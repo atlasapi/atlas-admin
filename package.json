@@ -1,0 +1,11 @@
+{
+  "name": "atlasAdmin",
+  "description": "Atlas administration front end",
+  "devDependencies": {
+        "phantomjs" : "*",
+        "karma" : "*",
+        "karma-junit-reporter" : "*",    
+        "karma-jasmine" : "*",
+        "karma-ng-scenario" : "*"
+    }
+}
