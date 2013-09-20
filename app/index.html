@@ -3,30 +3,35 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Atlas Administration</title>
+  <title>Atlas Administration - {{title}}</title>
   <link rel="stylesheet" href="css/app.css"/>
     <link rel="stylesheet" href="css/app.css"/>
     <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="lib/bootstrap/css/bootstrap-theme.min.css"/>
 </head>
     
-<body>
-<nav class="navbar navbar-default" role="navigation">
-    <a class="navbar-brand" href="#">Brand</a>
+<body ng-controller="aaContainer">
+<nav class="navbar navbar-default .navbar-fixed-top" role="navigation">
+    <div class="navbar-header">
+        <a class="navbar-brand" href="#"><img src="img/atlas_admin_logo.png" alt="Atlas Admin logo" /></a>
+    </div>
+    
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+         <ul class="nav navbar-nav">
+             <li><a href="#/sources">Sources</a></li>  
+             <li><a href="#/requests">Requests</a></li> 
+             <li><a href="#/applications">Applications</a></li>    
+         </ul>
+    </div>
+    
 </nav>
-
-  <ul class="menu">
-    <li><a href="#/view1">view12</a></li>
-    <li><a href="#/view2">view2</a></li>
-  </ul>
+    <h1>{{title}}</h1>
   <div ng-view></div>
-
-  <div>Atlas Admin: v<span app-version></span></div>
-
   <!-- In production use:
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
   -->
   <script src="lib/angular/angular.js"></script>
+  <script src="lib/angular/angular-resource.js"></script>
   <script src="js/app.js"></script>
   <script src="js/services.js"></script>
   <script src="js/controllers.js"></script>
