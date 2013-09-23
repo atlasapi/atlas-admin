@@ -19,8 +19,10 @@ var aaContainer = function($scope) {
 }  
 
 
-var sourcesPage = function($scope, $routeParams) {
-   // $scope.title = "test 2";
-    
-   
+
+var sourcesPage = function($scope, $routeParams, $http, atlasHost) {
+  // $scope.sources = AllSources.query();
+    $http.jsonp(atlasHost + '/sources.json?callback=JSON_CALLBACK').success(function(data) {
+        $scope.sources = data.sources;
+    });
 };

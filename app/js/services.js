@@ -1,10 +1,13 @@
 'use strict';
 
 /* Services */
+angular.module('atlasAdmin.services', [])
+  .factory('AllSources', function($resource){
+  return $resource($atlasHost + '/sources.json?callback=JSON_CALLBACK', {}, {
+    query: {method:'JSONP', params:{}, isArray:true}
+  });
+});
 
 
-// Demonstrate how to register services
-// In this case it is a simple value service.
-angular.module('atlasAdmin.services', []).
-  value('version', '0.1')
-  ;
+
+

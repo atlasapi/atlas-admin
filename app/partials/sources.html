@@ -1,4 +1,9 @@
 <div ng-controller="sourcesPage">
-<p>Sources page</p>
+    
+    <table class="table table-striped table-hover">
+    <tr ng-repeat="source in sources | filter:query">
+        <td>{{source.name}}</td>
+    </tr>
+    </table>
 </div>
 
