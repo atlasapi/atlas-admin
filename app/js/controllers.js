@@ -3,9 +3,12 @@
 /* Controllers */
 
 angular.module('atlasAdmin.controllers', []).
-  controller('CtrlSources', function($scope, $rootScope, $routeParams) {
+  controller('CtrlSources', function($scope, $rootScope, $routeParams, Sources) {
       $rootScope.title = "Sources";
       $rootScope.showFilter = true;
+      Sources.all(function(data) {
+         $scope.sources = data.sources;
+      });
   })
   .controller('CtrlSourceReaders', function($scope, $rootScope, $routeParams) {
       $rootScope.title = "Source :::";
@@ -26,13 +29,6 @@ var aaContainer = function($scope) {
 
 
 
-var sourcesPage = function($scope, $routeParams, $http, atlasHost) {
-  // $scope.sources = AllSources.query();
-    $http.jsonp(atlasHost + '/sources.json?callback=JSON_CALLBACK').success(function(data) {
-        $scope.sources = data.sources;
-        
-    });
-};
 
 var sourceReadersPage = function($scope, $rootScope, $routeParams, $http, atlasHost) {
   // $scope.sources = AllSources.query();
