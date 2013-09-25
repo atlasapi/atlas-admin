@@ -1,4 +1,4 @@
-<div ng-controller="sourceReadersPage">
+<div>
     
     <table class="table table-striped table-hover">
     <tr>
@@ -12,7 +12,14 @@
         <td>{{application.title}}</td>
         <td></td>
         <td>{{application.created|date:'dd MMM yyyy H:mm'}}</td>
-        <td>{{application.state}}</td>
+        <td ng-show="application.state == 'requested'">
+            <button ng-click="approveClicked(application)">
+                 Approve?
+            </button>
+        </td>
+        <td ng-show="application.state != 'requested'">
+            {{application.state|title}}
+        </td>
         <td>{{application.enabled}}</td>
     </tr>
     </table>

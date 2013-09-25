@@ -7,4 +7,9 @@ angular.module('atlasAdmin.filters', []).
     return function(text) {
       return String(text).replace(/\%VERSION\%/mg, version);
     }
-  }]);
+  }])
+.filter('title', function() {
+    return function(text) {
+      return String(text).substring(0,1).toUpperCase() + String(text).substring(1);
+    }
+});

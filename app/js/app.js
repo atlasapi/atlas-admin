@@ -11,4 +11,11 @@ var app = angular.module('atlasAdmin', ['atlasAdmin.filters', 'atlasAdmin.servic
     $routeProvider.otherwise({redirectTo: '/sources'});
   }]);
 
+app.config(['$httpProvider', function($httpProvider) {
+        $httpProvider.defaults.useXDomain = true;
+        delete $httpProvider.defaults.headers.common['X-Requested-With'];
+      console.log($httpProvider);
+    }
+  ]);
+
 
