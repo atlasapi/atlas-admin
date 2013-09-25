@@ -12,10 +12,9 @@ angular.module('atlasAdmin.services', [])
         },
         changeAppState: function(sourceId, appId, state, callback) {
             var data = {"state":state};
-            // POST /4.0/sources/:sourceId/applications/readers/:appId/state
             var url = atlasHost + "/sources/" + sourceId + "/applications/readers/" + appId + "/state";
-            $http.post(url, data, {withCredentials: false}).success(callback).error(function(error) {console.log(error)});
-            
+            // DON'T DO $http POST here to avoid an OPTIONS request being issued.
+            $http({url: url, method: 'POST', data: data, withCredentials: false}).success(callback);//.error(function(error) {console.log(error)});
         }
     }
  })
