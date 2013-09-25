@@ -13,6 +13,7 @@ angular.module('atlasAdmin.controllers', []).
       $rootScope.showFilter = true;
       Sources.get($routeParams.sourceId).then(function(source) {
          $rootScope.title = source.name; 
+         $scope.source = source;
       });
       
       Applications.all().then(function(applications) {
@@ -33,7 +34,38 @@ angular.module('atlasAdmin.controllers', []).
               }
               sourceSpecificApplications.push(sourceSpecificApplication);
           }     
-                $scope.applications = sourceSpecificApplications;        
+          $scope.applications = sourceSpecificApplications;        
+      });
+      $scope.approveClicked = function (application) {
+          Sources.changeAppState(application.sourceId, application.id, "available", function() {
+              application.state = "available";
+          });
+      }
+      
+  })
+  .controller('CtrlSourceWriters', function($scope, $rootScope, $routeParams, Sources, Applications) {
+      $rootScope.showFilter = true;
+      Sources.get($routeParams.sourceId).then(function(source) {
+         $rootScope.title = source.name; 
+         $scope.source = source;
+      });
+      
+      Applications.all().then(function(applications) {
+          var sourceSpecificApplications = [];
+          for (var i in applications) {
+              var sourceSpecificApplication = {
+                  "id": applications[i].id,
+                  "title": applications[i].title,
+                  "created": applications[i].created
+              };
+              // find source
+              for (var j in applications[i].sources.writes) {
+                  if (applications[i].sources.writes[j].id == $routeParams.sourceId) {
+                      sourceSpecificApplications.push(sourceSpecificApplication);
+                  }
+              }
+          }     
+          $scope.applications = sourceSpecificApplications;        
       });
       $scope.approveClicked = function (application) {
           Sources.changeAppState(application.sourceId, application.id, "available", function() {
