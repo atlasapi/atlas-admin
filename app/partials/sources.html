@@ -1,6 +1,6 @@
 <div>
     <table class="table table-striped table-hover">
-    <tr ng-repeat="source in sources | filter:query">
+    <tr ng-repeat="source in sources | orderBy:'name' | filter:query">
         <td><a href="#/sources/{{source.id}}/readers">{{source.name}}</a></td>
     </tr>
     </table>

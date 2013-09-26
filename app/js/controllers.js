@@ -34,7 +34,8 @@ angular.module('atlasAdmin.controllers', []).
               }
               sourceSpecificApplications.push(sourceSpecificApplication);
           }     
-          $scope.applications = sourceSpecificApplications;        
+          $scope.applications = sourceSpecificApplications; 
+          $scope.predicate = "title";
       });
       $scope.approveClicked = function (application) {
           Sources.changeAppState(application.sourceId, application.id, "available", function() {
@@ -65,7 +66,8 @@ angular.module('atlasAdmin.controllers', []).
                   }
               }
           }     
-          $scope.applications = sourceSpecificApplications;        
+          $scope.applications = sourceSpecificApplications; 
+          $scope.predicate = "title";
       });
       $scope.approveClicked = function (application) {
           Sources.changeAppState(application.sourceId, application.id, "available", function() {
