@@ -79,8 +79,15 @@ app.controller('CtrlSourceWriters', function($scope, $rootScope, $routeParams, S
 app.controller('CtrlRequests', function($scope, $rootScope, $routeParams) {
      $rootScope.title = "Requests";
   })
-app.controller('CtrlApplications', function($scope, $rootScope, $routeParams) {
-     $rootScope.title = "Applications";
+app.controller('CtrlApplications', function($scope, $rootScope, $routeParams, Applications) {
+     $rootScope.title = "Current Applications";
+     $scope.apps = {};
+     Applications.all().then(function(applications) {
+         $scope.apps.applications = applications; 
+     });
+     $scope.apps.predicate = '-created';
+     $scope.apps.pageSize=10;
+     $scope.apps.currentPage = 0;
   });
 
 
