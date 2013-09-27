@@ -14,7 +14,7 @@
         <th ng-click="predicate='enabled'; reverse=!reverse;">Used</th>
     </tr>
     <tr ng-repeat="application in applications | filter:query | orderBy:predicate:reverse">
-        <td>{{application.title}}</td>
+        <td><a ng-href="#/applications/{{application.id}}">{{application.title}}</a></td>
         <td>{{application.created|date:'dd MMM yyyy H:mm'}}</td>
         <td ng-show="application.state == 'requested'">
             <button ng-click="approveClicked(application)">

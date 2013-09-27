@@ -26,7 +26,9 @@ angular.module('atlasAdmin.services', [])
         all: function () {
             return $http.get(atlasHost + '/applications.json').then(function (results) {return results.data.applications});
         },
-        
+        get: function(applicationId) {
+            return $http.get(atlasHost + '/applications/' + applicationId + '.json').then(function (results) {return results.data.application});   
+        }
     }
  });
 

@@ -9,6 +9,7 @@ var app = angular.module('atlasAdmin', ['atlasAdmin.filters', 'atlasAdmin.servic
     $routeProvider.when('/sources/:sourceId/writers', {templateUrl: 'partials/sourceWriters.html', controller: 'CtrlSourceWriters'});
     $routeProvider.when('/requests', {templateUrl: 'partials/requests.html', controller: 'CtrlRequests'});
     $routeProvider.when('/applications', {templateUrl: 'partials/applications.html', controller: 'CtrlApplications'});
+    $routeProvider.when('/applications/:applicationId', {templateUrl: 'partials/applicationEdit.html', controller: 'CtrlApplicationEdit'});
     $routeProvider.otherwise({redirectTo: '/sources'});
   }]);
 

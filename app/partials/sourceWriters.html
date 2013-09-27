@@ -13,7 +13,7 @@
         <th ng-click="predicate='created'; reverse=!reverse;">Created</th>
     </tr>
     <tr ng-repeat="application in applications | filter:query | orderBy:predicate:reverse">
-        <td>{{application.title}}</td>
+        <td><a ng-href="#/applications/{{application.id}}">{{application.title}}</a></td>
         <td>{{application.created|date:'dd MMM yyyy H:mm'}}</td>
     </tr>
     </table>

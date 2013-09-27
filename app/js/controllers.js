@@ -86,10 +86,58 @@ app.controller('CtrlApplications', function($scope, $rootScope, $routeParams, Ap
          $scope.apps.applications = applications; 
      });
      $scope.apps.predicate = '-created';
-     $scope.apps.pageSize=10;
+     $scope.apps.pageSize=15;
      $scope.apps.currentPage = 0;
   });
-
+app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams, Applications) {
+    $scope.app = {};
+    Applications.get($routeParams.applicationId).then(function(application) {
+       $rootScope.title = application.title; 
+       $rootScope.showFilter = false;
+       $scope.app.application = application;
+       $scope.app.writes = {};
+       $scope.app.writes.predicate = 'name';
+       $scope.app.writes.reverse = false; 
+    });
+    
+    $scope.app.disableSource = function(source) {
+        var reads = [];
+        for (var i in $scope.app.application.sources.reads) {
+            var readEntry = $scope.app.application.sources.reads[i];
+            if (readEntry.id == source.id) {
+                readEntry.enabled = "false";  
+            } 
+            reads.push(readEntry);   
+        }
+        $scope.app.application.sources.reads = reads;
+    };
+    
+    $scope.app.enableSource = function(source) {
+       var reads = [];
+        for (var i in $scope.app.application.sources.reads) {
+            var readEntry = $scope.app.application.sources.reads[i];
+            if (readEntry.id == source.id) {
+                readEntry.enabled = "true";  
+            } 
+            reads.push(readEntry);   
+        }
+        $scope.app.application.sources.reads = reads; 
+    };
+    
+    $scope.app.requestSource = function(source) {
+        // TODO POP UP A FORM TO REQUEST ACCESS + WRITE SOURCE REQUESTS
+       var reads = [];
+        for (var i in $scope.app.application.sources.reads) {
+            var readEntry = $scope.app.application.sources.reads[i];
+            if (readEntry.id == source.id) {
+                readEntry.state = "requested";  
+            } 
+            reads.push(readEntry);   
+        }
+        $scope.app.application.sources.reads = reads; 
+    };
+    
+});
 
 var AddWriterCtrl = function ($scope, $modal, $log, Applications, Sources) {
 

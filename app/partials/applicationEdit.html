@@ -1,0 +1,60 @@
+<h3>Your API Key</h3>
+<p>{{app.application.credentials.apiKey}}</p>
+
+<h3>Sources (Read)</h3>
+<div class="panel panel-default">
+    <div class="panel-heading">Available (enabled)</div>
+    <ul class="list-group">
+       <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:'true' | orderBy:'name'">
+           {{source.title}}
+            <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.disableSource(source)">Disable</button>
+       </li>
+    </ul>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">Available (disabled)</div>
+     <ul class="list-group">
+       <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:'false' | orderBy:'name'">
+           {{source.title}}
+           
+         <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.enableSource(source)">Enable</button>
+           
+       </li>
+    </ul>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">Requested</div>
+      <ul class="list-group">
+       <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'requested' | orderBy:'name'">
+        {{source.title}}    
+       </li>
+    </ul>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">Unavailable</div>
+    <ul class="list-group">
+       <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'unavailable' | orderBy:'name'">
+         {{source.title}}      
+          <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.requestSource(source)">Request Access</button>
+       </li>
+    </ul>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">Revoked</div>
+     <ul class="list-group">
+       <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'revoked' | orderBy:'name'">
+         {{source.title}}  
+       </li>
+    </ul>
+</div>
+<div ng-show="app.application.sources.writes.length > 0">
+   <h3>Sources (Write)</h3>
+    <table class="table table-striped">
+        <tr>
+            <th ng-click="app.writes.predicate='name'; app.writes.reverse=!app.writes.reverse">Name</th>
+        </tr>
+        <tr ng-repeat="source in app.application.sources.writes | orderBy:app.writes.predicate:app.writes.reverse">
+            <td>{{source.name}}</td>
+        </tr>
+    </table>
+</div>
