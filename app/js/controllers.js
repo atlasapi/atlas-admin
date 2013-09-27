@@ -2,14 +2,14 @@
 
 /* Controllers */
 
-angular.module('atlasAdmin.controllers', []).
-  controller('CtrlSources', function($scope, $rootScope, $routeParams, Sources) {
+var app = angular.module('atlasAdmin.controllers', []);
+app.controller('CtrlSources', function($scope, $rootScope, $routeParams, Sources) {
       $rootScope.title = "Sources";
       $rootScope.showFilter = true;
       // TODO clear filter
       $scope.sources = Sources.all();
-  })
-  .controller('CtrlSourceReaders', function($scope, $rootScope, $routeParams, Sources, Applications) {
+  });
+app.controller('CtrlSourceReaders', function($scope, $rootScope, $routeParams, Sources, Applications) {
       $rootScope.showFilter = true;
       Sources.get($routeParams.sourceId).then(function(source) {
          $rootScope.title = source.name; 
@@ -43,8 +43,8 @@ angular.module('atlasAdmin.controllers', []).
           });
       }
       
-  })
-  .controller('CtrlSourceWriters', function($scope, $rootScope, $routeParams, Sources, Applications) {
+  });
+app.controller('CtrlSourceWriters', function($scope, $rootScope, $routeParams, Sources, Applications, $modal) {
       $rootScope.showFilter = true;
       Sources.get($routeParams.sourceId).then(function(source) {
          $rootScope.title = source.name; 
@@ -75,12 +75,56 @@ angular.module('atlasAdmin.controllers', []).
           });
       }
       
-  })
-  .controller('CtrlRequests', function($scope, $rootScope, $routeParams) {
+  });
+app.controller('CtrlRequests', function($scope, $rootScope, $routeParams) {
      $rootScope.title = "Requests";
   })
-  .controller('CtrlApplications', function($scope, $rootScope, $routeParams) {
+app.controller('CtrlApplications', function($scope, $rootScope, $routeParams) {
      $rootScope.title = "Applications";
   });
 
 
+var AddWriterCtrl = function ($scope, $modal, $log, Applications, Sources) {
+
+
+  $scope.addWriterDialog = function () {
+    var modalInstance = $modal.open({
+      templateUrl: 'partials/addWriterModal.html',
+      controller: AddWriterTypeaheadCtrl
+    });
+
+    modalInstance.result.then(function (selectedItem) {
+        Sources.addWriter($scope.source.id, selectedItem.id, function() {
+           $scope.applications.push(selectedItem);
+           alert(selectedItem.title + " now has write access to this source.");
+        });
+    }, function () {
+      $log.info('Add writer cancelled at: ' + new Date());
+    });
+  };
+};
+
+function AddWriterTypeaheadCtrl($scope, $modalInstance, Applications) {
+  $scope.item = {};
+  $scope.item.invalid = true;
+  $scope.item.selected = undefined;
+  Applications.all().then(function(applications) {
+      $scope.applications = applications;
+  });
+    
+  $scope.ok = function () {
+      $modalInstance.close($scope.item.selected);
+  };
+
+  $scope.cancel = function () {
+      $modalInstance.dismiss('cancel');
+  };
+    
+  $scope.onSelect = function ($item, $model, $label) {
+      $scope.item.invalid = false;
+  }
+  
+  $scope.selectionChanged = function() {
+      $scope.item.invalid = true; 
+  }
+}

@@ -11,9 +11,13 @@ angular.module('atlasAdmin.services', [])
              return $http.get(atlasHost + '/sources/' + sourceId + '.json').then(function(result) {return result.data.source;});
         },
         changeAppState: function(sourceId, appId, state, callback) {
-            var data = {"state":state};
+            var data = {};
             var url = atlasHost + "/sources/" + sourceId + "/applications/readers/" + appId + "/state?state="+ state;
             $http.post(url, data, {withCredentials: false}).success(callback);//.error(function(error) {console.log(error)});
+        },
+        addWriter: function(sourceId, appId, callback) {
+            var url = atlasHost + "/sources/" + sourceId + "/applications?id=" + appId + "&permission=write";
+            $http.post(url, {}, {withCredentials: false}).success(callback);
         }
     }
  })

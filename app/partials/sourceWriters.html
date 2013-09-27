@@ -1,8 +1,9 @@
+<div ng-controller="AddWriterCtrl">
 <div class="panel panel-default">
   <div class="panel-body">
     <a class="btn" ng-href="#/sources/{{source.id}}/readers">Readers</a>
     <span class="btn">Writers</span>
-    <a class="btn pull-right" ng-href="#/sources/{{source.id}}/readers">Add Writer</a>
+    <button class="btn pull-right" ng-click="addWriterDialog()">Add Writer</button>
   </div>
 </div>
 <div>
@@ -17,3 +18,8 @@
     </tr>
     </table>
 </div>
+    
+  
+</div>
+
+  
