@@ -137,11 +137,6 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
         }
         $scope.app.application.sources.reads = reads; 
     };
-    
-    $scope.handleDrop = function() {
-        console.log("dropped");
-    }
-    
 });
 
 var AddWriterCtrl = function ($scope, $modal, $log, Applications, Sources) {
