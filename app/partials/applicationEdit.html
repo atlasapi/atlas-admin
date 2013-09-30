@@ -2,6 +2,15 @@
 <p>{{app.application.credentials.apiKey}}</p>
 
 <h3>Sources (Read)</h3>
+
+<div class="well">
+    <button type="button" class="btn btn-success pull-right" ng-click="" ng-show="app.application.sources.precedence=='false'">Enable Precedence</button>
+    <button type="button" class="btn btn-danger pull-right" ng-click="" ng-show="app.application.sources.precedence=='true'">Disable Precedence</button>
+    <p>Atlas automatically matches the same programmes across different sources. With equivalence precedence turned off, we'll return all equivalent content as separate items in the response. With precedence turned on we'll merge the best data from every source into a single item, based on the order you set here.</p>
+    <p>Hint: If you have access to Press Association data, you probably want it at the top.</p>
+</div>
+    
+
 <div class="panel panel-default">
     <div class="panel-heading">Available (enabled)</div>
     <ul class="list-group">
