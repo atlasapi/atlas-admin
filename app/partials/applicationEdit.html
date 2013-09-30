@@ -24,16 +24,16 @@
     
 
 <div class="panel panel-default">
-    <div class="panel-heading">Available (enabled)</div>
-    <ul class="list-group">
-       <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:'true' | orderBy:'name'">
-           {{source.title}}
+    <div class="panel-heading">Enabled</div>
+    <ul class="list-group" sortable-list>
+       <li class="list-group-item drag" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:'true' | orderBy:'name'" orderable id="source-{{source.id}}" >
+           {{source.title}} {{source.id}}
             <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.disableSource(source)">Disable</button>
        </li>
     </ul>
 </div>
 <div class="panel panel-default">
-    <div class="panel-heading">Available (disabled)</div>
+    <div class="panel-heading">Available</div>
      <ul class="list-group">
        <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:'false' | orderBy:'name'">
            {{source.title}}

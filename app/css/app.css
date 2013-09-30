@@ -24,3 +24,10 @@
     display: table;
     content: " ";
 }
+
+.over {
+    border-bottom-width: 3px !important;
+}
+
+.drag {
+}
