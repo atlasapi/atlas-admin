@@ -26,8 +26,8 @@
 <div class="panel panel-default">
     <div class="panel-heading">Enabled</div>
     <ul class="list-group" sortable-list>
-       <li class="list-group-item drag" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:'true' | orderBy:'name'" orderable id="source-{{source.id}}" >
-           {{source.title}} {{source.id}}
+       <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:'true'" orderable id="source-{{source.id}}" drop="handleDrop()">
+           {{source.title}}
             <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.disableSource(source)">Disable</button>
        </li>
     </ul>
@@ -35,7 +35,7 @@
 <div class="panel panel-default">
     <div class="panel-heading">Available</div>
      <ul class="list-group">
-       <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:'false' | orderBy:'name'">
+       <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:'false'">
            {{source.title}}
            
          <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.enableSource(source)">Enable</button>
@@ -46,7 +46,7 @@
 <div class="panel panel-default">
     <div class="panel-heading">Requested</div>
       <ul class="list-group">
-       <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'requested' | orderBy:'name'">
+       <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'requested' ">
         {{source.title}}    
        </li>
     </ul>
@@ -54,7 +54,7 @@
 <div class="panel panel-default">
     <div class="panel-heading">Unavailable</div>
     <ul class="list-group">
-       <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'unavailable' | orderBy:'name'">
+       <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'unavailable'">
          {{source.title}}      
           <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.requestSource(source)">Request Access</button>
        </li>
@@ -63,7 +63,7 @@
 <div class="panel panel-default">
     <div class="panel-heading">Revoked</div>
      <ul class="list-group">
-       <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'revoked' | orderBy:'name'">
+       <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'revoked'">
          {{source.title}}  
        </li>
     </ul>
