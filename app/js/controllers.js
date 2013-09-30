@@ -92,12 +92,13 @@ app.controller('CtrlApplications', function($scope, $rootScope, $routeParams, Ap
 app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams, Applications) {
     $scope.app = {};
     Applications.get($routeParams.applicationId).then(function(application) {
-       $rootScope.title = application.title; 
        $rootScope.showFilter = false;
        $scope.app.application = application;
        $scope.app.writes = {};
        $scope.app.writes.predicate = 'name';
        $scope.app.writes.reverse = false; 
+        
+       $rootScope.title = "Edit application"; 
     });
     
     $scope.app.disableSource = function(source) {

@@ -1,11 +1,23 @@
-<h3>Your API Key</h3>
-<p>{{app.application.credentials.apiKey}}</p>
+<form role>
+  <div class="form-group">
+    <label for="appTitle">Title</label>
+    <input type="text" class="form-control" id="appTitle" placeholder="title" ng-model="app.application.title">
+  </div>
+  <div class="form-group">
+    <label for="appDescription">Description</label>
+    <input type="text" class="form-control" id="appDescription" placeholder="description" ng-model="app.application.description">
+  </div>
+  <div class="form-group">
+    <label for="appApiKey">Your API Key</label>
+    <input type="text" class="form-control" id="appApiKey" ng-model="app.application.credentials.apiKey" ng-readonly="true">
+  </div>
+</form>
 
 <h3>Sources (Read)</h3>
 
 <div class="well">
-    <button type="button" class="btn btn-success pull-right" ng-click="" ng-show="app.application.sources.precedence=='false'">Enable Precedence</button>
-    <button type="button" class="btn btn-danger pull-right" ng-click="" ng-show="app.application.sources.precedence=='true'">Disable Precedence</button>
+    <button type="button" class="btn btn-success pull-right" ng-show="app.application.sources.precedence=='false'" ng-click="app.application.sources.precedence='true'">Enable Precedence</button>
+    <button type="button" class="btn btn-danger pull-right" ng-show="app.application.sources.precedence=='true'" ng-click="app.application.sources.precedence='false'">Disable Precedence</button>
     <p>Atlas automatically matches the same programmes across different sources. With equivalence precedence turned off, we'll return all equivalent content as separate items in the response. With precedence turned on we'll merge the best data from every source into a single item, based on the order you set here.</p>
     <p>Hint: If you have access to Press Association data, you probably want it at the top.</p>
 </div>
