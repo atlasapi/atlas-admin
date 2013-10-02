@@ -94,7 +94,7 @@ app.controller('CtrlApplications', function($scope, $rootScope, $routeParams, Ap
      $scope.apps.pageSize=15;
      $scope.apps.currentPage = 0;
   });
-app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams, Applications) {
+app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams, Applications, $modal) {
     $scope.app = {};
     $scope.app.edited = {};
     $scope.app.edited = {"meta":false,"precedenceState":false,"precedenceOrder":false};
@@ -135,18 +135,31 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
     };
     
     $scope.app.requestSource = function(source) {
-        // TODO POP UP A FORM TO REQUEST ACCESS + WRITE SOURCE REQUESTS
-       var reads = [];
-        for (var i in $scope.app.application.sources.reads) {
-            var readEntry = $scope.app.application.sources.reads[i];
-            if (readEntry.id == source.id) {
-                readEntry.state = "requested";  
-            } 
-            reads.push(readEntry);   
-        }
-        $scope.app.application.sources.reads = reads;
-        $scope.app.edited.meta = true;
+        $scope.app.sourceRequest = {};
+        $scope.app.sourceRequest.source = source;
+        $scope.app.sourceRequest.applicationId = $scope.app.application.id;
+        var modalInstance = $modal.open({
+          templateUrl: 'partials/sourceRequestModal.html',
+          controller: SourceRequestFormModalCtrl,
+          scope: $scope
+        });
+
+        modalInstance.result.then(function () {
+            // only modify data if ok pressed on form
+            var reads = [];
+            for (var i in $scope.app.application.sources.reads) {
+                var readEntry = $scope.app.application.sources.reads[i];
+                if (readEntry.id == source.id) {
+                    readEntry.state = "requested";  
+                } 
+                reads.push(readEntry);   
+            }
+            $scope.app.application.sources.reads = reads;
+            $scope.app.edited.meta = true;
+         });
     };
+    
+   
     
     $scope.save = function() {
         // Decide how to perform the update based on what has changed
@@ -226,4 +239,36 @@ function AddWriterTypeaheadCtrl($scope, $modalInstance, Applications) {
   $scope.selectionChanged = function() {
       $scope.item.invalid = true; 
   }
+}
+
+
+function SourceRequestFormModalCtrl($scope, $modalInstance, Applications, SourceRequests) {
+  $scope.item = {};
+  $scope.item.invalid = true;
+  $scope.app.sourceRequest.usageTypes = [
+      {value: 'commercial', label: 'Commercial'},
+      {value: 'noncommercial', label: 'Non commercial'},
+      {value: 'personal', label: 'Personal'}
+  ];
+  $scope.app.sourceRequest.reason = '';
+  $scope.app.sourceRequest.applicationUrl = '';
+  $scope.app.sourceRequest.usageType = 'commercial'; //default value for usage type
+  $scope.ok = function () {
+      if ($scope.app.sourceRequest.email && $scope.app.sourceRequest.email.indexOf('@') != -1) {
+        console.log($scope.app.sourceRequest);
+        SourceRequests.send($scope.app.sourceRequest.source.id, 
+                            $scope.app.sourceRequest.applicationId, 
+                            $scope.app.sourceRequest.applicationUrl, 
+                            $scope.app.sourceRequest.email, 
+                            $scope.app.sourceRequest.reason, 
+                            $scope.app.sourceRequest.usageType)
+        .then(function() {
+            $modalInstance.close();
+        });
+      }
+  };
+
+  $scope.cancel = function () {
+      $modalInstance.dismiss('cancel');
+  };
 }

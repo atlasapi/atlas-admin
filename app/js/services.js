@@ -44,7 +44,24 @@ angular.module('atlasAdmin.services', [])
         }
         
     }
- });
+ })
+.factory('SourceRequests', function ($http, atlasHost) {
+    return {
+        all: function() {
+            return $http.get(atlasHost + '/requests.json').then(function (results) {
+                return results.data.source_requests});
+        },
+        send: function(sourceId, applicationId, applicationUrl, email, reason, usageType) {
+            var url = atlasHost + "/sources/" + sourceId + "/requests?" 
+                 + "appId=" + applicationId
+                 + "&appUrl=" + encodeURIComponent(applicationUrl)
+                 + "&email=" + encodeURIComponent(email)
+                 + "&reason=" + encodeURIComponent(reason)
+                 + "&usageType=" + usageType;
+            return $http.post(url, {});
+        }
+    }
+});
 
 
 
