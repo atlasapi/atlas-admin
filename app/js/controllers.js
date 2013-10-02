@@ -118,6 +118,7 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
             reads.push(readEntry);   
         }
         $scope.app.application.sources.reads = reads;
+        $scope.app.edited.meta = true;
     };
     
     $scope.app.enableSource = function(source) {
@@ -129,7 +130,8 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
             } 
             reads.push(readEntry);   
         }
-        $scope.app.application.sources.reads = reads; 
+        $scope.app.application.sources.reads = reads;
+        $scope.app.edited.meta = true;
     };
     
     $scope.app.requestSource = function(source) {
@@ -142,11 +144,9 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
             } 
             reads.push(readEntry);   
         }
-        $scope.app.application.sources.reads = reads; 
+        $scope.app.application.sources.reads = reads;
+        $scope.app.edited.meta = true;
     };
-    
-    // TODO work out if just precedence changed or whole app
-    
     
     $scope.save = function() {
         // Decide how to perform the update based on what has changed
