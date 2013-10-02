@@ -28,7 +28,21 @@ angular.module('atlasAdmin.services', [])
         },
         get: function(applicationId) {
             return $http.get(atlasHost + '/applications/' + applicationId + '.json').then(function (results) {return results.data.application});   
+        },
+        update: function(application, callback) {
+            var url = atlasHost + "/applications";
+            return $http.post(url, application, {withCredentials: false});
+        },
+        setPrecedence: function(applicationId, sourceIdOrder) {
+            var url = atlasHost + "/applications/" + applicationId + "/precedence";
+            var data = {"ordering":sourceIdOrder};
+            return $http.post(url, data, {withCredentials: false});
+        },
+        deletePrecedence:  function(applicationId) {
+            var url = atlasHost + "/applications/" + applicationId + "/precedence";
+            return $http.delete(url);
         }
+        
     }
  });
 

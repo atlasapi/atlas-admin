@@ -98,6 +98,7 @@ app.directive('orderable', function() {
                     reads.push(source);
                  }
              }
+             scope.app.edited.precedenceOrder=true;
              scope.app.application.sources.reads = reads;
              return false;
          },

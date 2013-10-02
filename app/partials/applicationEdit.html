@@ -1,30 +1,38 @@
-<form role>
+
+<div class="panel panel-default">
+  <div class="panel-body">
+      
+    {{app.message}}
+     <button type="button" class="btn btn-danger pull-right" ng-click="save()">Save</button>
+  </div>
+</div>
+<form name="detailsForm">
+<div>
   <div class="form-group">
     <label for="appTitle">Title</label>
-    <input type="text" class="form-control" id="appTitle" placeholder="title" ng-model="app.application.title">
+    <input type="text" class="form-control" id="appTitle" name="appTitle" placeholder="title" ng-model="app.application.title" ng-change="app.edited.meta=true" ng-minlength="3">
   </div>
   <div class="form-group">
     <label for="appDescription">Description</label>
-    <input type="text" class="form-control" id="appDescription" placeholder="description" ng-model="app.application.description">
+    <input type="text" class="form-control" id="appDescription" placeholder="description" ng-model="app.application.description" ng-change="app.edited.meta=true">
   </div>
   <div class="form-group">
     <label for="appApiKey">Your API Key</label>
     <input type="text" class="form-control" id="appApiKey" ng-model="app.application.credentials.apiKey" ng-readonly="true">
   </div>
-</form>
 
 <h3>Sources (Read)</h3>
 
 <div class="well">
-    <button type="button" class="btn btn-success pull-right" ng-show="app.application.sources.precedence=='false'" ng-click="app.application.sources.precedence='true'">Enable Precedence</button>
-    <button type="button" class="btn btn-danger pull-right" ng-show="app.application.sources.precedence=='true'" ng-click="app.application.sources.precedence='false'">Disable Precedence</button>
+    <button type="button" class="btn btn-success pull-right" ng-show="app.application.sources.precedence=='false'" ng-click="app.application.sources.precedence='true';app.edited.precedenceState=true">Enable Precedence</button>
+    <button type="button" class="btn btn-danger pull-right" ng-show="app.application.sources.precedence=='true'" ng-click="app.application.sources.precedence='false';app.edited.precedenceState=true;app.edited.precedenceOrder=false">Disable Precedence</button>
     <p>Atlas automatically matches the same programmes across different sources. With equivalence precedence turned off, we'll return all equivalent content as separate items in the response. With precedence turned on we'll merge the best data from every source into a single item, based on the order you set here.</p>
     <p>Hint: If you have access to Press Association data, you probably want it at the top.</p>
 </div>
     
 
 <div class="panel panel-default">
-    <div class="panel-heading">Enabled</div>
+    <div class="panel-heading">Enabled <span ng-show="app.application.sources.precedence=='true'">(Drag and drop sources to rearrange precedence ordering)</span></div>
     <ul class="list-group" sortable-list>
         
        <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:'true'" orderable id="source-{{source.id}}" ng-show="app.application.sources.precedence=='true'">
@@ -78,12 +86,11 @@
 </div>
 <div ng-show="app.application.sources.writes.length > 0">
    <h3>Sources (Write)</h3>
-    <table class="table table-striped">
-        <tr>
-            <th ng-click="app.writes.predicate='name'; app.writes.reverse=!app.writes.reverse">Name</th>
-        </tr>
-        <tr ng-repeat="source in app.application.sources.writes | orderBy:app.writes.predicate:app.writes.reverse">
-            <td>{{source.name}}</td>
-        </tr>
-    </table>
+     <ul class="list-group">
+        <li class="list-group-item" ng-repeat="source in app.application.sources.writes | orderBy:app.writes.predicate:app.writes.reverse">
+            {{source.name}}
+        </li>
+    </ul>
 </div>
+
+</form>
