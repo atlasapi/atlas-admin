@@ -29,8 +29,17 @@ angular.module('atlasAdmin.services', [])
         get: function(applicationId) {
             return $http.get(atlasHost + '/applications/' + applicationId + '.json').then(function (results) {return results.data.application});   
         },
+        create: function(title) {
+            var url = atlasHost + "/applications.json";
+            var application = {
+                 "title": title,
+                 "description":"",
+                 "publisher": {"key":"metabroadcast.com", "name":"MetaBroadcast","country":"ALL"}
+            }
+            return $http.post(url, application, {withCredentials: false});
+        },
         update: function(application, callback) {
-            var url = atlasHost + "/applications";
+            var url = atlasHost + "/applications.json";
             return $http.post(url, application, {withCredentials: false});
         },
         setPrecedence: function(applicationId, sourceIdOrder) {
@@ -66,7 +75,3 @@ angular.module('atlasAdmin.services', [])
         }
     }
 });
-
-
-
-

@@ -74,11 +74,6 @@ app.controller('CtrlSourceWriters', function($scope, $rootScope, $routeParams, S
               application.state = "available";
           });
       }
-      $scope.save = function() {
-         console.log  
-      };
-
-      // TODO work out if just precedence changed or whole app
       
   });
 app.controller('CtrlRequests', function($scope, $rootScope, $routeParams, SourceRequests, Applications, $q) {
@@ -120,7 +115,7 @@ app.controller('CtrlRequests', function($scope, $rootScope, $routeParams, Source
     };
     
   })
-app.controller('CtrlApplications', function($scope, $rootScope, $routeParams, Applications) {
+app.controller('CtrlApplications', function($scope, $rootScope, $routeParams, Applications, $modal, $location) {
      $rootScope.title = "Current Applications";
      $scope.apps = {};
      Applications.all().then(function(applications) {
@@ -129,6 +124,18 @@ app.controller('CtrlApplications', function($scope, $rootScope, $routeParams, Ap
      $scope.apps.predicate = '-created';
      $scope.apps.pageSize=15;
      $scope.apps.currentPage = 0;
+    
+     $scope.createApplication = function() {
+         var modalInstance = $modal.open({
+          templateUrl: 'partials/newApplicationModal.html',
+          controller: CreateApplicationFormModalCtrl,
+          scope: $scope
+        });
+
+        modalInstance.result.then(function (application) {
+            $location.path('/applications/' + application.id);
+         });   
+     }
   });
 app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams, Applications, $modal) {
     $scope.app = {};
@@ -291,7 +298,6 @@ function SourceRequestFormModalCtrl($scope, $modalInstance, Applications, Source
   $scope.app.sourceRequest.usageType = 'commercial'; //default value for usage type
   $scope.ok = function () {
       if ($scope.app.sourceRequest.email && $scope.app.sourceRequest.email.indexOf('@') != -1) {
-        console.log($scope.app.sourceRequest);
         SourceRequests.send($scope.app.sourceRequest.source.id, 
                             $scope.app.sourceRequest.applicationId, 
                             $scope.app.sourceRequest.applicationUrl, 
@@ -302,6 +308,24 @@ function SourceRequestFormModalCtrl($scope, $modalInstance, Applications, Source
             $modalInstance.close();
         });
       }
+  };
+
+  $scope.cancel = function () {
+      $modalInstance.dismiss('cancel');
+  };
+}
+
+function CreateApplicationFormModalCtrl($scope, $modalInstance, Applications) {
+  $scope.app = {};
+  $scope.app.title = "";
+ 
+  $scope.ok = function () {
+      Applications.create($scope.app.title)
+        .then(function(result) {
+            if (result.data.application.id) {
+                $modalInstance.close(result.data.application);
+            }
+        });
   };
 
   $scope.cancel = function () {
