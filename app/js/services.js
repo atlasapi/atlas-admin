@@ -59,6 +59,10 @@ angular.module('atlasAdmin.services', [])
                  + "&reason=" + encodeURIComponent(reason)
                  + "&usageType=" + usageType;
             return $http.post(url, {});
+        },
+        approve: function(requestId) {
+            var url = atlasHost + '/requests/' + requestId + '/approve';
+            return $http.post(url, {}, {withCredentials: false});
         }
     }
 });

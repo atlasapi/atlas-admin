@@ -1,1 +1,31 @@
-<p>Requests page.</p>
+<div ng-show="errorMessage" class="alert alert-danger">
+    {{errorMessage}}
+</div>
+<div>
+    
+    <table class="table table-striped table-hover">
+    <tr>
+        <th ng-click="app.predicate='application.title'; app.reverse=!reverse;">Application</th>
+        <th ng-click="app.predicate='app_url'; app.reverse=!reverse;">URL</th>
+        <th ng-click="app.predicate='app.source.title'; app.reverse=!reverse;">Source</th>
+        <th ng-click="app.predicate='app.usage_type.name'; app.reverse=!reverse;">Usage type</th>
+        <th ng-click="app.predicate='app.reason'; app.reverse=!reverse;">Reason</th>
+        <th ng-click="app.predicate='approved'; app.reverse=!reverse;">Status</th>
+    </tr>
+    <tr ng-repeat="request in app.requests | orderBy:app.predicate:app.reverse">
+        <td><a ng-href="#/applications/{{request.application.id}}">{{request.application.title}}</a></td>
+        <td>{{request.app_url}}</td>
+        <td><a ng-href="#/sources/{{request.source.id}}/readers">{{request.source.name}}</a></td>
+        <td>{{request.usage_type.title}}</td>
+        <td>{{request.usage_type.reason}}</td>
+        <td ng-show="request.approved == 'false'">
+            <button ng-click="approveRequest(request);">
+                 Approve?
+            </button>
+        </td>
+        <td ng-show="request.approved == 'true'">
+            Approved
+        </td>
+    </tr>
+    </table>
+</div>
