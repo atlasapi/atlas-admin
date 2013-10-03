@@ -1,9 +1,13 @@
 <div ng-controller="AddWriterCtrl">
 <div class="panel panel-default">
   <div class="panel-body">
-    <a class="btn" ng-href="#/sources/{{source.id}}/readers">Readers</a>
-    <span class="btn">Writers</span>
-    <button class="btn pull-right" ng-click="addWriterDialog()">Add Writer</button>
+    <a class="btn btn-primary" ng-href="#/sources/{{source.id}}/readers">Readers</a>
+    <span class="btn btn-default">Writers</span>
+    <button class="btn btn-danger" ng-click="addWriterDialog()">Add Writer</button>
+    <div class="pull-right" >
+        <label for="queryFilter">Filter: </label>
+         <input aria-role="search" ng-model="query" id="queryFilter">
+    </div>
   </div>
 </div>
 <div>

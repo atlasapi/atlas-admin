@@ -5,12 +5,9 @@
 var app = angular.module('atlasAdmin.controllers', []);
 app.controller('CtrlSources', function($scope, $rootScope, $routeParams, Sources) {
       $rootScope.title = "Sources";
-      $rootScope.showFilter = true;
-      // TODO clear filter
       $scope.sources = Sources.all();
   });
 app.controller('CtrlSourceReaders', function($scope, $rootScope, $routeParams, Sources, Applications) {
-      $rootScope.showFilter = true;
       Sources.get($routeParams.sourceId).then(function(source) {
          $rootScope.title = source.name; 
          $scope.source = source;
@@ -45,7 +42,6 @@ app.controller('CtrlSourceReaders', function($scope, $rootScope, $routeParams, S
       
   });
 app.controller('CtrlSourceWriters', function($scope, $rootScope, $routeParams, Sources, Applications, $modal) {
-      $rootScope.showFilter = true;
       Sources.get($routeParams.sourceId).then(function(source) {
          $rootScope.title = source.name; 
          $scope.source = source;
@@ -142,7 +138,6 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
     $scope.app.edited = {};
     $scope.app.edited = {"meta":false,"precedenceState":false,"precedenceOrder":false};
     Applications.get($routeParams.applicationId).then(function(application) {
-       $rootScope.showFilter = false;
        $scope.app.application = application;
        $scope.app.writes = {};
        $scope.app.writes.predicate = 'name';
