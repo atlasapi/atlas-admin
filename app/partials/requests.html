@@ -1,3 +1,6 @@
+<div ng-show="errorMessage" class="alert alert-danger">
+    {{errorMessage}}
+</div>
 <div class="panel panel-default">
   <div class="panel-body">
     <div class="pull-right" >
@@ -5,9 +8,6 @@
         <input aria-role="search" ng-model="query" id="queryFilter">
     </div>
   </div>
-</div>
-<div ng-show="errorMessage" class="alert alert-danger">
-    {{errorMessage}}
 </div>
 <div>
     

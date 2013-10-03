@@ -1,4 +1,10 @@
 <div ng-controller="AddWriterCtrl">
+<div ng-show="successMessage" class="alert alert-success">
+    {{successMessage}}
+</div>
+<div ng-show="errorMessage" class="alert alert-danger">
+    {{errorMessage}}
+</div>
 <div class="panel panel-default">
   <div class="panel-body">
     <a class="btn btn-primary" ng-href="#/sources/{{source.id}}/readers">Readers</a>

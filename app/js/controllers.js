@@ -203,20 +203,20 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
         // Decide how to perform the update based on what has changed
         if ($scope.app.edited.meta) {
             if (!$scope.detailsForm.appTitle.$valid) {
-                $scope.app.message = "Application title must be at least three characters long";
+                $scope.app.errorMessage = "Application title must be at least three characters long";
             } else {
                Applications.update($scope.app.application).then(function() {
-                  $scope.app.message = "Changes saved";   
+                  $scope.successMessage = "Changes saved";   
                },function() {
-                  $scope.app.message = "Sorry, there was an error and your changes could not be saved";   
+                  $scope.errorMessage = "Sorry, there was an error and your changes could not be saved";   
                }); 
             }
         } else if ($scope.app.edited.precedenceState && $scope.app.application.sources.precedence == 'false') {
             // precedence has been disabled
             Applications.deletePrecedence($scope.app.application.id).then(function() {
-                $scope.app.message = "Changes saved";   
+                $scope.successMessage = "Changes saved";   
             },function() {
-                $scope.app.message = "Sorry, there was an error and your changes could not be saved";   
+                $scope.errorMessage = "Sorry, there was an error and your changes could not be saved";   
             }); 
             
         } else if ($scope.app.edited.precedenceState || $scope.app.edited.precedenceOrder) {
@@ -225,9 +225,9 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
                 sourceIdOrder.push($scope.app.application.sources.reads[i].id);   
             }
             Applications.setPrecedence($scope.app.application.id, sourceIdOrder).then(function() {
-                $scope.app.message = "Changes saved";   
+                $scope.successMessage = "Changes saved";   
             },function() {
-                $scope.app.message = "Sorry, there was an error and your changes could not be saved";   
+                $scope.errorMessage = "Sorry, there was an error and your changes could not be saved";   
             }); 
         }  
     };
@@ -246,7 +246,7 @@ var AddWriterCtrl = function ($scope, $modal, $log, Applications, Sources) {
     modalInstance.result.then(function (selectedItem) {
         Sources.addWriter($scope.source.id, selectedItem.id, function() {
            $scope.applications.push(selectedItem);
-           alert(selectedItem.title + " now has write access to this source.");
+           $scope.successMessage = selectedItem.title + " now has write access to this source.";
         });
     }, function () {
       $log.info('Add writer cancelled at: ' + new Date());

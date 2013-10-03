@@ -1,9 +1,12 @@
-
+<div ng-show="successMessage" class="alert alert-success">
+    {{successMessage}}
+</div>
+<div ng-show="errorMessage" class="alert alert-danger">
+    {{errorMessage}}
+</div>
 <div class="panel panel-default">
   <div class="panel-body">
-      
-    {{app.message}}
-     <button type="button" class="btn btn-danger pull-right" ng-click="save()">Save</button>
+     <button type="button" class="btn btn-danger" ng-click="save()">Save</button>
   </div>
 </div>
 <form name="detailsForm">
