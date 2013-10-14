@@ -1,8 +1,8 @@
 'use strict';
 
 /* Services */
-angular.module('atlasAdmin.services', [])
- .factory('Sources', function (Atlas, Applications) {
+var app = angular.module('atlasAdmin.services', []);
+app.factory('Sources', function (Atlas, Applications) {
     return {
         all: function () {
              return Atlas.getRequest('/sources.json').then(function(result) {return result.data.sources;});
@@ -20,8 +20,8 @@ angular.module('atlasAdmin.services', [])
             Atlas.postRequest(url, {}, {withCredentials: false}).success(callback);
         }
     }
- })
-.factory('Applications', function (Atlas) {
+ });
+app.factory('Applications', function (Atlas) {
     return {
         all: function () {
             return Atlas.getRequest('/applications.json').then(function (results) {return results.data.applications});
@@ -51,8 +51,8 @@ angular.module('atlasAdmin.services', [])
         }
         
     }
- })
-.factory('SourceRequests', function (Atlas) {
+ });
+app.factory('SourceRequests', function (Atlas) {
     return {
         all: function() {
             return Atlas.getRequest('/requests.json').then(function (results) {
@@ -72,17 +72,53 @@ angular.module('atlasAdmin.services', [])
             return Atlas.postRequest(url, {});
         }
     }
-})
-.factory('Atlas', function ($http, atlasHost) {
+});
+app.factory('Atlas', function ($http, atlasHost, atlasVersion) {
     return {
        getRequest: function(url) {
-           return $http.get(atlasHost + url);   
+           return $http.get(atlasHost + "/" + atlasVersion +  url);   
        },
        postRequest: function(url, data) {
-           return $http.post(atlasHost + url, data, {withCredentials: false});   
+           return $http.post(atlasHost + "/" + atlasVersion + url, data, {withCredentials: false});   
        },
        deleteRequest: function(url) {
-           return $http.delete(atlasHost + url);
+           return $http.delete(atlasHost + "/" + atlasVersion + url);
+       },
+       getAuthProviders: function() {
+           return $http.get(atlasHost + "/" + atlasVersion + "/auth/providers.json").then(function(results){
+               var authProviders = [];
+               for (var i in results.data.auth_providers) {
+                   var provider = results.data.auth_providers[i];
+                   provider.image = atlasHost + provider.image;
+                   authProviders.push(provider);
+               }
+               return authProviders;
+           }, function(error) {
+               console.log(error);   
+           });  
        }
+        
     }
 });
+app.factory('AuthenticationInterceptor', function ($q, $location, atlasHost) {
+    var auth = {token:0,provider:""};
+   
+    return function(promise) {
+        return promise.then(
+            function(response) {
+                // if no auth token then need to make an access request to atlas
+                if (response.config.url.indexOf(atlasHost)!= -1 && response.status == 401) {
+                    console.log("Not logged in");
+                    $location.path('/login');
+                    return $q.reject(response);
+                }
+               return response;
+            }, 
+            function(response) {
+                console.log("error");
+                return $q.reject(response);
+            }
+        );     
+    }
+});
+

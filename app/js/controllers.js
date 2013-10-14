@@ -234,6 +234,26 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
       
 });
 
+app.controller('CtrlLogin', function($scope, $rootScope, $routeParams, Atlas, atlasVersion, $location) {
+    // Ask atlas for access here 
+    $rootScope.title = "Please log in";
+    Atlas.getAuthProviders().then(function(results) {
+        $scope.providers = results; 
+    });
+    
+    $rootScope.startAuth = function(provider) {
+        var callbackUrl = encodeURIComponent($location.absUrl().replace("/login","/oauth"));
+        var targetUri = encodeURIComponent($location.absUrl().replace("/login","/"));
+        var authRequestUrl = provider.authRequestUrl.replace("/" + atlasVersion, "") 
+           + ".json?callbackUrl=" + callbackUrl
+           + "&targetUri=" + targetUri;
+        Atlas.getRequest(authRequestUrl).then(function(result) {
+            // redirect to provider
+            window.location.href = result.data.oauth_request.login_url;
+        });
+    }
+});
+
 var AddWriterCtrl = function ($scope, $modal, $log, Applications, Sources) {
 
 
