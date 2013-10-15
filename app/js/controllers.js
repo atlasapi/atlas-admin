@@ -234,29 +234,57 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
       
 });
 
-app.controller('CtrlLogin', function($scope, $rootScope, $routeParams, Atlas, atlasVersion, $location) {
+app.controller('CtrlLogin', function($scope, $rootScope, $routeParams, Atlas, atlasVersion, $location, Authentication) {
     // Ask atlas for access here 
     $rootScope.title = "Please log in";
+    Authentication.reset();
     Atlas.getAuthProviders().then(function(results) {
         $scope.providers = results; 
     });
     
     $rootScope.startAuth = function(provider) {
-        var callbackUrl = encodeURIComponent($location.absUrl().replace("/login","/oauth"));
+        var callbackUrl = encodeURIComponent($location.absUrl().replace("/login","/oauth/" + provider.name));
         var targetUri = encodeURIComponent($location.absUrl().replace("/login","/"));
-        var authRequestUrl = provider.authRequestUrl.replace("/" + atlasVersion, "") 
-           + ".json?callbackUrl=" + callbackUrl
-           + "&targetUri=" + targetUri;
-        Atlas.getRequest(authRequestUrl).then(function(result) {
-            // redirect to provider
-            window.location.href = result.data.oauth_request.login_url;
+        Authentication.setProvider(provider.name);
+        Atlas.startOauthAuthentication(provider, callbackUrl, targetUri).then(function(login_url) {
+            window.location.href = login_url; 
+        }, function(error) {
+            console.log(error);   
         });
     }
 });
 
+app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location, Authentication, Atlas) {
+    if (window.location.search == "") {
+        // search part will be empty if we have been here and cleared the oauth replies
+        // In this case redirect.
+        $location.path("/sources");
+        return;
+    }
+    $rootScope.title = "Authenticating.....";
+    Authentication.setProvider($routeParams.provider);
+    var oauth_token = "";
+    var oauth_verifier = "";
+    var searchParts = window.location.search.replace("?","").split("&");
+    for (var i in searchParts) {
+        var parts = searchParts[i].split("=");
+        if (parts[0] == "oauth_token") {
+           oauth_token = parts[1];
+        } else if (parts[0] == "oauth_verifier") {
+           oauth_verifier = parts[1];
+        }
+    }
+    Atlas.getAccessToken(oauth_token, oauth_verifier).then(function(results) {
+        Authentication.setToken(results.data.oauth_result.access_token);
+        window.location.search = "";
+    },
+    function(error) {
+        console.log(error);
+        $location.hash("/login");
+    });
+});
+
 var AddWriterCtrl = function ($scope, $modal, $log, Applications, Sources) {
-
-
   $scope.addWriterDialog = function () {
     var modalInstance = $modal.open({
       templateUrl: 'partials/addWriterModal.html',

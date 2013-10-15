@@ -73,9 +73,11 @@ app.factory('SourceRequests', function (Atlas) {
         }
     }
 });
-app.factory('Atlas', function ($http, atlasHost, atlasVersion) {
+app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication) {
     return {
        getRequest: function(url) {
+           console.log("token");
+           console.log(Authentication.getToken());
            return $http.get(atlasHost + "/" + atlasVersion +  url);   
        },
        postRequest: function(url, data) {
@@ -96,13 +98,45 @@ app.factory('Atlas', function ($http, atlasHost, atlasVersion) {
            }, function(error) {
                console.log(error);   
            });  
-       }
-        
+       },
+       startOauthAuthentication: function(provider, callbackUrl, targetUri) {
+          var url = atlasHost + provider.authRequestUrl + ".json?callbackUrl=" + callbackUrl;
+          Authentication.setProvider(provider.name);
+          return $http.get(url).then(function(result) {
+              return result.data.oauth_request.login_url;
+              
+          }, function(error) {
+              return error;  
+          });
+       },
+       getAccessToken: function(oauth_token, oauth_verifier) {
+           var url = "/auth/" + Authentication.getProvider() + "/token.json?oauthToken=" + oauth_token
+                 + "&oauthVerifier=" + oauth_verifier;
+           return $http.get(atlasHost + "/" + atlasVersion +  url); 
+       }        
+    }
+});
+app.factory('Authentication', function($rootScope) {
+    return {
+        getProvider: function() {
+            return sessionStorage.getItem("auth.provider");   
+        },
+        setProvider: function(provider) {
+            sessionStorage.setItem("auth.provider", provider);
+        },
+        getToken: function() {
+            return sessionStorage.getItem("auth.token");  
+        },
+        setToken: function(token) {
+            sessionStorage.setItem("auth.token", token);   
+        },
+        reset: function() {
+            sessionStorage.setItem("auth.provider", null);
+            sessionStorage.setItem("auth.token", null);   
+        }
     }
 });
 app.factory('AuthenticationInterceptor', function ($q, $location, atlasHost) {
-    var auth = {token:0,provider:""};
-   
     return function(promise) {
         return promise.then(
             function(response) {
