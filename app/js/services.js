@@ -76,15 +76,13 @@ app.factory('SourceRequests', function (Atlas) {
 app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication) {
     return {
        getRequest: function(url) {
-           console.log("token");
-           console.log(Authentication.getToken());
-           return $http.get(atlasHost + "/" + atlasVersion +  url);   
+           return $http.get(Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion +  url));   
        },
        postRequest: function(url, data) {
-           return $http.post(atlasHost + "/" + atlasVersion + url, data, {withCredentials: false});   
+           return $http.post(Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + url), data, {withCredentials: false});   
        },
        deleteRequest: function(url) {
-           return $http.delete(atlasHost + "/" + atlasVersion + url);
+           return $http.delete(Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + url));
        },
        getAuthProviders: function() {
            return $http.get(atlasHost + "/" + atlasVersion + "/auth/providers.json").then(function(results){
@@ -133,6 +131,19 @@ app.factory('Authentication', function($rootScope) {
         reset: function() {
             sessionStorage.setItem("auth.provider", null);
             sessionStorage.setItem("auth.token", null);   
+        },
+        appendTokenToUrl: function(url) {
+            var provider = sessionStorage.getItem("auth.provider");
+            var token = sessionStorage.getItem("auth.token");
+            if (!token) {
+                return url;
+            }
+            var oauthParams = "oauth_provider=" + provider + "&oauth_token=" + token;
+            if (url.indexOf("?") != -1) {
+                return url + "&" + oauthParams;
+            } else {
+                return url + "?" + oauthParams;
+            }            
         }
     }
 });
