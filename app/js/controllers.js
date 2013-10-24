@@ -243,9 +243,9 @@ app.controller('CtrlLogin', function($scope, $rootScope, $routeParams, Atlas, at
     });
     
     $rootScope.startAuth = function(provider) {
-        var callbackUrl = encodeURIComponent($location.absUrl().replace("/login","/oauth/" + provider.name));
+        var callbackUrl = encodeURIComponent($location.absUrl().replace("/login","/oauth/" + provider.namespace));
         var targetUri = encodeURIComponent($location.absUrl().replace("/login","/"));
-        Authentication.setProvider(provider.name);
+        Authentication.setProvider(provider.namespace);
         Atlas.startOauthAuthentication(provider, callbackUrl, targetUri).then(function(login_url) {
             window.location.href = login_url; 
         }, function(error) {

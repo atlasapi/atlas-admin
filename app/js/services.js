@@ -99,7 +99,7 @@ app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication) {
        },
        startOauthAuthentication: function(provider, callbackUrl, targetUri) {
           var url = atlasHost + provider.authRequestUrl + ".json?callbackUrl=" + callbackUrl;
-          Authentication.setProvider(provider.name);
+          Authentication.setProvider(provider.namespace);
           return $http.get(url).then(function(result) {
               return result.data.oauth_request.login_url;
               
@@ -129,15 +129,15 @@ app.factory('Authentication', function($rootScope) {
             sessionStorage.setItem("auth.token", token);   
         },
         reset: function() {
-            sessionStorage.setItem("auth.provider", null);
-            sessionStorage.setItem("auth.token", null);   
+            sessionStorage.removeItem("auth.provider");
+            sessionStorage.removeItem("auth.token");   
         },
         appendTokenToUrl: function(url) {
             var provider = sessionStorage.getItem("auth.provider");
             var token = sessionStorage.getItem("auth.token");
             if (!token) {
                 return url;
-            }
+            } 
             var oauthParams = "oauth_provider=" + provider + "&oauth_token=" + token;
             if (url.indexOf("?") != -1) {
                 return url + "&" + oauthParams;
@@ -151,16 +151,14 @@ app.factory('AuthenticationInterceptor', function ($q, $location, atlasHost) {
     return function(promise) {
         return promise.then(
             function(response) {
+                 return response;
+            }, 
+            function(response) {
                 // if no auth token then need to make an access request to atlas
                 if (response.config.url.indexOf(atlasHost)!= -1 && response.status == 401) {
                     console.log("Not logged in");
                     $location.path('/login');
-                    return $q.reject(response);
                 }
-               return response;
-            }, 
-            function(response) {
-                console.log("error");
                 return $q.reject(response);
             }
         );     
