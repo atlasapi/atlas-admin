@@ -10,14 +10,22 @@ var app = angular.module('atlasAdmin', ['atlasAdmin.filters', 'atlasAdmin.servic
     $routeProvider.when('/requests', {templateUrl: 'partials/requests.html', controller: 'CtrlRequests'});
     $routeProvider.when('/applications', {templateUrl: 'partials/applications.html', controller: 'CtrlApplications'});
     $routeProvider.when('/applications/:applicationId', {templateUrl: 'partials/applicationEdit.html', controller: 'CtrlApplicationEdit'});
+    $routeProvider.when('/login', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
+    $routeProvider.when('/oauth/:provider', {templateUrl: 'partials/oauth.html', controller: 'CtrlOAuth', reloadOnSearch: false});
     $routeProvider.otherwise({redirectTo: '/sources'});
   }]);
 
 app.config(['$httpProvider', function($httpProvider) {
         $httpProvider.defaults.useXDomain = true;
         delete $httpProvider.defaults.headers.common['X-Requested-With'];
-      //console.log($httpProvider);
+        // console.log($httpProvider);
+        $httpProvider.responseInterceptors.push('AuthenticationInterceptor');
     }
   ]);
+
+app.config(['$locationProvider', function($locationProvider) {
+    
+    //$locationProvider.html5Mode(false).hashPrefix('!');
+}]);
 
 
