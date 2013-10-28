@@ -284,6 +284,13 @@ app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location
     });
 });
 
+app.controller('CtrlLogout', function($scope, $rootScope, $routeParams, $location, Authentication) {
+    // Ask atlas for access here 
+    $rootScope.title = "Logging out";
+    Authentication.reset();
+    $location.path("/login");
+});
+
 var AddWriterCtrl = function ($scope, $modal, $log, Applications, Sources) {
   $scope.addWriterDialog = function () {
     var modalInstance = $modal.open({
