@@ -87,12 +87,7 @@ app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication) {
        getAuthProviders: function() {
            return $http.get(atlasHost + "/" + atlasVersion + "/auth/providers.json").then(function(results){
                var authProviders = [];
-               for (var i in results.data.auth_providers) {
-                   var provider = results.data.auth_providers[i];
-                   provider.image = "img/" +  provider.image;
-                   authProviders.push(provider);
-               }
-               return authProviders;
+               return results.data.auth_providers;
            }, function(error) {
                console.log(error);   
            });  
