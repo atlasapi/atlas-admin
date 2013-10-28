@@ -5,5 +5,5 @@
  * Atlas version e.g. "4.0"
  */
 angular.module('atlasAdminConfig', [])
-    .value('atlasHost','YOUR ATLAS HOST')
-    .value('atlasVersion', 'ATLAS VERSION');
+    .value('atlasHost','%%ATLASHOST%%')
+    .value('atlasVersion', '%%ATLASVERSION%%');
