@@ -111,33 +111,38 @@ app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication) {
            var url = "/auth/" + Authentication.getProvider() + "/token.json?oauthToken=" + oauth_token
                  + "&oauthVerifier=" + oauth_verifier;
            return $http.get(atlasHost + "/" + atlasVersion +  url); 
-       }        
+       },
+       startLogout: function() {
+           return $http.get(Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + "/auth/logout.json"));    
+       }
     }
 });
 app.factory('Authentication', function($rootScope) {
     return {
         getProvider: function() {
-            return sessionStorage.getItem("auth.provider");   
+            return localStorage.getItem("auth.provider");   
         },
         setProvider: function(provider) {
-            sessionStorage.setItem("auth.provider", provider);
+            localStorage.setItem("auth.provider", provider);
         },
         getToken: function() {
-            return sessionStorage.getItem("auth.token");  
+            return localStorage.getItem("auth.token");  
         },
         setToken: function(token) {
-            sessionStorage.setItem("auth.token", token);   
+            localStorage.setItem("auth.token", token);   
         },
         reset: function() {
-            sessionStorage.removeItem("auth.provider");
-            sessionStorage.removeItem("auth.token");   
+            localStorage.removeItem("auth.provider");
+            localStorage.removeItem("auth.token");  
+            $rootScope.loggedIn = false;
         },
         appendTokenToUrl: function(url) {
-            var provider = sessionStorage.getItem("auth.provider");
-            var token = sessionStorage.getItem("auth.token");
+            var provider = localStorage.getItem("auth.provider");
+            var token = localStorage.getItem("auth.token");
             if (!token) {
                 return url;
-            } 
+            }
+            $rootScope.loggedIn = true;
             var oauthParams = "oauth_provider=" + provider + "&oauth_token=" + token;
             if (url.indexOf("?") != -1) {
                 return url + "&" + oauthParams;
