@@ -137,6 +137,7 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
     $scope.app = {};
     $scope.app.edited = {};
     $scope.app.edited = {"meta":false,"precedenceState":false,"precedenceOrder":false};
+    
     Applications.get($routeParams.applicationId).then(function(application) {
        $scope.app.application = application;
        $scope.app.writes = {};
@@ -145,6 +146,12 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
         
        $rootScope.title = "Edit application"; 
     });
+    
+    $scope.app.changed = function() {
+       return $scope.app.edited.meta 
+           || $scope.app.edited.precedenceState 
+           || $scope.app.edited.precedenceOrder;
+    };
     
     $scope.app.disableSource = function(source) {
         var reads = [];
@@ -197,7 +204,16 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
          });
     };
     
-   
+    $scope.enablePrecedence = function() {
+        $scope.app.application.sources.precedence='true';
+        $scope.app.edited.precedenceState=true;
+    };
+    
+    $scope.disablePrecedence = function() {
+        $scope.app.application.sources.precedence='false';
+        $scope.app.edited.precedenceState=true;
+        $scope.app.edited.precedenceOrder=false;  
+    };
     
     $scope.save = function() {
         // Decide how to perform the update based on what has changed
@@ -211,7 +227,7 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
                   $scope.errorMessage = "Sorry, there was an error and your changes could not be saved";   
                }); 
             }
-        } else if ($scope.app.edited.precedenceState && $scope.app.application.sources.precedence == 'false') {
+        } else if ($scope.app.edited.precedenceState && !$scope.app.application.sources.precedence == 'false') {
             // precedence has been disabled
             Applications.deletePrecedence($scope.app.application.id).then(function() {
                 $scope.successMessage = "Changes saved";   
@@ -229,7 +245,8 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
             },function() {
                 $scope.errorMessage = "Sorry, there was an error and your changes could not be saved";   
             }); 
-        }  
+        }
+        $scope.app.edited = {"meta":false,"precedenceState":false,"precedenceOrder":false};
     };
       
 });
