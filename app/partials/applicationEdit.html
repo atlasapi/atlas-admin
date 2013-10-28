@@ -1,12 +1,13 @@
-<div ng-show="successMessage" class="alert alert-success">
+<div ng-show="successMessage && !app.changed()" class="alert alert-success">
     {{successMessage}}
 </div>
 <div ng-show="errorMessage" class="alert alert-danger">
     {{errorMessage}}
 </div>
-<div class="panel panel-default">
+<div class="panel panel-default" ng-show="!successMessage || app.changed()">
   <div class="panel-body">
-     <button type="button" class="btn btn-danger" ng-click="save()">Save</button>
+     <button type="button" class="btn btn-danger" ng-click="save()" ng-disabled="!app.changed()">Save</button>
+     <span class="label label-warning pull-right" ng-show="app.changed()">Unsaved changes</span> 
   </div>
 </div>
 <form name="detailsForm">
@@ -27,8 +28,8 @@
 <h3>Sources (Read)</h3>
 
 <div class="well">
-    <button type="button" class="btn btn-success pull-right" ng-show="app.application.sources.precedence=='false'" ng-click="app.application.sources.precedence='true';app.edited.precedenceState=true">Enable Precedence</button>
-    <button type="button" class="btn btn-danger pull-right" ng-show="app.application.sources.precedence=='true'" ng-click="app.application.sources.precedence='false';app.edited.precedenceState=true;app.edited.precedenceOrder=false">Disable Precedence</button>
+    <button type="button" class="btn btn-success pull-right" ng-show="app.application.sources.precedence=='false'" ng-click="enablePrecedence()">Enable Precedence</button>
+    <button type="button" class="btn btn-danger pull-right" ng-show="app.application.sources.precedence=='true'" ng-click="disablePrecedence()">Disable Precedence</button>
     <p>Atlas automatically matches the same programmes across different sources. With equivalence precedence turned off, we'll return all equivalent content as separate items in the response. With precedence turned on we'll merge the best data from every source into a single item, based on the order you set here.</p>
     <p>Hint: If you have access to Press Association data, you probably want it at the top.</p>
 </div>
@@ -39,7 +40,7 @@
     <ul class="list-group" sortable-list>
         
        <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:'true'" orderable id="source-{{source.id}}" ng-show="app.application.sources.precedence=='true'">
-        
+           <span ng-show="app.application.sources.precedence=='true'" class="glyphicon glyphicon-sort"></span>
            {{source.title}}
             <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.disableSource(source)">Disable</button>
        </li>
