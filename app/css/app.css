@@ -39,3 +39,9 @@
 .btn-success {
     background-color: #357235;   
 }
+
+.profile-picture {
+    height: 30px;
+    width: 30px;
+    margin-right: 10px;
+}

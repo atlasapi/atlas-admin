@@ -1,0 +1,26 @@
+<div class="panel panel-default" ng-show="!successMessage || app.changed()">
+  <div class="panel-body">
+     
+  </div>
+</div>
+<form name="userForm">
+<div>
+  <div class="form-group">
+    <label for="fullName">Full name</label>
+    <input type="text" class="form-control" id="fullName" name="fullName" placeholder="name" ng-model="app.user.full_name" ng-minlength="2">
+  </div>
+  <div class="form-group">
+    <label for="company">Company</label>
+    <input type="text" class="form-control" id="company" placeholder="" ng-model="app.user.company">
+  </div>
+  <div class="form-group">
+    <label for="email">Email</label>
+    <input type="text" class="form-control" id="email" placeholder="me@example.com" ng-model="app.user.email">
+  </div>
+  <div class="form-group">
+    <label for="website">Website</label>
+    <input type="text" class="form-control" id="website" placeholder="http://example.com" ng-model="app.user.website">
+  </div>
+</div>
+</form>
+    

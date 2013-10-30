@@ -326,6 +326,11 @@ var AddWriterCtrl = function ($scope, $modal, $log, Applications, Sources) {
   };
 };
 
+app.controller('UserMenuController', function($scope, Users) {
+    $scope.app = {};
+    $scope.app.user = Users.currentUser();
+});
+
 function AddWriterTypeaheadCtrl($scope, $modalInstance, Applications) {
   $scope.item = {};
   $scope.item.invalid = true;

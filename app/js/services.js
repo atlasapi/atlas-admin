@@ -52,7 +52,7 @@ app.factory('Applications', function (Atlas) {
         
     }
  });
-app.factory('SourceRequests', function (Atlas) {
+app.factory('SourceRequests', function (Atlas, Users) {
     return {
         all: function() {
             return Atlas.getRequest('/requests.json').then(function (results) {
@@ -72,6 +72,13 @@ app.factory('SourceRequests', function (Atlas) {
             return Atlas.postRequest(url, {});
         }
     }
+});
+app.factory('Users', function(Atlas) {
+    return {
+        currentUser: function() {
+            return Atlas.getRequest('/auth/user.json').then(function(result) { return result.data.user; });            
+        }        
+    }    
 });
 app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication) {
     return {
