@@ -36,7 +36,7 @@ app.controller('AllUsersController', function($scope, $rootScope, $routeParams, 
     Users.all().then(function(users) {
          $scope.app.users = users;
     });
-    $scope.app.predicate = '-created';
+    $scope.app.predicate = '-full_name';
     $scope.app.pageSize=15;
     $scope.app.currentPage = 0;
 })
