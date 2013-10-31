@@ -22,6 +22,7 @@ app.config(['$httpProvider', function($httpProvider) {
         delete $httpProvider.defaults.headers.common['X-Requested-With'];
         // console.log($httpProvider);
         $httpProvider.responseInterceptors.push('AuthenticationInterceptor');
+        $httpProvider.responseInterceptors.push('ProfileCompleteInterceptor');
     }
   ]);
 

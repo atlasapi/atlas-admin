@@ -6,7 +6,9 @@ var app = angular.module('atlasAdmin.controller.user', []);
 app.controller('UserProfileController', function($scope, $rootScope, $routeParams, Users) {
     $rootScope.title = "Your profile";
     $scope.app = {};
-    $scope.app.user = Users.currentUser();
+    Users.currentUser().then(function(user) {
+         $scope.app.user = user;
+    });
     
     $scope.save = function() {
         if ($scope.userForm.$invalid) {

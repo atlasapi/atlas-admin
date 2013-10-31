@@ -4,6 +4,9 @@
 <div ng-show="errorMessage" class="alert alert-danger">
     {{errorMessage}}
 </div>
+<div ng-show="app.user.profile_complete == 'false'" class="alert alert-warning">
+    Thank you for logging into Atlas. To continue please complete the information below.
+</div>
 <div class="panel panel-default" ng-show="!successMessage || app.changed">
   <div class="panel-body">
      <button type="button" class="btn btn-danger" ng-click="save()" ng-disabled="!app.changed || userForm.$invalid">Save</button>
