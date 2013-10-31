@@ -77,6 +77,9 @@ app.factory('Users', function(Atlas) {
     return {
         currentUser: function() {
             return Atlas.getRequest('/auth/user.json').then(function(result) { return result.data.user; });            
+        },
+        update: function(user, callback) {
+            return Atlas.postRequest("/users/" + user.id + ".json", user);
         }        
     }    
 });

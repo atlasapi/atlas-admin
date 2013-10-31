@@ -1,25 +1,35 @@
-<div class="panel panel-default" ng-show="!successMessage || app.changed()">
+<div ng-show="successMessage && !app.changed" class="alert alert-success">
+    {{successMessage}}
+</div>
+<div ng-show="errorMessage" class="alert alert-danger">
+    {{errorMessage}}
+</div>
+<div class="panel panel-default" ng-show="!successMessage || app.changed">
   <div class="panel-body">
-     
+     <button type="button" class="btn btn-danger" ng-click="save()" ng-disabled="!app.changed || userForm.$invalid">Save</button>
+     <span class="label label-warning pull-right" ng-show="app.changed">Unsaved changes</span>
   </div>
 </div>
-<form name="userForm">
+<form name="userForm" class="form-horizontal" role="form">
 <div>
   <div class="form-group">
     <label for="fullName">Full name</label>
-    <input type="text" class="form-control" id="fullName" name="fullName" placeholder="name" ng-model="app.user.full_name" ng-minlength="2">
+    <input type="text" class="form-control" id="full_name" name="full_name" placeholder="name" ng-model="app.user.full_name" ng-change="app.changed=true" ng-minlength=2 required>
+    <span ng-show="userForm.full_name.$error.required || userForm.full_name.$error.minlength" class="help-block">Please provide your name</span>
   </div>
   <div class="form-group">
     <label for="company">Company</label>
-    <input type="text" class="form-control" id="company" placeholder="" ng-model="app.user.company">
+    <input type="text" class="form-control" id="company" name="company" placeholder="" ng-model="app.user.company" ng-change="app.changed=true">
   </div>
   <div class="form-group">
     <label for="email">Email</label>
-    <input type="text" class="form-control" id="email" placeholder="me@example.com" ng-model="app.user.email">
+    <input type="email" class="form-control" id="email" name="email" placeholder="me@example.com" ng-model="app.user.email" ng-change="app.changed=true" required>
+    <span ng-show="userForm.email.$error.email || userForm.email.$error.required" class="help-block">Please enter a valid email address</span>
   </div>
   <div class="form-group">
     <label for="website">Website</label>
-    <input type="text" class="form-control" id="website" placeholder="http://example.com" ng-model="app.user.website">
+    <input type="url" class="form-control" id="website" name="website" placeholder="http://example.com" ng-model="app.user.website" ng-change="app.changed=true">
+    <span ng-show="userForm.website.$error.url" class="help-block">Please enter a valid website address</span>  
   </div>
 </div>
 </form>
