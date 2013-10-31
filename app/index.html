@@ -10,6 +10,7 @@
 </head>
     
 <body>
+    <div ng-sparkline></div>
 <nav class="navbar navbar-default .navbar-fixed-top" role="navigation">
      <div class="navbar-header">
         <button type="button" class="navbar-toggle"  ng-init="navCollapsed = true" ng-click="navCollapsed = !navCollapsed" title="Toggle navigation">
@@ -21,13 +22,19 @@
     </div>
     
     <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
-         <ul ng-show="loggedIn" class="nav navbar-nav">
+         <ul ng-show="status.loggedIn" class="nav navbar-nav">
              <li><a href="#/sources">Sources</a></li>  
              <li><a href="#/requests">Requests</a></li>
              <li><a href="#/applications">Applications</a></li>
          </ul>
-        <ul ng-show="loggedIn" class="nav navbar-nav navbar-right">
-             <li><a href="#/logout">Log out</a></li>  
+        <ul ng-show="status.loggedIn" class="nav navbar-nav navbar-right" ng-controller="UserMenuController">
+             <li class="dropdown">
+               <a href="#" class="dropdown-toggle navsmall" data-toggle="dropdown"><img class="profile-picture" ng-src="{{app.user.profile_image}}" alt="profile picture"/>{{app.user.full_name}}<b class="caret"></b></a>
+               <ul class="dropdown-menu">
+                  <li><a href="#/profile">Your profile</a></li>
+                  <li><a href="#/logout">Log out</a></li>
+               </ul>
+             </li>
          </ul>
     </div>
     
@@ -53,6 +60,7 @@
   <script src="js/app.js"></script>
   <script src="js/services.js"></script>
   <script src="js/controllers.js"></script>
+  <script src="js/controllers/controller-user-profile.js"></script>  
   <script src="js/filters.js"></script>
   <script src="js/directives.js"></script>
   <script src="js/ui-bootstrap-tpls.js"></script>

@@ -52,7 +52,7 @@ app.factory('Applications', function (Atlas) {
         
     }
  });
-app.factory('SourceRequests', function (Atlas) {
+app.factory('SourceRequests', function (Atlas, Users) {
     return {
         all: function() {
             return Atlas.getRequest('/requests.json').then(function (results) {
@@ -72,6 +72,30 @@ app.factory('SourceRequests', function (Atlas) {
             return Atlas.postRequest(url, {});
         }
     }
+});
+app.factory('Users', function(Atlas, $rootScope, ProfileStatus) {
+    return {
+        currentUser: function() {
+            return Atlas.getRequest('/auth/user.json').then(function(result) { 
+                ProfileStatus.setComplete(result.data.user.profile_complete == "true");
+                return result.data.user; 
+            }); 
+        },
+        update: function(user, callback) {
+            ProfileStatus.setComplete(true);
+            return Atlas.postRequest("/users/" + user.id + ".json", user);
+        }        
+    }    
+});
+app.factory('ProfileStatus', function() {
+    return {
+        setComplete: function(status) {
+            localStorage.setItem("profile.complete", status ? "true" : "false");   
+        },
+        isProfileComplete: function() {
+            return localStorage.getItem("profile.complete") == "true";
+        }
+    }    
 });
 app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication) {
     return {
@@ -112,7 +136,10 @@ app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication) {
        }
     }
 });
-app.factory('Authentication', function($rootScope) {
+app.factory('Authentication', function($rootScope, ProfileStatus) {
+    if (!$rootScope.status) {
+        $rootScope.status = {};
+    }
     return {
         getProvider: function() {
             return localStorage.getItem("auth.provider");   
@@ -128,8 +155,9 @@ app.factory('Authentication', function($rootScope) {
         },
         reset: function() {
             localStorage.removeItem("auth.provider");
-            localStorage.removeItem("auth.token");  
-            $rootScope.loggedIn = false;
+            localStorage.removeItem("auth.token"); 
+            ProfileStatus.setComplete(false);
+            $rootScope.status.loggedIn = false;
         },
         appendTokenToUrl: function(url) {
             var provider = localStorage.getItem("auth.provider");
@@ -137,7 +165,7 @@ app.factory('Authentication', function($rootScope) {
             if (!token) {
                 return url;
             }
-            $rootScope.loggedIn = true;
+            $rootScope.status.loggedIn = true;
             var oauthParams = "oauth_provider=" + provider + "&oauth_token=" + token;
             if (url.indexOf("?") != -1) {
                 return url + "&" + oauthParams;
@@ -163,5 +191,28 @@ app.factory('AuthenticationInterceptor', function ($q, $location, atlasHost) {
             }
         );     
     }
+});
+// Make sure profile is completed before allowing use of app
+app.factory('ProfileCompleteInterceptor', function(ProfileStatus, $location, $q) {
+   return function(promise) {
+        return promise.then(
+            function(response) {
+                if (ProfileStatus.isProfileComplete()) {
+                    return response;   
+                }
+                var url = response.config.url;
+                
+                if (url.indexOf("partials/request") != -1 || url.indexOf("partials/source") != -1 || url.indexOf("partials/application") != -1) {
+                    $location.path('/profile');
+                    return $q.reject(response);
+                } 
+                return response;
+            }, 
+            function(response) {
+                return response;
+            }
+        );     
+    } 
+    
 });
 

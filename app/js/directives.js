@@ -10,8 +10,6 @@ app.directive('appVersion', ['version', function(version) {
       elm.text(version);
     };
   }]);
-
-
 app.directive('orderable', function() {
    return {
       link: function(scope, element) {
