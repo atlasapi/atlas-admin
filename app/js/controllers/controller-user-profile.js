@@ -6,9 +6,15 @@ var app = angular.module('atlasAdmin.controller.user', []);
 app.controller('UserProfileController', function($scope, $rootScope, $routeParams, Users) {
     $rootScope.title = "Your profile";
     $scope.app = {};
-    Users.currentUser().then(function(user) {
-         $scope.app.user = user;
-    });
+    if ($routeParams.uid) {
+        Users.get($routeParams.uid).then(function(user) {
+             $scope.app.user = user;
+        });
+    } else {
+        Users.currentUser().then(function(user) {
+             $scope.app.user = user;
+        });
+    }
     
     $scope.save = function() {
         if ($scope.userForm.$invalid) {
@@ -24,3 +30,13 @@ app.controller('UserProfileController', function($scope, $rootScope, $routeParam
         });
     }
 });
+app.controller('AllUsersController', function($scope, $rootScope, $routeParams, Users) {
+    $rootScope.title = "All users";
+    $scope.app = {};
+    Users.all().then(function(users) {
+         $scope.app.users = users;
+    });
+    $scope.app.predicate = '-created';
+    $scope.app.pageSize=15;
+    $scope.app.currentPage = 0;
+})

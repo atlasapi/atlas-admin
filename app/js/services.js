@@ -84,7 +84,17 @@ app.factory('Users', function(Atlas, $rootScope, ProfileStatus) {
         update: function(user, callback) {
             ProfileStatus.setComplete(true);
             return Atlas.postRequest("/users/" + user.id + ".json", user);
-        }        
+        },
+        get: function(uid) {
+            return Atlas.getRequest('/users/' + uid + '.json').then(function(result) { 
+                return result.data.user; 
+            }); 
+        },
+        all: function() {
+            return Atlas.getRequest('/users.json').then(function(result) { 
+                return result.data.users; 
+            }); 
+        }
     }    
 });
 app.factory('ProfileStatus', function() {
