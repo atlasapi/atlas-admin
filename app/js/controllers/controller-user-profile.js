@@ -6,15 +6,14 @@ var app = angular.module('atlasAdmin.controller.user', []);
 app.controller('UserProfileController', function($scope, $rootScope, $routeParams, Users) {
     $rootScope.title = "Your profile";
     $scope.app = {};
-    Users.currentUser().then(function(user) {
-        $scope.app.user = user;  
-    });
+    $scope.app.user = Users.currentUser();
     
     $scope.save = function() {
         if ($scope.userForm.$invalid) {
             return;
         }
         $scope.app.changed = false;
+        $scope.app.user.profile_complete = true;
         Users.update($scope.app.user).then(function() {
             $scope.successMessage = "Changes saved"; 
         },

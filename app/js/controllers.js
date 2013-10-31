@@ -326,9 +326,12 @@ var AddWriterCtrl = function ($scope, $modal, $log, Applications, Sources) {
   };
 };
 
-app.controller('UserMenuController', function($scope, Users) {
+app.controller('UserMenuController', function($scope, Users, $rootScope, Authentication) {
     $scope.app = {};
-    $scope.app.user = Users.currentUser();
+    // only try to get user if logged in
+    if (Authentication.getToken()) {
+        $scope.app.user = Users.currentUser();
+    }
 });
 
 function AddWriterTypeaheadCtrl($scope, $modalInstance, Applications) {

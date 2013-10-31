@@ -73,12 +73,15 @@ app.factory('SourceRequests', function (Atlas, Users) {
         }
     }
 });
-app.factory('Users', function(Atlas) {
+app.factory('Users', function(Atlas, $rootScope, Authentication) {
     return {
         currentUser: function() {
-            return Atlas.getRequest('/auth/user.json').then(function(result) { return result.data.user; });            
+            return Atlas.getRequest('/auth/user.json').then(function(result) { 
+                return result.data.user; 
+            }); 
         },
         update: function(user, callback) {
+            localStorage.setItem("auth.user", JSON.stringify(user));
             return Atlas.postRequest("/users/" + user.id + ".json", user);
         }        
     }    
@@ -123,6 +126,9 @@ app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication) {
     }
 });
 app.factory('Authentication', function($rootScope) {
+    if (!$rootScope.status) {
+        $rootScope.status = {};
+    }
     return {
         getProvider: function() {
             return localStorage.getItem("auth.provider");   
@@ -138,8 +144,9 @@ app.factory('Authentication', function($rootScope) {
         },
         reset: function() {
             localStorage.removeItem("auth.provider");
-            localStorage.removeItem("auth.token");  
-            $rootScope.loggedIn = false;
+            localStorage.removeItem("auth.token"); 
+            localStorage.removeItem("auth.user");
+            $rootScope.status.loggedIn = false;
         },
         appendTokenToUrl: function(url) {
             var provider = localStorage.getItem("auth.provider");
@@ -147,7 +154,7 @@ app.factory('Authentication', function($rootScope) {
             if (!token) {
                 return url;
             }
-            $rootScope.loggedIn = true;
+            $rootScope.status.loggedIn = true;
             var oauthParams = "oauth_provider=" + provider + "&oauth_token=" + token;
             if (url.indexOf("?") != -1) {
                 return url + "&" + oauthParams;
