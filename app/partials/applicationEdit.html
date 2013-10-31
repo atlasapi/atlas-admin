@@ -10,91 +10,110 @@
      <span class="label label-warning pull-right" ng-show="app.changed()">Unsaved changes</span> 
   </div>
 </div>
-<form name="detailsForm">
+<form name="detailsForm" class="form-horizontal">
 <div>
   <div class="form-group">
-    <label for="appTitle">Title</label>
-    <input type="text" class="form-control" id="appTitle" name="appTitle" placeholder="title" ng-model="app.application.title" ng-change="app.edited.meta=true" ng-minlength="3">
+    <label for="appTitle" class="col-sm-2 control-label">Title</label>
+    <div class="col-sm-10">
+        <input type="text" class="form-control" id="appTitle" name="appTitle" placeholder="title" ng-model="app.application.title" ng-change="app.edited.meta=true" ng-minlength="3">
+    </div>
   </div>
   <div class="form-group">
-    <label for="appDescription">Description</label>
-    <input type="text" class="form-control" id="appDescription" placeholder="description" ng-model="app.application.description" ng-change="app.edited.meta=true">
+    <label for="appDescription" class="col-sm-2 control-label">Description</label>
+    <div class="col-sm-10">
+        <input type="text" class="form-control" id="appDescription" placeholder="description" ng-model="app.application.description" ng-change="app.edited.meta=true">
+    </div>
   </div>
   <div class="form-group">
-    <label for="appApiKey">Your API Key</label>
-    <input type="text" class="form-control" id="appApiKey" ng-model="app.application.credentials.apiKey" ng-readonly="true">
+    <label for="appApiKey" class="col-sm-2 control-label">Your API Key</label>
+    <div class="col-sm-10">
+        <input type="text" class="form-control" id="appApiKey" ng-model="app.application.credentials.apiKey" ng-readonly="true">
+    </div>
   </div>
-
-<h3>Sources (Read)</h3>
-
-<div class="well">
-    <button type="button" class="btn btn-success pull-right" ng-show="app.application.sources.precedence=='false'" ng-click="enablePrecedence()">Enable Precedence</button>
-    <button type="button" class="btn btn-danger pull-right" ng-show="app.application.sources.precedence=='true'" ng-click="disablePrecedence()">Disable Precedence</button>
-    <p>Atlas automatically matches the same programmes across different sources. With equivalence precedence turned off, we'll return all equivalent content as separate items in the response. With precedence turned on we'll merge the best data from every source into a single item, based on the order you set here.</p>
-    <p>Hint: If you have access to Press Association data, you probably want it at the top.</p>
-</div>
+  
+  <div class="form-group">
+      <label for="appApiKey" class="col-sm-2 control-label">Sources (Read)</label>
+      <div class="col-sm-10">
+         <div class="well">
+             <div class="row">
+                <div class="col-sm-10">
+                  <p>Atlas automatically matches the same programmes across different sources. With equivalence precedence turned off, we'll return all equivalent content as separate items in the response. With precedence turned on we'll merge the best data from every source into a single item, based on the order you set here.</p>
+                  <p>Hint: If you have access to Press Association data, you probably want it at the top.</p>
+                </div>
+                <div class="col-sm-2">
+                    <button type="button" class="btn btn-success pull-right" ng-show="app.application.sources.precedence=='false'" ng-click="enablePrecedence()">Enable Precedence</button>
+                    <button type="button" class="btn btn-danger pull-right" ng-show="app.application.sources.precedence=='true'" ng-click="disablePrecedence()">Disable Precedence</button>                    
+                </div>
+             
+             </div>
+         </div>
     
-
-<div class="panel panel-default">
-    <div class="panel-heading">Enabled <span ng-show="app.application.sources.precedence=='true'">(Drag and drop sources to rearrange precedence ordering)</span></div>
-    <ul class="list-group" sortable-list>
+         <div class="panel panel-default">
+             <div class="panel-heading">Enabled <span ng-show="app.application.sources.precedence=='true'">(Drag and drop sources to rearrange precedence ordering)</span></div>
+             <ul class="list-group" sortable-list>
         
-       <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:'true'" orderable id="source-{{source.id}}" ng-show="app.application.sources.precedence=='true'">
-           <span ng-show="app.application.sources.precedence=='true'" class="glyphicon glyphicon-sort"></span>
-           {{source.title}}
-            <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.disableSource(source)">Disable</button>
-       </li>
+                <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:'true'" orderable id="source-{{source.id}}" ng-show="app.application.sources.precedence=='true'">
+                   <span ng-show="app.application.sources.precedence=='true'" class="glyphicon glyphicon-sort"></span>
+                     {{source.title}}
+                   <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.disableSource(source)">Disable</button>
+                </li>
         
-       <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:'true'" id="source-{{source.id}}" ng-show="app.application.sources.precedence=='false'">
-             {{source.title}}
-            <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.disableSource(source)">Disable</button>
-       </li>
-        
-    </ul>
+                <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:'true'" id="source-{{source.id}}" ng-show="app.application.sources.precedence=='false'">
+                    {{source.title}}
+                   <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.disableSource(source)">Disable</button>
+                </li>
+             </ul>
+         </div>
+          
+         <div class="panel panel-default">
+             <div class="panel-heading">Available</div>
+             <ul class="list-group">
+                 <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:'false'">
+                    {{source.title}}
+                    <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.enableSource(source)">Enable</button>
+                 </li>
+             </ul>
+         </div>
+          
+         <div class="panel panel-default">
+             <div class="panel-heading">Requested</div>
+             <ul class="list-group">
+                <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'requested' ">
+                   {{source.title}}    
+                </li>
+             </ul>
+         </div>
+          
+         <div class="panel panel-default">
+             <div class="panel-heading">Unavailable</div>
+             <ul class="list-group">
+                <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'unavailable'">
+                    {{source.title}}      
+                    <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.requestSource(source)">Request Access</button>
+                </li>
+             </ul>
+         </div>
+          
+         <div class="panel panel-default">
+             <div class="panel-heading">Revoked</div>
+             <ul class="list-group">
+                 <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'revoked'">
+                    {{source.title}}  
+                 </li>
+             </ul>
+         </div>
+      </div>
+  </div>
 </div>
-<div class="panel panel-default">
-    <div class="panel-heading">Available</div>
-     <ul class="list-group">
-       <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:'false'">
-           {{source.title}}
-           
-         <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.enableSource(source)">Enable</button>
-           
-       </li>
-    </ul>
-</div>
-<div class="panel panel-default">
-    <div class="panel-heading">Requested</div>
-      <ul class="list-group">
-       <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'requested' ">
-        {{source.title}}    
-       </li>
-    </ul>
-</div>
-<div class="panel panel-default">
-    <div class="panel-heading">Unavailable</div>
-    <ul class="list-group">
-       <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'unavailable'">
-         {{source.title}}      
-          <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.requestSource(source)">Request Access</button>
-       </li>
-    </ul>
-</div>
-<div class="panel panel-default">
-    <div class="panel-heading">Revoked</div>
-     <ul class="list-group">
-       <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'revoked'">
-         {{source.title}}  
-       </li>
-    </ul>
-</div>
-<div ng-show="app.application.sources.writes.length > 0">
-   <h3>Sources (Write)</h3>
-     <ul class="list-group">
-        <li class="list-group-item" ng-repeat="source in app.application.sources.writes | orderBy:app.writes.predicate:app.writes.reverse">
+<div class="form-group" ng-show="app.application.sources.writes.length > 0">
+    <label for="appTitle" class="col-sm-2 control-label">Sources (Write)</label>
+    <div class="col-sm-10">
+        <ul class="list-group">
+          <li class="list-group-item" ng-repeat="source in app.application.sources.writes | orderBy:app.writes.predicate:app.writes.reverse">
             {{source.name}}
-        </li>
-    </ul>
+          </li>
+       </ul>
+    </div>
 </div>
 
 </form>
