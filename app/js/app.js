@@ -2,7 +2,8 @@
 
 
 // Declare app level module which depends on filters, and services
-var app = angular.module('atlasAdmin', ['atlasAdmin.filters', 'atlasAdmin.services', 'atlasAdmin.directives', 'atlasAdmin.controllers','atlasAdmin.controller.user','ui.bootstrap','ngResource','atlasAdminConfig']).
+var app = angular.module('atlasAdmin', ['atlasAdmin.filters', 'atlasAdmin.services', 'atlasAdmin.services.sourceRequests', 'atlasAdmin.directives', 
+                        'atlasAdmin.controllers','atlasAdmin.controller.user','ui.bootstrap','ngResource','atlasAdminConfig']).
   config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/sources', {templateUrl: 'partials/sources.html', controller: 'CtrlSources'});
     $routeProvider.when('/sources/:sourceId/readers', {templateUrl: 'partials/sourceReaders.html', controller: 'CtrlSourceReaders'});
