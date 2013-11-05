@@ -65,11 +65,10 @@ app.factory('SourceRequests', function (Atlas, Users) {
             return Atlas.getRequest('/requests.json').then(function (results) {
                 return results.data.source_requests});
         },
-        send: function(sourceId, applicationId, applicationUrl, email, reason, usageType) {
+        send: function(sourceId, applicationId, applicationUrl, reason, usageType) {
             var url = "/sources/" + sourceId + "/requests?" 
                  + "appId=" + applicationId
                  + "&appUrl=" + encodeURIComponent(applicationUrl)
-                 + "&email=" + encodeURIComponent(email)
                  + "&reason=" + encodeURIComponent(reason)
                  + "&usageType=" + usageType;
             return Atlas.postRequest(url, {});

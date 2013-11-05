@@ -392,17 +392,14 @@ function SourceRequestFormModalCtrl($scope, $modalInstance, Applications, Source
   $scope.app.sourceRequest.applicationUrl = '';
   $scope.app.sourceRequest.usageType = 'commercial'; //default value for usage type
   $scope.ok = function () {
-      if ($scope.app.sourceRequest.email && $scope.app.sourceRequest.email.indexOf('@') != -1) {
-        SourceRequests.send($scope.app.sourceRequest.source.id, 
+      SourceRequests.send($scope.app.sourceRequest.source.id, 
                             $scope.app.sourceRequest.applicationId, 
                             $scope.app.sourceRequest.applicationUrl, 
-                            $scope.app.sourceRequest.email, 
                             $scope.app.sourceRequest.reason, 
                             $scope.app.sourceRequest.usageType)
         .then(function() {
             $modalInstance.close();
         });
-      }
   };
 
   $scope.cancel = function () {
