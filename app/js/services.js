@@ -197,6 +197,9 @@ app.factory('AuthenticationInterceptor', function ($q, $location, atlasHost) {
                     console.log("Not logged in");
                     $location.path('/login');
                 }
+                if (response.config.url.indexOf(atlasHost)!= -1 && response.status == 403) {
+                    $location.path('/error?type=forbidden');
+                }
                 return $q.reject(response);
             }
         );     
@@ -212,7 +215,9 @@ app.factory('ProfileCompleteInterceptor', function(ProfileStatus, $location, $q)
                 }
                 var url = response.config.url;
                 
-                if (url.indexOf("partials/request") != -1 || url.indexOf("partials/source") != -1 || url.indexOf("partials/application") != -1) {
+                if (url.indexOf("partials/request") != -1 
+                    || url.indexOf("partials/source") != -1 
+                    || url.indexOf("partials/application") != -1) {
                     $location.path('/profile');
                     return $q.reject(response);
                 } 

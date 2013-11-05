@@ -301,6 +301,14 @@ app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location
     });
 });
 
+app.controller('ErrorController', function($scope, $rootScope, $routeParams) {
+    $rootScope.title = "Error";
+    $scope.alerts = [];
+    if ($routeParams.type == "forbidden") {
+        $scope.alerts.push({type:"danger", msg: "You do not have access to this resource"});        
+    }    
+});
+
 app.controller('CtrlLogout', function($scope, $rootScope, $routeParams, $location, Authentication) {
     // Ask atlas for access here 
     $rootScope.title = "Logging out";

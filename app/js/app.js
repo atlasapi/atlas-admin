@@ -16,6 +16,7 @@ var app = angular.module('atlasAdmin', ['atlasAdmin.filters', 'atlasAdmin.servic
     $routeProvider.when('/users/:uid', {templateUrl: 'partials/profile.html', controller: 'UserProfileController'});
     $routeProvider.when('/users', {templateUrl: 'partials/users.html', controller: 'AllUsersController'});
     $routeProvider.when('/logout', {templateUrl: 'partials/logout.html', controller: 'CtrlLogout'});
+    $routeProvider.when('/error', {templateUrl: 'partials/error.html', controller: 'ErrorController'});
     $routeProvider.otherwise({redirectTo: '/sources'});
   }]);
 
