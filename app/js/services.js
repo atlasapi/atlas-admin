@@ -48,8 +48,15 @@ app.factory('Applications', function (Atlas) {
         deletePrecedence:  function(applicationId) {
             var url = "/applications/" + applicationId + "/precedence";
             return Atlas.deleteRequest(url);
+        },
+        revokeApplication: function(applicationId) {
+            var url = "/applications/" + applicationId + "/revoke";
+            return Atlas.postRequest(url);            
+        },
+        unRevokeApplication: function(applicationId) {
+            var url = "/applications/" + applicationId + "/revoke";
+            return Atlas.deleteRequest(url);            
         }
-        
     }
  });
 app.factory('SourceRequests', function (Atlas, Users) {

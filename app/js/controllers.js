@@ -215,6 +215,18 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
         $scope.app.edited.precedenceOrder=false;  
     };
     
+    $scope.revokeApplication = function() {
+        Applications.revokeApplication($scope.app.application.id).then(function() {
+              $scope.app.application.revoked = "true";
+        });
+    };
+    
+    $scope.unRevokeApplication = function() {
+        Applications.unRevokeApplication($scope.app.application.id).then(function() {
+              $scope.app.application.revoked = "false";
+        }); 
+    };
+    
     $scope.save = function() {
         // Decide how to perform the update based on what has changed
         if ($scope.app.edited.meta) {
