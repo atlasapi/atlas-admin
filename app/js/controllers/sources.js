@@ -70,6 +70,24 @@ app.controller('CtrlSourceWriters', function($scope, $rootScope, $routeParams, S
       
   });
 
+var AddWriterCtrl = function ($scope, $modal, $log, Applications, Sources) {
+   $scope.addWriterDialog = function () {
+     var modalInstance = $modal.open({
+       templateUrl: 'partials/addWriterModal.html',
+       controller: AddWriterTypeaheadCtrl
+     });
+ 
+     modalInstance.result.then(function (selectedItem) {
+         Sources.addWriter($scope.source.id, selectedItem.id, function() {
+            $scope.applications.push(selectedItem);
+            $scope.successMessage = selectedItem.title + " now has write access to this source.";
+         });
+     }, function () {
+       $log.info('Add writer cancelled at: ' + new Date());
+     });
+   };
+ };
+
 function AddWriterTypeaheadCtrl($scope, $modalInstance, Applications) {
   $scope.item = {};
   $scope.item.invalid = true;
