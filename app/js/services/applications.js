@@ -31,13 +31,13 @@ app.factory('Applications', function (Atlas) {
             var url = "/applications/" + applicationId + "/precedence";
             return Atlas.deleteRequest(url);
         },
-        revokeApplication: function(applicationId) {
-            var url = "/applications/" + applicationId + "/revoke";
-            return Atlas.postRequest(url);            
+        revokeApplication: function(application) {
+            application.revoked = "true";
+            return Atlas.postRequest("/applications.json", application).then(function (results) {return results.data.application});       
         },
-        unRevokeApplication: function(applicationId) {
-            var url = "/applications/" + applicationId + "/revoke";
-            return Atlas.deleteRequest(url);            
+        unRevokeApplication: function(application) {
+            application.revoked = "false";
+            return Atlas.postRequest("/applications.json", application).then(function (results) {return results.data.application});       
         }
     }
  });

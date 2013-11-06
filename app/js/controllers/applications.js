@@ -106,14 +106,15 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
     };
     
     $scope.revokeApplication = function() {
-        Applications.revokeApplication($scope.app.application.id).then(function() {
-              $scope.app.application.revoked = "true";
+        Applications.revokeApplication($scope.app.application).then(function(application) {
+            console.log(application);
+             $scope.app.application = application;
         });
     };
     
     $scope.unRevokeApplication = function() {
-        Applications.unRevokeApplication($scope.app.application.id).then(function() {
-              $scope.app.application.revoked = "false";
+        Applications.unRevokeApplication($scope.app.application).then(function(application) {
+            $scope.app.application = application;
         }); 
     };
     
