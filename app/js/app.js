@@ -2,9 +2,26 @@
 
 
 // Declare app level module which depends on filters, and services
-var app = angular.module('atlasAdmin', ['atlasAdmin.filters', 'atlasAdmin.services', 'atlasAdmin.services.sourceRequests', 'atlasAdmin.directives', 
-                        'atlasAdmin.controllers','atlasAdmin.controller.user','ui.bootstrap','ngResource','atlasAdminConfig']).
-  config(['$routeProvider', function($routeProvider) {
+var app = angular.module('atlasAdmin', [
+                                'atlasAdmin.filters', 
+                                'atlasAdmin.services.auth',
+                                'atlasAdmin.services.atlas',
+                                'atlasAdmin.services.applications',
+                                'atlasAdmin.services.sources',
+                                'atlasAdmin.services.sourceRequests',
+                                'atlasAdmin.services.users', 
+                                'atlasAdmin.directives.orderable', 
+                                'atlasAdmin.controllers.auth',
+                                'atlasAdmin.controllers.errors',
+                                'atlasAdmin.controllers.applications',
+                                'atlasAdmin.controllers.sources',
+                                'atlasAdmin.controllers.sourceRequests',
+                                'atlasAdmin.controllers.user',
+                                'ui.bootstrap',
+                                'ngResource',
+                                'atlasAdminConfig'
+]);
+app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/sources', {templateUrl: 'partials/sources.html', controller: 'CtrlSources'});
     $routeProvider.when('/sources/:sourceId/readers', {templateUrl: 'partials/sourceReaders.html', controller: 'CtrlSourceReaders'});
     $routeProvider.when('/sources/:sourceId/writers', {templateUrl: 'partials/sourceWriters.html', controller: 'CtrlSourceWriters'});
