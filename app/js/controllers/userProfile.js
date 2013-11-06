@@ -2,7 +2,7 @@
 
 /* User Profile Controller */
 
-var app = angular.module('atlasAdmin.controller.user', []);
+var app = angular.module('atlasAdmin.controllers.user', []);
 app.controller('UserProfileController', function($scope, $rootScope, $routeParams, Users) {
     $rootScope.title = "Your profile";
     $scope.app = {};
@@ -39,4 +39,11 @@ app.controller('AllUsersController', function($scope, $rootScope, $routeParams, 
     $scope.app.predicate = '-full_name';
     $scope.app.pageSize=15;
     $scope.app.currentPage = 0;
-})
+});
+app.controller('UserMenuController', function($scope, Users, $rootScope, Authentication) {
+    $scope.app = {};
+    // only try to get user if logged in
+    if (Authentication.getToken()) {
+        $scope.app.user = Users.currentUser();
+    }
+});

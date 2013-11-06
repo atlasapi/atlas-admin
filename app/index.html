@@ -20,13 +20,12 @@
         </button>
         <a class="navbar-brand" href="#"><img src="img/atlas_admin_logo.png" alt="Atlas Admin logo" /></a>
     </div>
-    
     <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'" ng-controller="UserMenuController">
          <ul ng-show="status.loggedIn" class="nav navbar-nav">
-             <li><a href="#/sources">Sources</a></li>  
-             <li><a href="#/requests">Requests</a></li>
              <li><a href="#/applications">Applications</a></li>
-             <li><a href="#/users" ng-show="app.user.role = 'admin'">Users</a></li>
+             <li><a href="#/sources">Sources</a></li>  
+             <li><a href="#/requests" ng-show="app.user.role == 'admin'">Requests</a></li>
+             <li><a href="#/users" ng-show="app.user.role == 'admin'">Users</a></li>
          </ul>
         <ul ng-show="status.loggedIn" class="nav navbar-nav navbar-right">
              <li class="dropdown">
@@ -56,14 +55,23 @@
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
   -->
   <script src="lib/angular/angular.js"></script>
-  <script src="lib/angular/angular-resource.js"></script>
-    <script src="config/atlasAdmin.config.js"></script>
+  <script src="lib/angular/angular-resource.js"></script>    
+  <script src="lib/ui-bootstrap-tpls.js"></script>
+  <script src="config/atlasAdmin.config.js"></script>
   <script src="js/app.js"></script>
-  <script src="js/services.js"></script>
-  <script src="js/controllers.js"></script>
-  <script src="js/controllers/controller-user-profile.js"></script>  
+  <script src="js/services/auth.js"></script>
+  <script src="js/services/atlas.js"></script>
+  <script src="js/services/users.js"></script> 
+  <script src="js/services/applications.js"></script>  
+  <script src="js/services/sources.js"></script>  
+  <script src="js/services/sourceRequests.js"></script>   
+  <script src="js/controllers/errors.js"></script>
+  <script src="js/controllers/auth.js"></script>
+  <script src="js/controllers/sources.js"></script>
+  <script src="js/controllers/sourceRequests.js"></script>
+  <script src="js/controllers/applications.js"></script>
+  <script src="js/controllers/userProfile.js"></script>  
   <script src="js/filters.js"></script>
-  <script src="js/directives.js"></script>
-  <script src="js/ui-bootstrap-tpls.js"></script>
+  <script src="js/directives/orderable.js"></script>
 </body>
 </html>

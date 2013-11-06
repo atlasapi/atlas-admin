@@ -3,13 +3,9 @@
 /* Directives */
 
 
-var app = angular.module('atlasAdmin.directives', []);
+var app = angular.module('atlasAdmin.directives.orderable', []);
 
-app.directive('appVersion', ['version', function(version) {
-    return function(scope, elm, attrs) {
-      elm.text(version);
-    };
-  }]);
+
 app.directive('orderable', function() {
    return {
       link: function(scope, element) {
