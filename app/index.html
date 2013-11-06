@@ -20,7 +20,7 @@
         </button>
         <a class="navbar-brand" href="#"><img src="img/atlas_admin_logo.png" alt="Atlas Admin logo" /></a>
     </div>
-    <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'" ng-controller="UserMenuController">
+    <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'" ng-controller="UserMenuController"  ng-cloak>
          <ul ng-show="status.loggedIn" class="nav navbar-nav">
              <li><a href="#/applications">Applications</a></li>
              <li><a href="#/sources">Sources</a></li>  
@@ -39,7 +39,7 @@
     </div>
     
 </nav>
-    <div class="container">
+    <div class="container" ng-cloak>
         <h2>{{title}}</h2>
     <div class="row">
       <div class="col-md-6"></div>
