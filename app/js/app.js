@@ -35,7 +35,7 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/users', {templateUrl: 'partials/users.html', controller: 'AllUsersController'});
     $routeProvider.when('/logout', {templateUrl: 'partials/logout.html', controller: 'CtrlLogout'});
     $routeProvider.when('/error', {templateUrl: 'partials/error.html', controller: 'ErrorController'});
-    $routeProvider.otherwise({redirectTo: '/sources'});
+    $routeProvider.otherwise({redirectTo: '/applications'});
   }]);
 
 app.config(['$httpProvider', function($httpProvider) {
