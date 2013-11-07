@@ -119,5 +119,10 @@
        </ul>
     </div>
 </div>
-
+<div class="panel panel-default" ng-show="!successMessage || app.changed()">
+  <div class="panel-body">
+     <button type="button" class="btn btn-danger" ng-click="save()" ng-disabled="!app.changed()">Save</button>
+     <span class="label label-warning pull-right" ng-show="app.changed()">Unsaved changes</span> 
+  </div>
+</div>
 </form>
