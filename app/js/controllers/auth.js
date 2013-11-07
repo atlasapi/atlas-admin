@@ -1,7 +1,7 @@
 'use strict';
 var app = angular.module('atlasAdmin.controllers.auth', []);
 
-app.controller('CtrlLogin', function($scope, $rootScope, $routeParams, Atlas, atlasVersion, $location, Authentication) {
+app.controller('CtrlLogin', function($scope, $rootScope, $routeParams, Atlas, atlasVersion, $location, Authentication, $log) {
     // Ask atlas for access here 
     $rootScope.title = "Please log in";
     Authentication.reset();
@@ -16,12 +16,12 @@ app.controller('CtrlLogin', function($scope, $rootScope, $routeParams, Atlas, at
         Atlas.startOauthAuthentication(provider, callbackUrl, targetUri).then(function(login_url) {
             window.location.href = login_url; 
         }, function(error) {
-            console.log(error);   
+            $log.error(error);   
         });
     }
 });
 
-app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location, Authentication, Atlas) {
+app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location, Authentication, Atlas, $log) {
     if (window.location.search == "") {
         // search part will be empty if we have been here and cleared the oauth replies
         // In this case redirect.
@@ -46,7 +46,7 @@ app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location
         window.location.search = "";
     },
     function(error) {
-        console.log(error);
+        $log.error(error);
         $location.hash("/login");
     });
 });

@@ -43,7 +43,7 @@ app.factory('Authentication', function($rootScope, ProfileStatus) {
         }
     }
 });
-app.factory('AuthenticationInterceptor', function ($q, $location, atlasHost) {
+app.factory('AuthenticationInterceptor', function ($q, $location, atlasHost, $log) {
     return function(promise) {
         return promise.then(
             function(response) {
@@ -52,6 +52,7 @@ app.factory('AuthenticationInterceptor', function ($q, $location, atlasHost) {
             function(response) {
                 // if no auth token then need to make an access request to atlas
                 if (response.config.url.indexOf(atlasHost)!= -1 && response.status == 401) {
+                    $log.info("Not logged in");
                     $location.path('/login');
                 }
                 if (response.config.url.indexOf(atlasHost)!= -1 && response.status == 403) {
