@@ -7,8 +7,11 @@ app.factory('Users', function(Atlas, $rootScope, ProfileStatus) {
     return {
         currentUser: function() {
             return Atlas.getRequest('/auth/user.json').then(function(result) { 
-                ProfileStatus.setComplete(result.data.user.profile_complete == "true");
-                return result.data.user; 
+                if (result.data.user) {
+                    ProfileStatus.setComplete(result.data.user.profile_complete == "true");
+                    return result.data.user; 
+                }
+                return null;
             }); 
         },
         update: function(user, callback) {
