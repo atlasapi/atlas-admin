@@ -57,3 +57,7 @@ input.ng-valid {
 .navsmall {
     font-size: small;   
 }
+
+.role-btn.active {
+    background-color: black;
+}

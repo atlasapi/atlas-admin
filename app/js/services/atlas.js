@@ -3,7 +3,7 @@
 /* Services */
 var app = angular.module('atlasAdmin.services.atlas', []);
 
-app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication) {
+app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $log) {
     return {
        getRequest: function(url) {
            return $http.get(Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion +  url));   
@@ -19,7 +19,7 @@ app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication) {
                var authProviders = [];
                return results.data.auth_providers;
            }, function(error) {
-               console.log(error);   
+               $log.error(error);   
            });  
        },
        startOauthAuthentication: function(provider, callbackUrl, targetUri) {

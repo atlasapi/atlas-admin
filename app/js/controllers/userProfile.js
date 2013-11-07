@@ -4,15 +4,24 @@
 
 var app = angular.module('atlasAdmin.controllers.user', []);
 app.controller('UserProfileController', function($scope, $rootScope, $routeParams, Users) {
-    $rootScope.title = "Your profile";
+    
     $scope.app = {};
+    
+    $scope.app.isAdmin = false;
+    
+    
     if ($routeParams.uid) {
         Users.get($routeParams.uid).then(function(user) {
-             $scope.app.user = user;
+            $scope.app.user = user;
+            $rootScope.title = "Profile for " + user.full_name;
+            Users.currentUser().then(function(editingUser) {
+                $scope.app.isAdmin = editingUser.role == "admin";
+            });
         });
     } else {
         Users.currentUser().then(function(user) {
-             $scope.app.user = user;
+            $scope.app.user = user;
+            $rootScope.title = "Your profile";
         });
     }
     

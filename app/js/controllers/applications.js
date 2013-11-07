@@ -23,7 +23,7 @@ app.controller('CtrlApplications', function($scope, $rootScope, $routeParams, Ap
          });   
      }
   });
-app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams, Applications, $modal) {
+app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams, Applications, $modal, $log) {
     $scope.app = {};
     $scope.app.edited = {};
     $scope.app.edited = {"meta":false,"precedenceState":false,"precedenceOrder":false};
@@ -107,7 +107,6 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
     
     $scope.revokeApplication = function() {
         Applications.revokeApplication($scope.app.application).then(function(application) {
-            console.log(application);
              $scope.app.application = application;
         });
     };
