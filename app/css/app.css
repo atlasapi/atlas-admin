@@ -25,11 +25,11 @@
     content: " ";
 }
 
-.over {
-    border-bottom-width: 3px !important;
+.drag {
 }
 
-.drag {
+.source-item-entry {
+    cursor: pointer;
 }
 
 .btn-link {

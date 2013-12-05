@@ -56,9 +56,9 @@
              <div class="panel-heading">Enabled <span ng-show="app.application.sources.precedence=='true'">(Drag and drop sources to rearrange precedence ordering)</span></div>
              <ul class="list-group" sortable-list>
         
-                <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:'true'" orderable id="source-{{source.id}}" ng-show="app.application.sources.precedence=='true'">
+                <li class="list-group-item source-item-entry" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:'true'" orderable id="source-{{source.id}}" ng-show="app.application.sources.precedence=='true'">
                    <span ng-show="app.application.sources.precedence=='true'" class="glyphicon glyphicon-sort"></span>
-                     {{source.title}}
+                     {{source.title}} (source-{{source.id}})
                    <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.disableSource(source)">Disable</button>
                 </li>
         

@@ -19,7 +19,7 @@ app.directive('orderable', function() {
             function(e) {
                 e.dataTransfer.effectAllowed = 'move';
                 e.dataTransfer.setData('Text', this.id);
-                e.dataTransfer.setData('y', e.pageY);
+                this.setAttribute("data-y", e.pageY);
                 this.classList.add('drag');
                 return false;
             },
@@ -34,43 +34,53 @@ app.directive('orderable', function() {
             },
             false
         );
-       el.addEventListener(
-            'dragover',
+        el.addEventListener(
+            'dragenter',
             function(e) {
-              e.dataTransfer.dropEffect = 'move';
-              // allows us to drop
-              e.preventDefault();
-              this.classList.add('over');
-              return false;
+                e.preventDefault();
+                return false;
             },
             false
-      );
-      el.addEventListener(
+        );
+          
+        el.addEventListener(
+            'dragover',
+            function(e) {
+                e.preventDefault();
+                return false;
+            },
+            false
+        );
+          
+         // removed dragover
+        el.addEventListener(
             'dragleave',
             function(e) {
-              e.dataTransfer.dropEffect = 'move';
-              // allows us to drop
-              if (e.preventDefault) e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                // allows us to drop
+                if (e.preventDefault) e.preventDefault();
                 this.classList.remove('over');
                 return false;
-              },
-              false
-          );
+            },
+            false
+        );
      el.addEventListener(
          'drop',
          function(e) {
+             if (e.preventDefault) e.preventDefault();
              // Stops some browsers from redirecting.
              if (e.preventDefault) e.preventDefault(); // Stops FF from redirecting
              if (e.stopPropagation) e.stopPropagation();
-             this.classList.remove('over');
              var item = document.getElementById(e.dataTransfer.getData('Text'));
-             var isDown = e.dataTransfer.getData('y') < e.pageY;
+             
+             var isDown = item.getAttribute("data-y") < e.pageY;
+             item.removeAttribute("data-y");
              if (isDown) {
                  // insert after
                  this.parentNode.insertBefore(item, this.nextSibling);
              } else {
                  // insert before
-                 this.parentNode.insertBefore(item, item.previousSibling);
+                 this.parentNode.insertBefore(item, this.nextSibling.previousSibling);
              }
              var movedSourceId = item.id.replace("source-","");
              var movedSource;
