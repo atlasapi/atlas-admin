@@ -45,8 +45,8 @@
                   <p>Hint: If you have access to Press Association data, you probably want it at the top.</p>
                 </div>
                 <div class="col-sm-3 pull-right">
-                    <button type="button" class="btn btn-success pull-right" ng-show="app.application.sources.precedence=='false'" ng-click="enablePrecedence()">Enable Precedence</button>
-                    <button type="button" class="btn btn-danger pull-right" ng-show="app.application.sources.precedence=='true'" ng-click="disablePrecedence()">Disable Precedence</button>                    
+                    <button type="button" class="btn btn-success pull-right" ng-show="app.application.sources.precedence=='false'" ng-click="enablePrecedence()">Enable Matching</button>
+                    <button type="button" class="btn btn-danger pull-right" ng-show="app.application.sources.precedence=='true'" ng-click="disablePrecedence()">Disable Matching</button>                    
                 </div>
              
              </div>
@@ -57,7 +57,7 @@
              <ul class="list-group" sortable-list>
         
                 <li class="list-group-item source-item-entry" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:'true'" orderable id="source-{{source.id}}" ng-show="app.application.sources.precedence=='true'">
-                   <span ng-show="app.application.sources.precedence=='true'" class="glyphicon glyphicon-sort"></span>
+                   <span ng-show="app.application.sources.precedence=='true'" class="box-shadow-menu"></span>
                      {{source.title}} (source-{{source.id}})
                    <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.disableSource(source)">Disable</button>
                 </li>

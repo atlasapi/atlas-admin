@@ -23,7 +23,7 @@
     <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'" ng-controller="UserMenuController"  ng-cloak>
          <ul ng-show="status.loggedIn" class="nav navbar-nav">
              <li><a href="#/applications">Applications</a></li>
-             <li><a href="#/sources">Sources</a></li>  
+             <li><a href="#/sources" ng-show="app.user.role == 'admin'">Sources</a></li>  
              <li><a href="#/requests" ng-show="app.user.role == 'admin'">Requests</a></li>
              <li><a href="#/users" ng-show="app.user.role == 'admin'">Users</a></li>
          </ul>
