@@ -8,7 +8,7 @@ app.controller('CtrlApplications', function($scope, $rootScope, $routeParams, Ap
          $scope.apps.applications = applications; 
      });
      $scope.apps.predicate = '-created';
-     $scope.apps.pageSize=15;
+     $scope.apps.pageSize=10;
      $scope.apps.currentPage = 0;
     
      $scope.createApplication = function() {
