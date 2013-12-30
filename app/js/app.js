@@ -10,6 +10,8 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.services.sources',
                                 'atlasAdmin.services.sourceRequests',
                                 'atlasAdmin.services.users', 
+                                'atlasAdmin.services.uservideosources',
+                                'atlasAdmin.services.uservideosources.youtube',
                                 'atlasAdmin.directives.orderable', 
                                 'atlasAdmin.controllers.auth',
                                 'atlasAdmin.controllers.errors',
@@ -17,6 +19,8 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.controllers.sources',
                                 'atlasAdmin.controllers.sourceRequests',
                                 'atlasAdmin.controllers.user',
+                                'atlasAdmin.controllers.uservideosources',
+                                'atlasAdmin.controllers.uservideosources.youtube',
                                 'ui.bootstrap',
                                 'ngResource',
                                 'atlasAdminConfig'
@@ -33,6 +37,8 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/profile', {templateUrl: 'partials/profile.html', controller: 'UserProfileController'});
     $routeProvider.when('/users/:uid', {templateUrl: 'partials/profile.html', controller: 'UserProfileController'});
     $routeProvider.when('/users', {templateUrl: 'partials/users.html', controller: 'AllUsersController'});
+    $routeProvider.when('/videosource/providers', {templateUrl: 'partials/videoSourceProviders.html', controller: 'CtrlVideoSourceProviders'});
+    $routeProvider.when('/videosource/config/youtube', {templateUrl: 'partials/videoSourceYouTubeConfig.html', controller: 'CtrlVideoSourceYouTubeConfig'});
     $routeProvider.when('/logout', {templateUrl: 'partials/logout.html', controller: 'CtrlLogout'});
     $routeProvider.when('/error', {templateUrl: 'partials/error.html', controller: 'ErrorController'});
     $routeProvider.otherwise({redirectTo: '/applications'});
