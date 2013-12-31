@@ -5,6 +5,9 @@ app.controller('CtrlVideoSourceProviders', function($scope, $rootScope, $locatio
     $rootScope.title = "Select video source provider";
     $scope.app = {};
     $scope.app.providers = [];
+    if (window.location.search != "") {
+        window.location.search = "";
+    }
     UserVideoSources.allProviders().then(function(providers) {
         $scope.app.providers = providers;
     });

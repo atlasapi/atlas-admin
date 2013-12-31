@@ -3,7 +3,12 @@ var app = angular.module('atlasAdmin.controllers.uservideosources.youtube', []);
 
 app.controller('CtrlVideoSourceYouTubeConfig', function($scope, $rootScope, UserVideoSources, UserVideoSourcesYouTube) {
     $rootScope.title = "Configure YouTube link";
+    
     $scope.app = {};
+    if (window.location.search != "" && window.location.search.indexOf("error=") != -1) {
+        window.location.href="#/videosource/providers";
+        return;
+    };
     $scope.app.writableSources = [];
     // populate available publishers
     UserVideoSources.getAllWritableSources().then(function(writableSources) {
