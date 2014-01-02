@@ -53,6 +53,10 @@ app.controller('CtrlVideoSourceYouTubeConfig', function($scope, $rootScope, User
                 $scope.app.errorMessage = "Your channel could not be added because an error occured. Please try again later";
             }
            );
+        },
+        function(error) {
+            $scope.app.infoMessage = "";
+            $scope.app.errorMessage = "There was a problem adding yout publisher. Please try again later";
         });
     };
 });
