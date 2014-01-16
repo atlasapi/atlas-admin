@@ -3,13 +3,16 @@ var app = angular.module('atlasAdmin.controllers.applications', []);
 
 app.controller('CtrlApplications', function($scope, $rootScope, $routeParams, Applications, $modal, $location) {
      $rootScope.title = "Current Applications";
-     $scope.apps = {};
+     $scope.app = {};
+    
+     $scope.app.predicate = 'title';
+     $scope.app.reverse = false;
+     $scope.app.pageSize=10;
+     $scope.app.currentPage = 0;
+    
      Applications.all().then(function(applications) {
-         $scope.apps.applications = applications; 
+         $scope.app.applications = applications; 
      });
-     $scope.apps.predicate = '-created';
-     $scope.apps.pageSize=10;
-     $scope.apps.currentPage = 0;
     
      $scope.createApplication = function() {
          var modalInstance = $modal.open({
