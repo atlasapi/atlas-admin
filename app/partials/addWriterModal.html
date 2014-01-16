@@ -1,15 +1,13 @@
-<div id="addWriterModal" class="modal-dialog">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>Add a writer</h3>
-        </div>
-        <div class="modal-body">
-            <pre>Application: {{item.selected.title}} API Key: {{item.selected.credentials.apiKey}} </pre>
-            <input type="text" ng-model="item.selected" typeahead="application  as application.title for application in applications | filter:$viewValue | limitTo:15" typeahead-editable="false" typeahead-min-length="3" ng-change="selectionChanged()" typeahead-on-select="onSelect($item, $model, $label)">
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" ng-disabled="item.invalid" ng-click="ok()">Add</button>
-            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
-        </div>
+<div id="addWriterModal">
+    <div class="modal-header">
+        <h3>Add a writer</h3>
+    </div>
+    <div class="modal-body">
+        <pre>Application: {{item.selected.title}} API Key: {{item.selected.credentials.apiKey}} </pre>
+        <input type="text" ng-model="item.selected" typeahead="application  as application.title for application in applications | filter:$viewValue | limitTo:15" typeahead-editable="false" typeahead-min-length="3" ng-change="selectionChanged()" typeahead-on-select="onSelect($item, $model, $label)">
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-disabled="item.invalid" ng-click="ok()">Add</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
     </div>
 </div> 

@@ -10,11 +10,13 @@
 <div class="row">
     <table class="table table-striped table-hover">
     <tr>
-        <th ng-click="predicate='title'; reverse=!reverse;">Application</th>
-        <th ng-click="predicate='credentials.apiKey'; reverse=!reverse;">API Key</th>
-        <th ng-click="predicate='created'; reverse=!reverse;">Created</th>
+        <th ng-click="app.predicate='title'; app.reverse=!app.reverse;">Application</th>
+        <th ng-click="app.predicate='credentials.apiKey'; app.reverse=!app.reverse;">API Key</th>
+        <th ng-click="app.predicate='created'; app.reverse=!app.reverse;">Created</th>
     </tr>
-    <tr ng-repeat="application in apps.applications | filter:query | orderBy:predicate:reverse | startFrom:(apps.currentPage-1)*apps.pageSize | limitTo:apps.pageSize">
+       
+        {{query}}
+    <tr ng-repeat="application in app.applications | filter:query | orderBy:app.predicate:!app.reverse | startFrom:(app.currentPage-1)*app.pageSize  | limitTo:app.pageSize">
         <td><a ng-href="#/applications/{{application.id}}">{{application.title}}</a></td>
         <td>{{application.credentials.apiKey}}</td>
         <td>{{application.created|date:'dd MMM yyyy H:mm'}}</td>
@@ -22,5 +24,5 @@
     </table>
 </div>
 <div class="container">
-    <pagination total-items="apps.applications.length" page="apps.currentPage" max-size="apps.pageSize" boundary-links="true"></pagination>
+    <pagination total-items="app.applications.length" page="app.currentPage" max-size="app.pageSize" boundary-links="true"></pagination>
 </div>

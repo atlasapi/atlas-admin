@@ -50,9 +50,11 @@ app.controller('AllUsersController', function($scope, $rootScope, $routeParams, 
     $scope.app.currentPage = 0;
 });
 app.controller('UserMenuController', function($scope, Users, $rootScope, Authentication) {
-    $scope.app = {};
     // only try to get user if logged in
+    $scope.app = {};
     if (Authentication.getToken()) {
-        $scope.app.user = Users.currentUser();
-    }
+        Users.currentUser().then(function(user) {
+            $scope.app.user = user;
+        });
+    } 
 });
