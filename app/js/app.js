@@ -23,6 +23,7 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.controllers.uservideosources.youtube',
                                 'ui.bootstrap',
                                 'ngResource',
+                                'ngRoute',
                                 'atlasAdminConfig'
 ]);
 app.config(['$routeProvider', function($routeProvider) {

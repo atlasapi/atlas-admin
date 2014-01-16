@@ -2,7 +2,9 @@
 var app = angular.module('atlasAdmin.controllers.sources', []);
 app.controller('CtrlSources', function($scope, $rootScope, $routeParams, Sources) {
       $rootScope.title = "Sources";
-      $scope.sources = Sources.all();
+      Sources.all().then(function(sources) {
+          $scope.sources = sources;
+      });
   });
 app.controller('CtrlSourceReaders', function($scope, $rootScope, $routeParams, Sources, Applications) {
       Sources.get($routeParams.sourceId).then(function(source) {
