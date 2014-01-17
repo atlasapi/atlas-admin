@@ -5,10 +5,10 @@ app.controller('CtrlApplications', function($scope, $rootScope, $routeParams, Ap
      $rootScope.title = "Current Applications";
      $scope.app = {};
     
-     $scope.app.predicate = 'title';
-     $scope.app.reverse = false;
+     $scope.app.predicate = 'created';
+     $scope.app.reverse = true;
      $scope.app.pageSize=10;
-     $scope.app.currentPage = 0;
+     $scope.app.currentPage = 1;
     
      Applications.all().then(function(applications) {
          $scope.app.applications = applications; 
@@ -24,7 +24,16 @@ app.controller('CtrlApplications', function($scope, $rootScope, $routeParams, Ap
         modalInstance.result.then(function (application) {
             $location.path('/applications/' + application.id);
          });   
-     }
+     };
+    
+    $scope.appSearchFilter = function(application) {
+        if (!$scope.query || $scope.query=="") {
+            return true;
+        }
+        // Search on title match or if query is over 10 chars long the api key
+        return application.title.toLowerCase().indexOf($scope.query.toLowerCase()) != -1
+        || ($scope.query.length > 10 && application.credentials.apiKey.toLowerCase().indexOf($scope.query.toLowerCase()) != -1);
+    };
   });
 app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams, Applications, $modal, $log) {
     $scope.app = {};
@@ -155,7 +164,7 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
     };
       
 });
-function SourceRequestFormModalCtrl($scope, $modalInstance, Applications, SourceRequests) {
+function SourceRequestFormModalCtrl($scope, $modalInstance, Applications, SourceRequests, $log) {
   $scope.item = {};
   $scope.item.invalid = true;
   $scope.app.sourceRequest.usageTypes = [
@@ -174,6 +183,10 @@ function SourceRequestFormModalCtrl($scope, $modalInstance, Applications, Source
                             $scope.app.sourceRequest.usageType)
         .then(function() {
             $modalInstance.close();
+        },
+        function(error) {
+            $log.error(error);
+            $modalInstance.close();   
         });
   };
 

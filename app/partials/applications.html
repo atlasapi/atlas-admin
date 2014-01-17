@@ -14,9 +14,7 @@
         <th ng-click="app.predicate='credentials.apiKey'; app.reverse=!app.reverse;">API Key</th>
         <th ng-click="app.predicate='created'; app.reverse=!app.reverse;">Created</th>
     </tr>
-       
-        {{query}}
-    <tr ng-repeat="application in app.applications | filter:query | orderBy:app.predicate:!app.reverse | startFrom:(app.currentPage-1)*app.pageSize  | limitTo:app.pageSize">
+    <tr ng-repeat="application in app.applications  | filter:appSearchFilter | orderBy:app.predicate:app.reverse  | startFrom:(app.currentPage-1)*app.pageSize  | limitTo:app.pageSize ">
         <td><a ng-href="#/applications/{{application.id}}">{{application.title}}</a></td>
         <td>{{application.credentials.apiKey}}</td>
         <td>{{application.created|date:'dd MMM yyyy H:mm'}}</td>
