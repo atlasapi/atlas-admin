@@ -9,9 +9,19 @@
 </div>
 <div>
     <table class="table table-striped table-hover">
-    <tr ng-repeat="source in sources | orderBy:'name' | filter:query">
+    <tr>
+        <th ng-click="app.predicate='name'; app.reverse=!app.reverse;">Name</th>
+        <th ng-click="app.predicate='key'; app.reverse=!app.reverse;">Key</th>
+        <th ng-click="app.predicate='country.name'; app.reverse=!app.reverse;">Country</th>
+    </tr>
+    <tr ng-repeat="source in app.sources | filter:query | orderBy:app.predicate:app.reverse | startFrom:(app.currentPage-1)*app.pageSize  | limitTo:app.pageSize">
         <td><a href="#/sources/{{source.id}}/readers">{{source.name}}</a></td>
+        <td>{{source.key}}</td>
+        <td>{{source.country.name}}</td>
     </tr>
     </table>
+</div>
+<div class="container">
+    <pagination total-items="(app.sources|filter:query).length" page="app.currentPage" max-size="app.pageSize" boundary-links="true"></pagination>
 </div>
 

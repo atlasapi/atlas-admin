@@ -28,5 +28,5 @@
     </table>
 </div>
 <div class="container">
-    <pagination total-items="app.users.length" page="app.currentPage" max-size="app.pageSize" boundary-links="true"></pagination>
+    <pagination total-items="(app.users|filter:query).length" page="app.currentPage" max-size="app.pageSize" boundary-links="true"></pagination>
 </div>

@@ -54,7 +54,7 @@ app.controller('AllUsersController', function($scope, $rootScope, $routeParams, 
     });
     $scope.app.predicate = 'full_name';
     $scope.app.reverse = false;
-    $scope.app.pageSize=15;
+    $scope.app.pageSize=10;
     $scope.app.currentPage = 1;
 });
 app.controller('UserMenuController', function($scope, Users, $rootScope, Authentication) {
