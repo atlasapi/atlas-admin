@@ -13,9 +13,16 @@ app.controller('UserProfileController', function($scope, $rootScope, $routeParam
     if ($routeParams.uid) {
         Users.get($routeParams.uid).then(function(user) {
             $scope.app.user = user;
-            $rootScope.title = "Profile for " + user.full_name;
+            var title = "Profile for ";
+            if (user.full_name) {
+                title += user.full_name;
+            } else {
+                title += "user id " + user.id;
+            }
+            $rootScope.title = title;
             Users.currentUser().then(function(editingUser) {
                 $scope.app.isAdmin = editingUser.role == "admin";
+                $scope.app.editingUser = editingUser.id;
             });
         });
     } else {
@@ -45,9 +52,10 @@ app.controller('AllUsersController', function($scope, $rootScope, $routeParams, 
     Users.all().then(function(users) {
          $scope.app.users = users;
     });
-    $scope.app.predicate = '-full_name';
+    $scope.app.predicate = 'full_name';
+    $scope.app.reverse = false;
     $scope.app.pageSize=15;
-    $scope.app.currentPage = 0;
+    $scope.app.currentPage = 1;
 });
 app.controller('UserMenuController', function($scope, Users, $rootScope, Authentication) {
     // only try to get user if logged in
