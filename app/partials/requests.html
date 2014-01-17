@@ -19,7 +19,7 @@
         <th ng-click="app.predicate='reason'; app.reverse=!app.reverse;">Reason</th>
         <th ng-click="app.predicate='approved'; app.reverse=!app.reverse;">Status</th>
     </tr>
-    <tr ng-repeat="request in app.requests | filter:query | orderBy:app.predicate:app.reverse">
+    <tr ng-repeat="request in app.requests | filter:query | orderBy:app.predicate:app.reverse | startFrom:(app.currentPage-1)*app.pageSize | limitTo:app.pageSize">
         <td><a ng-href="#/applications/{{request.application.id}}">{{request.application.title}}</a></td>
         <td>{{request.app_url}}</td>
         <td><a ng-href="#/sources/{{request.source.id}}/readers">{{request.source.name}}</a></td>
@@ -35,4 +35,7 @@
         </td>
     </tr>
     </table>
+</div>
+<div class="container">
+    <pagination total-items="(app.requests|filter:query).length" page="app.currentPage" max-size="app.pageSize" boundary-links="true"></pagination>
 </div>

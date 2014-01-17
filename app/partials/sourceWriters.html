@@ -7,7 +7,7 @@
 </div>
 <div class="panel panel-default">
   <div class="panel-body">
-    <a class="btn btn-primary" ng-href="#/sources/{{source.id}}/readers">Readers</a>
+    <a class="btn btn-primary" ng-href="#/sources/{{app.source.id}}/readers">Readers</a>
     <span class="btn btn-default">Writers</span>
     <button class="btn btn-danger" ng-click="addWriterDialog()">Add Writer</button>
     <div class="pull-right" >
@@ -19,16 +19,18 @@
 <div>
     <table class="table table-striped table-hover">
     <tr>
-        <th ng-click="predicate='title'; reverse=!reverse;">Application</th>
-        <th ng-click="predicate='created'; reverse=!reverse;">Created</th>
+        <th ng-click="app.predicate='title'; app.reverse=!app.reverse;">Application</th>
+        <th ng-click="app.predicate='created'; app.reverse=!app.reverse;">Created</th>
     </tr>
-    <tr ng-repeat="application in applications | filter:query | orderBy:predicate:reverse">
+    <tr ng-repeat="application in app.applications | filter:query | orderBy:app.predicate:app.reverse | startFrom:(app.currentPage-1)*app.pageSize  | limitTo:app.pageSize ">
         <td><a ng-href="#/applications/{{application.id}}">{{application.title}}</a></td>
         <td>{{application.created|date:'dd MMM yyyy H:mm'}}</td>
     </tr>
     </table>
 </div>
-    
+<div class="container">
+    <pagination total-items="(app.applications|filter:query).length" page="app.currentPage" max-size="app.pageSize" boundary-links="true"></pagination>
+</div>
   
 </div>
 

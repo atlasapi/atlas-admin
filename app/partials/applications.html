@@ -7,6 +7,7 @@
     </div>
   </div>
 </div>
+{{}}
 <div class="row">
     <table class="table table-striped table-hover">
     <tr>
@@ -22,5 +23,5 @@
     </table>
 </div>
 <div class="container">
-    <pagination total-items="app.applications.length" page="app.currentPage" max-size="app.pageSize" boundary-links="true"></pagination>
+    <pagination total-items="(app.applications|filter:appSearchFilter).length" page="app.currentPage" max-size="app.pageSize" boundary-links="true"></pagination>
 </div>
