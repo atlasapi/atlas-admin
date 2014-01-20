@@ -21,7 +21,7 @@ app.controller('CtrlLogin', function($scope, $rootScope, $routeParams, Atlas, at
     }
 });
 
-app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location, Authentication, Atlas, $log) {
+app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location, Authentication, Atlas, $log, Users) {
     if (window.location.search == "") {
         // search part will be empty if we have been here and cleared the oauth replies
         // In this case redirect.
@@ -43,7 +43,10 @@ app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location
     }
     Atlas.getAccessToken(oauth_token, oauth_verifier).then(function(results) {
         Authentication.setToken(results.data.oauth_result.access_token);
-        window.location.search = "";
+        var redirectToSources = function() {
+            window.location.search = "";
+        };
+        Users.currentUser().then(redirectToSources, redirectToSources);
     },
     function(error) {
         $log.error(error);
