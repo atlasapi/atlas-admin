@@ -2,14 +2,20 @@
 var app = angular.module('atlasAdmin.controllers.sources', []);
 app.controller('CtrlSources', function($scope, $rootScope, $routeParams, Sources) {
       $rootScope.title = "Sources";
+      $scope.app = {};
       Sources.all().then(function(sources) {
-          $scope.sources = sources;
+          $scope.app.sources = sources;
+          $scope.app.predicate='name'; 
+          $scope.app.reverse=false;
+          $scope.app.pageSize=10;
+          $scope.app.currentPage = 1;
       });
   });
 app.controller('CtrlSourceReaders', function($scope, $rootScope, $routeParams, Sources, Applications) {
+      $scope.app = {};
       Sources.get($routeParams.sourceId).then(function(source) {
          $rootScope.title = source.name; 
-         $scope.source = source;
+         $scope.app.source = source;
       });
       
       Applications.all().then(function(applications) {
@@ -30,8 +36,11 @@ app.controller('CtrlSourceReaders', function($scope, $rootScope, $routeParams, S
               }
               sourceSpecificApplications.push(sourceSpecificApplication);
           }     
-          $scope.applications = sourceSpecificApplications; 
-          $scope.predicate = "title";
+          $scope.app.applications = sourceSpecificApplications; 
+          $scope.app.predicate = "title";
+          $scope.app.reverse=false;
+          $scope.app.pageSize=10;
+          $scope.app.currentPage = 1;
       });
       $scope.approveClicked = function (application) {
           Sources.changeAppState(application.sourceId, application.id, "available", function() {
@@ -41,9 +50,10 @@ app.controller('CtrlSourceReaders', function($scope, $rootScope, $routeParams, S
       
   });
 app.controller('CtrlSourceWriters', function($scope, $rootScope, $routeParams, Sources, Applications, $modal) {
+      $scope.app = {};
       Sources.get($routeParams.sourceId).then(function(source) {
          $rootScope.title = source.name; 
-         $scope.source = source;
+         $scope.app.source = source;
       });
       
       Applications.all().then(function(applications) {
@@ -61,8 +71,11 @@ app.controller('CtrlSourceWriters', function($scope, $rootScope, $routeParams, S
                   }
               }
           }     
-          $scope.applications = sourceSpecificApplications; 
-          $scope.predicate = "title";
+          $scope.app.applications = sourceSpecificApplications; 
+          $scope.app.predicate = "title";
+          $scope.app.reverse=false;
+          $scope.app.pageSize=10;
+          $scope.app.currentPage = 1;
       });
       $scope.approveClicked = function (application) {
           Sources.changeAppState(application.sourceId, application.id, "available", function() {
@@ -80,8 +93,8 @@ var AddWriterCtrl = function ($scope, $modal, $log, Applications, Sources) {
      });
  
      modalInstance.result.then(function (selectedItem) {
-         Sources.addWriter($scope.source.id, selectedItem.id, function() {
-            $scope.applications.push(selectedItem);
+         Sources.addWriter($scope.app.source.id, selectedItem.id, function() {
+            $scope.app.applications.push(selectedItem);
             $scope.successMessage = selectedItem.title + " now has write access to this source.";
          });
      }, function () {

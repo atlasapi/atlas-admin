@@ -4,7 +4,7 @@
 <div ng-show="errorMessage" class="alert alert-danger">
     {{errorMessage}}
 </div>
-<div ng-show="app.user.profile_complete == 'false'" class="alert alert-warning">
+<div ng-show="app.editingUser == app.user.id && app.user.profile_complete == 'false'" class="alert alert-warning">
     Thank you for logging into Atlas. To continue please complete the information below.
 </div>
 <div class="panel panel-default" ng-show="!successMessage || app.changed">

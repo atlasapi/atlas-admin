@@ -4,6 +4,8 @@ app.controller('CtrlRequests', function($scope, $rootScope, $routeParams, Source
     $scope.app = {};
     $scope.app.predicate = 'approved';
     $scope.app.reverse = false;
+    $scope.app.pageSize=10;
+    $scope.app.currentPage = 1;
     SourceRequests.all().then(function(requests) {
         var applications = {};
         var appRequests = [];
