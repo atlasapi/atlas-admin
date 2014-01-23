@@ -37,6 +37,7 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/applications/:applicationId', {templateUrl: 'partials/applicationEdit.html', controller: 'CtrlApplicationEdit'});
     $routeProvider.when('/login', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
     $routeProvider.when('/oauth/:provider', {templateUrl: 'partials/oauth.html', controller: 'CtrlOAuth', reloadOnSearch: false});
+    $routeProvider.when('/terms', {templateUrl: 'partials/terms.html', controller: 'UserLicenceController'});
     $routeProvider.when('/profile', {templateUrl: 'partials/profile.html', controller: 'UserProfileController'});
     $routeProvider.when('/users/:uid', {templateUrl: 'partials/profile.html', controller: 'UserProfileController'});
     $routeProvider.when('/users', {templateUrl: 'partials/users.html', controller: 'AllUsersController'});
@@ -44,7 +45,7 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/videosource/config/youtube', {templateUrl: 'partials/videoSourceYouTubeConfig.html', controller: 'CtrlVideoSourceYouTubeConfig'});
     $routeProvider.when('/logout', {templateUrl: 'partials/logout.html', controller: 'CtrlLogout'});
     $routeProvider.when('/error', {templateUrl: 'partials/error.html', controller: 'ErrorController'});
-    $routeProvider.otherwise({redirectTo: '/applications'});
+    $routeProvider.otherwise({redirectTo: '/profile'});
   }]);
 
 app.config(['$httpProvider', function($httpProvider) {

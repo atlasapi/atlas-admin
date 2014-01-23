@@ -66,3 +66,27 @@ app.controller('UserMenuController', function($scope, Users, $rootScope, Authent
         });
     } 
 });
+app.controller('UserLicenceController', function($scope, $rootScope, $routeParams, Users, $location, $sce, $log) {
+    // only try to get user if logged in
+    $scope.app = {};
+    Users.currentUser().then(function(user) {
+        $scope.app.user = user;
+        $rootScope.title = "Terms and conditions";
+    });
+    Users.getTermsAndConditions().then(function(licence) {
+        $scope.app.licence = $sce.trustAsHtml(licence);
+    });
+    
+    $scope.app.accept = function() {
+       Users.acceptTermsAndConditions($scope.app.user.id).then(function(data) {
+          $location.path("/profile"); 
+       }, 
+       function(error) {
+          $log.error(error);
+       });
+    };
+    
+    $scope.app.reject = function() {
+        $location.path("/logout"); 
+    }
+});
