@@ -43,10 +43,17 @@ app.factory('Authentication', function($rootScope, ProfileStatus) {
         }
     }
 });
-app.factory('AuthenticationInterceptor', function ($q, $location, atlasHost, $log) {
+app.factory('AuthenticationInterceptor', function ($q, $location, atlasHost, $log, $timeout, $rootScope) {
     return function(promise) {
         return promise.then(
             function(response) {
+                 // Set up auto logout after 20 mins. Cancel any existing instance.
+                 if ($rootScope.autologout) {
+                     $timeout.cancel($rootScope.autologout);
+                 }
+                 $rootScope.autologout = $timeout(function() {
+                     $location.path('/logout');
+                 }, 20 * 60 * 1000);
                  return response;
             }, 
             function(response) {
