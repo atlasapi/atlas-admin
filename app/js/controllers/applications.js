@@ -40,6 +40,19 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
     $scope.app.edited = {};
     $scope.app.edited = {"meta":false,"precedenceState":false,"precedenceOrder":false};
     
+    var leavingPageText = "You have unsaved changes!";
+    window.onbeforeunload = function(){
+        if ($scope.app.changed()) {
+            return leavingPageText;
+        }
+    }
+
+    $scope.$on('$locationChangeStart', function(event, next, current) {
+        if($scope.app.changed() && !confirm(leavingPageText + "\n\nAre you sure you want to leave this page?")) {
+            event.preventDefault();
+        }
+    });
+    
     Applications.get($routeParams.applicationId).then(function(application) {
        $scope.app.application = application;
        $scope.app.writes = {};
