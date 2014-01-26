@@ -5,12 +5,13 @@ app.factory('SourceRequests', function (Atlas, Users) {
             return Atlas.getRequest('/requests.json').then(function (results) {
                 return results.data.source_requests});
         },
-        send: function(sourceId, applicationId, applicationUrl, reason, usageType) {
+        send: function(sourceId, applicationId, applicationUrl, reason, usageType, licenceAccepted) {
             var url = "/sources/" + sourceId + "/requests?" 
                  + "appId=" + applicationId
                  + "&appUrl=" + encodeURIComponent(applicationUrl)
                  + "&reason=" + encodeURIComponent(reason)
-                 + "&usageType=" + usageType;
+                 + "&usageType=" + usageType 
+                 + "&licenceAccepted=" + licenceAccepted;
             return Atlas.postRequest(url, {});
         },
         approve: function(requestId) {

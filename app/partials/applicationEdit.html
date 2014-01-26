@@ -58,7 +58,7 @@
         
                 <li class="list-group-item source-item-entry" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:'true'" orderable id="source-{{source.id}}" ng-show="app.application.sources.precedence=='true'">
                    <span ng-show="app.application.sources.precedence=='true'" class="box-shadow-menu"></span>
-                     {{source.title}} (source-{{source.id}})
+                     {{source.title}} 
                    <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.disableSource(source)">Disable</button>
                 </li>
         
@@ -74,7 +74,7 @@
              <ul class="list-group">
                  <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:'false'">
                     {{source.title}}
-                    <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.enableSource(source)">Enable</button>
+                    <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.requestSource(source)">Enable</button>
                  </li>
              </ul>
          </div>

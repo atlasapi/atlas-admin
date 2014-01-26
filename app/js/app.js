@@ -9,6 +9,7 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.services.applications',
                                 'atlasAdmin.services.sources',
                                 'atlasAdmin.services.sourceRequests',
+                                'atlasAdmin.services.sourceLicences',
                                 'atlasAdmin.services.users', 
                                 'atlasAdmin.services.uservideosources',
                                 'atlasAdmin.services.uservideosources.youtube',

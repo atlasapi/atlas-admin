@@ -4,19 +4,10 @@
     </div>
     <div class="modal-body">
         <form name="sourceRequestForm">
-            <div class="form-group" ng-show="app.sourceRequest.source.key == 'pressassociation.com' || app.sourceRequest.source.key ==  'summaries.pressassociation.com'">
+            <div class="form-group" ng-show="app.licence">
                 <label for="toc">Terms and conditions</label>
-                <blockquote name="toc">
-                    <p>Press Association data is made available without any licence fee under the following conditions:</p>
-                    <ul>
-                    <li>This is a personal or research project and has no commercial model at this stage</li>
-                        <li>PA will limit the free licence to six months and may agree an extension if appropriate</li>
-                        <li>PA receive updates on progress of the work</li>
-                        <li>PA have an opportunity to be involved in the commercial exploitation of any product</li>
-                        <li>The data is marked Copyright: Press Association</li>
-                        <li>PA require us to pass on your contact details, including any company or trading name for their records</li>
-                        <li>Any fees payable to Red Bee Media on behalf of ITV are paid by yourself</li>
-                    </ul>
+                <blockquote name="toc" ng-bind-html="app.licence">
+                    
                 </blockquote>
             </div>
             <div class="form-group">
@@ -26,8 +17,8 @@
             </div>
             <div class="form-group">
                 <label for="applicationUrl">Application URL</label>
-                <input focus-me type="url" class="form-control" id="applicationUrl" name="applicationUrl" placeholder="" ng-model="app.sourceRequest.applicationUrl" required>
-                <span ng-show="sourceRequestForm.applicationUrl.$error.required || sourceRequestForm.applicationUrl.$error.url" class="help-block">Please supply a location with information about your application</span> 
+                <input focus-me type="url" class="form-control" id="applicationUrl" name="applicationUrl" placeholder="" ng-model="app.sourceRequest.applicationUrl"> 
+                <span ng-show="sourceRequestForm.applicationUrl.$error.url" class="help-block">Please supply a location with information about your application</span>
             </div>
             <div class="form-group">
                 <label for="usageType">Usage type:</label>

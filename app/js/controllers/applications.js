@@ -35,7 +35,7 @@ app.controller('CtrlApplications', function($scope, $rootScope, $routeParams, Ap
         || ($scope.query.length > 10 && application.credentials.apiKey.toLowerCase().indexOf($scope.query.toLowerCase()) != -1);
     };
   });
-app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams, Applications, $modal, $log) {
+app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams, Applications, SourceLicences, $modal, $sce, $log) {
     $scope.app = {};
     $scope.app.edited = {};
     $scope.app.edited = {"meta":false,"precedenceState":false,"precedenceOrder":false};
@@ -80,43 +80,29 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
         $scope.app.application.sources.reads = reads;
         $scope.app.edited.meta = true;
     };
-    
-    $scope.app.enableSource = function(source) {
-       var reads = [];
-        for (var i in $scope.app.application.sources.reads) {
-            var readEntry = $scope.app.application.sources.reads[i];
-            if (readEntry.id == source.id) {
-                readEntry.enabled = "true";  
-            } 
-            reads.push(readEntry);   
-        }
-        $scope.app.application.sources.reads = reads;
-        $scope.app.edited.meta = true;
-    };
-    
+
     $scope.app.requestSource = function(source) {
+
         $scope.app.sourceRequest = {};
+        $scope.app.licence = null;
+        SourceLicences.get(source.id).then(function(data) {
+            if (data && data.licence) {
+                $scope.app.licence = $sce.trustAsHtml(data.licence);
+            } 
+        });
         $scope.app.sourceRequest.source = source;
         $scope.app.sourceRequest.applicationId = $scope.app.application.id;
         var modalInstance = $modal.open({
-          templateUrl: 'partials/sourceRequestModal.html',
-          controller: SourceRequestFormModalCtrl,
-          scope: $scope
+            templateUrl: 'partials/sourceRequestModal.html',
+            controller: SourceRequestFormModalCtrl,
+            scope: $scope
         });
 
         modalInstance.result.then(function () {
-            // only modify data if ok pressed on form
-            var reads = [];
-            // update display, app is updated server side
-            for (var i in $scope.app.application.sources.reads) {
-                var readEntry = $scope.app.application.sources.reads[i];
-                if (readEntry.id == source.id) {
-                    readEntry.state = "requested";  
-                } 
-                reads.push(readEntry);   
-            }
-            $scope.app.application.sources.reads = reads;
-         });
+            Applications.get($scope.app.application.id).then(function(application) {
+                $scope.app.application = application;
+            });
+        });
     };
     
     $scope.enablePrecedence = function() {
@@ -193,7 +179,8 @@ function SourceRequestFormModalCtrl($scope, $modalInstance, Applications, Source
                             $scope.app.sourceRequest.applicationId, 
                             $scope.app.sourceRequest.applicationUrl, 
                             $scope.app.sourceRequest.reason, 
-                            $scope.app.sourceRequest.usageType)
+                            $scope.app.sourceRequest.usageType,
+                            true)
         .then(function() {
             $modalInstance.close();
         },
