@@ -198,7 +198,7 @@ function SourceRequestFormModalCtrl($scope, $modalInstance, Applications, Source
 function CreateApplicationFormModalCtrl($scope, $modalInstance, Applications) {
   $scope.app = {};
   $scope.app.title = "";
- 
+    
   $scope.ok = function () {
       Applications.create($scope.app.title)
         .then(function(result) {
