@@ -68,3 +68,8 @@ input.ng-valid {
 .provider-logo {
   float: left;
 }
+
+#termsAndConditions {
+  max-height: 400px;
+  overflow: scroll;
+}

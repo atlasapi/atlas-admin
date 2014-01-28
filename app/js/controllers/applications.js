@@ -35,7 +35,7 @@ app.controller('CtrlApplications', function($scope, $rootScope, $routeParams, Ap
         || ($scope.query.length > 10 && application.credentials.apiKey.toLowerCase().indexOf($scope.query.toLowerCase()) != -1);
     };
   });
-app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams, Applications, SourceLicences, $modal, $sce, $log) {
+app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams, Applications, SourceLicenses, $modal, $sce, $log) {
     $scope.app = {};
     $scope.app.edited = {};
     $scope.app.edited = {"meta":false,"precedenceState":false,"precedenceOrder":false};
@@ -84,12 +84,17 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
     $scope.app.requestSource = function(source) {
 
         $scope.app.sourceRequest = {};
-        $scope.app.licence = null;
-        SourceLicences.get(source.id).then(function(data) {
-            if (data && data.licence) {
-                $scope.app.licence = $sce.trustAsHtml(data.licence);
-            } 
-        });
+        $scope.app.license = null;
+        SourceLicenses.get(source.id).then(
+            function(data) {
+                if (data && data.license) {
+                    $scope.app.license = $sce.trustAsHtml(data.license);
+                } 
+            },
+            function(error) {
+                $log.error(error);   
+            }
+        );
         $scope.app.sourceRequest.source = source;
         $scope.app.sourceRequest.applicationId = $scope.app.application.id;
         var modalInstance = $modal.open({
@@ -167,13 +172,14 @@ function SourceRequestFormModalCtrl($scope, $modalInstance, Applications, Source
   $scope.item = {};
   $scope.item.invalid = true;
   $scope.app.sourceRequest.usageTypes = [
+      {value: 'invalid', label: '<Please select>'},
       {value: 'commercial', label: 'Commercial'},
-      {value: 'noncommercial', label: 'Non commercial'},
+      {value: 'non_commercial', label: 'Non commercial'},
       {value: 'personal', label: 'Personal'}
   ];
   $scope.app.sourceRequest.reason = '';
   $scope.app.sourceRequest.applicationUrl = '';
-  $scope.app.sourceRequest.usageType = 'commercial'; //default value for usage type
+  $scope.app.sourceRequest.usageType = 'invalid'; //default value for usage type
   $scope.ok = function () {
       SourceRequests.send($scope.app.sourceRequest.source.id, 
                             $scope.app.sourceRequest.applicationId, 

@@ -25,7 +25,7 @@ app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location
     if (window.location.search == "") {
         // search part will be empty if we have been here and cleared the oauth replies
         // In this case redirect.
-        $location.path("/sources");
+        $location.path("/applications");
         return;
     }
     $rootScope.title = "Authenticating.....";

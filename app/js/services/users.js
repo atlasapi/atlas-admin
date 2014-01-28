@@ -3,14 +3,17 @@
 /* Services */
 var app = angular.module('atlasAdmin.services.users', []);
 
-app.factory('Users', function(Atlas, $rootScope, ProfileStatus) {
+app.factory('Users', function(Atlas, $rootScope, ProfileStatus, $log) {
     return {
         currentUser: function() {
             return Atlas.getRequest('/auth/user.json').then(function(result) { 
                 if (result.data.user) {
-                    ProfileStatus.setComplete(result.data.user.profile_complete == "true");
+                    if (result.data.user.license_accepted && result.data.user.profile_complete === "true") {
+                        ProfileStatus.setComplete(true);
+                    } 
                     return result.data.user; 
                 }
+                $log.error("No user");
                 return null;
             }); 
         },
@@ -27,6 +30,21 @@ app.factory('Users', function(Atlas, $rootScope, ProfileStatus) {
             return Atlas.getRequest('/users.json').then(function(result) { 
                 return result.data.users; 
             }); 
+        },
+        getTermsAndConditions: function() {
+            return Atlas.getRequest('/eula.json').then(function(result) { 
+                return result.data.license.license; 
+            }); 
+        },
+        acceptTermsAndConditions: function(uid) {
+            return Atlas.postRequest('/users/' + uid + '/eula/accept.json', {}).then(
+                function(success) {
+                    return success;
+                },
+                function(error) {
+                    $log.error(error)
+                }             
+            );  
         }
     }    
 });

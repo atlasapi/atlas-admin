@@ -83,7 +83,7 @@ app.factory('ProfileCompleteInterceptor', function(ProfileStatus, $location, $q)
                 if (url.indexOf("partials/request") != -1 
                     || url.indexOf("partials/source") != -1 
                     || url.indexOf("partials/application") != -1) {
-                    $location.path('/profile');
+                    $location.path('/terms');
                     return $q.reject(response);
                 } 
                 return response;

@@ -4,9 +4,9 @@
     </div>
     <div class="modal-body">
         <form name="sourceRequestForm">
-            <div class="form-group" ng-show="app.licence">
+            <div class="form-group" ng-show="app.license">
                 <label for="toc">Terms and conditions</label>
-                <blockquote name="toc" ng-bind-html="app.licence">
+                <blockquote name="toc" ng-bind-html="app.license">
                     
                 </blockquote>
             </div>
@@ -22,7 +22,11 @@
             </div>
             <div class="form-group">
                 <label for="usageType">Usage type:</label>
-                <select ng-model="app.sourceRequest.usageType" ng-options="u.value as u.label for u in app.sourceRequest.usageTypes"></select><br>
+                <select id="usageType"
+                        ng-model="app.sourceRequest.usageType" 
+                        ng-options="u.value as u.label for u in app.sourceRequest.usageTypes"
+                        valid-usage></select><br>
+                <span ng-show="sourceRequestForm.$error.validUsage" class="help-block">Please select a usage type</span>
             </div>
         </form>
     </div>
