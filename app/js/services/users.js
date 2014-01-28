@@ -8,11 +8,12 @@ app.factory('Users', function(Atlas, $rootScope, ProfileStatus, $log) {
         currentUser: function() {
             return Atlas.getRequest('/auth/user.json').then(function(result) { 
                 if (result.data.user) {
-                    if (result.data.user.profile_complete == "true") {
+                    if (result.data.user.license_accepted && result.data.user.profile_complete === "true") {
                         ProfileStatus.setComplete(true);
                     } 
                     return result.data.user; 
                 }
+                $log.error("No user");
                 return null;
             }); 
         },
@@ -32,7 +33,7 @@ app.factory('Users', function(Atlas, $rootScope, ProfileStatus, $log) {
         },
         getTermsAndConditions: function() {
             return Atlas.getRequest('/eula.json').then(function(result) { 
-                return result.data.licence.text; 
+                return result.data.license.license; 
             }); 
         },
         acceptTermsAndConditions: function(uid) {

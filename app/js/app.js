@@ -9,12 +9,13 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.services.applications',
                                 'atlasAdmin.services.sources',
                                 'atlasAdmin.services.sourceRequests',
-                                'atlasAdmin.services.sourceLicences',
+                                'atlasAdmin.services.sourceLicenses',
                                 'atlasAdmin.services.users', 
                                 'atlasAdmin.services.uservideosources',
                                 'atlasAdmin.services.uservideosources.youtube',
                                 'atlasAdmin.directives.orderable', 
                                 'atlasAdmin.directives.focus',
+                                'atlasAdmin.directives.validUsage',
                                 'atlasAdmin.controllers.auth',
                                 'atlasAdmin.controllers.errors',
                                 'atlasAdmin.controllers.applications',
@@ -37,7 +38,7 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/applications/:applicationId', {templateUrl: 'partials/applicationEdit.html', controller: 'CtrlApplicationEdit'});
     $routeProvider.when('/login', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
     $routeProvider.when('/oauth/:provider', {templateUrl: 'partials/oauth.html', controller: 'CtrlOAuth', reloadOnSearch: false});
-    $routeProvider.when('/terms', {templateUrl: 'partials/terms.html', controller: 'UserLicenceController'});
+    $routeProvider.when('/terms', {templateUrl: 'partials/terms.html', controller: 'UserLicenseController'});
     $routeProvider.when('/profile', {templateUrl: 'partials/profile.html', controller: 'UserProfileController'});
     $routeProvider.when('/users/:uid', {templateUrl: 'partials/profile.html', controller: 'UserProfileController'});
     $routeProvider.when('/users', {templateUrl: 'partials/users.html', controller: 'AllUsersController'});
@@ -45,7 +46,7 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/videosource/config/youtube', {templateUrl: 'partials/videoSourceYouTubeConfig.html', controller: 'CtrlVideoSourceYouTubeConfig'});
     $routeProvider.when('/logout', {templateUrl: 'partials/logout.html', controller: 'CtrlLogout'});
     $routeProvider.when('/error', {templateUrl: 'partials/error.html', controller: 'ErrorController'});
-    $routeProvider.otherwise({redirectTo: '/profile'});
+    $routeProvider.otherwise({redirectTo: '/applications'});
   }]);
 
 app.config(['$httpProvider', function($httpProvider) {

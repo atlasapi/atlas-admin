@@ -66,24 +66,27 @@ app.controller('UserMenuController', function($scope, Users, $rootScope, Authent
         });
     } 
 });
-app.controller('UserLicenceController', function($scope, $rootScope, $routeParams, Users, $location, $sce, $log) {
+app.controller('UserLicenseController', function($scope, $rootScope, $routeParams, Users, $location, $sce, $log) {
     // only try to get user if logged in
     $scope.app = {};
     Users.currentUser().then(function(user) {
         $scope.app.user = user;
-        $rootScope.title = "Terms and conditions";
-    });
-    Users.getTermsAndConditions().then(function(licence) {
-        $scope.app.licence = $sce.trustAsHtml(licence);
-    });
+        $rootScope.title = "Atlas usage guidelines, terms and conditions";
+    });    
+    
+    var error = function(error) {
+        $log.error(error);
+    };
+    
+    Users.getTermsAndConditions().then(function(license) {
+        $scope.app.license = $sce.trustAsHtml(license);
+    }, error);
+    
     
     $scope.app.accept = function() {
        Users.acceptTermsAndConditions($scope.app.user.id).then(function(data) {
           $location.path("/profile"); 
-       }, 
-       function(error) {
-          $log.error(error);
-       });
+       }, error);
     };
     
     $scope.app.reject = function() {
