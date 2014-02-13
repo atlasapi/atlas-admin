@@ -35,7 +35,7 @@ app.controller('CtrlApplications', function($scope, $rootScope, $routeParams, Ap
         || ($scope.query.length > 10 && application.credentials.apiKey.toLowerCase().indexOf($scope.query.toLowerCase()) != -1);
     };
   });
-app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams, Applications, SourceLicenses, $modal, $sce, $log) {
+app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams, Applications, Sources, SourceLicenses, $modal, $sce, $log) {
     $scope.app = {};
     $scope.app.edited = {};
     $scope.app.edited = {"meta":false,"precedenceState":false,"precedenceOrder":false};
@@ -80,9 +80,21 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
         $scope.app.application.sources.reads = reads;
         $scope.app.edited.meta = true;
     };
+    
+    $scope.app.enableSource = function(source) {
+        var reads = [];
+        for (var i in $scope.app.application.sources.reads) {
+            var readEntry = $scope.app.application.sources.reads[i];
+            if (readEntry.id == source.id) {
+                readEntry.enabled = "true";  
+            } 
+            reads.push(readEntry);   
+        }
+        $scope.app.application.sources.reads = reads;
+        $scope.app.edited.meta = true;
+    };
 
     $scope.app.requestSource = function(source) {
-
         $scope.app.sourceRequest = {};
         $scope.app.license = null;
         SourceLicenses.get(source.id).then(

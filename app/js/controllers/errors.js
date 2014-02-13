@@ -5,5 +5,5 @@ app.controller('ErrorController', function($scope, $rootScope, $routeParams) {
     $scope.alerts = [];
     if ($routeParams.type == "forbidden") {
         $scope.alerts.push({type:"danger", msg: "You do not have access to this resource"});        
-    }    
+    } 
 });

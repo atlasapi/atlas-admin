@@ -75,11 +75,12 @@ app.factory('ProfileCompleteInterceptor', function(ProfileStatus, $location, $q)
    return function(promise) {
         return promise.then(
             function(response) {
-                if (ProfileStatus.isProfileComplete() || response.status == 401 || response.config.url.indexOf("/auth/")!= -1) {
+                if (ProfileStatus.isProfileComplete() 
+                    || response.status == 401 
+                    || response.config.url.indexOf("/auth/")!= -1) {
                     return response;   
                 }
                 var url = response.config.url;
-                
                 if (url.indexOf("partials/request") != -1 
                     || url.indexOf("partials/source") != -1 
                     || url.indexOf("partials/application") != -1) {

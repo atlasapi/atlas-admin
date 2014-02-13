@@ -3,7 +3,7 @@
 /* Services */
 var app = angular.module('atlasAdmin.services.users', []);
 
-app.factory('Users', function(Atlas, $rootScope, ProfileStatus, $log) {
+app.factory('Users', function(Atlas, $rootScope, ProfileStatus, $log, $location) {
     return {
         currentUser: function() {
             return Atlas.getRequest('/auth/user.json').then(function(result) { 

@@ -79,7 +79,11 @@ app.controller('UserLicenseController', function($scope, $rootScope, $routeParam
     };
     
     Users.getTermsAndConditions().then(function(license) {
-        $scope.app.license = $sce.trustAsHtml(license);
+        if (license == "NOT_AVAILABLE") {
+            $location.path('/error?type=not_available');
+        } else {
+            $scope.app.license = $sce.trustAsHtml(license);
+        }
     }, error);
     
     
