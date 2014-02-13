@@ -74,7 +74,7 @@
              <ul class="list-group">
                  <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:'false'">
                     {{source.title}}
-                    <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.requestSource(source)">Enable</button>
+                    <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.enableSource(source)">Enable</button>
                  </li>
              </ul>
          </div>
@@ -91,7 +91,7 @@
          <div class="panel panel-default">
              <div class="panel-heading">Unavailable</div>
              <ul class="list-group">
-                <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'unavailable'">
+                <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'unavailable|enableable'">
                     {{source.title}}      
                     <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.requestSource(source)">Request Access</button>
                 </li>

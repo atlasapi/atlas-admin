@@ -22,10 +22,11 @@ angular.module('atlasAdmin.filters', []).
     }
 })
 .filter('sourceState', function() {
-    return function(input, state) {
+    return function(input, states) {
+        var search = states.split("|");
         var output = [];
         for (var i in input) {
-            if (input[i].state == state) {
+            if (search.indexOf(input[i].state) != -1) {
                 output.push(input[i]);
             }
         }
