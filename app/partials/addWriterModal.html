@@ -7,7 +7,7 @@
         <input focus-me type="text" ng-model="item.selected" typeahead="application  as application.title for application in applications | filter:$viewValue | limitTo:15" typeahead-editable="false" typeahead-min-length="3" ng-change="selectionChanged()" typeahead-on-select="onSelect($item, $model, $label)">
     </div>
     <div class="modal-footer">
-        <button class="btn btn-primary" ng-disabled="item.invalid" ng-click="ok()">Add</button>
-        <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        <button class="btn btn-primary" ng-disabled="item.invalid || app.wait" ng-click="ok()">Add</button>
+        <button class="btn btn-warning" ng-click="cancel()" ng-disabled="app.wait" >Cancel</button>
     </div>
 </div> 

@@ -11,7 +11,7 @@
     
 <body>
     <div ng-sparkline></div>
-<nav class="navbar navbar-default .navbar-fixed-top" role="navigation"  ng-cloak>
+    <nav class="navbar navbar-default .navbar-fixed-top" role="navigation"  ng-cloak>
      <div class="navbar-header">
         <button type="button" class="navbar-toggle"  ng-init="navCollapsed = true" ng-click="navCollapsed = !navCollapsed" title="Toggle navigation">
            <span class="icon-bar"></span>
@@ -21,7 +21,7 @@
         <a class="navbar-brand" href="#"><img src="img/atlas_admin_logo.png" alt="Atlas Admin logo" /></a>
     </div>
     <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'" ng-controller="UserMenuController"  ng-cloak>
-         <ul ng-show="status.loggedIn" class="nav navbar-nav">
+         <ul ng-show="status.loggedIn && !show.load" class="nav navbar-nav">
              <li><a href="#/applications">Applications</a></li>
              <li><a href="#/sources" ng-show="app.user.role == 'admin'">Sources</a></li>  
              <li><a href="#/requests" ng-show="app.user.role == 'admin'">Requests</a></li>
@@ -39,7 +39,10 @@
     </div>
     
 </nav>
-    <div class="container" ng-cloak>
+    
+    <div class="container loading"  ng-show="show.load" us-spinner="{radius:60, length:40}" ng-cloak>
+    </div>
+    <div class="container" ng-cloak ng-show="!show.load">
         <h2>{{title}}</h2>
     <div class="row">
       <div class="col-md-6"></div>
@@ -77,6 +80,8 @@
   <script src="js/filters.js"></script>
   <script src="js/directives/orderable.js"></script>
   <script src="js/directives/focus.js"></script>
-    <script src="js/directives/validUsage.js"></script>
+  <script src="js/directives/validUsage.js"></script>
+  <script src="js/spin.min.js"></script>
+  <script src="js/angular-spinner.min.js"></script>
 </body>
 </html>

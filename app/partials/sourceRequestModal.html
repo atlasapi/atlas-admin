@@ -37,7 +37,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-primary" ng-click="ok()" ng-disabled="sourceRequestForm.$invalid">I agree</button>
-        <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        <button class="btn btn-primary" ng-click="ok()" ng-disabled="sourceRequestForm.$invalid || app.wait">I agree</button>
+        <button class="btn btn-warning" ng-click="cancel()" ng-disabled="app.wait">Cancel</button>
     </div>
 </div> 
