@@ -192,7 +192,9 @@ function SourceRequestFormModalCtrl($scope, $modalInstance, Applications, Source
   $scope.app.sourceRequest.reason = '';
   $scope.app.sourceRequest.applicationUrl = '';
   $scope.app.sourceRequest.usageType = 'invalid'; //default value for usage type
+  $scope.app.wait = false;
   $scope.ok = function () {
+      $scope.app.wait = true;
       SourceRequests.send($scope.app.sourceRequest.source.id, 
                             $scope.app.sourceRequest.applicationId, 
                             $scope.app.sourceRequest.applicationUrl, 
@@ -216,8 +218,10 @@ function SourceRequestFormModalCtrl($scope, $modalInstance, Applications, Source
 function CreateApplicationFormModalCtrl($scope, $modalInstance, Applications) {
   $scope.app = {};
   $scope.app.title = "";
+  $scope.app.wait = false;
     
   $scope.ok = function () {
+      $scope.app.wait = true;
       Applications.create($scope.app.title)
         .then(function(result) {
             if (result.data.application.id) {

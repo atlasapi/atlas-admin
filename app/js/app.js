@@ -27,6 +27,7 @@ var app = angular.module('atlasAdmin', [
                                 'ui.bootstrap',
                                 'ngResource',
                                 'ngRoute',
+                                'angularSpinner',
                                 'atlasAdminConfig'
 ]);
 app.config(['$routeProvider', function($routeProvider) {
@@ -54,6 +55,54 @@ app.config(['$httpProvider', function($httpProvider) {
         delete $httpProvider.defaults.headers.common['X-Requested-With'];
         $httpProvider.responseInterceptors.push('AuthenticationInterceptor');
         $httpProvider.responseInterceptors.push('ProfileCompleteInterceptor');
+        // loading notifications
+         var $http,
+            interceptor = ['$q', '$injector', function ($q, $injector) {
+            var rootScope;
+
+            function success(response) {
+                // get $http via $injector because of circular dependency problem
+                $http = $http || $injector.get('$http');
+                // don't send notification until all requests are complete
+                if ($http.pendingRequests.length < 1) {
+                    // get $rootScope via $injector because of circular dependency problem
+                    rootScope = rootScope || $injector.get('$rootScope');
+                    if (!rootScope.show) {
+                       rootScope.show = {};
+                    }
+                    rootScope.show.load = false;
+                    
+                }
+                return response;
+            }
+
+            function error(response) {
+                // get $http via $injector because of circular dependency problem
+                $http = $http || $injector.get('$http');
+                // don't send notification until all requests are complete
+                if ($http.pendingRequests.length < 1) {
+                    // get $rootScope via $injector because of circular dependency problem
+                    rootScope = rootScope || $injector.get('$rootScope');
+                    if (!rootScope.show) {
+                       rootScope.show = {};
+                    }
+                    rootScope.show.load = false;
+                }
+                return $q.reject(response);
+            }
+
+            return function (promise) {
+                // get $rootScope via $injector because of circular dependency problem
+                rootScope = rootScope || $injector.get('$rootScope');
+                if (!rootScope.show) {
+                    rootScope.show = {};
+                }
+                rootScope.show.load = true;
+                return promise.then(success, error);
+            }
+        }];
+
+        $httpProvider.responseInterceptors.push(interceptor);
     }
   ]);
 

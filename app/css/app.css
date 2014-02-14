@@ -73,3 +73,8 @@ input.ng-valid {
   max-height: 400px;
   overflow: scroll;
 }
+
+.loading {
+   padding-top: 300px;   
+    
+}
