@@ -3,7 +3,7 @@
 /* Services */
 var app = angular.module('atlasAdmin.services.users', []);
 
-app.factory('Users', function(Atlas, $rootScope, ProfileStatus, $log, $location) {
+app.factory('Users', function(Atlas, $rootScope, ProfileStatus, $log) {
     return {
         currentUser: function() {
             return Atlas.getRequest('/auth/user.json').then(function(result) { 
@@ -33,6 +33,9 @@ app.factory('Users', function(Atlas, $rootScope, ProfileStatus, $log, $location)
         },
         getTermsAndConditions: function() {
             return Atlas.getRequest('/eula.json').then(function(result) { 
+                if (result.status > 399) {
+                    throw 'NOT_AVAILABLE/'+result.status;
+                }
                 return result.data.license.license; 
             }); 
         },

@@ -43,7 +43,7 @@ app.factory('Authentication', function($rootScope, ProfileStatus) {
         }
     }
 });
-app.factory('AuthenticationInterceptor', function ($q, $location, atlasHost, $log, $timeout, $rootScope) {
+app.factory('AuthenticationInterceptor', function ($q, $location, $window, atlasHost, $log, $timeout, $rootScope) {
     return function(promise) {
         return promise.then(
             function(response) {
@@ -63,7 +63,7 @@ app.factory('AuthenticationInterceptor', function ($q, $location, atlasHost, $lo
                     $location.path('/login');
                 }
                 if (response.config.url.indexOf(atlasHost)!= -1 && response.status == 403) {
-                    $location.path('/error?type=forbidden');
+                    $window.location.href = '/error?type=forbidden';
                 }
                 return $q.reject(response);
             }
@@ -71,20 +71,24 @@ app.factory('AuthenticationInterceptor', function ($q, $location, atlasHost, $lo
     }
 });
 // Make sure profile is completed before allowing use of app
-app.factory('ProfileCompleteInterceptor', function(ProfileStatus, $location, $q) {
+app.factory('ProfileCompleteInterceptor', function(ProfileStatus, $location, $q, $rootScope) {
    return function(promise) {
         return promise.then(
             function(response) {
+                var url = response.config.url;
+                if (url.indexOf("partials/error") != -1) {
+                    return response;
+                }
                 if (ProfileStatus.isProfileComplete() 
                     || response.status == 401 
                     || response.config.url.indexOf("/auth/")!= -1) {
                     return response;   
                 }
-                var url = response.config.url;
                 if (url.indexOf("partials/request") != -1 
                     || url.indexOf("partials/source") != -1 
                     || url.indexOf("partials/application") != -1) {
                     $location.path('/terms');
+                  
                     return $q.reject(response);
                 } 
                 return response;
