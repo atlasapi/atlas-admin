@@ -66,7 +66,7 @@ app.controller('UserMenuController', function($scope, Users, $rootScope, Authent
         });
     } 
 });
-app.controller('UserLicenseController', function($scope, $rootScope, $routeParams, Users, $location, $sce, $log) {
+app.controller('UserLicenseController', function($scope, $rootScope, $routeParams, Users, $location, $window, $sce, $log) {
     // only try to get user if logged in
     $scope.app = {};
     Users.currentUser().then(function(user) {
@@ -76,16 +76,12 @@ app.controller('UserLicenseController', function($scope, $rootScope, $routeParam
     
     var error = function(error) {
         $log.error(error);
+        $window.location.href = "/#/error?type=not_available";
     };
     
     Users.getTermsAndConditions().then(function(license) {
-        if (license == "NOT_AVAILABLE") {
-            $location.path('/error?type=not_available');
-        } else {
-            $scope.app.license = $sce.trustAsHtml(license);
-        }
+        $scope.app.license = $sce.trustAsHtml(license);
     }, error);
-    
     
     $scope.app.accept = function() {
        Users.acceptTermsAndConditions($scope.app.user.id).then(function(data) {
