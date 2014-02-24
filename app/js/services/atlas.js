@@ -32,9 +32,9 @@ app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $
               return error;  
           });
        },
-       getAccessToken: function(oauth_token, oauth_verifier) {
+       getAccessToken: function(oauth_token, oauth_verifier, code) {
            var url = "/auth/" + Authentication.getProvider() + "/token.json?oauthToken=" + oauth_token
-                 + "&oauthVerifier=" + oauth_verifier;
+                 + "&oauthVerifier=" + oauth_verifier + "&code=" + code;
            return $http.get(atlasHost + "/" + atlasVersion +  url); 
        },
        startLogout: function() {
