@@ -3,6 +3,18 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <!--[if lte IE 8]>
+        <script>
+          document.createElement('ng-include');
+          document.createElement('ng-pluralize');
+          document.createElement('ng-view');
+ 
+          // Optionally these for CSS
+          document.createElement('ng:include');
+          document.createElement('ng:pluralize');
+          document.createElement('ng:view');
+        </script>
+      <![endif]-->
   <title>Atlas Administration - {{title}}</title>
   <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.min.css"/>
   <link rel="stylesheet" href="lib/bootstrap/css/bootstrap-theme.min.css"/>
