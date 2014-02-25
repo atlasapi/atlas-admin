@@ -75,6 +75,9 @@ input.ng-valid {
 }
 
 .loading {
-   padding-top: 300px;   
-    
+   padding-top: 300px;     
+}
+
+.btn-block {
+   margin-top: 5px;   
 }

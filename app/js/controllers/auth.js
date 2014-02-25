@@ -6,7 +6,19 @@ app.controller('CtrlLogin', function($scope, $rootScope, $routeParams, Atlas, at
     $rootScope.title = "Please log in";
     Authentication.reset();
     Atlas.getAuthProviders().then(function(results) {
-        $scope.providers = results; 
+        var providers = [];
+        for (var i=0; i<results.length; i++) {
+            // handle any namespace to bootstrap social mappings here
+            // http://lipis.github.io/bootstrap-social/
+            var provider = results[i];
+            if (provider.namespace == 'google') {
+                provider.icon = "google-plus";
+            } else {
+                provider.icon = provider.namespace;
+            }
+            providers.push(provider);
+        }
+        $scope.providers = providers; 
     });
     
     $rootScope.startAuth = function(provider) {
