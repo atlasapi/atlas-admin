@@ -3,11 +3,24 @@
 /* User Profile Controller */
 
 var app = angular.module('atlasAdmin.controllers.user', []);
-app.controller('UserProfileController', function($scope, $rootScope, $routeParams, Users) {
+app.controller('UserProfileController', function($scope, $rootScope, $routeParams, Users, Applications) {
     
     $scope.app = {};
     
     $scope.app.isAdmin = false;
+    $scope.app.predicate = 'created';
+    $scope.app.reverse = true;
+    $scope.app.pageSize=10;
+    $scope.app.currentPage = 1;
+    
+    var populateApplications = function(idList) {
+        $scope.app.applications = [];
+        for (var i=0; i<idList.length; i++) {
+            Applications.get(idList[i]).then(function(application) {
+               $scope.app.applications.push(application);
+            });
+        }
+    }
     
     
     if ($routeParams.uid) {
@@ -23,6 +36,10 @@ app.controller('UserProfileController', function($scope, $rootScope, $routeParam
             Users.currentUser().then(function(editingUser) {
                 $scope.app.isAdmin = editingUser.role == "admin";
                 $scope.app.editingUser = editingUser.id;
+                
+                if ($scope.app.isAdmin) {
+                    populateApplications($scope.app.user.applications);
+                }
             });
         });
     } else {
