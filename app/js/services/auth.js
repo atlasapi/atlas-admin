@@ -58,12 +58,12 @@ app.factory('AuthenticationInterceptor', function ($q, $location, $window, atlas
             }, 
             function(response) {
                 // if no auth token then need to make an access request to atlas
-                if (response.config.url.indexOf(atlasHost)!= -1 && response.status == 401) {
+                if (response.config.url.indexOf(atlasHost)!= -1 && response.status == 400) {
                     $log.info("Not logged in");
                     $location.path('/login');
                 }
                 if (response.config.url.indexOf(atlasHost)!= -1 && response.status == 403) {
-                    $window.location.href = '/error?type=forbidden';
+                    $window.location.href = '#/error?type=forbidden';
                 }
                 return $q.reject(response);
             }
@@ -80,7 +80,7 @@ app.factory('ProfileCompleteInterceptor', function(ProfileStatus, $location, $q,
                     return response;
                 }
                 if (ProfileStatus.isProfileComplete() 
-                    || response.status == 401 
+                    || response.status == 400 
                     || response.config.url.indexOf("/auth/")!= -1) {
                     return response;   
                 }

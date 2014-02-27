@@ -57,14 +57,38 @@ app.controller('AllUsersController', function($scope, $rootScope, $routeParams, 
     $scope.app.pageSize=10;
     $scope.app.currentPage = 1;
 });
-app.controller('UserMenuController', function($scope, Users, $rootScope, Authentication) {
+app.controller('UserMenuController', function($scope, Users, $rootScope, Authentication, $location) {
     // only try to get user if logged in
     $scope.app = {};
+    
+    var buildMenu = function(user, currentPath) {
+          var allMenu = [{path:'/applications', label:'Applications'},
+                {path:'/sources', label:'Sources', role:'admin'},
+                {path:'/requests', label:'Requests', role:'admin'},
+                {path:'/users', label:'Users', role:'admin'}];  
+    
+            var menu = [];    
+            for (var i=0; i<allMenu.length; i++) {
+                var item = allMenu[i];
+                item.active = item.path == currentPath;
+                if (!item.role || item.role == user.role) {
+                    menu.push(item);
+                }
+            }
+        return menu;
+    };
+    
     if (Authentication.getToken()) {
         Users.currentUser().then(function(user) {
             $scope.app.user = user;
+            $scope.app.menu = buildMenu($scope.app.user, $location.path());
         });
-    } 
+    }
+    
+    $scope.app.move = function(path) {
+        $scope.app.menu = buildMenu($scope.app.user, path);
+        $location.path(path);
+    };
 });
 app.controller('UserLicenseController', function($scope, $rootScope, $routeParams, Users, $location, $window, $sce, $log) {
     // only try to get user if logged in

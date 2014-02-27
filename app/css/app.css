@@ -81,3 +81,12 @@ input.ng-valid {
 .btn-block {
    margin-top: 5px;   
 }
+
+.active-menu-item {
+   color: #ff009a;   
+   text-shadow: 0 1px 0 rgba(255,255,255,0.25);
+   padding: 15px 15px 15px 15px;
+   line-height: 20px;
+   position: relative;
+   display: block;
+}
