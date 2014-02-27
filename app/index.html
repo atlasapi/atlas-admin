@@ -29,8 +29,8 @@
     </div>
     <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'" ng-controller="UserMenuController"  ng-cloak>
          <ul ng-show="status.loggedIn && !show.load" class="nav navbar-nav">
-             <li ng-repeat="item in app.menu">                 
-                 <a ng-show="!item.active" ng-click="app.move(item.path)" href="#">{{item.label}}</a>
+             <li ng-repeat="item in app.menu"> 
+                 <a ng-click="app.move(item.path)" ng-show="!item.active" href="#">{{item.label}}</a>
                  <span class="active-menu-item" ng-show="item.active">{{item.label}}</span>
              </li>
          </ul>
