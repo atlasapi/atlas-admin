@@ -85,3 +85,7 @@ input.ng-valid {
 .active-menu-item {
    color: #ff009a !important;   
 }
+
+.hide {
+   display: none;   
+}

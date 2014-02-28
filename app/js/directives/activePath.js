@@ -4,7 +4,7 @@
 /* Thanks to http://stackoverflow.com/questions/12592472/how-to-highlight-a-current-menu-item-in-angularjs */
 var app = angular.module('atlasAdmin.directives.activePath', []);
 
-app.directive('activePath', ['$location', function(location) {
+app.directive('activePath', ['$location', 'ProfileStatus', function(location, ProfileStatus) {
     return {
       restrict: 'A',
       link: function(scope, element, attrs, controller) {
@@ -15,6 +15,14 @@ app.directive('activePath', ['$location', function(location) {
         }
         scope.location = location;
         scope.$watch('location.path()', function(currentPath) {
+            // hide menu if profile not complete
+            if (ProfileStatus.isProfileComplete()) {
+                element.removeClass('hide');
+            } else {
+                element.addClass('hide');
+            }
+            
+            // highlight active item
             if (path == currentPath.substring(0, path.length)) {
                 element.addClass(activeClass);
             } else {

@@ -3,7 +3,7 @@
 /* User Profile Controller */
 
 var app = angular.module('atlasAdmin.controllers.user', []);
-app.controller('UserProfileController', function($scope, $rootScope, $routeParams, Users, Applications) {
+app.controller('UserProfileController', function($scope, $rootScope, $routeParams, Users, Applications, $location) {
     
     $scope.app = {};
     
@@ -20,8 +20,7 @@ app.controller('UserProfileController', function($scope, $rootScope, $routeParam
                $scope.app.applications.push(application);
             });
         }
-    }
-    
+    }    
     
     if ($routeParams.uid) {
         Users.get($routeParams.uid).then(function(user) {
@@ -54,9 +53,16 @@ app.controller('UserProfileController', function($scope, $rootScope, $routeParam
             return;
         }
         $scope.app.changed = false;
+        $scope.app.newUser = $scope.app.user.profile_complete == "false";
         $scope.app.user.profile_complete = true;
         Users.update($scope.app.user).then(function() {
-            $scope.successMessage = "Changes saved"; 
+            var successMessage = "Changes saved"; 
+            // redirect new users to apps screen otherwise show message
+            if ($scope.app.newUser) {
+               $location.path('/');
+            } else {
+               $scope.successMessage = "Changes saved"; 
+            }
         },
         function() {
             $scope.errorMessage = "Sorry, there was an error and your changes could not be saved";
