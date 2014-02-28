@@ -30,8 +30,7 @@
     <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'" ng-controller="UserMenuController"  ng-cloak>
          <ul ng-show="status.loggedIn && !show.load" class="nav navbar-nav">
              <li ng-repeat="item in app.menu"> 
-                 <a ng-click="app.move(item.path)" ng-show="!item.active">{{item.label}}</a>
-                 <span class="active-menu-item" ng-show="item.active">{{item.label}}</span>
+                 <a ng-href="#{{item.path}}" active-path="active-menu-item">{{item.label}}</a>
              </li>
          </ul>
         <ul ng-show="status.loggedIn" class="nav navbar-nav navbar-right">
@@ -44,7 +43,6 @@
              </li>
          </ul>
     </div>
-    
 </nav>
     
     <div class="container loading"  ng-show="show.load" us-spinner="{radius:60, length:40}" ng-cloak>
@@ -87,6 +85,7 @@
   <script src="js/filters.js"></script>
   <script src="js/directives/orderable.js"></script>
   <script src="js/directives/focus.js"></script>
+  <script src="js/directives/activePath.js"></script>
   <script src="js/directives/validUsage.js"></script>
   <script src="js/spin.min.js"></script>
   <script src="js/angular-spinner.min.js"></script>
