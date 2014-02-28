@@ -13,6 +13,8 @@
         <th ng-click="app.predicate='company'; app.reverse=!app.reverse;">Company</th>
         <th ng-click="app.predicate='email'; app.reverse=!app.reverse;">Email</th>
         <th ng-click="app.predicate='website'; app.reverse=!app.reverse;">Website</th>
+        <th ng-click="app.predicate='applications.length'; app.reverse=!app.reverse;">Apps</th>
+        <th ng-click="app.predicate='userRef.userNamespace'; app.reverse=!app.reverse;">Login</th>
     </tr>
     <tr ng-repeat="user in app.users | filter:query | orderBy:app.predicate:app.reverse | startFrom:(app.currentPage-1)*app.pageSize | limitTo:app.pageSize">
         <td>
@@ -24,6 +26,8 @@
         <td>{{user.company}}</td>
         <td><a ng-href="mailto:{{user.email}}">{{user.email}}</a></td>
         <td><a ng-href="{{user.website}}" target="_blank">{{user.website}}</a></td>
+        <td>{{user.applications.length}}</td>
+        <td>{{user.userRef.userNamespace}}</td>
     </tr>
     </table>
 </div>
