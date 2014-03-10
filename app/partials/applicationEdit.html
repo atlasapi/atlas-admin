@@ -59,12 +59,12 @@
                 <li class="list-group-item source-item-entry" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:'true'" orderable id="source-{{source.id}}" ng-show="app.application.sources.precedence=='true'">
                    <span ng-show="app.application.sources.precedence=='true'" class="box-shadow-menu"></span>
                      {{source.title}}
-                   <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.viewTerms(source)">View Terms</button> | <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.disableSource(source)">Disable</button>
+                    <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.disableSource(source)">Disable</button> <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.viewTerms(source)">View Terms</button>
                 </li>
 
                 <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:'true'" id="source-{{source.id}}" ng-show="app.application.sources.precedence=='false'">
                     {{source.title}}
-                   <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.disableSource(source)">Disable</button>
+                   <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.viewTerms(source)">View Terms</button> <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.disableSource(source)">Disable</button>
                 </li>
              </ul>
          </div>
