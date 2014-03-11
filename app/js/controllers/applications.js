@@ -189,6 +189,9 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
             // $scope.app.license should be templated
             $scope.app.license = $sce.trustAsHtml(data.license);
           }
+          else {
+            $scope.app.license = $sce.trustAsHtml('Please contact us for more details regarding access and pricing for this source.');
+          }
         },
         function (error) {
           $log.error(error);
