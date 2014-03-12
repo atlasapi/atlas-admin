@@ -40,6 +40,38 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
     $scope.app.edited = {};
     $scope.app.edited = {"meta":false,"precedenceState":false,"precedenceOrder":false};
 
+    // @TODO: this is fixture data! need to replace this for
+    // an actual API call (AY)
+    $scope.app.pricing = {
+      chargeable: true,
+      sources: [
+        {
+          name: "Free Tier - 1 to 10 Users",
+          price: 0,
+          id: "free1"
+        },
+        {
+          name: "Atlas + PA - 11 to 1000 Users",
+          price: 95,
+          id: "atlpa11"
+        },
+        {
+          name: "Atlas + PA - 1001 to 10000 Users",
+          price: 245,
+          id: "atlpa1001"
+        },
+        {
+          name: "Atlas + PA - 10001 to 50000 Users",
+          price: 995,
+          id: "atlpa10001"
+        }
+      ]
+    };
+
+    // @TODO: this is fixture data! need to replace this for
+    // an actual API call (AY)
+    $scope.app.accruedCost = 0;
+
     var leavingPageText = "You have unsaved changes!";
     window.onbeforeunload = function(){
         if ($scope.app.changed()) {

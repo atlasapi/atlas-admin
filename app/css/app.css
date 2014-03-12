@@ -8,7 +8,7 @@
 }
 
 .navbar-default .navbar-nav>li>a {
-    color: #444;   
+    color: #444;
 }
 
 .drag {
@@ -23,7 +23,7 @@
 }
 
 .btn-success {
-    background-color: #357235;   
+    background-color: #357235;
 }
 
 .profile-picture {
@@ -41,7 +41,7 @@ input.ng-valid {
 }
 
 .navsmall {
-    font-size: small;   
+    font-size: small;
 }
 
 .role-btn.active {
@@ -60,7 +60,7 @@ input.ng-valid {
   width: 1em;
   height: 0.15em;
   background: black;
-  box-shadow: 
+  box-shadow:
     0 0.25em 0 0 black,
     0 0.45em 0 0 black;
 }
@@ -75,17 +75,23 @@ input.ng-valid {
 }
 
 .loading {
-   padding-top: 300px;     
+   padding-top: 300px;
 }
 
 .btn-block {
-   margin-top: 5px;   
+   margin-top: 5px;
 }
 
 .active-menu-item {
-   color: #ff009a !important;   
+   color: #ff009a !important;
 }
 
 .hide {
-   display: none;   
+   display: none;
+}
+
+.app-cost {
+  margin: 0 10px;
+  position: relative;
+  top: 4px;
 }

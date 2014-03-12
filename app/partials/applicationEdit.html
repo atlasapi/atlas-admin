@@ -6,7 +6,10 @@
 </div>
 <div class="panel panel-default" ng-show="!successMessage || app.changed()">
   <div class="panel-body">
-     <button type="button" class="btn btn-danger" ng-click="save()" ng-disabled="!app.changed()">Save</button>
+     <button type="button" class="btn btn-danger" ng-click="save()" ng-disabled="!app.changed()" ng-hide="app.pricing.chargeable">Save</button>
+     <!-- @TODO: changing payment option needs to update `app.changed()` (AY) -->
+     <button type="button" class="btn btn-danger" ng-click="save()" ng-disabled="!app.changed()" ng-show="app.pricing.chargeable">Checkout</button>
+     <span class="lead app-cost" ng-show="app.accruedCost > 0">Total monthly cost of application: £{{ app.accruedCost }}</span>
      <span class="label label-warning pull-right" ng-show="app.changed()">Unsaved changes</span>
   </div>
 </div>
@@ -27,16 +30,10 @@
   <div class="form-group">
     <label for="appUserNum" class="col-sm-2 control-label">Number of Users</label>
     <div class="col-sm-8">
-      <div class="radio">
+      <div class="radio" ng-repeat="plan in app.pricing.sources">
         <label>
-          <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
-          Option one is this and that&mdash;be sure to include why it's great
-        </label>
-      </div>
-      <div class="radio">
-        <label>
-          <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
-          Option two can be something else and selecting it will deselect option one
+          <input type="radio" name="{{ plan.id }}" id="optionsRadios1" value="{{ plan.price }}" ng-model="app.accruedCost">
+          {{ plan.name }} - £{{ plan.price }} per month
         </label>
       </div>
     </div>
