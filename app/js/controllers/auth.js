@@ -18,12 +18,19 @@ app.controller('CtrlLogin', function($scope, $rootScope, $routeParams, Atlas, at
             }
             providers.push(provider);
         }
-        $scope.providers = providers; 
+        $scope.providers = providers;
+        
+        if ($routeParams.namespace) {
+            $rootScope.startAuth($scope.providers.filter(function (item) {
+                return item.namespace === $routeParams.namespace;
+            })[0]);
+        }
     });
     
     $rootScope.startAuth = function(provider) {
         var callbackUrl = encodeURIComponent($location.absUrl().replace("/login","/oauth/" + provider.namespace));
         var targetUri = encodeURIComponent($location.absUrl().replace("/login","/"));
+        
         Authentication.setProvider(provider.namespace);
         Atlas.startOauthAuthentication(provider, callbackUrl, targetUri).then(function(login_url) {
             window.location.href = login_url; 
@@ -31,7 +38,7 @@ app.controller('CtrlLogin', function($scope, $rootScope, $routeParams, Atlas, at
             $log.error("Error starting auth:");
             $log.error(error);   
         });
-    }
+    };
 });
 
 app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location, Authentication, Atlas, $log, Users) {
