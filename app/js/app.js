@@ -25,6 +25,7 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.controllers.user',
                                 'atlasAdmin.controllers.uservideosources',
                                 'atlasAdmin.controllers.uservideosources.youtube',
+                                'atlasAdmin.controllers.stripe',
                                 'ui.bootstrap',
                                 'ngResource',
                                 'ngRoute',
