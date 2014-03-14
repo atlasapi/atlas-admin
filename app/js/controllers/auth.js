@@ -28,8 +28,18 @@ app.controller('CtrlLogin', function($scope, $rootScope, $routeParams, Atlas, at
     });
     
     $rootScope.startAuth = function(provider) {
-        var callbackUrl = encodeURIComponent($location.absUrl().replace("/login","/oauth/" + provider.namespace));
-        var targetUri = encodeURIComponent($location.absUrl().replace("/login","/"));
+        var uri,
+            target;
+        if ($location.absUrl().indexOf('/login/' + provider.namespace) !== -1) {
+            uri = $location.absUrl().replace("/login/" + provider.namespace,"/oauth/" + provider.namespace);
+            target = $location.absUrl().replace("/login/" + provider.namespace,"/");
+        } else {
+            uri = $location.absUrl().replace("/login", "/oauth/" + provider.namespace);
+            target = $location.absUrl().replace("/login","/");
+        }
+        
+        var callbackUrl = encodeURIComponent(uri);
+        var targetUri = encodeURIComponent(target);
         
         Authentication.setProvider(provider.namespace);
         Atlas.startOauthAuthentication(provider, callbackUrl, targetUri).then(function(login_url) {
