@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
      <!--[if lte IE 9]>
         <script>
-             window.location.href = "unsupported.html";        
+             window.location.href = "unsupported.html";
         </script>
       <![endif]-->
   <title>Atlas Administration - {{title}}</title>
@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="css/bootstrap-social.css"/>
   <link rel="stylesheet" href="css/app.css"/>
 </head>
-    
+
 <body>
     <div ng-sparkline></div>
     <nav class="navbar navbar-default .navbar-fixed-top" role="navigation"  ng-cloak>
@@ -25,11 +25,11 @@
            <span class="icon-bar"></span>
            <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#"><img src="img/atlas_admin_logo.png" alt="Atlas Admin logo" /></a>
+        <a class="navbar-brand" href="#"><img src="img/atlas_logo.png" alt="Atlas Admin logo" /></a>
     </div>
     <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'" ng-controller="UserMenuController"  ng-cloak>
          <ul ng-show="status.loggedIn && !show.load" class="nav navbar-nav">
-             <li ng-repeat="item in app.menu"> 
+             <li ng-repeat="item in app.menu">
                  <a ng-href="#{{item.path}}" active-path="active-menu-item">{{item.label}}</a>
              </li>
          </ul>
@@ -44,7 +44,7 @@
          </ul>
     </div>
 </nav>
-    
+
     <div class="container loading"  ng-show="show.load" us-spinner="{radius:60, length:40}" ng-cloak>
     </div>
     <div class="container" ng-cloak ng-show="!show.load">
@@ -52,11 +52,11 @@
     <div class="row">
       <div class="col-md-6"></div>
       <div class="col-md-6">
-          
-          
+
+
       </div>
     </div>
-    
+
      <div class="container" ng-view></div>
   </div>
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js"></script>
@@ -67,11 +67,11 @@
   <script src="js/app.js"></script>
   <script src="js/services/auth.js"></script>
   <script src="js/services/atlas.js"></script>
-  <script src="js/services/users.js"></script> 
-  <script src="js/services/applications.js"></script>  
-  <script src="js/services/sources.js"></script>  
+  <script src="js/services/users.js"></script>
+  <script src="js/services/applications.js"></script>
+  <script src="js/services/sources.js"></script>
   <script src="js/services/sourceRequests.js"></script>
-  <script src="js/services/sourceLicenses.js"></script> 
+  <script src="js/services/sourceLicenses.js"></script>
   <script src="js/services/userVideoSources.js"></script>
   <script src="js/services/userVideoSourcesYouTube.js"></script>
   <script src="js/controllers/errors.js"></script>
@@ -79,9 +79,9 @@
   <script src="js/controllers/sources.js"></script>
   <script src="js/controllers/sourceRequests.js"></script>
   <script src="js/controllers/applications.js"></script>
-  <script src="js/controllers/userProfile.js"></script> 
-  <script src="js/controllers/userVideoSources.js"></script> 
-  <script src="js/controllers/userVideoSourcesYouTube.js"></script> 
+  <script src="js/controllers/userProfile.js"></script>
+  <script src="js/controllers/userVideoSources.js"></script>
+  <script src="js/controllers/userVideoSourcesYouTube.js"></script>
   <script src="js/filters.js"></script>
   <script src="js/directives/orderable.js"></script>
   <script src="js/directives/focus.js"></script>
