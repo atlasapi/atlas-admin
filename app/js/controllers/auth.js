@@ -20,9 +20,9 @@ app.controller('CtrlLogin', function($scope, $rootScope, $routeParams, Atlas, at
         }
         $scope.providers = providers;
         
-        if ($routeParams.namespace) {
-            $rootScope.startAuth($scope.providers.filter(function (item) {
-                return item.namespace === $routeParams.namespace;
+        if ($routeParams.providerNamespace) {
+            $rootScope.startAuth($scope.providers.filter(function (provider) {
+                return provider.namespace === $routeParams.providerNamespace;
             })[0]);
         }
     });
@@ -49,7 +49,7 @@ app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location
         return;
     }
     $rootScope.title = "Authenticating.....";
-    Authentication.setProvider($routeParams.provider);
+    Authentication.setProvider($routeParams.providerNamespace);
     var oauth_token = "";
     var oauth_verifier = "";
     var code = "";
