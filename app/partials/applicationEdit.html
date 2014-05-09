@@ -30,8 +30,8 @@
         <input type="text" class="form-control" id="appApiKey" ng-model="app.application.credentials.apiKey" ng-readonly="true">
     </div>
     <div class="col-sm-2">
-        <button type="button" class="btn btn-danger pull-right" ng-show="app.application.revoked == 'false'" ng-click="revokeApplication()">Revoke key</button>
-        <button type="button" class="btn btn-danger pull-right" ng-show="app.application.revoked == 'true'" ng-click="unRevokeApplication()">Unrevoke key</button>
+        <button type="button" class="btn btn-danger pull-right" ng-show="app.application.revoked === false" ng-click="revokeApplication()">Revoke key</button>
+        <button type="button" class="btn btn-danger pull-right" ng-show="app.application.revoked === true" ng-click="unRevokeApplication()">Unrevoke key</button>
     </div>
   </div>
 
@@ -45,24 +45,23 @@
                   <p>Hint: If you have access to Press Association data, you probably want it at the top.</p>
                 </div>
                 <div class="col-sm-3 pull-right">
-                    <button type="button" class="btn btn-danger pull-right" ng-show="app.application.sources.precedence=='false'" ng-click="enablePrecedence()">Enable Matching</button>
-                    <button type="button" class="btn btn-success pull-right" ng-show="app.application.sources.precedence=='true'" ng-click="disablePrecedence()">Disable Matching</button>
+                    <button type="button" class="btn btn-danger pull-right" ng-show="app.application.sources.precedence === false" ng-click="enablePrecedence()">Enable Matching</button>
+                    <button type="button" class="btn btn-success pull-right" ng-show="app.application.sources.precedence === true" ng-click="disablePrecedence()">Disable Matching</button>
                 </div>
 
              </div>
          </div>
 
          <div class="panel panel-default">
-             <div class="panel-heading">Enabled <span ng-show="app.application.sources.precedence=='true'">(Drag and drop sources to rearrange precedence ordering)</span></div>
+             <div class="panel-heading">Enabled <span ng-show="app.application.sources.precedence === true">(Drag and drop sources to rearrange precedence ordering)</span></div>
              <ul class="list-group" sortable-list>
-
-                <li class="list-group-item source-item-entry" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:'true'" orderable id="source-{{source.id}}" ng-show="app.application.sources.precedence=='true'">
-                   <span ng-show="app.application.sources.precedence=='true'" class="box-shadow-menu"></span>
+                <li class="list-group-item source-item-entry" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:true" orderable id="source-{{source.id}}" ng-show="app.application.sources.precedence === true">
+                   <span ng-show="app.application.sources.precedence === true" class="box-shadow-menu"></span>
                      {{source.title}}
                     <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.disableSource(source)">Disable</button> <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.viewTerms(source)">View Terms</button>
                 </li>
 
-                <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:'true'" id="source-{{source.id}}" ng-show="app.application.sources.precedence=='false'">
+                <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:true" id="source-{{source.id}}" ng-show="app.application.sources.precedence === false">
                     {{source.title}}
                    <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.viewTerms(source)">View Terms</button> <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.disableSource(source)">Disable</button>
                 </li>
@@ -72,7 +71,7 @@
          <div class="panel panel-default">
              <div class="panel-heading">Available</div>
              <ul class="list-group">
-                 <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:'false'">
+                 <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:false">
                     {{source.title}}
                     <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.enableSource(source)">Enable</button>
                  </li>

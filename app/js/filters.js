@@ -31,7 +31,7 @@ angular.module('atlasAdmin.filters', []).
             }
         }
         return output;
-    }    
+    }
 })
 .filter('sourceEnabled', function() {
     return function(input, isEnabled) {
@@ -42,5 +42,5 @@ angular.module('atlasAdmin.filters', []).
             }
         }
         return output;
-    }    
+    }
 });
