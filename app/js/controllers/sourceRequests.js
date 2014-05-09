@@ -31,7 +31,7 @@ app.controller('CtrlRequests', function($scope, $rootScope, $routeParams, Source
     $scope.approveRequest = function(request) {
         SourceRequests.approve(request.id)
         .then(function() {
-                request.approved = 'true';
+                request.approved = true;
             },
             function() {
                 $scope.errorMessage = 'Sorry the request could not be approved due to an error';
