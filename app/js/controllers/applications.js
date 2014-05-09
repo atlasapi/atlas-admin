@@ -34,7 +34,8 @@ app.controller('CtrlApplications', function($scope, $rootScope, $routeParams, Ap
         return application.title.toLowerCase().indexOf($scope.query.toLowerCase()) !== -1
         || ($scope.query.length > 10 && application.credentials.apiKey.toLowerCase().indexOf($scope.query.toLowerCase()) !== -1);
     };
-  });
+});
+
 app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams, Applications, Sources, SourceLicenses, $modal, $sce, $log) {
     $scope.app = {};
     $scope.app.edited = {};
@@ -72,7 +73,7 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
         var reads = [];
         for (var i in $scope.app.application.sources.reads) {
             var readEntry = $scope.app.application.sources.reads[i];
-            if (readEntry.id == source.id) {
+            if (readEntry.id === source.id) {
                 readEntry.enabled = false;
             }
             reads.push(readEntry);
@@ -158,7 +159,7 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
                     $scope.errorMessage = 'Sorry, there was an error and your changes could not be saved';
                 });
             }
-        } else if ($scope.app.edited.precedenceState && !$scope.app.application.sources.precedence) {
+        } else if ($scope.app.edited.precedenceState && !!$scope.app.application.sources.precedence) {
             // precedence has been disabled
             Applications.deletePrecedence($scope.app.application.id).then(function() {
                 $scope.successMessage = 'Changes saved';
@@ -179,7 +180,12 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
                 $scope.errorMessage = 'Sorry, there was an error and your changes could not be saved';
             });
         }
-        $scope.app.edited = {'meta':false,'precedenceState':false,'precedenceOrder':false};
+
+        $scope.app.edited = {
+            'meta': false,
+            'precedenceState': false,
+            'precedenceOrder':false
+        };
     };
 
     $scope.app.viewTerms = function (source) {
