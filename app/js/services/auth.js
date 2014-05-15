@@ -92,9 +92,9 @@ app.factory('ProfileCompleteInterceptor', function (ProfileStatus, $location, $q
                     return response;
                 }
 
-                if (url.indexOf('partials/request') !== -1 ||
+                if ((url.indexOf('partials/request') !== -1 ||
                     url.indexOf('partials/source') !== -1 ||
-                    url.indexOf('partials/application') !== -1) {
+                    url.indexOf('partials/application') !== -1) && !ProfileStatus.isProfileComplete()) {
 
                     $location.path('/terms');
 
