@@ -37,7 +37,7 @@ app.factory('Authentication', function ($rootScope, ProfileStatus) {
 
             $rootScope.status.loggedIn = true;
 
-            if (url.indexOf('?') != -1) {
+            if (url.indexOf('?') !== -1) {
                 return url + '&' + oauthParams;
             }
             else {
@@ -55,18 +55,18 @@ app.factory('AuthenticationInterceptor', function ($q, $location, $window, atlas
                  if ($rootScope.autologout) {
                      $timeout.cancel($rootScope.autologout);
                  }
-                 $rootScope.autologout = $timeout(function() {
+                 $rootScope.autologout = $timeout(function () {
                      $location.path('/logout');
                  }, 20 * 60 * 1000);
                  return response;
             },
             function (response) {
                 // if no auth token then need to make an access request to atlas
-                if (response.config.url.indexOf(atlasHost)!= -1 && response.status == 400) {
+                if (response.config.url.indexOf(atlasHost) !== -1 && response.status === 400) {
                     $log.info('Not logged in');
                     $location.path('/login');
                 }
-                if (response.config.url.indexOf(atlasHost)!= -1 && response.status == 403) {
+                if (response.config.url.indexOf(atlasHost) !== -1 && response.status === 403) {
                     $window.location.href = '#/error?type=forbidden';
                 }
                 return $q.reject(response);
@@ -86,15 +86,16 @@ app.factory('ProfileCompleteInterceptor', function (ProfileStatus, $location, $q
                     return response;
                 }
 
-                if (ProfileStatus.isProfileComplete()
-                    || response.status === 400
-                    || response.config.url.indexOf('/auth/') !== -1) {
+                if (ProfileStatus.isProfileComplete() ||
+                    response.status === 400 ||
+                    response.config.url.indexOf('/auth/') !== -1) {
                     return response;
                 }
 
-                if (url.indexOf('partials/request') !== -1
-                    || url.indexOf('partials/source') !== -1
-                    || url.indexOf('partials/application') !== -1) {
+                if (url.indexOf('partials/request') !== -1 ||
+                    url.indexOf('partials/source') !== -1 ||
+                    url.indexOf('partials/application') !== -1) {
+
                     $location.path('/terms');
 
                     return $q.reject(response);
