@@ -159,7 +159,7 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
                     $scope.errorMessage = 'Sorry, there was an error and your changes could not be saved';
                 });
             }
-        } else if ($scope.app.edited.precedenceState && !!$scope.app.application.sources.precedence) {
+        } else if ($scope.app.edited.precedenceState && !$scope.app.application.sources.precedence) {
             // precedence has been disabled
             Applications.deletePrecedence($scope.app.application.id).then(function() {
                 $scope.successMessage = 'Changes saved';
