@@ -92,13 +92,14 @@ app.factory('ProfileCompleteInterceptor', function (ProfileStatus, $location, $q
                     return response;
                 }
 
-                if ((url.indexOf('partials/request') !== -1 ||
+                if (url.indexOf('partials/request') !== -1 ||
                     url.indexOf('partials/source') !== -1 ||
-                    url.indexOf('partials/application') !== -1) && !ProfileStatus.isProfileComplete()) {
+                    url.indexOf('partials/application') !== -1) {
 
-                    $location.path('/terms');
-
-                    return $q.reject(response);
+                    if (!ProfileStatus.isProfileComplete()) {
+                        $location.path('/terms');
+                        return $q.reject(response);
+                    }
                 }
 
                 return response;
