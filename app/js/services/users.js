@@ -8,8 +8,8 @@ app.factory('Users', function(Atlas, $rootScope, ProfileStatus, $log) {
         currentUser: function() {
             return Atlas.getRequest('/auth/user.json').then(function(result) {
                 if (result.data.user) {
-                    if (result.data.user.license_accepted && result.data.user.profile_complete === true) {
-                        ProfileStatus.setComplete(true);
+                    if (result.data.user.license_accepted) {
+                        ProfileStatus.setComplete(result.data.user.profile_complete);
                     }
                     return result.data.user;
                 }
