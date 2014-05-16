@@ -27,9 +27,9 @@ app.factory('Authentication', function ($rootScope, ProfileStatus) {
             $rootScope.status.loggedIn = false;
         },
         appendTokenToUrl: function (url) {
-            var provider = localStorage.getItem('auth.provider'),
-                token = localStorage.getItem('auth.token'),
-                oauthParams = 'oauth_provider=' + provider + '&oauth_token=' + token;
+            var provider = localStorage.getItem('auth.provider');
+            var token = localStorage.getItem('auth.token');
+            var oauthParams = 'oauth_provider=' + provider + '&oauth_token=' + token;
 
             if (!token) {
                 return url;
