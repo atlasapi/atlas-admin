@@ -17,7 +17,7 @@ app.directive('orderable', function () {
                 function (e) {
                     e.dataTransfer.effectAllowed = 'move';
                     e.dataTransfer.setData('Text', this.id);
-                    this.setAttribute("data-y", e.pageY);
+                    this.setAttribute('data-y', e.pageY);
                     this.classList.add('drag');
                     return false;
                 },
