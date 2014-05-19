@@ -226,6 +226,9 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
             return;
         });
     }, true);
+
+    // @TODO: if the user changes the model back to the way how it was
+    // before the UI was touched, `app.changed` should be `false`
 });
 
 function SourceRequestFormModalCtrl($scope, $modalInstance, Applications, SourceRequests, $log) {
