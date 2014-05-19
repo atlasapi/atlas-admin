@@ -44,14 +44,15 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
     $scope.app.changed = false;
 
     var leavingPageText = 'You have unsaved changes!';
+
     window.onbeforeunload = function(){
-        if ($scope.app.changed()) {
+        if ($scope.app.changed) {
             return leavingPageText;
         }
     };
 
     $scope.$on('$locationChangeStart', function(event, next, current) {
-        if($scope.app.changed() && !confirm(leavingPageText + '\n\nAre you sure you want to leave this page?')) {
+        if ($scope.app.changed && !confirm(leavingPageText + '\n\nAre you sure you want to leave this page?')) {
             event.preventDefault();
         }
     });
