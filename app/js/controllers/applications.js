@@ -37,9 +37,11 @@ app.controller('CtrlApplications', function($scope, $rootScope, $routeParams, Ap
 });
 
 app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams, Applications, Sources, SourceLicenses, $modal, $sce, $log) {
+
     $scope.app = {};
     $scope.app.edited = {};
     $scope.app.edited = {'meta':false,'precedenceState':false,'precedenceOrder':false};
+    $scope.app.changed = false;
 
     var leavingPageText = 'You have unsaved changes!';
     window.onbeforeunload = function(){
@@ -62,12 +64,6 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
 
        $rootScope.title = 'Edit application';
     });
-
-    $scope.app.changed = function() {
-       return $scope.app.edited.meta
-           || $scope.app.edited.precedenceState
-           || $scope.app.edited.precedenceOrder;
-    };
 
     $scope.app.disableSource = function(source) {
         var reads = [];
@@ -159,7 +155,7 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
                     $scope.errorMessage = 'Sorry, there was an error and your changes could not be saved';
                 });
             }
-        } else if ($scope.app.edited.precedenceState && !!$scope.app.application.sources.precedence) {
+        } else if ($scope.app.edited.precedenceState && !$scope.app.application.sources.precedence) {
             // precedence has been disabled
             Applications.deletePrecedence($scope.app.application.id).then(function() {
                 $scope.successMessage = 'Changes saved';
@@ -184,7 +180,7 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
         $scope.app.edited = {
             'meta': false,
             'precedenceState': false,
-            'precedenceOrder':false
+            'precedenceOrder': false
         };
     };
 
@@ -211,7 +207,30 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
             scope: $scope
         });
     };
+
+    // listen for an event from the orderable list
+    // to tell us when it has been updated, and then
+    // run the digest
+    $scope.$on('precedenceOrder', function () {
+        $scope.app.edited.precedenceOrder = true;
+        $scope.$digest();
+    });
+
+    // deep-watch `app.edited` for changes so that we can reveal
+    // the save button when something has changed
+    $scope.$watch('app.edited', function (newVal) {
+        angular.forEach(newVal, function (val) {
+            if (val) {
+                $scope.app.changed = true;
+            }
+            return;
+        });
+    }, true);
+
+    // @TODO: if the user changes the model back to the way how it was
+    // before the UI was touched, `app.changed` should be `false`
 });
+
 function SourceRequestFormModalCtrl($scope, $modalInstance, Applications, SourceRequests, $log) {
     $scope.item = {};
     $scope.item.invalid = true;
