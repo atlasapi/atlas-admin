@@ -182,6 +182,8 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
             'precedenceState': false,
             'precedenceOrder': false
         };
+
+        $scope.app.changed = false;
     };
 
     $scope.app.viewTerms = function (source) {
