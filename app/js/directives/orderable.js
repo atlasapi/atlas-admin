@@ -111,8 +111,11 @@ app.directive('orderable', function () {
                         }
                     }
 
-                    scope.app.edited.precedenceOrder = true;
                     scope.app.application.sources.reads = reads;
+
+                    // we've updated the precedence order, so tell
+                    // the controller about that
+                    scope.$emit('precedenceOrder');
 
                     return false;
                 },
