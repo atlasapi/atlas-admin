@@ -1,0 +1,17 @@
+// styles for blank slate screens
+.blank-slate {
+	color: #e61f84;
+	padding: 5rem 0 0;
+	text-align: center;
+
+	.no-apps-message {
+		margin: 0 0 .5em;
+		font-size: 3.5rem;
+	}
+
+	.create-link {
+		font-size: 2.5rem;
+		text-decoration: underline;
+		cursor: pointer;
+	}
+}

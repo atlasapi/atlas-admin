@@ -14,6 +14,11 @@ app.controller('CtrlApplications', function($scope, $rootScope, $routeParams, Ap
         $scope.app.applications = applications;
     });
 
+    $scope.state = { 
+        blankSlate: 'partials/blankSlate.html', 
+        appsTable: 'partials/applicationsTable.html'
+    };
+
     $scope.createApplication = function() {
         var modalInstance = $modal.open({
             templateUrl: 'partials/newApplicationModal.html',
