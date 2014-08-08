@@ -1,5 +1,9 @@
 'use strict';
 
+// this might be a bad idea...
+angular.module('atlasAdminConfig', [])
+    .value('atlasHost','//stage.atlas.metabroadcast.com')
+    .value('atlasVersion', '4');
 
 // Declare app level module which depends on filters, and services
 var app = angular.module('atlasAdmin', [

@@ -42,7 +42,6 @@ app.controller('CtrlApplications', function($scope, $rootScope, $routeParams, Ap
 });
 
 app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams, Applications, Sources, SourceLicenses, $modal, $sce, $log) {
-
     $scope.app = {};
     $scope.app.edited = {};
     $scope.app.edited = {'meta':false,'precedenceState':false,'precedenceOrder':false};
@@ -50,7 +49,7 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
 
     var leavingPageText = 'You have unsaved changes!';
 
-    window.onbeforeunload = function(){
+    window.onbeforeunload = function() {
         if ($scope.app.changed) {
             return leavingPageText;
         }
