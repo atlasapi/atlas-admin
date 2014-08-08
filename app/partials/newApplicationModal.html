@@ -1,6 +1,6 @@
 <div id="addApplication">
     <div class="modal-header">
-        <h3>Create new application</h3>
+        <h1>Create new application</h1>
     </div>
     <div class="modal-body">
          <form name="sourceRequestForm">
@@ -8,10 +8,28 @@
                 <label for="title">Application title</label>
                 <input type="text" name="appTitle" class="form-control" ng-model="app.title" ng-minlength="3" ng-required="true" focus-me>
             </div>
+            <div class="form-group">
+                {{app.$valid}}
+                <span class="validation-msg" ng-show="app.url.$dirty">You must enter a valid url</span>
+                <label for="appUrl">Application URL</label>
+                <input type="url" name="appUrl" placeholder="http://" class="form-control" ng-model="app.url" ng-minlength="3" required="true">
+            </div>
+            <div class="form-group">
+                <label for="appDescription">Application description</label>
+                <textarea name="appDescription" class="form-control" ng-model="app.description" ng-minlength="3"></textarea>
+            </div>
+            <div class="form-group">
+                <h2 class="form-heading">Which data sources will your application use?</h2>
+                <span class="form-label"><input type="radio" name="sourceUk" id="sourceUk" ng-model="app.sources" ng-change="termsToggle()" value="uk"><label class="inline-label" for="sourceUk">Simple UK listings data</label></span>
+                <span class="form-label"><input type="radio" name="sourceAll" id="sourceAll" ng-model="app.sources" ng-change="termsToggle()" value="all"><label class="inline-label" for="sourceAll">All listings data</label></span>
+                <div class="terms-box" ng-show="app.terms">            
+                    <label for="acceptTerms"><input type="checkbox" name="acceptUKTerms" id="acceptTerms" ng-model="app.acceptTerms"> Do you agree to the <a href="">BBC</a> and <a href="">UK Channel Lineup</a> terms and conditions.</p></label> 
+                </div>
+            </div>
          </form>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-primary" ng-disabled="!sourceRequestForm.appTitle.$valid || app.wait" ng-click="ok()">Create</button>
-        <button class="btn btn-warning" ng-disabled="app.wait" ng-click="cancel()">Cancel</button>
+        <button class="btn btn-primary" ng-disabled="app.wait" ng-click="ok()">Create</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
     </div>
 </div> 

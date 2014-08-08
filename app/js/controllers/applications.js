@@ -19,13 +19,13 @@ app.controller('CtrlApplications', function($scope, $rootScope, $routeParams, Ap
         appsTable: 'partials/applicationsTable.html'
     };
 
+    // instantiate a new modal window
     $scope.createApplication = function() {
         var modalInstance = $modal.open({
             templateUrl: 'partials/newApplicationModal.html',
-            controller: CreateApplicationFormModalCtrl,
+            controller: 'CreateApplicationFormModalCtrl',
             scope: $scope
         });
-
         modalInstance.result.then(function (application) {
             $location.path('/applications/' + application.id);
         });
@@ -276,13 +276,20 @@ function SourceRequestFormModalCtrl($scope, $modalInstance, Applications, Source
     };
 }
 
-function CreateApplicationFormModalCtrl($scope, $modalInstance, Applications) {
+// @controller CreateApplicationFormModalCtrl
+//  
+app.controller('CreateApplicationFormModalCtrl', ['$scope', '$modalInstance', 'Applications', 
+    function ($scope, $modalInstance, Applications) {
     $scope.app = {};
-    $scope.app.title = '';
-    $scope.app.wait = false;
+    $scope.app.terms = false;
 
+    // determine whether to show terms for this source
+    $scope.termsToggle = function() {
+        $scope.app.terms = 'uk' === $scope.app.sources ? true : false;
+    }
+
+    // submit the create app form
     $scope.ok = function () {
-        $scope.app.wait = true;
         Applications.create($scope.app.title)
             .then(function(result) {
                 if (result.data.application.id) {
@@ -291,10 +298,11 @@ function CreateApplicationFormModalCtrl($scope, $modalInstance, Applications) {
             });
     };
 
+    // cancel and close modal
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
     };
-}
+}]);
 
 function ViewTermsCtrl ($scope, $modalInstance, Applications, SourceRequests, $log) {
     $scope.close = function () {
