@@ -12,12 +12,8 @@ app.controller('CtrlApplications', function($scope, $rootScope, $routeParams, Ap
 
     Applications.all().then(function(applications) {
         $scope.app.applications = applications;
+        $scope.state = (applications.length !== -1) ? 'table' : 'blank';
     });
-
-    $scope.state = { 
-        blankSlate: 'partials/blankSlate.html', 
-        appsTable: 'partials/applicationsTable.html'
-    };
 
     // instantiate a new modal window
     $scope.createApplication = function() {
@@ -27,7 +23,7 @@ app.controller('CtrlApplications', function($scope, $rootScope, $routeParams, Ap
             scope: $scope
         });
         modalInstance.result.then(function (application) {
-            $location.path('/applications/' + application.id);
+            if ( 'all' === application.source ) $location.path('/applications/' + application.id);
         });
     };
 
@@ -238,7 +234,8 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
     // before the UI was touched, `app.changed` should be `false`
 });
 
-function SourceRequestFormModalCtrl($scope, $modalInstance, Applications, SourceRequests, $log) {
+app.controller('SourceRequestFormModalCtrl', ['$scope', '$modalInstance', 'Applications', 'SourceRequests', '$log',
+    function($scope, $modalInstance, Applications, SourceRequests, $log) {
     $scope.item = {};
     $scope.item.invalid = true;
     $scope.app.sourceRequest.usageTypes = [
@@ -273,13 +270,13 @@ function SourceRequestFormModalCtrl($scope, $modalInstance, Applications, Source
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
     };
-}
+}]);
 
-// @controller CreateApplicationFormModalCtrl
-//  
+/**
+ * @controller CreateApplicationFormModalCtrl
+ */  
 app.controller('CreateApplicationFormModalCtrl', ['$scope', '$modalInstance', 'Applications', 
     function ($scope, $modalInstance, Applications) {
-    $scope.app = {};
     $scope.app.terms = false;
 
     // determine whether to show terms for this source
@@ -288,10 +285,11 @@ app.controller('CreateApplicationFormModalCtrl', ['$scope', '$modalInstance', 'A
     }
 
     // submit the create app form
-    $scope.ok = function () {
+    $scope.ok = function() {
         Applications.create($scope.app.title)
             .then(function(result) {
                 if (result.data.application.id) {
+                    result.data.application.source = $scope.app.sources;
                     $modalInstance.close(result.data.application);
                 }
             });

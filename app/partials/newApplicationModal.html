@@ -3,16 +3,14 @@
         <h1>Create new application</h1>
     </div>
     <div class="modal-body">
-         <form name="sourceRequestForm">
+         <form name="sourceRequestForm" ng-submit="sourceRequestForm.$valid && ok()">
             <div class="form-group">
                 <label for="title">Application title</label>
                 <input type="text" name="appTitle" class="form-control" ng-model="app.title" ng-minlength="3" ng-required="true" focus-me>
             </div>
             <div class="form-group">
-                {{app.$valid}}
-                <span class="validation-msg" ng-show="app.url.$dirty">You must enter a valid url</span>
                 <label for="appUrl">Application URL</label>
-                <input type="url" name="appUrl" placeholder="http://" class="form-control" ng-model="app.url" ng-minlength="3" required="true">
+                <input type="url" name="appUrl" class="form-control" ng-model="app.url" required="true">
             </div>
             <div class="form-group">
                 <label for="appDescription">Application description</label>
@@ -20,16 +18,20 @@
             </div>
             <div class="form-group">
                 <h2 class="form-heading">Which data sources will your application use?</h2>
-                <span class="form-label"><input type="radio" name="sourceUk" id="sourceUk" ng-model="app.sources" ng-change="termsToggle()" value="uk"><label class="inline-label" for="sourceUk">Simple UK listings data</label></span>
-                <span class="form-label"><input type="radio" name="sourceAll" id="sourceAll" ng-model="app.sources" ng-change="termsToggle()" value="all"><label class="inline-label" for="sourceAll">All listings data</label></span>
-                <div class="terms-box" ng-show="app.terms">            
-                    <label for="acceptTerms"><input type="checkbox" name="acceptUKTerms" id="acceptTerms" ng-model="app.acceptTerms"> Do you agree to the <a href="">BBC</a> and <a href="">UK Channel Lineup</a> terms and conditions.</p></label> 
+                <span class="form-label">
+                    <input type="radio" name="source" id="sourceUk" ng-model="app.sources" ng-change="termsToggle()" value="uk" ng-required="true">
+                    <label class="inline-label" for="source">Simple UK listings data</label>
+                </span>
+                <span class="form-label">
+                    <input type="radio" name="source" id="sourceAll" ng-model="app.sources" ng-change="termsToggle()" value="all" ng-required="true">
+                    <label class="inline-label" for="source">All listings data</label>
+                </span>
+                <div class="terms-box" ng-show="app.terms">
+                    <label><input type="checkbox" name="acceptUKTerms" id="acceptTerms" ng-model="app.acceptTerms" ng-required="app.sources=='uk'">Do you agree to the <a href="http://www.bbc.co.uk/terms/" target="_blank">BBC</a> and <a href="">UK Channel Lineup</a> terms and conditions? Please read carefully. - These may contain information about payments you will have to make</p></label> 
                 </div>
             </div>
+            <button type="submit" class="btn btn-primary" ng-disabled="app.wait">Create</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
          </form>
-    </div>
-    <div class="modal-footer">
-        <button class="btn btn-primary" ng-disabled="app.wait" ng-click="ok()">Create</button>
-        <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
     </div>
 </div> 
