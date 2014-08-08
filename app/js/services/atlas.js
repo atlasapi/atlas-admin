@@ -28,6 +28,7 @@ app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $
             return $http.get(url).then(function(result) {
                 return result.data.oauth_request.login_url;
             }, function(error) {
+                console.error(error);
                 return error;
             });
         },
