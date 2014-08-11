@@ -27,7 +27,7 @@ app.controller('CtrlApplications', function($scope, $rootScope, $routeParams, Ap
             controller: 'CreateApplicationFormModalCtrl',
             scope: $scope
         });
-        modalInstance.result.then(function (application) {
+        modalInstance.result.then(function(application) {
             // if all sources are selected, go to edit page
             if ( 'all' === application.source ) { 
                 $location.path('/applications/' + application.id);
@@ -127,7 +127,7 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
             scope: $scope
         });
 
-        modalInstance.result.then(function () {
+        modalInstance.result.then(function() {
             Applications.get($scope.app.application.id).then(function(application) {
                 $scope.app.application = application;
             });
@@ -184,6 +184,7 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
             for (var i in $scope.app.application.sources.reads) {
                 sourceIdOrder.push($scope.app.application.sources.reads[i].id);
             }
+            console.log(sourceIdOrder);
             Applications.setPrecedence($scope.app.application.id, sourceIdOrder).then(function() {
                 $scope.successMessage = 'Changes saved';
             },
@@ -201,10 +202,10 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
         $scope.app.changed = false;
     };
 
-    $scope.app.viewTerms = function (source) {
+    $scope.app.viewTerms = function(source) {
         // Source Licence is a API name and a T&Cs
         // get a source
-        SourceLicenses.get(source.id).then(function (data) {
+        SourceLicenses.get(source.id).then(function(data) {
             // not all sources have licenses
             if (data && data.license) {
                 // $scope.app.license should be templated
@@ -214,7 +215,7 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
                 $scope.app.license = $sce.trustAsHtml('Please contact us for more details regarding access and pricing for this source.');
             }
         },
-        function (error) {
+        function(error) {
             $log.error(error);
         });
 
@@ -228,15 +229,15 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
     // listen for an event from the orderable list
     // to tell us when it has been updated, and then
     // run the digest
-    $scope.$on('precedenceOrder', function () {
+    $scope.$on('precedenceOrder', function() {
         $scope.app.edited.precedenceOrder = true;
         $scope.$digest();
     });
 
     // deep-watch `app.edited` for changes so that we can reveal
     // the save button when something has changed
-    $scope.$watch('app.edited', function (newVal) {
-        angular.forEach(newVal, function (val) {
+    $scope.$watch('app.edited', function(newVal) {
+        angular.forEach(newVal, function(val) {
             if (val) {
                 $scope.app.changed = true;
             }
@@ -266,7 +267,7 @@ app.controller('SourceRequestFormModalCtrl', ['$scope', '$modalInstance', 'Appli
     $scope.app.sourceRequest.applicationUrl = '';
     $scope.app.sourceRequest.usageType = 'invalid'; //default value for usage type
     $scope.app.wait = false;
-    $scope.ok = function () {
+    $scope.ok = function() {
         $scope.app.wait = true;
         SourceRequests.send(
             $scope.app.sourceRequest.source.id,
@@ -285,7 +286,7 @@ app.controller('SourceRequestFormModalCtrl', ['$scope', '$modalInstance', 'Appli
         });
     };
 
-    $scope.cancel = function () {
+    $scope.cancel = function() {
         $modalInstance.dismiss('cancel');
     };
 }]);
@@ -295,19 +296,35 @@ app.controller('SourceRequestFormModalCtrl', ['$scope', '$modalInstance', 'Appli
  * @controller CreateApplicationFormModalCtrl
  */  
 app.controller('CreateApplicationFormModalCtrl', ['$scope', '$modalInstance', 'Applications', 
-    function ($scope, $modalInstance, Applications) {
+    function($scope, $modalInstance, Applications) {
     $scope.app.terms = false;
 
-    // determine whether to show terms for this source
+    // determine whether to show terms for this preset
     $scope.termsToggle = function() {
-        $scope.app.terms = 'uk' === $scope.app.sources ? true : false;
+        $scope.app.terms = 'uk' === $scope.app.preset ? true : false;
     }
 
     // submit the create app form
     $scope.ok = function() {
-        Applications.create($scope.app.title)
+        var app_title       = $scope.app.title,
+            app_description = $scope.app.description || '',
+            app_preset      = $scope.app.preset;
+
+        // save the app data
+        Applications.create(app_title, app_description)
             .then(function(result) {
                 if (result.data.application.id) {
+                    // enable matching on simple account
+                    if (app_preset === 'uk') {
+                        var sourceOrder = [];
+                        for (var source in result.data.application.sources.reads) {
+                            sourceOrder.push(result.data.application.sources.reads[source].id);
+                        }
+                        Applications.setPrecedence(result.data.application.id, sourceOrder).then(function() {
+                            console.log('set');
+                        });
+                    }
+                    // close modal and return data
                     result.data.application.source = $scope.app.sources;
                     $modalInstance.close(result.data.application);
                 }
@@ -315,13 +332,13 @@ app.controller('CreateApplicationFormModalCtrl', ['$scope', '$modalInstance', 'A
     };
 
     // cancel and close modal
-    $scope.cancel = function () {
+    $scope.cancel = function() {
         $modalInstance.dismiss('cancel');
     };
 }]);
 
-function ViewTermsCtrl ($scope, $modalInstance, Applications, SourceRequests, $log) {
-    $scope.close = function () {
+function ViewTermsCtrl($scope, $modalInstance, Applications, SourceRequests, $log) {
+    $scope.close = function() {
         $modalInstance.dismiss();
     };
 }
