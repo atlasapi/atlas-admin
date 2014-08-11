@@ -1,6 +1,10 @@
 'use strict';
 var app = angular.module('atlasAdmin.controllers.applications', []);
 
+
+/**
+ * @controller CtrlApplications
+ */
 app.controller('CtrlApplications', function($scope, $rootScope, $routeParams, Applications, $modal, $location) {
     $rootScope.title = 'Current Applications';
     $scope.app = {};
@@ -10,6 +14,7 @@ app.controller('CtrlApplications', function($scope, $rootScope, $routeParams, Ap
     $scope.app.pageSize = 10;
     $scope.app.currentPage = 1;
 
+    // retreive a list of all apps 
     Applications.all().then(function(applications) {
         $scope.app.applications = applications;
         $scope.state = (applications.length !== -1) ? 'table' : 'blank';
@@ -23,7 +28,12 @@ app.controller('CtrlApplications', function($scope, $rootScope, $routeParams, Ap
             scope: $scope
         });
         modalInstance.result.then(function (application) {
-            if ( 'all' === application.source ) $location.path('/applications/' + application.id);
+            // if all sources are selected, go to edit page
+            if ( 'all' === application.source ) { 
+                $location.path('/applications/' + application.id);
+            }else{
+                $scope.app.applications.push(application)
+            }
         });
     };
 
@@ -37,6 +47,10 @@ app.controller('CtrlApplications', function($scope, $rootScope, $routeParams, Ap
     };
 });
 
+
+/**
+ * @controller CtrlApplicationEdit
+ */
 app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams, Applications, Sources, SourceLicenses, $modal, $sce, $log) {
     $scope.app = {};
     $scope.app.edited = {};
@@ -234,6 +248,10 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
     // before the UI was touched, `app.changed` should be `false`
 });
 
+
+/**
+ * @controller SourceRequestFormModalCtrl
+ */
 app.controller('SourceRequestFormModalCtrl', ['$scope', '$modalInstance', 'Applications', 'SourceRequests', '$log',
     function($scope, $modalInstance, Applications, SourceRequests, $log) {
     $scope.item = {};
@@ -271,6 +289,7 @@ app.controller('SourceRequestFormModalCtrl', ['$scope', '$modalInstance', 'Appli
         $modalInstance.dismiss('cancel');
     };
 }]);
+
 
 /**
  * @controller CreateApplicationFormModalCtrl
