@@ -1,25 +1,24 @@
 'use strict';
 var app = angular.module('atlasAdmin.controllers.auth', []);
 
-app.controller('CtrlLogin', function($scope, $rootScope, $routeParams, Atlas, atlasVersion, $location, Authentication, $log) {
+app.controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routeParams, Atlas, atlasVersion, $location, Authentication, $log) {
+    // modify title element
+    var h2_el = angular.element($rootElement).find('h2');
+    var app_title = _.find(h2_el, function(el) {
+        return angular.element(el).hasClass('app-title');
+    });
+    angular.element(app_title).addClass('align-mid')
+    $rootScope.title = "Hi there, please sign in to continue";
     // Ask atlas for access here 
-    $rootScope.title = "Please log in";
     Authentication.reset();
     Atlas.getAuthProviders().then(function(results) {
         var providers = [];
         for (var i=0; i<results.length; i++) {
-            // handle any namespace to bootstrap social mappings here
-            // http://lipis.github.io/bootstrap-social/
             var provider = results[i];
-            if (provider.namespace == 'google') {
-                provider.icon = "google-plus";
-            } else {
-                provider.icon = provider.namespace;
-            }
+            provider.icon = (provider.namespace === 'google')? 'google-plus' : provider.namespace;
             providers.push(provider);
         }
         $scope.providers = providers;
-        
         if ($routeParams.providerNamespace) {
             $rootScope.startAuth($scope.providers.filter(function (provider) {
                 return provider.namespace === $routeParams.providerNamespace;
