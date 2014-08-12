@@ -1,17 +1,37 @@
 <div id="addApplication">
     <div class="modal-header">
-        <h3>Create new application</h3>
+        <h1>Create new application</h1>
     </div>
     <div class="modal-body">
-         <form name="sourceRequestForm">
+         <form name="sourceRequestForm" ng-submit="sourceRequestForm.$valid && ok()">
             <div class="form-group">
                 <label for="title">Application title</label>
                 <input type="text" name="appTitle" class="form-control" ng-model="app.title" ng-minlength="3" ng-required="true" focus-me>
             </div>
+            <div class="form-group">
+                <label for="appUrl">Application URL</label>
+                <input type="url" name="appUrl" class="form-control" ng-model="app.url" required="true" placeholder="http://www.myapp.com">
+            </div>
+            <div class="form-group">
+                <label for="appDescription">Application description</label>
+                <textarea name="appDescription" class="form-control" ng-model="app.description" ng-minlength="3"></textarea>
+            </div>
+            <div class="form-group">
+                <h2 class="form-heading">Which data sources will your application use?</h2>
+                <span class="form-label">
+                    <input type="radio" name="preset" id="presetUk" ng-model="app.preset" ng-change="termsToggle()" value="uk" ng-required="true">
+                    <label class="inline-label" for="presetUk">Simple UK listings data</label>
+                </span>
+                <span class="form-label">
+                    <input type="radio" name="preset" id="presetAll" ng-model="app.preset" ng-change="termsToggle()" value="all" ng-required="true">
+                    <label class="inline-label" for="presetAll">All listings data</label>
+                </span>
+                <div class="terms-box" ng-show="app.terms">
+                    <label><input type="checkbox" name="acceptUKTerms" id="acceptTerms" ng-model="app.acceptTerms" ng-required="app.sources=='uk'">Do you agree to the <a href="http://www.bbc.co.uk/terms/" target="_blank">BBC</a> and <a href="">UK Channel Lineup</a> terms and conditions? Please read carefully. - These may contain information about payments you will have to make</p></label> 
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary" ng-disabled="app.wait">Create</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
          </form>
-    </div>
-    <div class="modal-footer">
-        <button class="btn btn-primary" ng-disabled="!sourceRequestForm.appTitle.$valid || app.wait" ng-click="ok()">Create</button>
-        <button class="btn btn-warning" ng-disabled="app.wait" ng-click="cancel()">Cancel</button>
     </div>
 </div> 

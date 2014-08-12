@@ -1,0 +1,95 @@
+.navbar-brand {
+    padding-top: 5px !important;
+}
+
+.navbar-nav {
+    padding-top: 0.4em !important;
+    font-size: large;
+}
+
+.navbar-default .navbar-nav>li>a {
+    color: #444;   
+}
+
+.drag {
+}
+
+.source-item-entry {
+    cursor: pointer;
+}
+
+.btn-link {
+    color: #105B9C;
+}
+
+.btn-success {
+    background-color: #357235;   
+}
+
+.profile-picture {
+    height: 30px;
+    width: 30px;
+    margin-right: 10px;
+}
+
+input.ng-invalid {
+    border: 1px solid red;
+}
+
+input.ng-valid {
+    border: 1px solid green;
+}
+
+.navsmall {
+    font-size: small;   
+}
+
+.role-btn.active {
+    background-color: black;
+}
+
+.box-shadow-menu {
+  position: relative;
+  padding-left: 1.25em;
+}
+.box-shadow-menu:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.25em;
+  width: 1em;
+  height: 0.15em;
+  background: black;
+  box-shadow: 
+    0 0.25em 0 0 black,
+    0 0.45em 0 0 black;
+}
+
+.provider-logo {
+  float: left;
+}
+
+#termsAndConditions {
+  max-height: 400px;
+  overflow: scroll;
+}
+
+.loading {
+   padding-top: 300px;     
+}
+
+.btn-block {
+   margin-top: 5px;   
+}
+
+.active-menu-item {
+   color: #ff009a !important;   
+}
+
+.hide {
+   display: none;   
+}
+
+.align-mid {
+  text-align: center;
+}

@@ -15,20 +15,20 @@ app.factory('Applications', function (Atlas) {
                 return results.data.application;
             });
         },
-        create: function(title) {
-            var application = {
+        create: function(title, description) {
+            var data = {
                 'title': title,
-                'description': '',
+                'description': description,
                 'publisher': {
                     'key': 'metabroadcast.com',
                     'name': 'MetaBroadcast',
                     'country': 'ALL'
                 }
-            };
-            return Atlas.postRequest('/applications.json', application);
+            }
+            return Atlas.postRequest('/applications.json', data);
         },
-        update: function(application, callback) {
-            return Atlas.postRequest('/applications.json', application);
+        update: function(data, callback) {
+            return Atlas.postRequest('/applications.json', data);
         },
         setPrecedence: function(applicationId, sourceIdOrder) {
             var url = '/applications/' + applicationId + '/precedence';
@@ -39,10 +39,10 @@ app.factory('Applications', function (Atlas) {
             var url = '/applications/' + applicationId + '/precedence';
             return Atlas.deleteRequest(url);
         },
-        revokeApplication: function(application) {
-            application.revoked = true;
-            return Atlas.postRequest('/applications.json', application).then(function (results) {
-                return results.data.application;
+        revokeApplication: function(data) {
+            data.revoked = true;
+            return Atlas.postRequest('/applications.json', data).then(function (results) {
+                return results.data.data;
             });
         },
         unRevokeApplication: function(application) {
