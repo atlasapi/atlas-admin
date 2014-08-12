@@ -6,7 +6,7 @@ var app = angular.module('atlasAdmin.controllers.applications', []);
  * @controller CtrlApplications
  */
 app.controller('CtrlApplications', function($scope, $rootScope, $routeParams, Applications, $modal, $location) {
-    $rootScope.title = 'Current Applications';
+    $rootScope.title = '';
     $scope.app = {};
 
     $scope.app.predicate = 'created';
@@ -123,7 +123,7 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
         $scope.app.sourceRequest.applicationId = $scope.app.application.id;
         var modalInstance = $modal.open({
             templateUrl: 'partials/sourceRequestModal.html',
-            controller: SourceRequestFormModalCtrl,
+            controller: 'SourceRequestFormModalCtrl',
             scope: $scope
         });
 
@@ -184,7 +184,6 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
             for (var i in $scope.app.application.sources.reads) {
                 sourceIdOrder.push($scope.app.application.sources.reads[i].id);
             }
-            console.log(sourceIdOrder);
             Applications.setPrecedence($scope.app.application.id, sourceIdOrder).then(function() {
                 $scope.successMessage = 'Changes saved';
             },
@@ -253,8 +252,7 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
 /**
  * @controller SourceRequestFormModalCtrl
  */
-app.controller('SourceRequestFormModalCtrl', ['$scope', '$modalInstance', 'Applications', 'SourceRequests', '$log',
-    function($scope, $modalInstance, Applications, SourceRequests, $log) {
+app.controller('SourceRequestFormModalCtrl', function( $scope, $modalInstance, Applications, SourceRequests, $log ) {
     $scope.item = {};
     $scope.item.invalid = true;
     $scope.app.sourceRequest.usageTypes = [
@@ -289,7 +287,7 @@ app.controller('SourceRequestFormModalCtrl', ['$scope', '$modalInstance', 'Appli
     $scope.cancel = function() {
         $modalInstance.dismiss('cancel');
     };
-}]);
+});
 
 
 /**
