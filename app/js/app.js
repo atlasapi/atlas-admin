@@ -2,9 +2,9 @@
 
 // this might be a bad idea...
 // shim for fixing on task instances
-angular.module('atlasAdminConfig', [])
-    .value('atlasHost','//stage.atlas.metabroadcast.com')
-    .value('atlasVersion', '4');
+//angular.module('atlasAdminConfig', [])
+//    .value('atlasHost','//stage.atlas.metabroadcast.com')
+//    .value('atlasVersion', '4');
 // end shim
 
 // Declare app level module which depends on filters, and services
