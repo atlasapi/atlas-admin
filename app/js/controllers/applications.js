@@ -296,6 +296,9 @@ app.controller('SourceRequestFormModalCtrl', function( $scope, $modalInstance, A
 app.controller('CreateApplicationFormModalCtrl', ['$scope', '$modalInstance', 'Applications', 
     function($scope, $modalInstance, Applications) {
     $scope.app.terms = false;
+    $scope.app.title = '';
+    $scope.app.description = '';
+    $scope.app.preset = null;
 
     // determine whether to show terms for this preset
     $scope.termsToggle = function() {
@@ -305,7 +308,7 @@ app.controller('CreateApplicationFormModalCtrl', ['$scope', '$modalInstance', 'A
     // submit the create app form
     $scope.ok = function() {
         var app_title       = $scope.app.title,
-            app_description = $scope.app.description || '',
+            app_description = $scope.app.description,
             app_preset      = $scope.app.preset;
 
         // save the app data
@@ -318,9 +321,7 @@ app.controller('CreateApplicationFormModalCtrl', ['$scope', '$modalInstance', 'A
                         for (var source in result.data.application.sources.reads) {
                             sourceOrder.push(result.data.application.sources.reads[source].id);
                         }
-                        Applications.setPrecedence(result.data.application.id, sourceOrder).then(function() {
-                            console.log('set');
-                        });
+                        Applications.setPrecedence(result.data.application.id, sourceOrder);
                     }
                     // close modal and return data
                     result.data.application.source = $scope.app.sources;
