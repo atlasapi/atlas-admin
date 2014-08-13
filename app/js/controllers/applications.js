@@ -321,9 +321,7 @@ app.controller('CreateApplicationFormModalCtrl', ['$scope', '$modalInstance', 'A
                         for (var source in result.data.application.sources.reads) {
                             sourceOrder.push(result.data.application.sources.reads[source].id);
                         }
-                        Applications.setPrecedence(result.data.application.id, sourceOrder).then(function() {
-
-                        });
+                        Applications.setPrecedence(result.data.application.id, sourceOrder);
                     }
                     // close modal and return data
                     result.data.application.source = $scope.app.sources;
