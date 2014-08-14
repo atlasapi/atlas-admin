@@ -297,6 +297,7 @@ app.controller('CreateApplicationFormModalCtrl', ['$scope', '$modalInstance', 'A
     function($scope, $modalInstance, Applications) {
     $scope.app.terms = false;
     $scope.app.title = '';
+    $scope.app.url = '';
     $scope.app.description = '';
     $scope.app.preset = null;
 
