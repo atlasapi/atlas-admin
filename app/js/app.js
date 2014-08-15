@@ -20,6 +20,7 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.controllers.errors',
                                 'atlasAdmin.controllers.applications',
                                 'atlasAdmin.controllers.sources',
+                                'atlasAdmin.controllers.requestSource',
                                 'atlasAdmin.controllers.sourceRequests',
                                 'atlasAdmin.controllers.user',
                                 'atlasAdmin.controllers.uservideosources',
@@ -37,6 +38,7 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/requests', {templateUrl: 'partials/requests.html', controller: 'CtrlRequests'});
     $routeProvider.when('/applications', {templateUrl: 'partials/applications.html', controller: 'CtrlApplications'});
     $routeProvider.when('/applications/:applicationId', {templateUrl: 'partials/applicationEdit.html', controller: 'CtrlApplicationEdit'});
+    $routeProvider.when('/requestSource/:sourceId', {templateUrl: 'partials/requestSource.html', controller: 'CtrlRequestSource'});
     $routeProvider.when('/login', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
     $routeProvider.when('/login/:providerNamespace', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
     $routeProvider.when('/oauth/:providerNamespace', {templateUrl: 'partials/oauth.html', controller: 'CtrlOAuth', reloadOnSearch: false});
@@ -51,62 +53,59 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.otherwise({redirectTo: '/applications'});
   }])
 app.config(['$httpProvider', function($httpProvider) {
-        $httpProvider.defaults.useXDomain = true;
-        delete $httpProvider.defaults.headers.common['X-Requested-With'];
-        $httpProvider.responseInterceptors.push('AuthenticationInterceptor');
-        $httpProvider.responseInterceptors.push('ProfileCompleteInterceptor');
-        // loading notifications
-         var $http,
-            interceptor = ['$q', '$injector', function ($q, $injector) {
-            var rootScope;
+    $httpProvider.defaults.useXDomain = true;
+    delete $httpProvider.defaults.headers.common['X-Requested-With'];
+    $httpProvider.responseInterceptors.push('AuthenticationInterceptor');
+    $httpProvider.responseInterceptors.push('ProfileCompleteInterceptor');
+    // loading notifications
+    var $http,
+    interceptor = ['$q', '$injector', function ($q, $injector) {
+        var rootScope;
 
-            function success(response) {
-                // get $http via $injector because of circular dependency problem
-                $http = $http || $injector.get('$http');
-                // don't send notification until all requests are complete
-                if ($http.pendingRequests.length < 1) {
-                    // get $rootScope via $injector because of circular dependency problem
-                    rootScope = rootScope || $injector.get('$rootScope');
-                    if (!rootScope.show) {
-                       rootScope.show = {};
-                    }
-                    rootScope.show.load = false;
-                    
-                }
-                return response;
-            }
-
-            function error(response) {
-                // get $http via $injector because of circular dependency problem
-                $http = $http || $injector.get('$http');
-                // don't send notification until all requests are complete
-                if ($http.pendingRequests.length < 1) {
-                    // get $rootScope via $injector because of circular dependency problem
-                    rootScope = rootScope || $injector.get('$rootScope');
-                    if (!rootScope.show) {
-                       rootScope.show = {};
-                    }
-                    rootScope.show.load = false;
-                }
-                return $q.reject(response);
-            }
-
-            return function (promise) {
+        function success(response) {
+            // get $http via $injector because of circular dependency problem
+            $http = $http || $injector.get('$http');
+            // don't send notification until all requests are complete
+            if ($http.pendingRequests.length < 1) {
                 // get $rootScope via $injector because of circular dependency problem
                 rootScope = rootScope || $injector.get('$rootScope');
                 if (!rootScope.show) {
                     rootScope.show = {};
                 }
-                rootScope.show.load = true;
-                return promise.then(success, error);
+                rootScope.show.load = false;
             }
-        }];
+            return response;
+        }
 
-        $httpProvider.responseInterceptors.push(interceptor);
-    }
-  ]);
+        function error(response) {
+            // get $http via $injector because of circular dependency problem
+            $http = $http || $injector.get('$http');
+            // don't send notification until all requests are complete
+            if ($http.pendingRequests.length < 1) {
+                // get $rootScope via $injector because of circular dependency problem
+                rootScope = rootScope || $injector.get('$rootScope');
+                if (!rootScope.show) {
+                    rootScope.show = {};
+                }
+                rootScope.show.load = false;
+            }
+            return $q.reject(response);
+        }
+
+        return function (promise) {
+            // get $rootScope via $injector because of circular dependency problem
+            rootScope = rootScope || $injector.get('$rootScope');
+            if (!rootScope.show) {
+              rootScope.show = {};
+            }
+            rootScope.show.load = true;
+            return promise.then(success, error);
+        }
+    }];
+
+    $httpProvider.responseInterceptors.push(interceptor);
+}]);
 
 app.config(['$locationProvider', function($locationProvider) {
-    
     //$locationProvider.html5Mode(false).hashPrefix('!');
 }]);
