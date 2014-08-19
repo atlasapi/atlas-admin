@@ -1,40 +1,17 @@
 <div class="app-surface request-source">
     <header class="app-header">
-        <h1 class="page-title">Request access to {{source.name}} source</h1>
+        <h1 class="page-title">Before you can use the  source, you must complete the steps below</h1>
     </header>
     <div class="app-content">
-        <div class="panel-half usage-details">
-            <div class="form-row">
-                <label>Application name:</label>
-                <span class="app-name-field">{{app.name}}</span>
-            </div>
-            <div class="form-row">
-                <label for="access_reason">Why do you want access to this publisher?</label>
-                <textarea name="access_reason" ng-model="app.access_reason"></textarea>
-            </div>
-            <div class="form-row">
-                <label for="use_type">Use type</label>
-                <select name="use_type" ng-model="app.use_type">
-                    <option value="null" ng-selected="true">Select option</option>
-                    <option value="commercial">Commercial</option>
-                    <option value="non commercial">Commercial</option>
-                    <option value="personal">Personal</option>
-                </select>
-            </div>
-        </div>
-        <div class="panel-half terms">
-            <h2>Terms and conditions</h2>
-            <p>1. In addition to platform fees, the following data fees are due per API key for which Press Association data is enabled: Number of unique users per month (exc. VAT):</p>
-            <ul class="pricing-table">
-                <li><span class="plan">1 to 100 unique users</span><em class="price">Free</em></li>
-                <li><span class="plan">11 to 100 unique users</span><em class="price">£95</em></li>
-                <li><span class="plan">1,001 to 10,000 unique users</span><em class="price">£245</em></li>
-                <li><span class="plan">10,001 to 50,000 unique users</span><em class="price">£995</em></li>
-            </ul>
-            <p>2. Please include the following credit in an "About" page or similar, within your app and easily accessible to all users:</p>
-            <p class="copiable">Entertainment data copyright: Press Association" And link to, or provide separately the URL: http://www.pressassociation.com/</p>
-            <!-- {{source.terms}} -->
-        </div>
+        <section class="panel-full usage-details">
+           <h2></h2>
+        </section>
+        <section class="panel-full plan">
+            
+        </section>
+        <section class="panel-half terms">
+            
+        </section>
         <div class="panel-full">
             <button>I agree</button><button>Cancel</button>
         </div>

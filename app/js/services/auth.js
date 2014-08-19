@@ -67,7 +67,8 @@ app.factory('AuthenticationInterceptor', function ($q, $location, $window, atlas
                     $location.path('/login');
                 }
                 if (response.config.url.indexOf(atlasHost) !== -1 && response.status === 403) {
-                    $window.location.href = '#/error?type=forbidden';
+                    console.log(atlasHost)
+                    //$window.location.href = '#/error?type=forbidden';
                 }
                 return $q.reject(response);
             }

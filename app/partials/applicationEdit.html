@@ -91,7 +91,7 @@
              <ul class="list-group">
                 <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'unavailable|enableable'">
                     {{source.title}}
-                    <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.requestSource(source)">Request Access</button>
+                    <a type="button" class="btn btn-link btn-xs pull-right" ng-href="#/applications/{{app.application.id}}/requestSource/{{source.id}}">Request Access</a>
                 </li>
              </ul>
          </div>
