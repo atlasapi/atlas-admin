@@ -1,3 +1,24 @@
+.app-surface {
+  width: 100%;
+}
+
+.app-header {
+  display: block;
+  width: 100%;
+}
+
+.app-content {
+  width: 100%;
+}
+
+// panels are used to lay out blocks of content
+.panel-full, .panel-half, .panel-third { @extend %cf; }
+.panel-full { width: 100%; }
+.panel-half { width: 50%; float: left; }
+.panel-third { width: 33.333%; float: left; }
+
+
+
 .navbar-brand {
     padding-top: 5px !important;
 }

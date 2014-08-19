@@ -60,7 +60,6 @@
                      {{source.title}}
                     <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.disableSource(source)">Disable</button> <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.viewTerms(source)">View Terms</button>
                 </li>
-
                 <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:true" id="source-{{source.id}}" ng-show="app.application.sources.precedence === false">
                     {{source.title}}
                    <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.viewTerms(source)">View Terms</button> <button type="button" class="btn btn-link btn-xs pull-right" ng-click="app.disableSource(source)">Disable</button>

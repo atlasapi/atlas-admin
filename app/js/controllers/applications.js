@@ -6,7 +6,7 @@ var app = angular.module('atlasAdmin.controllers.applications', []);
  * @controller CtrlApplications
  */
 app.controller('CtrlApplications', function($scope, $rootScope, $routeParams, Applications, $modal, $location) {
-    $rootScope.title = '';
+    $scope.view_title = 'My Applications';
     $scope.app = {};
 
     $scope.app.predicate = 'created';
@@ -43,7 +43,7 @@ app.controller('CtrlApplications', function($scope, $rootScope, $routeParams, Ap
         }
         // Search on title match or if query is over 10 chars long the api key
         return application.title.toLowerCase().indexOf($scope.query.toLowerCase()) !== -1
-        || ($scope.query.length > 10 && application.credentials.apiKey.toLowerCase().indexOf($scope.query.toLowerCase()) !== -1);
+                || ($scope.query.length > 10 && application.credentials.apiKey.toLowerCase().indexOf($scope.query.toLowerCase()) !== -1);
     };
 });
 
@@ -56,7 +56,6 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
     $scope.app.edited = {};
     $scope.app.edited = {'meta':false,'precedenceState':false,'precedenceOrder':false};
     $scope.app.changed = false;
-
     var leavingPageText = 'You have unsaved changes!';
 
     window.onbeforeunload = function() {
@@ -72,12 +71,12 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
     });
 
     Applications.get($routeParams.applicationId).then(function(application) {
-       $scope.app.application = application;
-       $scope.app.writes = {};
-       $scope.app.writes.predicate = 'name';
-       $scope.app.writes.reverse = false;
-
-       $rootScope.title = 'Edit application';
+        $scope.app.application = application;
+        console.log($scope.app.application.sources.reads)
+        $scope.app.writes = {};
+        $scope.app.writes.predicate = 'name';
+        $scope.app.writes.reverse = false;
+        $rootScope.title = 'Edit application';
     });
 
     $scope.app.disableSource = function(source) {
@@ -126,7 +125,6 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
             controller: 'SourceRequestFormModalCtrl',
             scope: $scope
         });
-
         modalInstance.result.then(function() {
             Applications.get($scope.app.application.id).then(function(application) {
                 $scope.app.application = application;
