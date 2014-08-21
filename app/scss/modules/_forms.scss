@@ -1,7 +1,26 @@
+// @module: forms
+
+// ——————————————————————————————————————————————————————————————
+//  general form helpers
+// ——————————————————————————————————————————————————————————————
 .form-heading {
     display: block;
     margin: 3rem 0 1.5rem;
     font-size: 2rem;
+}
+
+.form-field {
+    display: block;
+    margin-bottom: 1.5rem;
+
+    &.last { margin-bottom: 0; }
+
+    // use block labels by default
+    label {
+        display: block;
+        margin: 0 0 .6rem 0;
+        color: $mbst-purple;
+    }
 }
 
 .form-label {
@@ -23,8 +42,17 @@
     label { display: inline-block; font-weight: normal; margin: 0; }
 }
 
+// ——————————————————————————————————————————————————————————————
+//  text fields
+// ——————————————————————————————————————————————————————————————
 textarea {
     display: block;
+    width: 100%;
+    max-width: 38.44rem;
+    height: 140px;
+    padding: 1rem;
+    border: 1px solid $mbst-pink;
+    border-radius: 3px;
 }
 
 input[type="text"] {

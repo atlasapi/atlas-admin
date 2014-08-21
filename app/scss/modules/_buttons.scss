@@ -1,7 +1,6 @@
-// @component: Buttons 
-// Contains everything with the class .button
+// @module: buttons
 
-.button {
+.button, button {
 	// base button styles
 	display: inline-block;
 	padding: 1em;
@@ -14,5 +13,13 @@
 	// button used in UI to create a new application
 	&.new-app {
 		background: $mbst-pink;
+	}
+
+	&.group {
+		margin-right: 1rem;
+	}
+
+	&.last {
+		margin-right: 0;
 	}
 }

@@ -1,25 +1,59 @@
+// @module: layout
+
+// ——————————————————————————————————————————————————————————————
+//  Container & structure elements
+// ——————————————————————————————————————————————————————————————
 .app-surface {
+  margin-top: 3.375rem;
   width: 100%;
 }
 
 .app-header {
-  display: block;
-  width: 100%;
+    display: block;
+    width: 100%;
 }
 
 .app-content {
-  width: 100%;
+    width: 100%;
 }
 
-// panels are used to lay out blocks of content
-.panel-full, .panel-half, .panel-third { @extend %cf; }
+
+// ——————————————————————————————————————————————————————————————
+//  Panels
+//  panels are used to lay out blocks of content either
+//  horizontally or vertically
+// ——————————————————————————————————————————————————————————————
+.panel-full, .panel-half, .panel-third, .panel-quarter { 
+    @extend %cf; 
+    display: block; 
+    margin-bottom: 3.375rem;
+}
+
 .panel-full { width: 100%; }
 .panel-half { width: 50%; float: left; }
 .panel-third { width: 33.333%; float: left; }
 .panel-quarter { width: 25%; float: left; }
 
 
-// retro ... 
+// ——————————————————————————————————————————————————————————————
+//  Headings & title blocks
+// ——————————————————————————————————————————————————————————————
+// remove default margins on headings, because it's better 
+// to explicitly define them later
+h1, h2, h3, h4 { margin: 0; }
+
+// add margin to panel headers
+.panel-full, .panel-half, .panel-third, .panel-quarter {
+    .panel-header {
+        margin-bottom: 1.5rem;
+    }
+}
+
+
+
+// ——————————————————————————————————————————————————————————————
+//  :(
+// ——————————————————————————————————————————————————————————————
 .navbar-brand {
     padding-top: 5px !important;
 }
@@ -83,8 +117,8 @@ input.ng-valid {
   height: 0.15em;
   background: black;
   box-shadow: 
-    0 0.25em 0 0 black,
-    0 0.45em 0 0 black;
+  0 0.25em 0 0 black,
+  0 0.45em 0 0 black;
 }
 
 .provider-logo {
@@ -97,26 +131,26 @@ input.ng-valid {
 }
 
 .loading {
-   padding-top: 300px;     
+ padding-top: 300px;     
 }
 
 .btn-block {
-   margin-top: 5px;   
+ margin-top: 5px;   
 }
 
 .active-menu-item {
-   color: #ff009a !important;   
+ color: #ff009a !important;   
 }
 
 .hide {
-   display: none;   
+ display: none;   
 }
 
 
 .app-container {
-	box-sizing: border-box;
-	padding: 0 7%;
-	width: 100%;
+    box-sizing: border-box;
+    padding: 0 7%;
+    width: 100%;
 }
 
 

@@ -71,9 +71,9 @@ app.factory('AuthenticationInterceptor', function ($q, $location, $window, atlas
                 }
                 return $q.reject(response);
             }
-        );
-    };
-});
+        )
+    }
+})
 
 // Make sure profile is completed before allowing use of app
 app.factory('ProfileCompleteInterceptor', function (ProfileStatus, $location, $q, $rootScope) {

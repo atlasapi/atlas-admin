@@ -72,7 +72,6 @@ app.controller('CtrlApplicationEdit', function($scope, $rootScope, $routeParams,
 
     Applications.get($routeParams.applicationId).then(function(application) {
         $scope.app.application = application;
-        console.log($scope.app.application.sources.reads)
         $scope.app.writes = {};
         $scope.app.writes.predicate = 'name';
         $scope.app.writes.reverse = false;

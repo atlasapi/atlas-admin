@@ -1,19 +1,108 @@
 <div class="app-surface request-source">
     <header class="app-header">
-        <h1 class="page-title">Before you can use the  source, you must complete the steps below</h1>
+        <h1 class="page-title">Before you can use the {{source.title}} source, you must complete the steps below</h1>
+        <em class="form-terms">This information will be sent to {{source.title}} with your request</em>
     </header>
     <div class="app-content">
-        <section class="panel-full usage-details">
-           <h2></h2>
+        <section class="panel-full application-info">
+            <header class="panel-header">
+                <h1>1. Review your information</h1>
+            </header>
+            <div class="app-data">
+                <h2>Application information</h2>
+                <span class="form-field">
+                    <label>Application name</label>
+                    <span class="editable-field">{{app.name}}</span>
+                </span>
+                <span class="form-field">
+                    <label>Application URL</label>
+                    <span class="editable-field"></span>
+                </span>
+                <span class="form-field last">
+                    <label>Application Description</label>
+                    <span class="editable-field">{{app.description}}</span>
+                </span>
+            </div>
+            <div class="user-data">
+                <h2>Your information</h2>
+                <span class="form-field">
+                    <label>Name</label>
+                    <span class="editable-field">{{user.full_name}}</span>
+                </span>
+                <span class="form-field">
+                    <label>Email</label>
+                    <span class="editable-field">{{user.email}}</span>
+                </span>
+                <span class="form-field">
+                    <label>Company</label>
+                    <span class="editable-field">{{user.company}}</span>
+                </span>
+                <span class="form-field last">
+                    <label>Website</label>
+                    <span class="editable-field"><a href="{{user.website}}" target="_blank">{{user.website}}</a></span>
+                </span>
+            </div>
+        </span>
         </section>
-        <section class="panel-full plan">
-            
+        <section class="panel-full payment-plans">
+            <header class="panel-header">
+                <h1>2. Choose a payment plan</h1>
+            </header>
+            <div class="payment-plan-contain">
+                <div class="payment-plan one">
+                    <div class="plan-box">
+                        <span class="plan-features">
+                            <strong>1 to 10</strong> unique users 
+                        </span>
+                        <span class="plan-price">Free</span>
+                    </div>
+                </div>
+                <div class="payment-plan two">
+                    <div class="plan-box">
+                        <span class="plan-features">
+                            <strong>11 to 1000</strong> unique users 
+                        </span>
+                        <span class="plan-price">&pound;95</span>
+                    </div>
+                </div>
+                <div class="payment-plan three">
+                    <div class="plan-box">
+                        <span class="plan-features">
+                            <strong>1,001 to 10,000</strong> unique users 
+                        </span>
+                        <span class="plan-price">&pound;245</span>
+                    </div>
+                </div>
+                <div class="payment-plan four">
+                    <div class="plan-box">
+                        <span class="plan-features">
+                            <strong>10,001 to 50,000</strong> unique users 
+                        </span>
+                        <span class="plan-price">&pound;995</span>
+                    </div>
+                </div>
+            </div>
+            <div class="payment-terms">All prices excluding VAT</div>
         </section>
-        <section class="panel-half terms">
-            
+        <section class="panel-full terms">
+            <header class="panel-header">
+                <h1>3. Read the terms &amp; conditions</h1>
+                <a ng-href="#/terms" class="atlas-terms-link">Read the Atlas terms &amp; conditions</a>
+            </header>
+            <div class="terms-container">
+                <p>1. In addition to platform fees, the following data fees are due per API key for which Press Association data is enabled: Number of unique users per month (exc. VAT)</p>
+                <p>2. Please include the following credit in an "About" page or similar, within your app and easily accessible to all users:</p>
+                <p class="terms-important">Entertainment data copyright: Press Association" And link to, or provide separately the URL: http://www.pressassociation.com</p>
+            </div>
+            <div class="reason-for-access">
+                <span class="form-field last">
+                    <label>Why do you want access to the {{source.name}} source?</label>
+                    <textarea>Include any extra information you think the provider might need to know</textarea>
+                </span>
+            </div>
         </section>
         <div class="panel-full">
-            <button>I agree</button><button>Cancel</button>
+            <button class="group">I agree</button><button class="group last">Cancel</button>
         </div>
     </div>
 </div>
