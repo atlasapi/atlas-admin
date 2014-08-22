@@ -6,9 +6,8 @@ var app = angular.module('atlasAdmin.controllers.requestSource', []);
  */
 app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Users', '$location', 
     function( $scope, $rootScope, $routeParams, Applications, Users, $location ) {
-        // defaults
-        $scope.view_title = 'Howdy';
         $scope.app = {};
+        $scope.plan = 1;
         $scope.source = {};
         $scope.user = {};
 
@@ -22,20 +21,30 @@ app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$routeParams', 'Ap
             var source = _.find(sources, function(src) {
                 return src.id === sourceId;
             });
-            console.log(app);
-
-            // pass app, source data to the view
+            // pass app & source data to the view
             $scope.app.name         = app.title;
             $scope.app.description  = app.description;
             $scope.source.title     = source.title;
-
         })
 
-        // get user information
+        // get current user's information
         Users.currentUser().then( function(user) {
             // pass user data to the view
             $scope.user = user;
-
-            console.log(user);
         })
+
+        // send form action
+        $scope.send = function() {
+            var post_data = {
+                user: $scope.user,
+                app: $scope.app,
+                source: $scope.source,
+                plan: $scope.plan
+            }
+        }
+
+        // cancel form action action
+        $scope.cancel = function() {
+            $location.path('/applications/'+appId);
+        }
 }]);
