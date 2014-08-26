@@ -22,8 +22,7 @@ app.factory('SourceRequests', function (Atlas, Users) {
 });
 
 app.factory('SourcePayment', function(Atlas, Users) {
-    var plans = {
-        [{
+    var plans = [{
             users: '1 to 10',
             price: 'Free'
         },
@@ -38,8 +37,7 @@ app.factory('SourcePayment', function(Atlas, Users) {
         {
             users: '10,001 to 50,000',
             price: '995'
-        }]
-    }
+        }];
 
     return plans;
 });
