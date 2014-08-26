@@ -4,17 +4,17 @@ var gulp = require('gulp'),
 
 // sass -> concat -> autoprefix
 gulp.task('styles', function() {
-	gulp.src('app/scss/app.scss')
+	gulp.src('scss/app.scss')
 		.pipe(scss({
 			outputStyle: 'compressed'
 			}))
 		.pipe(autoprefix('last 2 versions'))
-		.pipe(gulp.dest('app/css'));
+		.pipe(gulp.dest('css'));
 })
 
 // task: watch
 gulp.task('watch', function() {
-	gulp.watch('app/scss/**/*.scss', ['styles']);
+	gulp.watch('scss/**/*.scss', ['styles']);
 });
 
 gulp.task('default', ['styles', 'watch']);

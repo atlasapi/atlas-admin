@@ -1,0 +1,8 @@
+{
+  "name": "atlasAdminAPI",
+  "description": "Atlas administration front end service",
+  "dependencies": {
+    "express": "^4.8.5",
+    "mongodb": "^1.4.8"
+  }
+}
