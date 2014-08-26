@@ -12,6 +12,7 @@ MongoClient.connect('mongodb://'+config.dbHost+':27017/atlasadmin', function(err
 
     // configure source request endpoints
     
+    
     db.close();
 })
 

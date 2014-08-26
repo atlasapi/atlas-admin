@@ -49,50 +49,15 @@
                 <h1>2. Choose a payment plan</h1>
             </header>
             <div class="payment-plan-contain">
-                <div class="payment-plan one">
+                <div class="payment-plan one" ng-repeat="plan in planData">
                     <input ng-model="plan" type="radio" class="payment-plan-radio" name="payment-opt" value="1" id="payment-opt-one" ng-checked="true">
                     <label for="payment-opt-one" class="plan-box">
                         <span class="plan-features">
-                            <strong>1 to 10</strong> unique users 
+                            <strong>{{plan.users}}</strong> unique users 
                         </span>
                         <span class="plan-price">
-                            <strong class="the-price">Free</strong>
-                        </span>
-                    </label>
-                </div>
-                <div class="payment-plan two">
-                    <input ng-model="plan" type="radio" class="payment-plan-radio" name="payment-opt" value="2" id="payment-opt-two">
-                    <label for="payment-opt-two" class="plan-box">
-                        <span class="plan-features">
-                            <strong>11 to 1000</strong> unique users 
-                        </span>
-                        <span class="plan-price">
-                            <strong class="the-price">&pound;95</strong>
-                            <span class="price-terms">per month</span>
-                        </span>
-                    </label>
-                </div>
-                <div class="payment-plan three">
-                    <input ng-model="plan" type="radio" class="payment-plan-radio" name="payment-opt" value="3" id="payment-opt-three">
-                    <label for="payment-opt-three" class="plan-box">
-                        <span class="plan-features">
-                            <strong>1,001 to 10,000</strong> unique users 
-                        </span>
-                        <span class="plan-price">
-                            <strong class="the-price">&pound;245</strong>
-                            <span class="price-terms">per month</span>
-                        </span>
-                    </label>
-                </div>
-                <div class="payment-plan four">
-                    <input ng-model="plan" type="radio" class="payment-plan-radio" name="payment-opt" value="4" id="payment-opt-four">
-                    <label for="payment-opt-four" class="plan-box">
-                        <span class="plan-features">
-                            <strong>10,001 to 50,000</strong> unique users 
-                        </span>
-                        <span class="plan-price">
-                            <strong class="the-price">&pound;995</strong>
-                            <span class="price-terms">per month</span>
+                            <strong class="the-price">{{plan.price}}</strong>
+                            <strong class="price-terms">per month</strong>
                         </span>
                     </label>
                 </div>
