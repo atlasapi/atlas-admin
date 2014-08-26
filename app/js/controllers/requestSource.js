@@ -41,6 +41,8 @@ app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$routeParams', 'Ap
                 source: $scope.source,
                 plan: $scope.plan
             }
+
+            // send to server here
         }
 
         // cancel form action action

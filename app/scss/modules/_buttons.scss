@@ -1,8 +1,16 @@
 // @module: buttons
 
 // ——————————————————————————————————————————————————————————————
-//	main button component
-// ——————————————————————————————————————————————————————————————
+//	Main button component
+//
+//  Modifiers:
+//  .primary    — primary button, stands out the most
+//  .secondary  — secondary button, usually used for `cancel`
+//  .medum      — makes the button slightly larger
+//	.new-app    — button used to create a new application
+//  .group      — makes buttons behave like they're in a group
+//  .group.last — applys to the last button in a group
+//
 .button, button {
 	// base button styles
 	display: inline-block;
@@ -10,7 +18,7 @@
 	background: $mbst-purple;
 	color: white;
 	border: none;
-	border-radius: 2px;
+	border-radius: 4px;
 	cursor: pointer;
 
 	// primary & secondary modifiers, primary  
@@ -25,16 +33,11 @@
 		&:hover { background: darken( #aaa, 10% ); }
 	}
 
-	// button used in UI to create a new application
-	&.new-app {
-		background: $mbst-pink;
+	&.medium {
+		font-size: 1.125rem;
 	}
 
-	&.group {
-		margin-right: 1rem;
-	}
-
-	&.last {
-		margin-right: 0;
-	}
+	&.new-app { background: $mbst-pink; }
+	&.group { margin-right: 1rem; }
+	&.group.last { margin-right: 0; } 
 }

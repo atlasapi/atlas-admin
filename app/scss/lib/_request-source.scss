@@ -1,5 +1,14 @@
 .request-source {
 
+    // highlight mentions of the source inside of inline text
+    .source-highlight {
+        display: inline;
+        padding: 3px .25em;
+        background: lighten( $mbst-pink, 45%);
+        border: 1px solid lighten( $mbst-pink, 40%);
+        border-radius: 3px;
+    }
+
     .app-header {
         margin-bottom: 2.25rem;
         max-width: 38.44rem;
@@ -42,7 +51,7 @@
             float: left;
             width: 25%;
         }
-
+        
         .plan-box {
             position: relative;
             box-sizing: border-box;

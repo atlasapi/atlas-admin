@@ -10,5 +10,9 @@
     "karma-junit-reporter": "*",
     "karma-ng-scenario": "*",
     "phantomjs": "*"
+  },
+  "dependencies": {
+    "express": "^4.8.5",
+    "mongodb": "^1.4.8"
   }
 }
