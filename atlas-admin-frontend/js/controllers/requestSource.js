@@ -12,8 +12,6 @@ app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$routeParams', 'Ap
         $scope.source = {};
         $scope.user = {};
 
-        console.log( $scope.planData)
-
         // url params
         var appId    = $routeParams.applicationId,
             sourceId = $routeParams.sourceId;

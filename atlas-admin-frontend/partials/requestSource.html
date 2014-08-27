@@ -49,14 +49,14 @@
                 <h1>2. Choose a payment plan</h1>
             </header>
             <div class="payment-plan-contain">
-                <div class="payment-plan one" ng-repeat="plan in planData">
-                    <input ng-model="plan" type="radio" class="payment-plan-radio" name="payment-opt" value="1" id="payment-opt-one" ng-checked="true">
-                    <label for="payment-opt-one" class="plan-box">
+                <div class="payment-plan plan-{{$index}}" ng-repeat="theplan in planData">
+                    <input ng-model="plan" type="radio" class="payment-plan-radio" name="payment-opt" value="{{$index}}" id="payment-opt-{{$index}}">
+                    <label for="payment-opt-{{$index}}" class="plan-box">
                         <span class="plan-features">
-                            <strong>{{plan.users}}</strong> unique users 
+                            <strong>{{theplan.users}}</strong> unique users 
                         </span>
                         <span class="plan-price">
-                            <strong class="the-price">{{plan.price}}</strong>
+                            <strong class="the-price">{{theplan.price}}</strong>
                             <strong class="price-terms">per month</strong>
                         </span>
                     </label>
