@@ -1,9 +1,6 @@
 'use strict'
 var app = angular.module('atlasAdmin.controllers.requestSource', []);
 
-/**
- * @controller CtrlRequestSource
- */
 app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Users', 'SourcePayment', '$location', 
     function( $scope, $rootScope, $routeParams, Applications, Users, SourcePayment, $location ) {
         $scope.planData = SourcePayment();
@@ -26,13 +23,13 @@ app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$routeParams', 'Ap
             $scope.app.name         = app.title;
             $scope.app.description  = app.description;
             $scope.source           = source;
-        })
+        });
 
         // get current user's information
         Users.currentUser().then( function(user) {
             // pass user data to the view
             $scope.user = user;
-        })
+        });
 
         // send form action
         $scope.send = function() {
@@ -41,11 +38,11 @@ app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$routeParams', 'Ap
                 app: $scope.app,
                 source: $scope.source,
                 plan: $scope.plan
-            }
+            };
 
             // send to server here
-            console.log(post_data)
-        }
+            console.log(post_data);
+        };
 
         // cancel form action action
         $scope.cancel = function() {
