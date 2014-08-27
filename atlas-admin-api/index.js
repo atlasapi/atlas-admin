@@ -1,8 +1,8 @@
-var config          = require('./lib/config.js'),
-    express         = require('express'),
-    MongoClient     = require('mongodb').MongoClient,
-    gateway         = require('./lib/gateway'),
-    app             = express();
+var config                       = require('./lib/config.js'),
+    express                      = require('express'),
+    MongoClient                  = require('mongodb').MongoClient,
+    gatewaySourceRequest         = require('./lib/gateways/sourceRequest.js'),
+    app                          = express();
 
 var port = 8000;
 
@@ -11,21 +11,8 @@ MongoClient.connect('mongodb://'+config.dbHost+':27017/atlasadmin', function(err
     if (err) console.error(err); 
 
     // configure source request endpoints
-    
-    
+    gatewaySourceRequest( app, db );
+
+    // close the database connection
     db.close();
 })
-
-// configure express
-// static files
-app.use(express.static(__dirname + '/app'));
-
-// for the default route, simply send the index.html
-// file back to the browser
-app.get('/', function(req, res) {
-    res.sendFile(__dirname + '/app/index.html');
-})
-
-// listen on port for requests...
-console.log('listening on port: '+port);
-app.listen(8000);
