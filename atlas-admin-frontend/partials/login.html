@@ -1,3 +1,4 @@
+<h2 class="sign-in-title align-mid">{{view_title}}</h2>
 <div class="auth-container">
 	<div ng-repeat="provider in providers | orderBy:'name'" class="auth-option {{provider.icon}}">
 		<a ng-click="startAuth(provider)">
