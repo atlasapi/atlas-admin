@@ -1,11 +1,11 @@
 'use strict'
 var app = angular.module('atlasAdmin.controllers.requestSource', []);
 
-app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Users', 'SourcePayment', '$location', 
-    function( $scope, $rootScope, $routeParams, Applications, Users, SourcePayment, $location ) {
-        $scope.planData = SourcePayment();
+app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Users', 'factorySourcePayments', 'factorySourceRequests', '$location', 
+    function( $scope, $rootScope, $routeParams, Applications, Users, factorySourcePayments, factorySourceRequests, $location ) {
+        $scope.planData = factorySourcePayments();
         $scope.app = {};
-        $scope.plan = 1;
+        $scope.plan = 0;
         $scope.source = {};
         $scope.user = {};
 
@@ -19,29 +19,41 @@ app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$routeParams', 'Ap
             var source = _.find(sources, function(src) {
                 return src.id === sourceId;
             });
-            // pass app & source data to the view
-            $scope.app.name         = app.title;
-            $scope.app.description  = app.description;
-            $scope.source           = source;
+            // make the application and source data available to the $scope
+            $scope.source = source;
+            $scope.app = {
+                id: app.id,
+                name: app.title,
+                url: app.url,
+                description: app.description
+            }
         });
 
-        // get current user's information
+        // push the current user's info into the $scope
         Users.currentUser().then( function(user) {
-            // pass user data to the view
-            $scope.user = user;
+            $scope.user = {
+                id: user.id,
+                full_name: user.full_name,
+                company: user.company,
+                website: user.website
+            }
         });
 
-        // send form action
+        // when user switches between payment methods, update the model
+        $scope.changeOfPlan = function(index) {
+            $scope.plan = index;
+        }
+
+        // construct data object, then send to server
         $scope.send = function() {
+            var plan_select = $scope.planData[$scope.plan];
             var post_data = {
                 user: $scope.user,
                 app: $scope.app,
-                source: $scope.source,
-                plan: $scope.plan
-            };
-
-            // send to server here
-            console.log(post_data);
+                plan: plan_select,
+                source: $scope.source
+            }
+            factorySourceRequests.post(post_data);
         };
 
         // cancel form action action

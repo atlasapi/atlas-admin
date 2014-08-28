@@ -4,10 +4,13 @@ module.exports = function() {
     // Configure the database
     var databaseHost    = 'localhost';
     var databaseUser    = 'admin';
-    var collectionName  = 'atlasadmin';
+    var databaseName    = 'atlasadmin';
 
     // Default paths
     var apiRootPath = '/api';
+
+    // Allowed domains
+    var allowedDomains = ['http://localhost:8000'];
 
     return {
         atlasHost: atlasHost,
@@ -15,11 +18,13 @@ module.exports = function() {
         database: {
             host: databaseHost,
             user: databaseUser,
-            collection: collectionName
+            name: databaseName
         },
 
         paths: {
             apiRoot: apiRootPath
-        }
+        },
+
+        allowedDomains: allowedDomains
     }
 }();

@@ -1,19 +1,16 @@
 'use strict'
-
 var config = require('../config'),
     express = require('express');
 
+// create REST interface for source requests
 var sourceRequest = function(db) {
     var router = express.Router();
-
     router.route('/')
         .post(function(req, res) {
-            console.log('post');
+            db.collection('sourceRequests').insert(req.body, {w:1}, function(err, data) {
+                console.log(err);
+            })
         })
-        .get(function() {
-            console.log('get')
-        });
-
     return router;
 }
 

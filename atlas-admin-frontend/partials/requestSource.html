@@ -50,7 +50,7 @@
             </header>
             <div class="payment-plan-contain">
                 <div class="payment-plan plan-{{$index}}" ng-repeat="theplan in planData">
-                    <input ng-model="plan" type="radio" class="payment-plan-radio" name="payment-opt" value="{{$index}}" id="payment-opt-{{$index}}">
+                    <input ng-model="plan" ng-change="changeOfPlan($index)" type="radio" class="payment-plan-radio" name="payment-opt" value="{{$index}}" id="payment-opt-{{$index}}">
                     <label for="payment-opt-{{$index}}" class="plan-box">
                         <span class="plan-features">
                             <strong>{{theplan.users}}</strong> unique users 
