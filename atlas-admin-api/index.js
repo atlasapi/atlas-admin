@@ -8,6 +8,8 @@ var config                       = require('./lib/config'),
 
 var port = process.env.PORT || 9000;
 
+app.use(bodyParser.json());
+
 // middleware to check calls against whitelisted domains
 app.use(function allowCrossDomain(req, res, next) {
     var originPermissionCheck = function(req) {

@@ -7,8 +7,9 @@ var sourceRequest = function(db) {
     var router = express.Router();
     router.route('/')
         .post(function(req, res) {
-            db.collection('sourceRequests').insert(req.body, {w:1}, function(err, data) {
-                console.log(err);
+            db.collection('sourceRequests').insert(req.body, function(err, data) {
+                if (err) throw err;
+                res.end(data)
             })
         })
     return router;

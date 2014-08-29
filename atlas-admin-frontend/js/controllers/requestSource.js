@@ -2,7 +2,7 @@
 var app = angular.module('atlasAdmin.controllers.requestSource', []);
 
 app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Users', 'factorySourcePayments', 'factorySourceRequests', '$location', 
-    function( $scope, $rootScope, $routeParams, Applications, Users, factorySourcePayments, factorySourceRequests, $location ) {
+    function( $scope, $rootScope, $routeParams, Applications, Users, factorySourcePayments, factorySourceRequests, $location) {
         $scope.planData = factorySourcePayments();
         $scope.app = {};
         $scope.plan = 0;
@@ -22,7 +22,7 @@ app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$routeParams', 'Ap
             // make the application and source data available to the $scope
             $scope.source = source;
             $scope.app = {
-                id: app.id,
+                app_id: app.id,
                 name: app.title,
                 url: app.url,
                 description: app.description
@@ -32,9 +32,10 @@ app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$routeParams', 'Ap
         // push the current user's info into the $scope
         Users.currentUser().then( function(user) {
             $scope.user = {
-                id: user.id,
+                user_id: user.id,
                 full_name: user.full_name,
                 company: user.company,
+                email: user.email,
                 website: user.website
             }
         });
@@ -53,7 +54,10 @@ app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$routeParams', 'Ap
                 plan: plan_select,
                 source: $scope.source
             }
-            factorySourceRequests.post(post_data);
+            factorySourceRequests.post(post_data).then(function(status) {
+                if (status === 200)
+                    $location.path('/applications/'+appId);
+            });
         };
 
         // cancel form action action
