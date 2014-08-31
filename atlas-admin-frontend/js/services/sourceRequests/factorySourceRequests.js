@@ -1,24 +1,57 @@
+'use strict'
 var app = angular.module('atlasAdmin.services.sourceRequests');
 
-app.factory('factorySourceRequests', ['$http', '$q', function($http, $q) {
-    var defer = $q.defer();
-    var url = 'http://localhost:9000/api/sourceRequest';
+app.factory('factorySourceRequests', ['$http', 'atlasAdminApiUrl', '$q', function($http, atlasAdminApiUrl, $q) {
+    var endpoint = atlasAdminApiUrl + '/sourceRequest';
 
-    var post = function(data) {
-        var promise = defer.promise;
+    // use POST to send source request data to the server
+    // @returns promise {number} status code from server (eg. 200 is ok)
+    var postRequest = function(data) {
+        var defer = $q.defer();
         $http({
             method: 'post',
-            url: url,
+            url: endpoint,
             data: data
         })
         .success(function(data, status) {
             defer.resolve(status);
+        })
+        return defer.promise;
+    }
+
+    // use GET to ask the server for all unapproved source requests
+    // @returns promise {object} 
+    var getUnapprovedRequests = function() {
+        var defer = $q.defer();
+        $http({
+            method: 'get',
+            url: endpoint
+        })
+        .success(function(data) {
+            defer.resolve(data)
+        })
+        return defer.promise;
+    }
+
+    // use PUT to update a source request
+    // @returns promise {object}
+    var putChangeRequest = function(data) {
+        var defer = $q.defer();
+        $http({
+            method: 'put',
+            url: endpoint,
+            data: data
+        })
+        .success(function(status) {
+            defer.resolve(status);
         });
-        return promise;
+        return defer.promise;
     }
     
+    // expose REST interface
     return {
-        post: post,
-        get: function() {}
+        postRequest: postRequest,
+        getUnapprovedRequests: getUnapprovedRequests,
+        putChangeRequest: putChangeRequest
     };
 }]);

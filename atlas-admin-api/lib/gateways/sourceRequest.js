@@ -1,16 +1,34 @@
 'use strict'
-var config = require('../config'),
-    express = require('express');
+var express     = require('express'),
+    ObjectID    = require('mongodb').ObjectID;
 
-// create REST interface for source requests
+// create REST interface for source requests feature
+// @param db {object} the mongo database object
 var sourceRequest = function(db) {
-    var router = express.Router();
+    var router      = express.Router(),
+        collection  = db.collection('sourceRequests');
+
     router.route('/')
         .post(function(req, res) {
-            db.collection('sourceRequests').insert(req.body, function(err, data) {
+            req.body.state = 'not approved';
+            collection.insert(req.body, function(err, data) {
                 if (err) throw err;
-                res.end(data)
+                res.end();
             })
+        })
+        .get(function(req, res) {
+            collection.find({state: 'not approved'}, {}).toArray(function(err, data) {
+                if (err) throw err;
+                res.end(JSON.stringify(data));
+            });
+        })
+        .put(function(req, res) {
+            var id = req.body.request_id,
+                new_state = req.body.new_state;
+            collection.update( {_id: new ObjectID(id)}, {$set: {state: new_state}}, function(err, count, status) {
+                if (err) throw err;
+                res.end(JSON.stringify(status));
+            });
         })
     return router;
 }

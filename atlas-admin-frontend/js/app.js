@@ -26,6 +26,7 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.controllers.user',
                                 'atlasAdmin.controllers.uservideosources',
                                 'atlasAdmin.controllers.uservideosources.youtube',
+                                'atlasAdmin.controllers.admins.manageSourceRequests',
                                 'ui.bootstrap',
                                 'ngResource',
                                 'ngRoute',
@@ -33,6 +34,10 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdminConfig'
 ]);
 app.config(['$routeProvider', function($routeProvider) {
+    // Admin only routes
+    $routeProvider.when('/cat/sourceRequests', {templateUrl: 'partials/admins/manageSourceRequests.html', controller: 'CtrlManageSourceRequests'});
+
+    // Public routes
     $routeProvider.when('/sources', {templateUrl: 'partials/sources.html', controller: 'CtrlSources'});
     $routeProvider.when('/sources/:sourceId/readers', {templateUrl: 'partials/sourceReaders.html', controller: 'CtrlSourceReaders'});
     $routeProvider.when('/sources/:sourceId/writers', {templateUrl: 'partials/sourceWriters.html', controller: 'CtrlSourceWriters'});

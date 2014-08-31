@@ -10,14 +10,12 @@ angular.module('atlasAdmin.controllers.applications')
     $scope.app.description = '';
     $scope.app.preset = null;
 
-    var showTerms = function() {
-        $scope.app.terms = ('uk' === $scope.app.preset) ? true : false;
+    // decide whether terms should be shown for this source set
+    $scope.showTerms = function(preset) {
+        $scope.app.terms = 'uk' === preset;
     }
 
-    $scope.termsToggle = showTerms();
-
-    // submit the create app form
-    $scope.ok = function() {
+    $scope.submit = function() {
         var app_title       = $scope.app.title,
             app_description = $scope.app.description,
             app_preset      = $scope.app.preset;

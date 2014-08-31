@@ -1,4 +1,4 @@
-var config                       = require('./lib/config'),
+var config                       = require('./config'),
     express                      = require('express'),
     bodyParser                   = require('body-parser'),
     MongoClient                  = require('mongodb').MongoClient,

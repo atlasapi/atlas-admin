@@ -10,7 +10,6 @@ angular.module('atlasAdmin.controllers.applications')
 
     $scope.view_title = 'My Applications';
     $scope.app = {};
-
     $scope.app.predicate = 'created';
     $scope.app.reverse = true;
     $scope.app.pageSize = 10;
