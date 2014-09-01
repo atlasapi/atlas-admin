@@ -36,7 +36,7 @@ app.factory('Authentication', function ($rootScope, ProfileStatus) {
             }
 
             $rootScope.status.loggedIn = true;
-
+            
             if (url.indexOf('?') !== -1) {
                 return url + '&' + oauthParams;
             }

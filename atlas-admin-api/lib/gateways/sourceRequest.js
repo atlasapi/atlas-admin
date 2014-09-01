@@ -1,10 +1,10 @@
-'use strict'
 var express     = require('express'),
     ObjectID    = require('mongodb').ObjectID;
 
 // create REST interface for source requests feature
 // @param db {object} the mongo database object
 var sourceRequest = function(db) {
+    'use strict'
     var router      = express.Router(),
         collection  = db.collection('sourceRequests');
 
@@ -16,9 +16,9 @@ var sourceRequest = function(db) {
             })
         })
         .get(function(req, res) {
+            console.log(req);
             collection.find({state: 'not approved'}, {}).toArray(function(err, data) {
                 if (err) throw err;
-                console.log(data);
                 res.end(JSON.stringify(data));
             });
         })

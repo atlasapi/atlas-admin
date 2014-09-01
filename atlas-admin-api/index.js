@@ -4,23 +4,29 @@ var config                       = require('./config'),
     MongoClient                  = require('mongodb').MongoClient,
     MongoServer                  = require('mongodb').Server,
     app                          = express(),
-    gatewaySourceRequest         = require('./lib/gateways/sourceRequest');
+    gatewaySourceRequest         = require('./lib/gateways/sourceRequest'),
+    proxy                        = require('./lib/proxy');
 
 var port = process.env.PORT || 9000;
 
+// middleware: parse incoming request data as json
 app.use(bodyParser.json());
 
-// middleware to check calls against whitelisted domains
+// middleware: check calls against whitelisted domains
 app.use(function allowCrossDomain(req, res, next) {
-    var originPermissionCheck = function(req) {
-        var origin = req.headers.origin;
-        if (config.allowedDomains.indexOf(origin) >= 0) return origin;
+    var origin = req.headers.origin;
+    if (config.allowedDomains.indexOf(origin) !== -1) {
+        res.header('Access-Control-Allow-Origin', origin);
+        res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+        res.header('Access-Control-Allow-Headers', 'Content-Type');
+    }else{
+        res.header('401'); 
     }
-    res.header('Access-Control-Allow-Origin', originPermissionCheck(req));
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
     next();
 });
+
+// middleware: proxy atlas requests
+app.use('/proxy', proxy);
 
 // open up a persistant connection to the database
 var mongoclient = new MongoClient(
@@ -30,7 +36,7 @@ mongoclient.open(function(err, mongo) {
     if (err) console.error(err); 
     var db = mongo.db(config.database.name);
 
-    // configure REST interface
+    // register REST endpoints
     app.use(config.paths.apiRoot + '/requests', gatewaySourceRequest(db));
 
     // listen for requests to server on port

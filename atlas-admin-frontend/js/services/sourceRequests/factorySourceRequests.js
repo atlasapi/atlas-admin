@@ -1,8 +1,8 @@
 'use strict'
 var app = angular.module('atlasAdmin.services.sourceRequests');
 
-app.factory('factorySourceRequests', ['$http', 'atlasAdminApiUrl', '$q', function($http, atlasAdminApiUrl, $q) {
-    var endpoint = atlasAdminApiUrl + '/requests';
+app.factory('factorySourceRequests', ['$http', 'atlasApiHost', '$q', function($http, atlasApiHost, $q) {
+    var endpoint = atlasApiHost + '/requests';
 
     // use POST to send source request data to the server
     // @returns promise {number} status code from server (eg. 200 is ok)

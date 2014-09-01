@@ -1,19 +1,20 @@
 module.exports = function() {
-    var atlasHost = 'localhost';
+    'use strict'
+    var atlasHost = 'stage.atlas.metabroadcast.com';
+    var atlasApiHost = 'dev.mbst.tv:9000';
+    var apiRootPath = '/api';
 
     // Configure the database
     var databaseHost    = 'localhost';
     var databaseUser    = 'admin';
     var databaseName    = 'atlasadmin';
 
-    // Default paths
-    var apiRootPath = '/api';
-
-    // Allowed domains
+    // Allowed domains for cross-origin requests
     var allowedDomains = ['http://localhost:8000', 'http://dev.mbst.tv:8000'];
 
     return {
         atlasHost: atlasHost,
+        atlasApiHost: atlasApiHost,
 
         database: {
             host: databaseHost,
