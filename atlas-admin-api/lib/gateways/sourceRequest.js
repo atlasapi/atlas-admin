@@ -10,7 +10,6 @@ var sourceRequest = function(db) {
 
     router.route('/')
         .post(function(req, res) {
-            req.body.state = 'not approved';
             collection.insert(req.body, function(err, data) {
                 if (err) throw err;
                 res.end();
@@ -19,6 +18,7 @@ var sourceRequest = function(db) {
         .get(function(req, res) {
             collection.find({state: 'not approved'}, {}).toArray(function(err, data) {
                 if (err) throw err;
+                console.log(data);
                 res.end(JSON.stringify(data));
             });
         })

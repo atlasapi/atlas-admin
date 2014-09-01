@@ -31,7 +31,7 @@ mongoclient.open(function(err, mongo) {
     var db = mongo.db(config.database.name);
 
     // configure REST interface
-    app.use(config.paths.apiRoot + '/sourceRequest', gatewaySourceRequest(db));
+    app.use(config.paths.apiRoot + '/requests', gatewaySourceRequest(db));
 
     // listen for requests to server on port
     console.log('listen on port: ' + port);

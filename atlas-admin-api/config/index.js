@@ -10,7 +10,7 @@ module.exports = function() {
     var apiRootPath = '/api';
 
     // Allowed domains
-    var allowedDomains = ['http://localhost:8000'];
+    var allowedDomains = ['http://localhost:8000', 'http://dev.mbst.tv:8000'];
 
     return {
         atlasHost: atlasHost,

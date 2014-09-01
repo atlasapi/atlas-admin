@@ -55,7 +55,9 @@ app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$routeParams', 'Ap
                 user: userData,
                 app: appData,
                 plan: planData,
-                source: sourceData
+                source: sourceData,
+                reason: $scope.reason,
+                state: 'not approved'
             }
             factorySourceRequests.postRequest(payload).then(function(status) {
                 if (status === 200)
