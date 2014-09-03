@@ -43,7 +43,6 @@ var oAuthProxy = function(request, response, next) {
                 responder.writeBody(chunk);
             })
             .on('end', function() { 
-                if (status === 200) responder.sendBody(response);
                 next();
             });
         });
