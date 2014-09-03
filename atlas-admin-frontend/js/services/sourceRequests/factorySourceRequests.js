@@ -1,7 +1,7 @@
 'use strict'
 var app = angular.module('atlasAdmin.services.sourceRequests');
 
-app.factory('factorySourceRequests', ['$http', 'atlasApiHost', '$q', function($http, atlasApiHost, $q) {
+app.factory('factorySourceRequests', ['$http', 'Authentication', 'atlasApiHost', '$q', function($http, Authentication, atlasApiHost, $q) {
     var endpoint = atlasApiHost + '/requests';
 
     // use POST to send source request data to the server
@@ -10,7 +10,7 @@ app.factory('factorySourceRequests', ['$http', 'atlasApiHost', '$q', function($h
         var defer = $q.defer();
         $http({
             method: 'post',
-            url: endpoint,
+            url: Authentication.appendTokenToUrl(endpoint),
             data: data
         })
         .success(function(data, status) {
@@ -25,7 +25,7 @@ app.factory('factorySourceRequests', ['$http', 'atlasApiHost', '$q', function($h
         var defer = $q.defer();
         $http({
             method: 'get',
-            url: endpoint
+            url: Authentication.appendTokenToUrl(endpoint)
         })
         .success(function(data) {
             defer.resolve(data)
@@ -39,7 +39,7 @@ app.factory('factorySourceRequests', ['$http', 'atlasApiHost', '$q', function($h
         var defer = $q.defer();
         $http({
             method: 'put',
-            url: endpoint,
+            url: Authentication.appendTokenToUrl(endpoint),
             data: data
         })
         .success(function(status) {

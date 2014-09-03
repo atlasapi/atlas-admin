@@ -5,7 +5,7 @@ var config                       = require('./config'),
     MongoServer                  = require('mongodb').Server,
     app                          = express(),
     gatewaySourceRequest         = require('./lib/gateways/sourceRequest'),
-    proxy                        = require('./lib/proxy');
+    oAuthProxy                   = require('./lib/oAuthProxy');
 
 var port = process.env.PORT || 9000;
 
@@ -26,7 +26,7 @@ app.use(function allowCrossDomain(req, res, next) {
 });
 
 // middleware: proxy atlas requests
-app.use('/proxy', proxy);
+app.use(oAuthProxy);
 
 // open up a persistant connection to the database
 var mongoclient = new MongoClient(
