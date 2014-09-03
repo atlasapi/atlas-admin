@@ -1,31 +1,26 @@
 module.exports = function() {
-    'use strict'
-    var atlasHost = 'stage.atlas.metabroadcast.com';
-    var atlasApiHost = 'dev.mbst.tv:9000';
-    var apiRootPath = '/api';
+    'use strict';
 
-    // Configure the database
-    var databaseHost    = 'localhost';
-    var databaseUser    = 'admin';
-    var databaseName    = 'atlasadmin';
-
-    // Allowed domains for cross-origin requests
-    var allowedDomains = ['http://localhost:8000', 'http://dev.mbst.tv:8000'];
+    instanceConfig = {};
+    try {
+        instanceConfig = require('./instance-config.js');
+    } catch (fileMissing) {}
 
     return {
-        atlasHost: atlasHost,
-        atlasApiHost: atlasApiHost,
+        atlasHost: instanceConfig.atlasHost || 'stage.atlas.metabroadcast.com',
+        atlasApiHost: instanceConfig.host || 'dev.mbst.tv:9000',
 
-        database: {
-            host: databaseHost,
-            user: databaseUser,
-            name: databaseName
+        database: instanceConfig.database || {
+            host: 'localhost',
+            user: 'admin',
+            name: 'atlasadmin',
+            password: null
         },
 
         paths: {
-            apiRoot: apiRootPath
+            apiRoot: instanceConfig.apiRootPath || '/api'
         },
 
-        allowedDomains: allowedDomains
-    }
+        allowedDomains: instanceConfig.allowedDomains || ['http://localhost:8000', 'http://dev.mbst.tv:8000']
+    };
 }();
