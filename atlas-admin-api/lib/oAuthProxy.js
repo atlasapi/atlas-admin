@@ -38,7 +38,6 @@ var oAuthProxy = function(request, response, next) {
             }else{
                 responder.not_authenticated(response);
             }
-
             res.on('data', function(chunk) {
                 responder.writeBody(chunk);
             })

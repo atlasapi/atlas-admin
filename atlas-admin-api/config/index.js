@@ -1,7 +1,7 @@
 module.exports = function() {
     'use strict';
 
-    instanceConfig = {};
+    var instanceConfig = {};
     try {
         instanceConfig = require('./instance-config.js');
     } catch (fileMissing) {}
