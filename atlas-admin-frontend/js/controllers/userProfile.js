@@ -87,9 +87,9 @@ app.controller('UserMenuController', function($scope, Users, $rootScope, Authent
     var buildMenu = function(user) {
         // if profile not complete the do not show menu
         var allMenu = [{path:'/applications', label:'Applications'},
-            {path:'/sources', label:'Sources', role:'admin'},
-            {path:'/requests', label:'Requests', role:'admin'},
-            {path:'/users', label:'Users', role:'admin'}];
+            {path:'/cat/sources', label:'Sources', role:'admin'},
+            {path:'/cat/requests', label:'Requests', role:'admin'},
+            {path:'/cat/users', label:'Users', role:'admin'}];
 
         var menu = [];
         for (var i = 0; i < allMenu.length; i++) {
