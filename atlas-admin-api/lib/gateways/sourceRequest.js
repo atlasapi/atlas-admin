@@ -16,7 +16,6 @@ var sourceRequest = function(db) {
             })
         })
         .get(function(req, res) {
-            console.log(req);
             collection.find({state: 'not approved'}, {}).toArray(function(err, data) {
                 if (err) throw err;
                 res.end(JSON.stringify(data));

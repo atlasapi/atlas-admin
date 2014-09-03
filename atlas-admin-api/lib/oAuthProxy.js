@@ -5,8 +5,23 @@ var url = require('url');
 // proxy auth requests to atlas auth server before making requests
 var oAuthProxy = function(request, response, next) {
     'use strict'
-    var data = ''
     var qs = url.parse(request.url, true).query;
+    var responder = {
+        body: '',
+        not_authenticated: function(r) {
+            r.send('NOT AUTHENTICATED');
+            r.statusCode = 400;
+        },
+        authenticated: function(r) {
+            r.statusCode = 200;
+        },
+        writeBody: function(chunk) {
+            this.body += chunk;
+        },
+        sendBody: function(r) {
+            r.send(this.body);
+        }
+    }
 
     if ( 'oauth_provider' in qs && 'oauth_token' in qs ) {
         var proxyOpts = {
@@ -16,26 +31,25 @@ var oAuthProxy = function(request, response, next) {
             method: 'GET'
         }
         var req = http.request(proxyOpts, function(res) {
-            res.setEncoding('utf8')
+            res.setEncoding('utf8');
             var status = res.statusCode;
+            if (status === 200) {
+                responder.authenticated(response);
+            }else{
+                responder.not_authenticated(response);
+            }
+
             res.on('data', function(chunk) {
-                data += chunk;
+                responder.writeBody(chunk);
             })
-            .on('end', function() {
-                //response.end(data);
-                if (status === 200) {
-                    console.log('authenticated');
-                }else{
-                    response.end( data );
-                    console.log('error');
-                }
+            .on('end', function() { 
+                if (status === 200) responder.sendBody(response);
                 next();
             });
         });
         req.end();
     }else{
-        response.writeHead(403);
-        response.end( 'NOT AUTHENTICATED' );
+        responder.not_authenticated(response);
         next();
     }
 }
