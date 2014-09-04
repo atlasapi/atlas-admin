@@ -54,7 +54,7 @@ angular.module('atlasAdmin.controllers.applications')
         }
         $scope.app.application.sources.reads = reads;
         $scope.app.edited.meta = true;
-    };
+    }
 
     $scope.app.requestSource = function(source) {
         $scope.app.sourceRequest = {};
