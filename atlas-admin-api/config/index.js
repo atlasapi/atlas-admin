@@ -8,7 +8,8 @@ module.exports = function() {
 
     return {
         atlasHost: instanceConfig.atlasHost || 'stage.atlas.metabroadcast.com',
-        atlasApiHost: instanceConfig.host || 'dev.mbst.tv:9000',
+
+        port: instanceConfig.listenPort || 9000,
 
         database: instanceConfig.database || {
             host: 'localhost',
