@@ -7,7 +7,7 @@ var config                       = require('./config'),
     gatewaySourceRequest         = require('./lib/gateways/sourceRequest'),
     oAuthProxy                   = require('./lib/oAuthProxy');
 
-var port = process.env.PORT || 9000;
+var port = config.port || 9000;
 
 // middleware: parse incoming request data as json
 app.use(bodyParser.json());
