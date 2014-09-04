@@ -12,34 +12,34 @@
                 <h2>Application information</h2>
                 <span class="form-field">
                     <label>Application name</label>
-                    <span class="editable-field">{{app.name}}</span>
+                    <span class="editable-field"><input ng-model="app.title" value="{{app.title}}" /></span>
                 </span>
                 <span class="form-field">
                     <label>Application URL</label>
-                    <span class="editable-field"></span>
+                    <span class="editable-field"><input ng-model="app.url" value="{{app.url}}" /></span>
                 </span>
                 <span class="form-field last">
                     <label>Application Description</label>
-                    <span class="editable-field">{{app.description}}</span>
+                    <span class="editable-field"><input ng-model="app.description" value="{{app.description}}" /></span>
                 </span>
             </div>
             <div class="user-data">
                 <h2>Your information</h2>
                 <span class="form-field">
                     <label>Name</label>
-                    <span class="editable-field">{{user.full_name}}</span>
+                    <span class="editable-field"><input ng-model="user.full_name" value="{{user.full_name}}" /></span>
                 </span>
                 <span class="form-field">
                     <label>Email</label>
-                    <span class="editable-field">{{user.email}}</span>
+                    <span class="editable-field"><input ng-model="user.email" value="{{user.email}}" /></span>
                 </span>
                 <span class="form-field">
                     <label>Company</label>
-                    <span class="editable-field">{{user.company}}</span>
+                    <span class="editable-field"><input ng-model="user.company" value="{{user.company}}" /></span>
                 </span>
                 <span class="form-field last">
-                    <label>Website</label>
-                    <span class="editable-field"><a href="{{user.website}}" target="_blank">{{user.website}}</a></span>
+                    <label>Website URL</label>
+                    <span class="editable-field"><input ng-model="user.website" value="{{user.website}}" /></span>
                 </span>
             </div>
         </span>
@@ -56,7 +56,8 @@
                             <strong>{{theplan.users}}</strong> unique users 
                         </span>
                         <span class="plan-price">
-                            <strong class="the-price">{{theplan.price}}</strong>
+                            <strong class="the-price" ng-if="isNumber(theplan.price)">{{theplan.price | currency:'£'}}</strong>
+                            <strong class="the-price" ng-if="!isNumber(theplan.price)">{{theplan.price}}</strong>
                             <strong class="price-terms">per month</strong>
                         </span>
                     </label>
@@ -66,7 +67,7 @@
         </section>
         <section class="panel-full terms">
             <header class="panel-header">
-                <h1>3. Read the terms &amp; conditions</h1>
+                <h1>3. Read the {{app.title}} terms &amp; conditions</h1>
                 <a ng-href="#/terms" class="atlas-terms-link">Read the Atlas terms &amp; conditions</a>
             </header>
             <div class="terms-container">
@@ -82,6 +83,9 @@
             </div>
         </section>
         <div class="panel-full submit-buttons">
+            <header class="panel-header">
+                <h1>Confirm and agree</h1>
+            </header>
             <button class="group primary medium" ng-click="send()">I agree</button>
             <button class="group secondary medium last" ng-click="cancel()">Cancel</button>
         </div>

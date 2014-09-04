@@ -3,12 +3,15 @@ var app = angular.module('atlasAdmin.controllers.requestSource', []);
 
 app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Users', 'factorySourcePayments', 'factorySourceRequests', '$location', 
     function( $scope, $rootScope, $routeParams, Applications, Users, factorySourcePayments, factorySourceRequests, $location) {
-        var appData, userData, sourceData, planData;
         $scope.planData = factorySourcePayments();
         $scope.app = {};
         $scope.plan = 0;
         $scope.source = {};
         $scope.user = {};
+
+        $scope.isNumber = function (value) {
+          return angular.isNumber(value);
+        };
 
         // read url params
         var appId    = $routeParams.applicationId,
@@ -21,41 +24,26 @@ app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$routeParams', 'Ap
                 return src.id === sourceId;
             });
             $scope.source = source;
-            $scope.app = {
-                app_id: app.id,
-                name: app.title,
-                url: app.url,
-                description: app.description
-            }
-            appData = app;
-            sourceData = source;
+            $scope.app = app;
         });
 
         // use provider to get user data, then pass result to $scope
         Users.currentUser().then( function(user) {
-            $scope.user = {
-                user_id: user.id,
-                full_name: user.full_name,
-                company: user.company,
-                email: user.email,
-                website: user.website
-            }
-            userData = user;
+            $scope.user = user;
         });
 
         // when user switches between payment methods, update the model
         $scope.changeOfPlan = function(index) {
             $scope.plan = index;
-            planData = $scope.planData[index];
         }
 
         // construct post payload, then send to the provider
         $scope.send = function() {
             var payload = {
-                user: userData,
-                app: appData,
-                plan: planData,
-                source: sourceData,
+                user: $scope.user,
+                app: $scope.app,
+                plan: $scope.planData[$scope.plan],
+                source: $scope.source,
                 reason: $scope.reason,
                 state: 'not approved'
             }
