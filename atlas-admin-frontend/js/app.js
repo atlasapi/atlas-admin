@@ -20,6 +20,7 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.controllers.atlas',
                                 'atlasAdmin.controllers.errors',
                                 'atlasAdmin.controllers.applications',
+                                'atlasAdmin.controllers.wishlist',
                                 'atlasAdmin.controllers.sources',
                                 'atlasAdmin.controllers.requestSource',
                                 'atlasAdmin.controllers.sourceRequests',
@@ -34,7 +35,7 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdminConfig'
 ]);
 app.config(['$routeProvider', function($routeProvider) {
-    // Admin only routes
+    // admin only routes
     $routeProvider.when('/cat/requests', {templateUrl: 'partials/admins/manageSourceRequests.html', controller: 'CtrlManageSourceRequests'});
     $routeProvider.when('/cat/sources', {templateUrl: 'partials/sources.html', controller: 'CtrlSources'});
     $routeProvider.when('/cat/sources/:sourceId/readers', {templateUrl: 'partials/sourceReaders.html', controller: 'CtrlSourceReaders'});
@@ -42,10 +43,11 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/cat/users/:uid', {templateUrl: 'partials/profile.html', controller: 'UserProfileController'});
     $routeProvider.when('/cat/users', {templateUrl: 'partials/users.html', controller: 'AllUsersController'});
 
-    // Public routes
+    // application user routes
     $routeProvider.when('/applications', {templateUrl: 'partials/applications.html', controller: 'CtrlApplications'});
     $routeProvider.when('/applications/:applicationId', {templateUrl: 'partials/applicationEdit.html', controller: 'CtrlApplicationEdit'});
     $routeProvider.when('/applications/:applicationId/requestSource/:sourceId', {templateUrl: 'partials/requestSource.html', controller: 'CtrlRequestSource'});
+    $routeProvider.when('/wishlist', {templateUrl: 'partials/sourceWishlist.html', controller: 'CtrlSourceWishlist'})
     $routeProvider.when('/login', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
     $routeProvider.when('/login/:providerNamespace', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
     $routeProvider.when('/oauth/:providerNamespace', {templateUrl: 'partials/oauth.html', controller: 'CtrlOAuth', reloadOnSearch: false});

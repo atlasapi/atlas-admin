@@ -28,6 +28,7 @@ angular.module('atlasAdmin.controllers.applications')
         $scope.app.writes.predicate = 'name';
         $scope.app.writes.reverse = false;
         $rootScope.title = 'Edit application';
+        console.log(application);
     });
 
     $scope.app.disableSource = function(source) {
