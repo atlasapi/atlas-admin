@@ -1,4 +1,5 @@
 var config = require('../config');
+var common = require('../common');
 var http = require('http');
 var url = require('url');
 
@@ -14,6 +15,8 @@ var oAuthProxy = function(request, response, next) {
         },
         authenticated: function(r) {
             r.statusCode = 200;
+            common.oauth.provider = qs.oauth_provider;
+            common.oauth.token = qs.oauth_token;
         },
         writeBody: function(chunk) {
             this.body += chunk;
@@ -30,6 +33,7 @@ var oAuthProxy = function(request, response, next) {
             path: '/4/users.json?oauth_provider='+qs.oauth_provider+'&oauth_token='+qs.oauth_token,
             method: 'GET'
         }
+
         var req = http.request(proxyOpts, function(res) {
             res.setEncoding('utf8');
             var status = res.statusCode;
