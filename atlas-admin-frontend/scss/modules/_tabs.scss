@@ -1,0 +1,41 @@
+//  Tabber container
+//
+//  Wraps a row of .tabs
+//
+//  Modifiers:
+//  .padded    – adds a touch of padding before the first tab
+.app-tabber {
+    $tab-border-color: #929292;
+    $tab-bg-color: #fff;
+
+    @extend %cf;
+    position: relative;
+    width: 100%;
+    margin-bottom: 3.375rem;
+    border-bottom: 1px solid $tab-border-color;
+
+    &.padded { padding-left: 1rem; }
+
+
+    //  The tab element
+    //
+    //  Just a tab that can be placed in a row with other tab elements
+    //
+    //  Modifiers:
+    //  .active    – behaviour for when tab is active
+    //  .last      – to be applied to last tab in a row
+    .tab {
+        position: relative;
+        bottom: -1px;
+        display: block;
+        float: left;
+        padding: 1rem 2rem;
+        background: $tab-bg-color;
+        border: 1px solid $tab-border-color;
+        border-right-width: 0;
+        cursor: pointer;
+
+        &.active { border-bottom-color: $tab-bg-color; }
+        &.last { border-right-width: 1px;  }
+    }
+}

@@ -1,16 +1,17 @@
 // @module: layout
 
-// ——————————————————————————————————————————————————————————————
 //  Container & structure elements
-// ——————————————————————————————————————————————————————————————
+//  
 .app-surface {
-  margin-top: 3.375rem;
-  width: 100%;
+    margin-top: 3.375rem;
+    width: 100%;
 }
 
 .app-header {
     display: block;
     width: 100%;
+    max-width: 41.625rem;
+    margin-bottom: 5.0625rem;
 }
 
 .app-content {
@@ -18,28 +19,31 @@
 }
 
 
-// ——————————————————————————————————————————————————————————————
+
 //  Panels
+//
 //  panels are used to lay out blocks of content either
 //  horizontally or vertically
-// ——————————————————————————————————————————————————————————————
+//
+//  .panel-full      — Full width block
+//  .panel-half      — 1/2 width block, floated left
+//  .panel-third     — 1/3 width block, floated left
+//  .panel-quarter   — 1/4 width block, floated left
+.panel-full { width: 100%; }
+.panel-half { width: 50%; float: left; }
+.panel-third { width: 33.333%; float: left; }
+.panel-quarter { width: 25%; float: left; }
 .panel-full, .panel-half, .panel-third, .panel-quarter { 
     @extend %cf; 
     display: block; 
     margin-bottom: 3.375rem;
 }
 
-.panel-full { width: 100%; }
-.panel-half { width: 50%; float: left; }
-.panel-third { width: 33.333%; float: left; }
-.panel-quarter { width: 25%; float: left; }
 
-
-// ——————————————————————————————————————————————————————————————
 //  Headings & title blocks
-// ——————————————————————————————————————————————————————————————
-// remove default margins on headings, because it's better 
-// to explicitly define them later
+//
+//  remove default margins on headings, because it's better 
+//  to explicitly define them later
 h1, h2, h3, h4 { margin: 0; }
 
 // add margin to panel headers
@@ -51,8 +55,11 @@ h1, h2, h3, h4 { margin: 0; }
 
 
 
+
+
+
 // ——————————————————————————————————————————————————————————————
-//  :(
+//  :`(
 // ——————————————————————————————————————————————————————————————
 .navbar-brand {
     padding-top: 5px !important;

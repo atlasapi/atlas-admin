@@ -16,6 +16,7 @@ app.controller('CtrlManageSourceRequests', ['$scope', '$rootScope', '$routeParam
     // @param id {string}  the `_id` value from mongo
     // @param state {string}  new state of request (defaults to 'approved')
     var changeRequestState = function(id, state) {
+        if (typeof id !== 'string') return false;        
         var payload = {
             request_id: id,
             new_state: state || 'approved'
