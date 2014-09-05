@@ -11,14 +11,20 @@ app.controller('CtrlManageSourceRequests', ['$scope', '$rootScope', '$routeParam
         return val.source.title;
     }
 
+    // send request to approve source to the server, then remove the request
+    // from the list
+    // @param id {string}  the `_id` value from mongo
+    // @param state {string}  new state of request (defaults to 'approved')
     var changeRequestState = function(id, state) {
         var payload = {
             request_id: id,
-            new_state: state 
+            new_state: state || 'approved'
         }
         factorySourceRequests.putChangeRequest(payload).then(function(status) {
             if (status.ok && status.n === 1) {
-                console.log('source set to:'+ state)
+                _.remove($scope.app.requests, function(n) {
+                    return n._id === id;
+                })
             }
         })
     }
@@ -27,7 +33,7 @@ app.controller('CtrlManageSourceRequests', ['$scope', '$rootScope', '$routeParam
         return changeRequestState(request_id, 'approved')
     }
 
-    // request data from the api and push result into the $scope
+    // pull request data from the api and push result into the $scope
     factorySourceRequests.getUnapprovedRequests().then(function(data) {
         $scope.app.requests = data;
     });
