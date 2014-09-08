@@ -4,6 +4,7 @@ var app = angular.module('atlasAdmin.controllers.requestSource', []);
 app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Users', 'factorySourcePayments', 'factorySourceRequests', '$location', 
     function( $scope, $rootScope, $routeParams, Applications, Users, factorySourcePayments, factorySourceRequests, $location) {
         $scope.planData = factorySourcePayments();
+        $scope.button_txt = 'Accept';
         $scope.app = {};
         $scope.plan = 0;
         $scope.source = {};
@@ -39,6 +40,7 @@ app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$routeParams', 'Ap
 
         // construct post payload, then send to the provider
         $scope.send = function() {
+            $scope.button_txt = 'Sending...';
             var payload = {
                 user: $scope.user,
                 app: $scope.app,

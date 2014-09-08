@@ -13,7 +13,7 @@
                 <tr ng-repeat="request in app.requests | orderBy:sortBySourceName">
                     <td>{{request.source.title}}</td>
                     <td>{{request.app.title}}</td>
-                    <td><span ng-click="approveRequest(request._id)" class="button small positive">Approve</span></td>
+                    <td><span ng-click="approveRequest(request._id, $event)" class="button small positive">Approve</span></td>
                 </tr>
             </table>
         </section>

@@ -30,7 +30,8 @@ app.controller('CtrlManageSourceRequests', ['$scope', '$rootScope', '$routeParam
         })
     }
 
-    $scope.approveRequest = function(request_id) {
+    $scope.approveRequest = function(request_id, $event) {
+        if (typeof $event !== 'undefined') $($event.currentTarget).addClass('xhr-progress');
         return changeRequestState(request_id, 'approved')
     }
 

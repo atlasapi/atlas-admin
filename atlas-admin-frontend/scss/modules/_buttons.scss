@@ -44,4 +44,12 @@
 	&.new-app { background: $mbst-pink; }
 	&.group { margin-right: 1rem; }
 	&.group.last { margin-right: 0; } 
+
+	&.xhr-progress {
+		overflow: hidden;
+		background-image: url(../img/preloader.gif);
+		background-repeat: no-repeat;
+		background-position: center;
+		text-indent: -100%;
+	}
 }
