@@ -8,11 +8,13 @@
                 <tr>
                     <th>Source name</th>
                     <th>Application</th>
+                    <th>Reason for access</th>
                     <th>Respond</th>
                 </tr>
                 <tr ng-repeat="request in app.requests | orderBy:sortBySourceName">
                     <td>{{request.source.title}}</td>
                     <td>{{request.app.title}}</td>
+                    <td><div class="reason-content">{{request.reason}}</div></td>
                     <td><span ng-click="approveRequest(request._id, $event)" class="button small positive">Approve</span></td>
                 </tr>
             </table>
