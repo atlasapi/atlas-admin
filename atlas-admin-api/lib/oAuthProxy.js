@@ -3,15 +3,17 @@ var common = require('../common');
 var http = require('http');
 var url = require('url');
 
-// proxy auth requests to atlas auth server before making requests
+// proxy auth request to atlas auth server before making requests
 var oAuthProxy = function(request, response, next) {
     'use strict'
     var qs = url.parse(request.url, true).query;
     var responder = {
         body: '',
         not_authenticated: function(r) {
-            r.send('NOT AUTHENTICATED');
             r.statusCode = 400;
+            r.send({
+                "error": "NOT AUTHENTICATED"
+            });
         },
         authenticated: function(r) {
             r.statusCode = 200;
@@ -20,9 +22,6 @@ var oAuthProxy = function(request, response, next) {
         },
         writeBody: function(chunk) {
             this.body += chunk;
-        },
-        sendBody: function(r) {
-            r.send(this.body);
         }
     }
 
@@ -36,6 +35,7 @@ var oAuthProxy = function(request, response, next) {
 
         var req = http.request(proxyOpts, function(res) {
             res.setEncoding('utf8');
+            res.set('Content-Type', 'application/json');
             var status = res.statusCode;
             if (status === 200) {
                 responder.authenticated(response);
@@ -46,6 +46,7 @@ var oAuthProxy = function(request, response, next) {
                 responder.writeBody(chunk);
             })
             .on('end', function() { 
+                common.user = responder.body;
                 next();
             });
         });

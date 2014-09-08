@@ -1,12 +1,14 @@
 'use strict'
 var app = angular.module('atlasAdmin.services.sourceRequests');
 
-app.factory('factorySourceRequests', ['$http', 'Authentication', 'atlasApiHost', '$q', function($http, Authentication, atlasApiHost, $q) {
+app.factory('factorySourceRequests', ['$http', 'Authentication', 'atlasApiHost', '$q', 
+    function($http, Authentication, atlasApiHost, $q) {
+
     var endpoint = atlasApiHost + '/requests';
 
-
     // use POST to send source request data to the server
-    // @returns promise {number} status code from server (eg. 200 is ok)
+    //
+    // @returns thenable promise {number} status code from server (eg. 200 is ok)
     var postRequest = function(data) {
         var defer = $q.defer();
         $http({
@@ -21,7 +23,8 @@ app.factory('factorySourceRequests', ['$http', 'Authentication', 'atlasApiHost',
     }
 
     // use GET to ask the server for all unapproved source requests
-    // @returns promise {object} 
+    //
+    // @returns thenable promise {object} 
     var getUnapprovedRequests = function() {
         var defer = $q.defer();
         $http({
@@ -35,7 +38,8 @@ app.factory('factorySourceRequests', ['$http', 'Authentication', 'atlasApiHost',
     }
 
     // use PUT to update a source request
-    // @returns promise {object}
+    //
+    // @returns thenable promise {object}
     var putChangeRequest = function(data) {
         var defer = $q.defer();
         $http({

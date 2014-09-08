@@ -1,3 +1,4 @@
+'use strict';
 var config      = require('../../config'),
     Atlas       = require('../services/atlasProvider'),
     qs          = require('querystring'),
@@ -6,11 +7,9 @@ var config      = require('../../config'),
     ObjectID    = require('mongodb').ObjectID;
 
 var sendSourceToAtlas = function(appId, sourceId, enable) {
-    var responder = {
-        success: function() {
-        },
-        fail: function() {
-        }
+    if (typeof appId !== 'string' || typeof sourceId !== 'string') {
+        console.error('appId and sourceId not present');
+        return false;
     }
    
     var postData = qs.stringify({
@@ -21,16 +20,13 @@ var sendSourceToAtlas = function(appId, sourceId, enable) {
         licenseAccepted: true
     })
 
-    Atlas.request('/sources/'+sourceId+'/requests?'+postData, 'POST', function(status, data) {
-
-    });
+    Atlas.request('/sources/'+sourceId+'/requests?'+postData, 'POST');
 }
 
 
 // create REST interface for source requests feature
 // @param db {object} the mongo database object
 var sourceRequest = function(db) {
-    'use strict'
     var router      = express.Router(),
         collection  = db.collection('sourceRequests');
 

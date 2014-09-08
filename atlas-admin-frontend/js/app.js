@@ -12,6 +12,7 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.services.users', 
                                 'atlasAdmin.services.uservideosources',
                                 'atlasAdmin.services.uservideosources.youtube',
+                                'atlasAdmin.services.wishlist',
                                 'atlasAdmin.directives.orderable', 
                                 'atlasAdmin.directives.focus',
                                 'atlasAdmin.directives.activePath',

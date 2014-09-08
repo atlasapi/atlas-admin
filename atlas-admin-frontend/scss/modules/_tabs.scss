@@ -7,7 +7,8 @@
 //
 .app-tabber {
     $tab-border-color: $mbst-purple;
-    $tab-bg-color: #fff;
+    $tab-active-bg-color: #fff;
+    $tab-inactive-bg-color: desaturate(lighten($mbst-purple, 78%), 80%);
 
     @extend %cf;
     position: relative;
@@ -32,14 +33,15 @@
         display: block;
         float: left;
         padding: 1rem 2rem;
-        background: $tab-bg-color;
+        background: $tab-inactive-bg-color;
         border: 1px solid $tab-border-color;
         border-right-width: 0;
         cursor: pointer;
 
         &.active { 
+            background: $tab-active-bg-color;
             font-weight: bold;
-            border-bottom-color: $tab-bg-color; 
+            border-bottom-color: $tab-active-bg-color; 
         }
 
         &.last { border-right-width: 1px;  }

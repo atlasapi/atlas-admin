@@ -3,7 +3,9 @@ var common = {
     oauth: {
         provider: null,
         token: null
-    }
+    },
+        
+    user: null
 }
 
 module.exports = common;

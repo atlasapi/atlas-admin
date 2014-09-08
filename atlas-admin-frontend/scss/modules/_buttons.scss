@@ -1,23 +1,24 @@
-// @module: buttons
-// ——————————————————————————————————————————————————————————————
 //	Main button component
 //
 //  Modifiers:
-//  .small      — makes the button size slightly smaller
-//  .medium     — makes the button size slightly larger
+//  .stroke       — converts button to a stroke style
 //
-//	.positive   — change button style to communicate a positive action
-//	.negative   — change button style to communicate a negative action
+//  .small        — makes the button size slightly smaller
+//  .medium       — makes the button size slightly larger
 //
-//  .primary    — primary button, stands out the most
-//  .secondary  — secondary button, usually used for `cancel`
+//	.positive     — change button style to communicate a positive action
+//	.negative     — change button style to communicate a negative action
 //
-//	.new-app    — button used to create a new application
-//  .group      — makes buttons behave like they're in a group
-//  .group.last — applys to the last button in a group
+//  .primary      — primary button, stands out the most
+//  .secondary    — secondary button, usually used for `cancel`
+//
+//	.new-app      — button used to create a new application
+//  .group        — makes buttons behave like they're in a group
+//  .group.last   — applys to the last button in a group
+//
+//	.xhr-progress — hides button text and replases with a spinner
 //
 .button, button {
-	// base button styles
 	display: inline-block;
 	padding: 1em 1.5rem;
 	background: $mbst-purple;
@@ -26,8 +27,10 @@
 	border-radius: 4px;
 	cursor: pointer;
 
+	&.stroke { background: none; color: $mbst-purple; border: 1px solid $mbst-purple; }
+
 	&.small { padding: .25em 1rem; }
-	&.medium { font-size: 1.125rem; }
+	&.medium { font-size: 1rem; padding: .666em 1rem; }
 
 	&.positive { background: #10B574; }
 	&.negative { background: #D43825; }
@@ -45,6 +48,7 @@
 	&.group { margin-right: 1rem; }
 	&.group.last { margin-right: 0; } 
 
+	// hides button text and replases with a spinner
 	&.xhr-progress {
 		overflow: hidden;
 		background-image: url(../img/preloader.gif);

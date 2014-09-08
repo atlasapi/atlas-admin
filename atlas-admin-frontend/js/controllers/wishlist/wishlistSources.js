@@ -1,15 +1,13 @@
 'use strict';
 var app = angular.module('atlasAdmin.controllers.wishlist');
 
-app.controller('CtrlWishlistSources', ['$scope', '$rootScope', '$routeParams', 'Sources', '$q', 
-    function ($scope, $rootScope, $routeParams, Sources, $q) {
+app.controller('CtrlWishlistSources', ['$scope', '$rootScope', '$routeParams', 'Sources', 'factoryWishlist', '$q', 
+    function ($scope, $rootScope, $routeParams, Sources, Wishlist, $q) {
     $scope.sources = {};
     $scope.asked = [];
 
-    Sources.all().then(function(sources) {
-        console.log(sources);
-        $scope.sources = sources;
-        var t = 3;
-        while(t--) $scope.asked.push(sources[t]);
+    Wishlist.all().then(function(data, status) {
+        console.log(data);
+        console.log(status);
     })
 }]);

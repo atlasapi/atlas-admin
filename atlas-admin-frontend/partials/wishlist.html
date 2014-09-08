@@ -12,7 +12,7 @@
         <section class="panel-full source-wishlist" ng-controller="CtrlWishlistSources">
             <div class="requested-sources">
                 <header class="panel-header">
-                    <h2>Sources you've asked for</h2>
+                    <h2 class="panel-title">Sources you've asked for</h2>
                 </header>
                 <table class="table">
                     <tr ng-repeat="source in asked">
@@ -23,12 +23,12 @@
             </div>
             <div class="unrequested-sources">
                 <header class="panel-header">
-                    <h2>Sources you haven't asked for</h2>
+                    <h2 class="panel-title">Sources you haven't asked for</h2>
                 </header>
                 <table class="table">
                     <tr ng-repeat="source in sources">
                         <td>{{source.name}}<td>
-                        <td><a href="#" class="button">I need this</a></td>
+                        <td><a href="#" class="button medium stroke">I need this</a></td>
                     </tr>
                 </table>
             </div>

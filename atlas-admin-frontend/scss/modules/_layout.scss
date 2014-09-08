@@ -1,7 +1,5 @@
-// @module: layout
-
 //  Container & structure elements
-//  
+
 .app-surface {
     margin-top: 3.375rem;
     width: 100%;
@@ -11,7 +9,7 @@
     display: block;
     width: 100%;
     max-width: 41.625rem;
-    margin-bottom: 5.0625rem;
+    margin-bottom: 3.375rem;
 }
 
 .app-content {
@@ -40,20 +38,17 @@
     margin-bottom: 3.375rem;
 }
 
+// Panel header
+.panel-header {
+    margin-bottom: 1.5rem;
+}
+
 
 //  Headings & title blocks
 //
 //  remove default margins on headings, because it's better 
 //  to explicitly define them later
 h1, h2, h3, h4 { margin: 0; }
-
-// add margin to panel headers
-.panel-full, .panel-half, .panel-third, .panel-quarter {
-    .panel-header {
-        margin-bottom: 1.5rem;
-    }
-}
-
 
 
 
