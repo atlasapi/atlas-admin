@@ -7,52 +7,84 @@ var url = require('url');
 var oAuthProxy = function(request, response, next) {
     'use strict'
     var qs = url.parse(request.url, true).query;
+
+    //  respond to different auth outcomes
+    //
+    //  responder                     – contains the http response object that the responder will work with
+    //  not_authenticated( response ) — send not authenticated message back in the response
+    //  authenticated( response )     — send authenticated status, and store auth and user info in common
+    //  writeBody( chunk )            — write to the body property
     var responder = {
         body: '',
-        not_authenticated: function(r) {
-            r.statusCode = 400;
-            r.send({
+        response: null,
+        not_authenticated: function() {
+            this.response.statusCode = 400;
+            this.response.send({
                 "error": "NOT AUTHENTICATED"
             });
         },
-        authenticated: function(r) {
-            r.statusCode = 200;
+        authenticated: function() {
+            this.response.statusCode = 200;
             common.oauth.provider = qs.oauth_provider;
             common.oauth.token = qs.oauth_token;
+            next();
         },
         writeBody: function(chunk) {
             this.body += chunk;
+            return;
         }
     }
+    responder.response = response;
 
+    //  if the oauth details are present in the querystring, go ahead
+    //  and request the current signed-in user's details from Atlas, and
+    //  store in the common module for use by other parts of the app
     if ( 'oauth_provider' in qs && 'oauth_token' in qs ) {
-        var proxyOpts = {
+
+        var auth_endpoint = '/4/auth/user.json?oauth_provider='+qs.oauth_provider+'&oauth_token='+qs.oauth_token;
+
+        // check if the auth server wants to redirect the request, and follow it,
+        // otherwise, handle the request as normal
+        var handleAuth = function(res) {
+            if (res.statusCode >= 300 && res.statusCode < 400) {
+                var redirectUrl = url.parse(res.headers.location);
+                if (!redirectUrl.host) redirectUrl.host = config.atlasHost;
+
+                var redirectOpts = {
+                    host: redirectUrl.host,
+                    port: 80,
+                    path: redirectUrl.path,
+                    method: 'GET'
+                }
+
+                var redirect = http.request(redirectOpts, function(redirect_res) {
+                    res.setEncoding('utf8');   
+                    redirect_res.on('data', function(chunk) {
+                        responder.writeBody();
+                    })
+                   .on('end', function() {
+                        common.user = responder.body;
+                        responder.authenticated();
+                    });
+                }).end();
+            }else{
+                if (res.statusCode === 200)
+                    responder.authenticated();       
+                else
+                    responder.not_authenticated();
+            }
+        }
+
+        var authOpts = {
             host: config.atlasHost,
             port: 80,
-            path: '/4/users.json?oauth_provider='+qs.oauth_provider+'&oauth_token='+qs.oauth_token,
+            path: auth_endpoint,
             method: 'GET'
         }
 
-        var req = http.request(proxyOpts, function(res) {
-            res.setEncoding('utf8');
-            res.set('Content-Type', 'application/json');
-            var status = res.statusCode;
-            if (status === 200) {
-                responder.authenticated(response);
-            }else{
-                responder.not_authenticated(response);
-            }
-            res.on('data', function(chunk) {
-                responder.writeBody(chunk);
-            })
-            .on('end', function() { 
-                common.user = responder.body;
-                next();
-            });
-        });
-        req.end();
+        var auth = http.request(authOpts, handleAuth).end();
     }else{
-        responder.not_authenticated(response);
+        responder.not_authenticated();
         next();
     }
 }
