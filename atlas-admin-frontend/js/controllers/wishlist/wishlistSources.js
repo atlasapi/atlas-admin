@@ -6,8 +6,7 @@ app.controller('CtrlWishlistSources', ['$scope', '$rootScope', '$routeParams', '
     $scope.sources = {};
     $scope.asked = [];
 
-    Wishlist.all().then(function(data, status) {
-        console.log(data);
-        console.log(status);
+    Wishlist.all().then(function(data) {
+        $scope.sources = data;
     })
 }]);

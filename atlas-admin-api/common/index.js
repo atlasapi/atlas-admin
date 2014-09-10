@@ -5,6 +5,10 @@ var common = {
         token: null
     },
         
+    responses: {
+        no_data: {'error': 'No data'}
+    },
+
     user: null
 }
 

@@ -4,7 +4,8 @@ var config      = require('../../config'),
     qs          = require('querystring'),
     express     = require('express'),
     http        = require('http'),
-    ObjectID    = require('mongodb').ObjectID;
+    ObjectID    = require('mongodb').ObjectID,
+    _           = require('lodash');
 
 var sendSourceToAtlas = function(appId, sourceId, enable) {
     if (typeof appId !== 'string' || typeof sourceId !== 'string') {
@@ -32,6 +33,7 @@ var sourceRequest = function(db) {
 
     router.route('/')
         .post(function(req, res) {
+            if (!'app' in req.body ||!'source' in req.body) return false;
             sendSourceToAtlas(req.body.app.id, req.body.source.id, false);
             collection.insert(req.body, function(err, data) {
                 if (err) throw err;

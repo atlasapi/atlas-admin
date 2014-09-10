@@ -10,7 +10,7 @@ app.factory('factoryWishlist', ['$http', 'Authentication', 'atlasApiHost', '$q',
     // 
     // @param type {string} type of wishes to get (`sources` || 'features')
     var all = function(type) {
-        var defer = $q.defer;
+        var defer = $q.defer();
         $http({
             method: "get",
             url: Authentication.appendTokenToUrl(endpoint)
@@ -21,8 +21,13 @@ app.factory('factoryWishlist', ['$http', 'Authentication', 'atlasApiHost', '$q',
         return defer.promise;
     }
 
+    var newWish = function(wishdata) {
+
+    }
+
     // expose the rest interface
     return {
-        all: all
+        all: all,
+        newWish: newWish
     }
 }])

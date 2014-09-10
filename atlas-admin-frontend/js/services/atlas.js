@@ -24,6 +24,7 @@ app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $
         },
         startOauthAuthentication: function(provider, callbackUrl, targetUri) {
             var url = atlasHost + provider.authRequestUrl + ".json?callbackUrl=" + callbackUrl;
+            console.log(provider.authRequestUrl);
             Authentication.setProvider(provider.namespace);
             return $http.get(url).then(function(result) {
                 return result.data.oauth_request.login_url;

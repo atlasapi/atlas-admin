@@ -46,7 +46,12 @@
 
 	&.new-app { background: $mbst-pink; }
 	&.group { margin-right: 1rem; }
-	&.group.last { margin-right: 0; } 
+	&.group.last { margin-right: 0; }
+
+	&.left-flush {
+		border-top-left-radius: 0;
+		border-bottom-left-radius: 0;
+	}
 
 	// hides button text and replases with a spinner
 	&.xhr-progress {

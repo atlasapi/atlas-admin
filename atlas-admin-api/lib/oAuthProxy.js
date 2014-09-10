@@ -20,7 +20,7 @@ var oAuthProxy = function(request, response, next) {
         not_authenticated: function() {
             this.response.statusCode = 400;
             this.response.send({
-                "error": "NOT AUTHENTICATED"
+                "error": "Not authenticated"
             });
         },
         authenticated: function() {
@@ -43,8 +43,10 @@ var oAuthProxy = function(request, response, next) {
 
         var auth_endpoint = '/4/auth/user.json?oauth_provider='+qs.oauth_provider+'&oauth_token='+qs.oauth_token;
 
-        // check if the auth server wants to redirect the request, and follow it,
-        // otherwise, handle the request as normal
+        //  check if the auth server wants to redirect the request, and follow it,
+        //  otherwise, handle the request as normal
+        //
+        //  @param res {object} http response object
         var handleAuth = function(res) {
             if (res.statusCode >= 300 && res.statusCode < 400) {
                 var redirectUrl = url.parse(res.headers.location);
@@ -60,7 +62,7 @@ var oAuthProxy = function(request, response, next) {
                 var redirect = http.request(redirectOpts, function(redirect_res) {
                     res.setEncoding('utf8');   
                     redirect_res.on('data', function(chunk) {
-                        responder.writeBody();
+                        responder.writeBody(chunk);
                     })
                    .on('end', function() {
                         common.user = responder.body;
@@ -75,13 +77,13 @@ var oAuthProxy = function(request, response, next) {
             }
         }
 
+        // make the request to Atlas, and pass response to handleAuth
         var authOpts = {
             host: config.atlasHost,
             port: 80,
             path: auth_endpoint,
             method: 'GET'
         }
-
         var auth = http.request(authOpts, handleAuth).end();
     }else{
         responder.not_authenticated();

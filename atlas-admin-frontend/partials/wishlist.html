@@ -1,7 +1,7 @@
 <div class="app-surface wishlist">
     <header class="app-header">
         <h1 class="page-title">Request new sources and features</h1>
-        <p>We are doing our best to add relevant sources to Atlas, and we are constantly working on making the Atlas admin experience better for people just like you. You can help us by telling us what you would like below.</p>
+        <p>We are doing our best to add relevant sources to Atlas, and we are constantly working on making the Atlas admin experience better for developers. You can help us by telling us what you would like below.</p>
     </header>
 
     <div class="panel-full wish-selector">
@@ -16,19 +16,19 @@
                 </header>
                 <table class="table">
                     <tr ng-repeat="source in asked">
-                        <td>{{source.name}}<td>
-                        <td></td>
+                        <td class="source-name">{{source.name}}</td>
+                        <td class="source-options"></td>
                     </tr>
                 </table>
             </div>
             <div class="unrequested-sources">
                 <header class="panel-header">
-                    <h2 class="panel-title">Sources you haven't asked for</h2>
+                    <h2 class="panel-title">Which sources do you need?</h2>
                 </header>
                 <table class="table">
                     <tr ng-repeat="source in sources">
-                        <td>{{source.name}}<td>
-                        <td><a href="#" class="button medium stroke">I need this</a></td>
+                        <td class="source-name">{{source.title}}</td>
+                        <td class="source-options"><span class="button medium stroke source-textbox">I need this</span></td>
                     </tr>
                 </table>
             </div>
