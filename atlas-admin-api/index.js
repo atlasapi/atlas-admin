@@ -1,3 +1,5 @@
+'use strict';
+
 var config                       = require('./config'),
     common                       = require('./common'),
     express                      = require('express'),
@@ -5,14 +7,18 @@ var config                       = require('./config'),
     MongoClient                  = require('mongodb').MongoClient,
     MongoServer                  = require('mongodb').Server,
     app                          = express(),
+    auth                         = require('./lib/auth'),
+    prepResponse                 = require('./lib/prepResponse'),
     gatewayRequest               = require('./lib/gateways/requests'),
-    gatewayWishlist              = require('./lib/gateways/wishlist'),
-    oAuthProxy                   = require('./lib/oAuthProxy');
+    gatewayWishlist              = require('./lib/gateways/wishlist');
 
 var port = config.port || 9000;
 
 // middleware: parse incoming request data as json
 app.use(bodyParser.json());
+
+// middleware: set content-type headers, and prep response
+app.use(prepResponse);
 
 // middleware: check calls against whitelisted domains
 app.use(function allowCrossDomain(req, res, next) {
@@ -28,7 +34,7 @@ app.use(function allowCrossDomain(req, res, next) {
 });
 
 // middleware: proxy atlas requests
-app.use(oAuthProxy);
+app.use(auth);
 
 // open up a persistant connection to the database
 var mongoclient = new MongoClient(

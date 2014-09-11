@@ -1,19 +1,20 @@
+'use strict';
+
 var config = require('../config');
 var common = require('../common');
 var http = require('http');
 var url = require('url');
 
-// proxy auth request to atlas auth server before making requests
-var oAuthProxy = function(request, response, next) {
-    'use strict'
+// proxy auth request to atlas auth server
+var auth = function(request, response, next) {
     var qs = url.parse(request.url, true).query;
 
     //  respond to different auth outcomes
     //
-    //  responder                     – contains the http response object that the responder will work with
-    //  not_authenticated( response ) — send not authenticated message back in the response
-    //  authenticated( response )     — send authenticated status, and store auth and user info in common
-    //  writeBody( chunk )            — write to the body property
+    //  response                – the http response object that the responder will interact with
+    //  not_authenticated()     — send not authenticated message back in the response
+    //  authenticated()         — send authenticated status, and store auth and user info in common
+    //  writeBody()             — write to the body property
     var responder = {
         body: '',
         response: null,
@@ -27,6 +28,7 @@ var oAuthProxy = function(request, response, next) {
             this.response.statusCode = 200;
             common.oauth.provider = qs.oauth_provider;
             common.oauth.token = qs.oauth_token;
+            common.user = JSON.parse(this.body).user;
             next();
         },
         writeBody: function(chunk) {
@@ -34,6 +36,7 @@ var oAuthProxy = function(request, response, next) {
             return;
         }
     }
+
     responder.response = response;
 
     //  if the oauth details are present in the querystring, go ahead
@@ -59,13 +62,12 @@ var oAuthProxy = function(request, response, next) {
                     method: 'GET'
                 }
 
-                var redirect = http.request(redirectOpts, function(redirect_res) {
+                http.request(redirectOpts, function(redirect_res) {
                     res.setEncoding('utf8');   
                     redirect_res.on('data', function(chunk) {
                         responder.writeBody(chunk);
                     })
                    .on('end', function() {
-                        common.user = responder.body;
                         responder.authenticated();
                     });
                 }).end();
@@ -77,7 +79,7 @@ var oAuthProxy = function(request, response, next) {
             }
         }
 
-        // make the request to Atlas, and pass response to handleAuth
+        // make the request to Atlas, and pass response to handleAuth()
         var authOpts = {
             host: config.atlasHost,
             port: 80,
@@ -91,4 +93,4 @@ var oAuthProxy = function(request, response, next) {
     }
 }
 
-module.exports = oAuthProxy;
+module.exports = auth;

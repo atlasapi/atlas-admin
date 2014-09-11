@@ -4,8 +4,7 @@ var config      = require('../../config'),
     qs          = require('querystring'),
     express     = require('express'),
     http        = require('http'),
-    ObjectID    = require('mongodb').ObjectID,
-    _           = require('lodash');
+    ObjectID    = require('mongodb').ObjectID;
 
 var sendSourceToAtlas = function(appId, sourceId, enable) {
     if (typeof appId !== 'string' || typeof sourceId !== 'string') {

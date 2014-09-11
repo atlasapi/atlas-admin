@@ -1,38 +1,97 @@
 'use strict';
+
 var config      = require('../../config'),
     common      = require('../../common'),
     express     = require('express'),
     http        = require('http'),
     ObjectID    = require('mongodb').ObjectID;
 
-// create REST interface for source requests feature
+// REST interface for wishlist
 //
 // @param db {object} the mongo database object
 var wishlist = function(db) { 
-    var router = express.Router(),
-        wishlistCollection = db.collection('wishlist');
+    var router  = express.Router(),
+        wishlistCollection = db.collection('wishlist'),
+        wishesCollection = db.collection('wishlistRequests');
 
-    var user = common.user;
+    router.route('/:userId')
+
+        // GET: returns all requests for userId (can only be accessed by current user)
+        .get( function(req, res) {
+            var userId = req.param('userId');
+            if (common.user.id !== userId) {
+                res.statusCode = 403;
+                res.end( JSON.stringify(common.errors.not_permitted) )
+                return;
+            }
+            wishesCollection.find({'user.id': userId}, {}).toArray(function(err, data) {
+                if (err) throw err;
+                var output = JSON.stringify(data) || JSON.stringify(common.errors.no_data);
+                res.end(output);
+            })
+        })
 
     router.route('/')
+
+        // GET: returns all wishlist items
         .get( function(req, res) {
-            res.setHeader('Content-Type', 'application/json');
-            wishlistCollection.find({type: 'source'}, {}).toArray(function(err, data) {
+            wishlistCollection.find({}, {}).toArray(function(err, data) {
                 if (err) throw err;
-                var output = JSON.stringify(data) || common.responses.no_data;
+                var output = JSON.stringify(data) || JSON.stringify(common.errors.no_data);
                 res.end(output);
             })
         });
 
     router.route('/create')
-        .post( function(req, res) {
-            res.setHeader('Content-Type', 'application/json');
-            var body = req.body || null;
-            wishlistCollection.insert( function() {
 
+        // POST: create a new wish
+        .post( function(req, res) {
+            var payload = req.body;
+            // bounce back with error if payload is empty
+            if (!Object.getOwnPropertyNames(payload).length) {
+                res.statusCode = 400;
+                res.end( JSON.stringify(common.errors.no_post_data) )
+                return;
+            }
+
+            payload.user = common.user;
+
+            // validate wish data
+            if (!validate_wish_data(payload)) {
+                res.statusCode = 400;
+                res.end( JSON.stringify(common.errors.invalid_data) ) 
+                return;
+            }
+
+            // push the request into the database
+            wishesCollection.insert(payload, {w: 1}, function(err, records) {
+                if (err) {
+                    res.statusCode = 500;
+                    res.end( JSON.stringify(common.errors.request_error) )
+                }else{
+                    res.statusCode = 201;
+                    res.end(JSON.stringify(records[0]));                    
+                }
             });
         });
     return router;
+}
+
+
+var validate_wish_data = function(data) {
+    var errors = [];
+    var schema = {
+        user: {type: 'object', required: true},
+        wish: {type: 'object', required: true},
+        reason: {type: 'string', required: true}
+    }
+
+    for (var n in schema) {
+        if (typeof data[n] !== schema[n].type && schema[n].required )
+            errors.push(n)
+    }
+ 
+    return (errors.length)? false : true;
 }
 
 module.exports = wishlist;
