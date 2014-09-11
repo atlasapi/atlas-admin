@@ -10,36 +10,36 @@
             </header>
             <div class="app-data">
                 <h2>Application information</h2>
-                <span class="form-field">
+                <span class="form-row">
                     <label>Application name</label>
-                    <span class="editable-field"><input ng-model="app.title" value="{{app.title}}" /></span>
+                    <span class="editable-field"><input type="text" ng-model="app.title" value="{{app.title}}" /></span>
                 </span>
-                <span class="form-field">
+                <span class="form-row">
                     <label>Application URL</label>
-                    <span class="editable-field"><input ng-model="app.url" value="{{app.url}}" /></span>
+                    <span class="editable-field"><input type="text" ng-model="app.url" value="{{app.url}}" /></span>
                 </span>
-                <span class="form-field last">
+                <span class="form-row last">
                     <label>Application Description</label>
-                    <span class="editable-field"><input ng-model="app.description" value="{{app.description}}" /></span>
+                    <span class="editable-field"><input type="text" ng-model="app.description" value="{{app.description}}" /></span>
                 </span>
             </div>
             <div class="user-data">
                 <h2>Your information</h2>
-                <span class="form-field">
+                <span class="form-row">
                     <label>Name</label>
-                    <span class="editable-field"><input ng-model="user.full_name" value="{{user.full_name}}" /></span>
+                    <span class="editable-field"><input type="text" ng-model="user.full_name" value="{{user.full_name}}" /></span>
                 </span>
-                <span class="form-field">
+                <span class="form-row">
                     <label>Email</label>
-                    <span class="editable-field"><input ng-model="user.email" value="{{user.email}}" /></span>
+                    <span class="editable-field"><input type="text" ng-model="user.email" value="{{user.email}}" /></span>
                 </span>
-                <span class="form-field">
+                <span class="form-row">
                     <label>Company</label>
-                    <span class="editable-field"><input ng-model="user.company" value="{{user.company}}" /></span>
+                    <span class="editable-field"><input type="text" ng-model="user.company" value="{{user.company}}" /></span>
                 </span>
-                <span class="form-field last">
+                <span class="form-row last">
                     <label>Website URL</label>
-                    <span class="editable-field"><input ng-model="user.website" value="{{user.website}}" /></span>
+                    <span class="editable-field"><input type="text" ng-model="user.website" value="{{user.website}}" /></span>
                 </span>
             </div>
         </span>
@@ -76,7 +76,7 @@
                 <p class="terms-important">Entertainment data copyright: Press Association" And link to, or provide separately the URL: http://www.pressassociation.com</p>
             </div>
             <div class="reason-for-access">
-                <span class="form-field last">
+                <span class="form-row last">
                     <label>Why do you want access to the {{source.name}} source?</label>
                     <textarea ng-model="reason" placeholder="Include any extra information you think the provider might need to know"></textarea>
                 </span>

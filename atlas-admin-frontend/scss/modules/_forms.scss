@@ -1,21 +1,23 @@
-// @module: forms
+//  Forms
+//
 
-// ——————————————————————————————————————————————————————————————
-//  general form structure helpers
-// ——————————————————————————————————————————————————————————————
-.form-heading {
-    display: block;
-    margin: 3rem 0 1.5rem;
-    font-size: 2rem;
-}
 
-.form-field {
+//  layout helpers
+//  ———————————————
+
+//  wrapper for form components
+//
+//  modifiers:
+//  .last   — remove margin from the bottom of element
+//
+//  elements:
+//  label   — block label sits in it's own row
+.form-row {
     display: block;
     margin-bottom: 1.5rem;
 
     &.last { margin-bottom: 0; }
 
-    // use block labels by default
     label {
         display: block;
         margin: 0 0 .4rem 0;
@@ -23,28 +25,11 @@
     }
 }
 
-.form-label {
-    display: block;
-}
 
-.inline-label {
-    margin-left: 1rem;
-}
+//  form components
+//  ———————————————
 
-.terms-box {
-    display: block;
-    padding: 1rem;
-    margin-top: 1rem;
-    background: #FFEB9F;
-
-    input, p { display: inline-block; margin: 0; }
-    input { margin: 0 .8rem 0 0; }
-    label { display: inline-block; font-weight: normal; margin: 0; }
-}
-
-// ——————————————————————————————————————————————————————————————
-//  text fields
-// ——————————————————————————————————————————————————————————————
+// 
 textarea {
     display: block;
     width: 100%;
@@ -56,5 +41,17 @@ textarea {
 }
 
 input[type="text"] {
-    
+    padding: .296rem;
+    border: 1px solid $mbst-purple;
+    border-radius: .197rem;
+
+    &.flush-right {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    &.flush-left {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
 }

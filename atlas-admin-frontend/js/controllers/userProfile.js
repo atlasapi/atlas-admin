@@ -86,7 +86,10 @@ app.controller('UserMenuController', function($scope, Users, $rootScope, Authent
 
     var buildMenu = function(user) {
         // if profile not complete the do not show menu
-        var allMenu = [{path:'/applications', label:'Applications'},
+        var allMenu = [
+            {path:'/applications', label:'Applications'},
+            {path:'/wishlist', label:'Wishlist'},
+            // admin only
             {path:'/cat/sources', label:'Sources', role:'admin'},
             {path:'/cat/requests', label:'Requests', role:'admin'},
             {path:'/cat/users', label:'Users', role:'admin'}];

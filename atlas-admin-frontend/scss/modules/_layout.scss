@@ -34,6 +34,7 @@
 .panel-quarter { width: 25%; float: left; }
 .panel-full, .panel-half, .panel-third, .panel-quarter { 
     @extend %cf; 
+    box-sizing: border-box;
     display: block; 
     margin-bottom: 3.375rem;
 }

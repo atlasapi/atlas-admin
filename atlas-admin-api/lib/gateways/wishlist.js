@@ -14,16 +14,16 @@ var wishlist = function(db) {
         wishlistCollection = db.collection('wishlist'),
         wishesCollection = db.collection('wishlistRequests');
 
-    router.route('/:userId')
+    router.route('/user')
 
-        // GET: returns all requests for userId (can only be accessed by current user)
+        // GET: returns all requests for current user
         .get( function(req, res) {
-            var userId = req.param('userId');
-            if (common.user.id !== userId) {
+            if ('string' !== typeof common.user.id) {
                 res.statusCode = 403;
                 res.end( JSON.stringify(common.errors.not_permitted) )
                 return;
             }
+            var userId = common.user.id;
             wishesCollection.find({'user.id': userId}, {}).toArray(function(err, data) {
                 if (err) throw err;
                 var output = JSON.stringify(data) || JSON.stringify(common.errors.no_data);

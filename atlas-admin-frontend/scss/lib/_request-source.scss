@@ -109,6 +109,17 @@
     // ——————————————————————————————————————————————————————————————
     //  terms and conditions block
     // ——————————————————————————————————————————————————————————————
+    .terms-box {
+        display: block;
+        padding: 1rem;
+        margin-top: 1rem;
+        background: #FFEB9F;
+
+        input, p { display: inline-block; margin: 0; }
+        input { margin: 0 .8rem 0 0; }
+        label { display: inline-block; font-weight: normal; margin: 0; }
+    }
+    
     .terms {
         .panel-header { @extend %cf; }
         .panel-header h1 { float: left; }

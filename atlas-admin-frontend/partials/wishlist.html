@@ -6,35 +6,56 @@
 
     <div class="panel-full wish-selector">
         <div class="app-tabber padded">
-            <div class="tab sources active">Sources</div>
-            <div class="tab features last">Features</div>
+            <div ng-click="currentTab = 'sources'" class="tab sources" ng-class="{active: currentTab=='sources'}">Sources</div>
+            <div ng-click="currentTab = 'features'" class="tab features last" ng-class="{active: currentTab=='features'}">Features</div>
         </div>
-        <section class="panel-full source-wishlist" ng-controller="CtrlWishlistSources">
+
+        <section ng-hide="currentTab == 'features'" class="panel-full source-wishlist" ng-controller="CtrlWishlistSources">
             <div class="requested-sources">
                 <header class="panel-header">
                     <h2 class="panel-title">Sources you've asked for</h2>
                 </header>
                 <table class="table">
-                    <tr ng-repeat="source in asked">
-                        <td class="source-name">{{source.name}}</td>
-                        <td class="source-options"></td>
+                    <tr ng-if="asked.length" ng-repeat="item in asked">
+                        <td class="source-name">{{item.wish.title}}</td>
+                        <td class="source-options">{{item.wish.status}}</td>
+                    </tr>
+                    <tr ng-if="!asked.length">
+                        <td class="blank">You haven't asked for any sources yet. To get updates when sources become available, click 'I want this' for any sources you want access to.</td>
                     </tr>
                 </table>
             </div>
             <div class="unrequested-sources">
                 <header class="panel-header">
-                    <h2 class="panel-title">Which sources do you need?</h2>
+                    <h2 class="panel-title">Which sources do you want access to?</h2>
                 </header>
                 <table class="table">
                     <tr ng-repeat="source in sources">
                         <td class="source-name">{{source.title}}</td>
-                        <td class="source-options"><span class="button medium stroke source-textbox">I need this</span></td>
+                        <td class="source-options">
+                            <span ng-if="!user_has(source._id)" input-morph="{{source._id}}" class="button-to-input"></span>
+                            <span ng-if="user_has(source._id)" class="button medium stroke">...</span>
+                        </td>
                     </tr>
                 </table>
             </div>
         </section>
-        <section ng-hide class="panel-full feature-wishlist" ng-controller="CtrlWishlistFeatures">
-            
+
+        <section ng-hide="currentTab == 'sources'" class="panel-full feature-wishlist" ng-controller="CtrlWishlistFeatures">
+            <div class="unrequested-sources">
+                <header class="panel-header">
+                    <h2 class="panel-title">Features in the pipeline</h2>
+                </header>
+                <table class="table">
+                    <tr ng-repeat="feature in features">
+                        <td class="source-name">{{feature.title}}</td>
+                        <td class="source-options"><span class="button medium stroke source-textbox">Tell me more</span></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="feature-request">
+                <span class="button large">Tell us about a feature you'd like</span>
+            </div>
         </section>
     </div>    
 </div>
