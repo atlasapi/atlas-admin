@@ -3,6 +3,7 @@
 var config      = require('../../config'),
     common      = require('../../common'),
     express     = require('express'),
+    model       = require('../services/modelHelpers'),
     http        = require('http'),
     ObjectID    = require('mongodb').ObjectID;
 
@@ -57,7 +58,13 @@ var wishlist = function(db) {
             payload.user = common.user;
 
             // validate wish data
-            if (!validate_wish_data(payload)) {
+            var schema = {
+                user: {type: 'object', required: true},
+                wish: {type: 'object', required: true},
+                reason: {type: 'string', required: true}
+            }
+            var valid = new model.Validator(schema, payload);
+            if (valid.fail) {
                 res.statusCode = 400;
                 res.end( JSON.stringify(common.errors.invalid_data) ) 
                 return;
@@ -75,23 +82,6 @@ var wishlist = function(db) {
             });
         });
     return router;
-}
-
-
-var validate_wish_data = function(data) {
-    var errors = [];
-    var schema = {
-        user: {type: 'object', required: true},
-        wish: {type: 'object', required: true},
-        reason: {type: 'string', required: true}
-    }
-
-    for (var n in schema) {
-        if (typeof data[n] !== schema[n].type && schema[n].required )
-            errors.push(n)
-    }
- 
-    return (errors.length)? false : true;
 }
 
 module.exports = wishlist;

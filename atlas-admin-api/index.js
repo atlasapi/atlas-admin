@@ -7,8 +7,8 @@ var config                       = require('./config'),
     MongoClient                  = require('mongodb').MongoClient,
     MongoServer                  = require('mongodb').Server,
     app                          = express(),
-    auth                         = require('./lib/auth'),
-    prepResponse                 = require('./lib/prepResponse'),
+    auth                         = require('./lib/middleware/auth'),
+    prepResponse                 = require('./lib/middleware/prepResponse'),
     gatewayRequest               = require('./lib/gateways/requests'),
     gatewayWishlist              = require('./lib/gateways/wishlist');
 
@@ -52,5 +52,3 @@ mongoclient.open(function(err, mongo) {
     console.log('listen on port: ' + port);
     app.listen(port);
 })
-
-

@@ -1,7 +1,7 @@
 'use strict';
 
-var config = require('../config');
-var common = require('../common');
+var config = require('../../config');
+var common = require('../../common');
 var http = require('http');
 var url = require('url');
 

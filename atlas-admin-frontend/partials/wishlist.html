@@ -47,10 +47,7 @@
                     <h2 class="panel-title">Features in the pipeline</h2>
                 </header>
                 <table class="table">
-                    <tr ng-repeat="feature in features">
-                        <td class="source-name">{{feature.title}}</td>
-                        <td class="source-options"><span class="button medium stroke source-textbox">Tell me more</span></td>
-                    </tr>
+                    <tr ng-repeat="feature in features" feature-row="{{feature._id}}"></tr>
                 </table>
             </div>
             <div class="feature-request">
