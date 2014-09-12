@@ -5,8 +5,8 @@ var app = angular.module('atlasAdmin.controllers.wishlist');
 app.controller('CtrlWishlistSources', ['$scope', '$rootScope', '$routeParams', 'factoryWishlist', '$q', 
     function ($scope, $rootScope, $routeParams, Wishlist, $q) {
     var root = $rootScope;
-    $scope.sources = {};
-    $scope.asked = {};
+    $scope.sources = [];
+    $scope.asked = [];
 
     // when wishlist data changes, only allow sources to be filtered 
     // into the $scope
@@ -26,7 +26,6 @@ app.controller('CtrlWishlistSources', ['$scope', '$rootScope', '$routeParams', '
 
     $scope.user_has = function(item_id) {
         var t = _.filter($scope.asked, {wish: { _id: item_id }});
-
         return t.length > 0;
     }
 
