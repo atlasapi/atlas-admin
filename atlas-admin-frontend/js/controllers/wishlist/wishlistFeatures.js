@@ -1,8 +1,8 @@
 'use strict';
 var app = angular.module('atlasAdmin.controllers.wishlist');
 
-app.controller('CtrlWishlistFeatures', ['$scope', '$rootScope', '$routeParams', 'factoryWishlist', '$q', 
-    function ($scope, $rootScope, $routeParams, Wishlist, $q) {
+app.controller('CtrlWishlistFeatures', ['$scope', '$rootScope', '$routeParams', 'factoryWishlist', '$q', '$modal',
+    function ($scope, $rootScope, $routeParams, Wishlist, $q, $modal) {
     var root = $rootScope;
     $scope.features = {};
     $scope.asked = {};
@@ -43,16 +43,31 @@ app.controller('CtrlWishlistFeatures', ['$scope', '$rootScope', '$routeParams', 
             $scope.asked.push(data);
         });
     }
+
+    $scope.customFeatureWish = function() {
+        $scope.modal = {
+            title: 'Tell us about a feature'
+        }
+
+        var modalInstance = $modal.open({
+            templateUrl: 'partials/wishlist/customFeatureRequestModal.html',
+            controller: 'customFeatureRequestModal',
+            scope: $scope
+        });
+
+    };
 }]);
 
 app.directive('featureRow', ['$document', function($document) {
     var template = 
             '<td class="feature-item">'+
-                '<div class="feature-name">{{feature.title}}</div>'+
-                '<div class="feature-options"><span class="button tell-me-more">Tell me more</span></div>'+
+                '<div class="feature-name panel-half"><h2>{{feature.title}}</h2></div>'+
+                '<div class="feature-options panel-half">'+
+                '<span ng-if="user_has(feature._id)" class="button disabled use-this">...</span>'+
+                '<span ng-if="!user_has(feature._id)" ng-click="use(feature._id)" class="button use-this">I\'d use this</span></div>'+
                 '<div class="feature-detail panel-full">'+
-                    '<div class="panel-half"><p>{{feature.feature.description}}</p></div>'+
-                    '<div class="panel-half"><div ng-if="!user_has(feature._id)" ng-click="use(feature._id)" class="use-this">I\'d use this</div></div>'+
+                    '<div class="panel-half feature-description"><p>{{feature.feature.description}}</p></div>'+
+                    '<div class="panel-half"></div>'+
                 '</div>'+
             '</td>';
 
@@ -61,3 +76,8 @@ app.directive('featureRow', ['$document', function($document) {
         template: template
     }
 }]);
+
+app.controller('customFeatureRequestModal', ['$scope', '$rootScope', '$routeParams', 'factoryWishlist', '$q',
+    function($scope, $rootScope, $routeParams, Wishlist, $q) {
+        
+}])

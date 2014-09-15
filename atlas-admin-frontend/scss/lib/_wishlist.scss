@@ -39,4 +39,29 @@
             }
         }
     }
+
+
+    // features
+    .feature-item {
+        background: lighten($mbst-purple, 80%);
+    }
+
+    .feature-name {
+        padding: 1rem;
+        margin: 0;
+
+        > h2 {
+            font-size: 1.5rem;
+        }
+    }
+
+    .feature-options {
+        padding: 1rem;
+        margin: 0;
+        text-align: right;
+    }
+
+    .feature-detail { padding: 1rem; padding-top: 0; }
+
+
 }
