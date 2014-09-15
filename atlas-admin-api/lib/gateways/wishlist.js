@@ -81,6 +81,43 @@ var wishlist = function(db) {
                 }
             });
         });
+
+    router.route('/new-item')
+
+        .post( function(req, res) {
+            var payload = req.body;
+            // bounce back with error if payload is empty
+            if (!Object.getOwnPropertyNames(payload).length) {
+                res.statusCode = 400;
+                res.end( JSON.stringify(common.errors.no_post_data) )
+                return;
+            }
+            // validate request data against a schema descriptor
+            var schema = {
+                type: {type: 'string', required: true},
+                title: {type: 'string', required: true},
+                status: {type: 'string', required: true},
+                feature: {type: 'object'}
+            }
+            var valid = new model.Validator(schema, payload);
+            if (valid.fail) {
+                res.statusCode = 400;
+                res.end( JSON.stringify(common.errors.invalid_data) ) 
+                return;
+            }
+
+            // push the request into the database
+            wishlistCollection.insert(payload, {w: 1}, function(err, records) {
+                if (err) {
+                    res.statusCode = 500;
+                    res.end( JSON.stringify(common.errors.request_error) )
+                }else{
+                    res.statusCode = 201;
+                    res.end(JSON.stringify(records[0]));                    
+                }
+            });
+        })
+
     return router;
 }
 
