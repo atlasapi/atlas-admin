@@ -4,10 +4,10 @@
         <p>We are doing our best to add relevant sources to Atlas, and we are constantly working on making the Atlas admin experience better for developers. You can help us by telling us what you would like below.</p>
     </header>
 
-    <div class="panel-full wish-selector">
+    <div class="app-content wish-selector">
         <div class="app-tabber padded">
-            <div ng-click="currentTab = 'sources'" class="tab sources" ng-class="{active: currentTab=='sources'}">Sources</div>
-            <div ng-click="currentTab = 'features'" class="tab features last" ng-class="{active: currentTab=='features'}">Features</div>
+            <div ng-click="currentTab = 'sources'" class="app-tab sources" ng-class="{active: currentTab=='sources'}">Sources</div>
+            <div ng-click="currentTab = 'features'" class="app-tab features last" ng-class="{active: currentTab=='features'}">Features</div>
         </div>
 
         <section ng-hide="currentTab == 'features'" class="panel-full source-wishlist" ng-controller="CtrlWishlistSources">

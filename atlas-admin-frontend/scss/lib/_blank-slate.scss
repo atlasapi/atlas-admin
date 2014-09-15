@@ -9,12 +9,12 @@
 
 	.no-apps-message {
 		margin: 0 0 .5em;
-		font-size: 3.5rem;
+		font-size: 2.25rem;
 	}
 
 	.create-link {
-		font-size: 2.5rem;
-		text-decoration: underline;
+		@extend .button;
+		@extend .button.medium;
 		cursor: pointer;
 	}
 }

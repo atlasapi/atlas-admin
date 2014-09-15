@@ -16,7 +16,6 @@ var wishlist = function(db) {
         wishesCollection = db.collection('wishlistRequests');
 
     router.route('/user')
-
         // GET: returns all requests for current user
         .get( function(req, res) {
             if ('string' !== typeof common.user.id) {
@@ -33,7 +32,6 @@ var wishlist = function(db) {
         })
 
     router.route('/')
-
         // GET: returns all wishlist items
         .get( function(req, res) {
             wishlistCollection.find({}, {}).toArray(function(err, data) {
@@ -44,7 +42,6 @@ var wishlist = function(db) {
         });
 
     router.route('/create')
-
         // POST: create a new wish
         .post( function(req, res) {
             var payload = req.body;
@@ -83,7 +80,6 @@ var wishlist = function(db) {
         });
 
     router.route('/new-item')
-
         .post( function(req, res) {
             var payload = req.body;
             // bounce back with error if payload is empty
@@ -116,6 +112,21 @@ var wishlist = function(db) {
                     res.end(JSON.stringify(records[0]));                    
                 }
             });
+        })
+
+    router.route('/wishes')
+        .get( function(req, res) {
+            var user = common.user;
+            if (user.role === 'admin') {
+                wishesCollection.find({}, {}).toArray(function(err, data) {
+                    if (err) throw err;
+                    var output = JSON.stringify(data) || JSON.stringify(common.errors.no_data);
+                    res.end(output);
+                })
+            }else{
+                res.statusCode = 403;
+                res.end(JSON.stringify(common.errors.not_permitted));
+            }
         })
 
     return router;

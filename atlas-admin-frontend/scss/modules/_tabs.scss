@@ -5,11 +5,11 @@
 //  Modifiers:
 //  .padded    – adds a touch of padding before the first tab
 //
-.app-tabber {
-    $tab-border-color: $mbst-purple;
-    $tab-active-bg-color: #fff;
-    $tab-inactive-bg-color: desaturate(lighten($mbst-purple, 75%), 80%);
+$tab-border-color: $mbst-purple;
+$tab-active-bg-color: #fff;
+$tab-inactive-bg-color: desaturate(lighten($mbst-purple, 75%), 80%);
 
+.app-tabber {
     @extend %cf;
     position: relative;
     width: 100%;
@@ -17,34 +17,69 @@
     border-bottom: 1px solid $tab-border-color;
 
     &.padded { padding-left: 1rem; }
+}
 
+//  The tab element
+//
+//  Just a tab that can be placed in a row with other tab elements
+//
+//  Modifiers:
+//  .active    – behaviour for when tab is active
+//  .last      – to be applied to last tab in a row
+//
+.app-tab {
+    position: relative;
+    bottom: -1px;
+    display: block;
+    float: left;
+    padding: 0 2rem;
+    height: 3.375rem;
+    background: $tab-inactive-bg-color;
+    color: $mbst-purple;
+    line-height: 3.375rem;
+    border: 1px solid $tab-border-color;
+    border-right-width: 0;
+    cursor: pointer;
 
-    //  The tab element
-    //
-    //  Just a tab that can be placed in a row with other tab elements
-    //
-    //  Modifiers:
-    //  .active    – behaviour for when tab is active
-    //  .last      – to be applied to last tab in a row
-    //
-    .tab {
-        position: relative;
-        bottom: -1px;
-        display: block;
-        float: left;
-        padding: 1rem 2rem;
-        background: $tab-inactive-bg-color;
-        color: $mbst-purple;
-        border: 1px solid $tab-border-color;
-        border-right-width: 0;
-        cursor: pointer;
-
-        &.active { 
-            background: $tab-active-bg-color;
-            font-weight: bold;
-            border-bottom-color: $tab-active-bg-color; 
-        }
-
-        &.last { border-right-width: 1px;  }
+    &.active { 
+        background: $tab-active-bg-color;
+        font-weight: bold;
+        border-bottom-color: $tab-active-bg-color; 
     }
+
+    &.last { border-right-width: 1px;  }
+}
+
+//  Tab groups
+//
+//  Group tabs together for contextual spaces
+//
+//  Modifiers:
+//  .right     – align group to the right of tabber box
+.app-tab-group {
+    display: block;
+    float: left;
+    
+    &.right { float: right; }
+}
+
+//  Notifications
+//
+//  Notifications can be displayed in the tab
+//
+.app-tab-notification {
+    box-sizing: border-box;
+    display: inline-block;
+    height: 1.5rem;
+    margin-right: .5rem;
+    padding: 0 .5rem;
+    background: $mbst-purple;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 1.5rem;
+    text-align: center;
+    border-radius: 100px;
+
+    .app-tab.active & { background: $mbst-pink; }
 }

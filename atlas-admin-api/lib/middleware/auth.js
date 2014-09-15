@@ -89,7 +89,6 @@ var auth = function(request, response, next) {
         var auth = http.request(authOpts, handleAuth).end();
     }else{
         responder.not_authenticated();
-        next();
     }
 }
 

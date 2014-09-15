@@ -1,0 +1,84 @@
+<div class="app-surface manage-source-requests">
+    <header class="app-header">
+        <h1 class="page-title">Wishlist manager</h1>
+    </header>
+    <div class="app-content">
+        <div class="app-tabber padded">
+            <div class="app-tab-group">
+                <div ng-click="currentTab = 'source-requests'" class="app-tab source-requests" ng-class="{active: currentTab=='source-requests'}">
+                    <span ng-if="$root.requestsToday.sources > 0" class="app-tab-notification">{{$root.requestsToday.sources}}</span>Source requests
+                </div>
+                <div ng-click="currentTab = 'feature-requests'" class="app-tab feature-requests last" ng-class="{active: currentTab=='feature-requests'}">
+                    <span ng-if="$root.requestsToday.features > 0" class="app-tab-notification">{{$root.requestsToday.features}}</span>Feature requests
+                </div>
+            </div>
+            <div class="app-tab-group right">
+                <div ng-click="currentTab = 'sources'" class="app-tab sources" ng-class="{active: currentTab=='sources'}">Sources</div>
+                <div ng-click="currentTab = 'features'" class="app-tab features last" ng-class="{active: currentTab=='features'}">Features</div>
+            </div>
+        </div>
+    
+        <!-- source requests panel -->
+        <section class="panel-full" ng-show="currentTab == 'source-requests'" ng-controller="CtrlManageWishlistSourceRequests">
+            <table class="table">
+                <thead>
+                    <th>Source name</th>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="(source,count) in sources_by_count">
+                        <td>{{count}} {{source}}</td>
+                        <td>View requests</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section> <!-- end source requests panel -->
+
+        <!-- feature wishlist panel -->
+        <section class="panel-full" ng-show="currentTab == 'feature-requests'" ng-controller="CtrlManageWishlistFeatureRequests">
+             <table class="table">
+                <thead>
+                    <th>Feature name</th>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="(feature,count) in features_by_count">
+                        <td>{{count}} {{feature}}</td>
+                        <td>View requests</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section><!-- end feature wishlist panel -->
+
+        <!-- source wishlist panel -->
+        <section class="panel-full" ng-show="currentTab == 'sources'" ng-controller="CtrlManageWishlistSources">
+            <div class="panel-full add" ng-click="newSourceItem()">+ Add new source to the wishlist</div>
+            <table class="table">
+                   <thead>
+                       <th>Source name</th>
+                   </thead>
+                   <tbody>
+                       <tr ng-repeat="source in sources">
+                           <td class="source-name">{{source.title}}</td>
+                           <td class="source-options">Not available | In progress | Available | Delete</td>
+                       </tr>
+                   </tbody>
+               </table>
+        </section><!-- end source wishlist panel -->
+
+        <!-- source wishlist panel -->
+        <section class="panel-full" ng-show="currentTab == 'features'" ng-controller="CtrlManageWishlistFeatures">
+            <div class="panel-full add" ng-click="newFeatureItem()">+ Add new feature to the wishlist</div>
+            <table class="table">
+                   <thead>
+                       <th>Feature name</th>
+                   </thead>
+                   <tbody>
+                       <tr ng-repeat="feature in features">
+                           <td class="source-name">{{feature.title}}</td>
+                           <td class="source-options">Not available | In progress | Available | Delete</td>
+                       </tr>
+                   </tbody>
+               </table>
+        </section><!-- end source wishlist panel -->
+
+    </div>
+</div>
