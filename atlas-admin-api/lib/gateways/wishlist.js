@@ -10,10 +10,11 @@ var config      = require('../../config'),
 // REST interface for wishlist
 //
 // @param db {object} the mongo database object
-var wishlist = function(db) { 
+var wishlistInterface = function(db) { 
     var router  = express.Router(),
         wishlistCollection = db.collection('wishlist'),
         wishesCollection = db.collection('wishlistRequests');
+
 
     router.route('/user')
         // GET: returns all requests for current user
@@ -31,7 +32,9 @@ var wishlist = function(db) {
             })
         })
 
+
     router.route('/')
+
         // GET: returns all wishlist items
         .get( function(req, res) {
             wishlistCollection.find({}, {}).toArray(function(err, data) {
@@ -41,7 +44,9 @@ var wishlist = function(db) {
             })
         });
 
+
     router.route('/create')
+
         // POST: create a new wish
         .post( function(req, res) {
             var payload = req.body;
@@ -79,6 +84,7 @@ var wishlist = function(db) {
             });
         });
 
+
     router.route('/new-item')
         .post( function(req, res) {
             var payload = req.body;
@@ -114,6 +120,7 @@ var wishlist = function(db) {
             });
         })
 
+
     router.route('/wishes')
         .get( function(req, res) {
             var user = common.user;
@@ -129,7 +136,38 @@ var wishlist = function(db) {
             }
         })
 
+
+    router.route('/item/:itemId')
+        .delete(function(req, res) {
+            var user = common.user;
+            if (user.role === 'admin' && typeof req.params.itemId === 'string') {
+                var id = new ObjectID(req.params.itemId);
+                wishlistCollection.remove({"_id": id}, {w:1}, function(err, numRemoved) {
+                    res.statusCode = 200;
+                    res.end('{"deleted": "'+numRemoved+'"}');
+                })
+            }
+        })
+
+
+    // POST: change the status of a wishlist item
+    router.route('/item/:itemId/status')
+        .post(function(req, res) {
+            var payload = req.body;
+            var user = common.user;
+            if (user.role === 'admin' 
+                && typeof req.params.itemId === 'string' 
+                && payload.status) {
+                var status = payload.status.toString();
+                var id = new ObjectID(req.params.itemId);
+                wishlistCollection.update({"_id": id}, {$set: {"status": status}}, {}, function(err, updateCount) {
+                    res.statusCode = 200;
+                    res.end('{"updated": "'+updateCount+'"}');
+                })
+            }
+        })
+
     return router;
 }
 
-module.exports = wishlist;
+module.exports = wishlistInterface;

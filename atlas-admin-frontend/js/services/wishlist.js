@@ -108,10 +108,45 @@ app.factory('factoryWishlist', ['$http', 'Authentication', 'atlasApiHost', '$q',
         .success(function(data, status) {
             defer.resolve(data, status)
         })
+        .error(function(data, status) { defer.reject('There was an error with the request. [status: '+status+']'); });
         return defer.promise;
     }
 
-    var updateWishlistItem = function() {}
+    var removeWishlistItem = function(itemId) {
+        var defer = $q.defer();
+        if ('object' !== typeof itemId) {
+            defer.reject('First argument should be ID string');
+            return;
+        }
+        $http({
+            method: 'delete',
+            url: Authentication.appendTokenToUrl(endpoint+'/item/'+itemId)
+        })
+        .success(function(data, status) {
+            defer.resolve(data, status)
+        })
+        .error(function(data, status) { defer.reject('There was an error with the request. [status: '+status+']'); });
+        return defer.promise;
+    }
+
+    var updateWishlistItemStatus = function(itemId, status) {
+        var defer = $q.defer();
+        if ('string' !== typeof itemId || 'string' !== typeof status) {
+            defer.reject('First argument should be ID string, the second should be status string')
+            return;
+        }
+        var payload = { 'status': status }
+        $http({
+            method: 'post',
+            url: Authentication.appendTokenToUrl(endpoint+'/item/'+itemId+'/status'),
+            data: payload
+        })
+        .success(function(data, status) {
+            defer.resolve(data, status);
+        })
+        .error(function(data, status) { defer.reject('There was an error with the request. [status: '+status+']'); })
+        return defer.promise;
+    }
 
     // expose the REST interface
     return {
@@ -119,6 +154,8 @@ app.factory('factoryWishlist', ['$http', 'Authentication', 'atlasApiHost', '$q',
         createWish: createWish,
         getUserWishes: getUserWishes,
         getAllWishes: getAllWishes,
-        createWishlistItem: createWishlistItem
+        createWishlistItem: createWishlistItem,
+        removeWishlistItem: removeWishlistItem,
+        updateWishlistItemStatus: updateWishlistItemStatus
     }
 }])

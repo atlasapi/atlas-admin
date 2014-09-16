@@ -44,7 +44,7 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/cat/sources/:sourceId/writers', {templateUrl: 'partials/sourceWriters.html', controller: 'CtrlSourceWriters'});
     $routeProvider.when('/cat/users/:uid', {templateUrl: 'partials/profile.html', controller: 'UserProfileController'});
     $routeProvider.when('/cat/users', {templateUrl: 'partials/users.html', controller: 'AllUsersController'});
-    $routeProvider.when('/cat/wishlist', {templateUrl: 'partials/admins/manageWishlist.html', controller: 'CtrlManageWishlist'});
+    $routeProvider.when('/cat/wishlist', {templateUrl: 'partials/admins/wishlist/manageWishlist.html', controller: 'CtrlManageWishlist'});
 
     // application user routes
     $routeProvider.when('/applications', {templateUrl: 'partials/applications.html', controller: 'CtrlApplications'});

@@ -23,6 +23,7 @@ var newSourceItem = function(type) {
     });
 }
 
+
 app.controller('CtrlManageWishlist', ['$scope', '$rootScope', 'factoryWishlist',
     function($scope, $rootScope, Wishlist) {
     $scope.app = {};
@@ -38,6 +39,7 @@ app.controller('CtrlManageWishlist', ['$scope', '$rootScope', 'factoryWishlist',
     }, function(err) { console.error(err) });
 }])
 
+
 app.controller('CtrlManageWishlistSourceRequests', [ '$scope', '$rootScope', 'factoryWishlist',
     function($scope, $rootScope, Wishlist) {
 
@@ -46,17 +48,16 @@ app.controller('CtrlManageWishlistSourceRequests', [ '$scope', '$rootScope', 'fa
         $scope.sourceWishes = _.filter($rootScope.wishes, function(n) {
             return n.wish.type === 'source';
         });
-
         $scope.sources_by_count = _.countBy($scope.sourceWishes, function(n) {
             return n.wish.title;
         });
-
         // map out number of requests from today
         $rootScope.requestsToday.sources = _.map($scope.sourceWishes, function(n) {
             if (dateFromObjectId(n._id) > yesterday) return n;
         }).length;
     });
 }])
+
 
 app.controller('CtrlManageWishlistFeatureRequests', [ '$scope', '$rootScope', 'factoryWishlist',
     function($scope, $rootScope, Wishlist) {
@@ -76,6 +77,7 @@ app.controller('CtrlManageWishlistFeatureRequests', [ '$scope', '$rootScope', 'f
         }).length;
     });
 }])
+
 
 app.controller('CtrlManageWishlistSources', ['$scope', '$rootScope', 'factoryWishlist', '$modal',
     function($scope, $rootScope, Wishlist, $modal) {
@@ -104,6 +106,7 @@ app.controller('CtrlManageWishlistSources', ['$scope', '$rootScope', 'factoryWis
     }
 }])
 
+
 app.controller('CtrlManageWishlistFeatures', ['$scope', '$rootScope', 'factoryWishlist', '$modal',
     function($scope, $rootScope, Wishlist, $modal) {
 
@@ -131,16 +134,18 @@ app.controller('CtrlManageWishlistFeatures', ['$scope', '$rootScope', 'factoryWi
     }
 }])
 
+
 app.controller('CtrlNewWishlistItemModal', ['$scope', '$rootScope', '$modalInstance', 'factoryWishlist',
     function($scope, $rootScope, $modalInstance, Wishlist) {
     $scope.formdata = {};
+    $scope.formdata.status = 'not available';
     $scope.submit = function() {
         if ('string' !== typeof $scope.formdata.name
             && 'string'!== typeof $scope.formdata.status) {
             return false;
         } 
         var data = {
-            "type": 'source',
+            "type": $scope.modal.type.toLowerCase(),
             "title": $scope.formdata.name,
             "status": $scope.formdata.status
         }
@@ -151,4 +156,45 @@ app.controller('CtrlNewWishlistItemModal', ['$scope', '$rootScope', '$modalInsta
     $scope.cancel = function() {
         $modalInstance.dismiss();
     }
+}])
+
+
+app.directive('deleteitem', ['$document', 'factoryWishlist', 
+    function factory($document, Wishlist) {
+    var definitionObj = {
+        link: function(scope, $el, attr) {
+            $el.on('click', function() {
+                var itemId = attr.deleteitem;
+                if ('string' === typeof itemId) {
+                    scope.$apply(function() {
+                        _.remove(scope.$parent.sources, function(n) {
+                            return n._id === itemId;
+                        });
+                    })
+                    Wishlist.removeWishlistItem(itemId);
+                }
+            })
+        }
+    }
+    return definitionObj;
+}])
+
+
+app.directive('changestatus', ['$document', 'factoryWishlist', 
+    function factory($document, Wishlist) {
+    var definitionObj = {
+        link: function(scope, $el, attr) {
+            $el.on('click', function() {
+                var itemId = attr.id;
+                var status = attr.changestatus;
+                var parentClassRegex = new RegExp('\\b' + 'state-' + '.+?\\b', 'g'); 
+                if ('string' === typeof itemId && 'string' === typeof status) {
+                    $el.parent().children().removeClass('active');
+                    $el.addClass('active');
+                    Wishlist.updateWishlistItemStatus(itemId, status);
+                }
+            })
+        }
+    }
+    return definitionObj;
 }])

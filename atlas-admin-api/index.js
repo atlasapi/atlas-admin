@@ -36,7 +36,7 @@ app.use(function allowCrossDomain(req, res, next) {
 // middleware: proxy atlas requests
 app.use(auth);
 
-// open up a persistant connection to the database
+// open up a connection to mongodb, then register endpoints and boot the server
 var mongoclient = new MongoClient(
     new MongoServer(config.database.host, 27017), {native_parser: true});
 
@@ -48,7 +48,7 @@ mongoclient.open(function(err, mongo) {
     app.use(config.paths.apiRoot + '/requests', gatewayRequest(db));
     app.use(config.paths.apiRoot + '/wishlist', gatewayWishlist(db));
 
-    // listen for requests to server on port
+    // listen for requests to server on `port`
     console.log('listen on port: ' + port);
     app.listen(port);
 })
