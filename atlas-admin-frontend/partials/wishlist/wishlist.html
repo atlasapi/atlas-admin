@@ -36,7 +36,7 @@
                         <td class="source-name">{{source.title}}</td>
                         <td class="source-options">
                             <span ng-if="!user_has(source._id)" input-morph="{{source._id}}" data-title="{{source.title}}" class="button-to-input"></span>
-                            <span ng-if="user_has(source._id)" class="button medium stroke disabled">Thanks!</span>
+                            <span ng-if="user_has(source._id)" class="button medium stroke disabled">Requested</span>
                         </td>
                     </tr>
                 </table>

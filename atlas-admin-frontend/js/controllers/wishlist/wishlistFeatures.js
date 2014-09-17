@@ -57,7 +57,7 @@ app.directive('featureRow', ['$document', function($document) {
                 '<div class="feature-name panel-half"><h2>{{feature.title}}</h2></div>'+
                 '<div class="feature-options panel-half">'+
                     '<span ng-if="!user_has(feature._id)" data-title="{{feature.title}}" input-morph="{{feature._id}}" class="button-to-input"></span>'+
-                    '<span ng-if="user_has(feature._id)" class="button medium stroke disabled">Thanks!</span>'+
+                    '<span ng-if="user_has(feature._id)" class="button medium stroke disabled">Requested</span>'+
                 '</div>'+
                 '<div class="feature-detail panel-full">'+
                     '<div class="panel-half feature-description"><p>{{feature.feature.description}}</p></div>'+
