@@ -12,7 +12,8 @@ var config                       = require('./config'),
     gatewayRequest               = require('./lib/gateways/requests'),
     gatewayWishlist              = require('./lib/gateways/wishlist');
 
-var port = config.port || 9000;
+var _http_port = config.port.http;
+var _mongo_port = config.port.mongo;
 
 // middleware: parse incoming request data as json
 app.use(bodyParser.json());
@@ -38,7 +39,7 @@ app.use(auth);
 
 // open up a connection to mongodb, then register endpoints and boot the server
 var mongoclient = new MongoClient(
-    new MongoServer(config.database.host, 27017), {native_parser: true});
+    new MongoServer(config.database.host, _mongo_port), {native_parser: true});
 
 mongoclient.open(function(err, mongo) {
     if (err) console.error(err); 
@@ -48,7 +49,7 @@ mongoclient.open(function(err, mongo) {
     app.use(config.paths.apiRoot + '/requests', gatewayRequest(db));
     app.use(config.paths.apiRoot + '/wishlist', gatewayWishlist(db));
 
-    // listen for requests to server on `port`
-    console.log('listen on port: ' + port);
-    app.listen(port);
+    // listen for requests to server on _http_port
+    console.log('listen on port: ' + _http_port);
+    app.listen(_http_port);
 })

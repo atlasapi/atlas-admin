@@ -9,7 +9,11 @@ module.exports = function() {
     return {
         atlasHost: instanceConfig.atlasHost || 'stage.atlas.metabroadcast.com',
         
-        port: instanceConfig.listenPort || 9000,
+        port: {
+            http: instanceConfig.listenPort || 9000,
+            mongo: 27017
+        },
+
 
         database: instanceConfig.database || {
             host: 'localhost',
