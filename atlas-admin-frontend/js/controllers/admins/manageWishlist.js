@@ -164,7 +164,7 @@ app.directive('deleteitem', ['$document', 'factoryWishlist',
     var definitionObj = {
         link: function(scope, $el, attr) {
             $el.on('click', function() {
-                var itemId = attr.deleteitem;
+                var itemId = attr.id;
                 if ('string' === typeof itemId) {
                     scope.$apply(function() {
                         _.remove(scope.$parent.sources, function(n) {

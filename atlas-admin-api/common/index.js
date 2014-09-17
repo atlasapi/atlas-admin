@@ -1,6 +1,6 @@
 'use strict';
 
-// Anything that needs to be global to the app scope does in here
+// Anything that needs to be global to the app scope goes in here
 var common = {
     oauth: {
         provider: null,

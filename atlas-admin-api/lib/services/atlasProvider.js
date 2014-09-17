@@ -1,10 +1,9 @@
+'use strict';
 var common = require('../../common'),
     config = require('../../config'),
     http   = require('http');
 
 var Atlas = function() {
-    'use strict';
-
     var appendOauthToken = function(path) {
         if (!common.oauth.token || !common.oauth.provider) return false;
         var path = path || '',

@@ -62,6 +62,9 @@
     }
 
     .feature-detail { padding: 1rem; padding-top: 0; }
+}
 
-
+.manage-wishlist {
+    .item-options .button { background: #bbb; }
+    .item-options .button.active { background: $mbst-pink; }
 }

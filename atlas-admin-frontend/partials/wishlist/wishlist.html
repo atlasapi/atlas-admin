@@ -16,9 +16,11 @@
                     <h2 class="panel-title">Sources you've asked for</h2>
                 </header>
                 <table class="table">
-                    <tr ng-if="asked.length" ng-repeat="item in asked">
+                    <tr ng-if="asked.length" ng-repeat="item in asked" ng-switch on="item.wish.status">
                         <td class="source-name">{{item.wish.title}}</td>
-                        <td class="source-options">{{item.wish.status}}</td>
+                        <td class="source-options" ng-switch-when="not available">We'll tell you when it becomes available</td>
+                        <td class="source-options" ng-switch-when="in progress">We're working on it</td>
+                        <td class="source-options" ng-switch-when="available">Available!</td>
                     </tr>
                     <tr ng-if="!asked.length">
                         <td class="blank">You haven't asked for any sources yet. To get updates when sources become available, click 'I want this' for any sources you want access to.</td>
@@ -33,8 +35,8 @@
                     <tr ng-repeat="source in sources">
                         <td class="source-name">{{source.title}}</td>
                         <td class="source-options">
-                            <span ng-if="!user_has(source._id)" input-morph="{{source._id}}" class="button-to-input"></span>
-                            <span ng-if="user_has(source._id)" class="button medium stroke">...</span>
+                            <span ng-if="!user_has(source._id)" input-morph="{{source._id}}" data-title="{{source.title}}" class="button-to-input"></span>
+                            <span ng-if="user_has(source._id)" class="button medium stroke disabled">Thanks!</span>
                         </td>
                     </tr>
                 </table>

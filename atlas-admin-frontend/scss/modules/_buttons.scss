@@ -62,4 +62,9 @@
 		background-position: center;
 		text-indent: -100%;
 	}
+
+	&.disabled {
+		color: #aaa;
+		border-color: #aaa;
+	}
 }

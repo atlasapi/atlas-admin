@@ -17,6 +17,7 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.directives.focus',
                                 'atlasAdmin.directives.activePath',
                                 'atlasAdmin.directives.validUsage',
+                                'atlasAdmin.directives.inputmorph',
                                 'atlasAdmin.controllers.auth',
                                 'atlasAdmin.controllers.atlas',
                                 'atlasAdmin.controllers.errors',

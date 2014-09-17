@@ -1,3 +1,4 @@
+'use strict';
 //  validate data against schema descriptor
 //
 //  schema descriptor example:
