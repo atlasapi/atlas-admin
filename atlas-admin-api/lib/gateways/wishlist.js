@@ -3,7 +3,7 @@
 var config      = require('../../config'),
     common      = require('../../common'),
     express     = require('express'),
-    model       = require('../services/modelHelpers'),
+    validate    = require('../services/validationHelpers'),
     http        = require('http'),
     ObjectID    = require('mongodb').ObjectID;
 
@@ -60,13 +60,13 @@ var wishlistInterface = function(db) {
             payload.user = common.user;
 
             // validate wish data
-            var schema = {
+            var schema = new validate.schema({
                 user: {type: 'object', required: true},
                 wish: {type: 'object', required: true},
                 reason: {type: 'string', required: true}
-            }
-            var valid = new model.Validator(schema, payload);
-            if (valid.fail) {
+            }, payload);
+
+            if (schema.invalid) {
                 res.statusCode = 400;
                 res.end( JSON.stringify(common.errors.invalid_data) ) 
                 return;
@@ -95,14 +95,14 @@ var wishlistInterface = function(db) {
                 return;
             }
             // validate request data against a schema descriptor
-            var schema = {
+            var schema = new validate.schema({
                 type: {type: 'string', required: true},
                 title: {type: 'string', required: true},
                 status: {type: 'string', required: true},
                 feature: {type: 'object'}
-            }
-            var valid = new model.Validator(schema, payload);
-            if (valid.fail) {
+            }, payload);
+
+            if (schema.invalid) {
                 res.statusCode = 400;
                 res.end( JSON.stringify(common.errors.invalid_data) ) 
                 return;

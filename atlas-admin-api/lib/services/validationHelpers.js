@@ -7,7 +7,7 @@
 //  @param schema {object} the model schema
 //  @param data {object} real data to be validated
 //
-var Validator = function(schema, data) {
+var ValidateSchema = function(schema, data) {
     if ('object' !== typeof schema || 'object' !== typeof data) {
         throw new TypeError();
         return;
@@ -23,8 +23,10 @@ var Validator = function(schema, data) {
             }
         }
     }
-    this.success = this.errors.length ? false : true;
-    this.fail = this.errors.length ? true : false;
+    this.valid = this.errors.length ? false : true;
+    this.invalid = !this.valid;
 }
 
-module.exports.Validator = Validator;
+module.exports = {
+    schema: ValidateSchema
+}
