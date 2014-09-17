@@ -1,8 +1,0 @@
-<div class="auth-container">
-	<div ng-repeat="provider in providers | orderBy:'name'" class="auth-option {{provider.icon}}">
-		<a ng-click="startAuth(provider)">
-			<i class="fa fa-{{provider.icon}}"></i> {{provider.prompt}}
-		</a>
-	</div>
-	<small class="smallprint">We won't post to your account without asking you first</small>
-</div>

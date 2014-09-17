@@ -1,0 +1,70 @@
+.wishlist {
+    .requested-sources {
+        margin-bottom: 3.375rem;
+    }
+    
+    // table behaviour
+    .source-options {
+        text-align: right;
+    }
+
+
+    .feature-request {
+        width: 100%;
+        padding: 2rem 0;
+        text-align: center;
+
+        > .button { display: inline-block; }
+    }
+
+    .button-to-input {
+        display: block;
+        float: right;
+        height: 45px;
+        transition: all 500ms;
+
+        .button-state { display: inline-block; }
+        .form-state { display: none; }
+
+        &.input-mode {
+            .button-state { display: none; }
+            .form-state { 
+                display: block; 
+                input { width: 370px; height: 30px; }
+                .button { 
+                    float: right;
+                    height: 30px; 
+                    line-height: 25px;
+                }
+            }
+        }
+    }
+
+
+    // features
+    .feature-item {
+        background: lighten($mbst-purple, 80%);
+    }
+
+    .feature-name {
+        padding: 1rem;
+        margin: 0;
+
+        > h2 {
+            font-size: 1.5rem;
+        }
+    }
+
+    .feature-options {
+        padding: 1rem;
+        margin: 0;
+        text-align: right;
+    }
+
+    .feature-detail { padding: 1rem; padding-top: 0; }
+}
+
+.manage-wishlist {
+    .item-options .button { background: #bbb; }
+    .item-options .button.active { background: $mbst-pink; }
+}

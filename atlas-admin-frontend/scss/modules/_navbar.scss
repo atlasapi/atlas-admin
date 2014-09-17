@@ -1,0 +1,79 @@
+//	The global navbar
+//
+.navbar {
+	@extend %cf;
+	box-sizing: border-box;
+	display: block;
+	padding: 1rem;
+	width: 100%;
+	background: $mbst-purple;
+}
+
+// remove list defaults 
+.navbar ul { list-style: none; margin: 0; padding: 0; }
+
+.navbar-header {
+	float: left;		
+}
+
+.navbar-menu {
+	@extend %cf;
+	display: block;
+	width: 100%;
+}
+
+// navigation bar links
+.navbar-nav {
+	display: block;
+	float: left;
+	margin-left: 3rem;
+	
+	li {
+		display: inline-block;
+		float: left;
+
+		a {
+			display: inline-block;
+			color: white;
+			line-height: 3.125rem;
+		}
+	}
+}
+
+// navigation bar user dropdown
+ul.navbar-user {
+	display: block;
+	float: right;
+
+	> li {
+		display: block;
+	}
+
+	ul.dropdown-menu {
+		margin: 0;
+	}
+
+	.dropdown ul.dropdown-menu { display: none; }
+
+	.dropdown.open ul.dropdown-menu { display: block; }
+}
+
+// admin dropdown
+.nav-dropdown {
+	.dropdown-label {
+		position: relative;
+		display: inline-block;
+	}
+
+	&:hover > .dropdown-content { display: block; }
+
+	> .dropdown-content {
+		position: absolute;
+		top: 90%;
+		left: 0;
+		display: none;
+		margin: 0;
+		padding: 0;
+		list-style-type: none;
+	}
+}

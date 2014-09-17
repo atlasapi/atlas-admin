@@ -1,0 +1,98 @@
+<div class="app-surface manage-wishlist">
+    <header class="app-header">
+        <h1 class="page-title">Wishlist manager</h1>
+    </header>
+    <div class="app-content">
+        <div class="app-tabber padded">
+            <div class="app-tab-group">
+                <div ng-click="currentTab = 'source-requests'" class="app-tab source-requests" ng-class="{active: currentTab=='source-requests'}">
+                    <span ng-if="$root.requestsToday.sources > 0" class="app-tab-notification">{{$root.requestsToday.sources}}</span>Source requests
+                </div>
+                <div ng-click="currentTab = 'feature-requests'" class="app-tab feature-requests last" ng-class="{active: currentTab=='feature-requests'}">
+                    <span ng-if="$root.requestsToday.features > 0" class="app-tab-notification">{{$root.requestsToday.features}}</span>Feature requests
+                </div>
+            </div>
+            <div class="app-tab-group right">
+                <div ng-click="currentTab = 'sources'" class="app-tab sources" ng-class="{active: currentTab=='sources'}">Sources</div>
+                <div ng-click="currentTab = 'features'" class="app-tab features last" ng-class="{active: currentTab=='features'}">Features</div>
+            </div>
+        </div>
+    
+        <!-- source wish panel -->
+        <section class="panel-full" ng-show="currentTab == 'source-requests'" ng-controller="CtrlManageWishlistSourceRequests">
+            <header class="panel-header">
+                <h2>Source requests</h2>
+            </header>
+            <table class="table">
+                <thead>
+                    <th>Source name</th>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="(source,count) in sources_by_count">
+                        <td><span class="counter">{{count}}</span> {{source}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section> <!-- end source wish panel -->
+
+        <!-- feature wish panel -->
+        <section class="panel-full" ng-show="currentTab == 'feature-requests'" ng-controller="CtrlManageWishlistFeatureRequests">
+            <header class="panel-header">
+                <h2>Feature requests</h2>
+            </header>
+             <table class="table">
+                <thead>
+                    <th>Feature name</th>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="(feature,count) in features_by_count">
+                        <td><span class="counter">{{count}}</span> {{feature}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section><!-- end feature wish panel -->
+
+        <!-- source wishlist items panel -->
+        <section class="panel-full" ng-show="currentTab == 'sources'" ng-controller="CtrlManageWishlistSources">
+            <div class="panel-full add" ng-click="newSourceItem()">+ Add new source to the wishlist</div>
+            <table class="table">
+                <thead>
+                    <th>Source name</th>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="source in sources">
+                        <td class="item-name">{{source.title}}</td>
+                        <td class="item-options">
+                            <span class="button small status-selector" ng-class="{active: source.status == 'not available'}" data-id="{{source._id}}" changestatus="not available">Not available</span>
+                            <span class="button small status-selector" ng-class="{active: source.status == 'in progress'}" data-id="{{source._id}}" changestatus="in progress">In progress</span>
+                            <span class="button small status-selector" ng-class="{active: source.status == 'available'}" data-id="{{source._id}}" changestatus="available">Available</span>
+                            <span class="button small status-selector" deleteitem data-id="{{source._id}}">Delete</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section><!-- end source wishlist items panel -->
+
+        <!-- source wishlist items panel -->
+        <section class="panel-full" ng-show="currentTab == 'features'" ng-controller="CtrlManageWishlistFeatures">
+            <div class="panel-full add" ng-click="newFeatureItem()">+ Add new feature to the wishlist</div>
+            <table class="table">
+                <thead>
+                   <th>Feature name</th>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="feature in features">
+                        <td class="item-name">{{feature.title}}</td>
+                        <td class="item-options">
+                            <span class="button small status-selector" ng-class="{active: feature.status == 'not available'}" data-id="{{feature._id}}" changestatus="not available">Not available</span>
+                            <span class="button small status-selector" ng-class="{active: feature.status == 'in progress'}" data-id="{{feature._id}}" changestatus="in progress">In progress</span>
+                            <span class="button small status-selector" ng-class="{active: feature.status == 'available'}" data-id="{{feature._id}}" changestatus="available">Available</span>
+                            <span class="button small status-selector" deleteitem data-id="{{feature._id}}">Delete</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section><!-- end source wishlist items panel -->
+
+    </div>
+</div>

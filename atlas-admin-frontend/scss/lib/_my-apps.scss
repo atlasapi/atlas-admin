@@ -1,0 +1,92 @@
+.app-title { margin-bottom: 1em; }
+
+.apps-sheet {
+	@extend %cf;
+	width: 100%;
+}
+
+// view header block
+.apps-sheet-header {
+	@extend %cf;
+	display: block;
+	margin-bottom: 4rem;
+
+	.header-content {
+		float: left;
+		width: 50%;
+	}
+
+	.header-filter {
+		float: left;
+		width: 50%;
+
+		.filter-query-box {
+			float: right;
+		}
+	}
+
+	h1 {
+		margin: 0 0 .5em 0;
+		color: $mbst-purple;
+	}
+}
+
+// apps listing
+.apps-list {
+	@extend %cf;
+}
+
+// app block
+.app-block {
+	@extend %cf;
+	box-sizing: border-box;
+	width: 50%;
+	padding: 0 0 4rem 2rem;
+	float: left;
+
+	// odd keys in the loop
+	&.odd {
+		padding-left: 0;
+		padding-right: 2rem;
+	}
+
+	.app-block-inner {
+		box-sizing: border-box;
+		padding: 2rem;
+		background: #f3f3f3;
+		border: 1px solid darken(#f3f3f3, 10%);
+		border-radius: 3px;
+	}
+
+	.app-title {
+		margin: 0 0 2rem;
+		color: $mbst-purple;
+	}
+
+	.app-meta {
+		margin-bottom: 2rem;
+
+		> .meta-item {
+			display: block;
+			margin-bottom: 1rem;
+
+			.meta-item-label {
+				display: block;
+				margin-bottom: .5rem;
+				font-weight: bold;
+			}
+		} 
+	}
+
+	.app-actions {
+
+	}
+}
+
+#addApplication {
+	// block level form label
+	.form-label { display: block; }
+	
+	// inline level form label
+	.inline-label { margin-left: 1rem; }
+}

@@ -1,0 +1,57 @@
+.sign-in-title { 
+	@extend .app-title;
+	margin-bottom: 2rem; 
+}
+
+.auth-container {
+	display: block;
+	width: 100%;
+	max-width: 362px;
+	margin: 3rem auto 0;
+}
+
+.auth-option {
+	box-sizing: border-box;
+	//margin: 0 0 14px 0;
+	color: white;
+	text-align: center;
+
+	> a {
+		box-sizing: border-box;
+		display: block;
+		width: 100%;
+		height: 100%;
+		padding: 1rem;
+		color: white;
+		cursor: pointer;
+		font-weight: bold;
+		text-decoration: none;
+
+		// icon
+		i {
+			display: block;
+			margin-bottom: 1rem;
+			font-size: 3rem;
+		}
+	}
+
+	&.twitter {
+		background: #55acee;
+		border-radius: 5px 5px 0 0;
+	}
+	&.github {
+		background: #333;
+		border-radius: 0;
+	}
+	&.google-plus {
+		background: #dd4b39;
+		border-radius: 0 0 5px 5px;
+	}
+}
+
+.smallprint {
+	display: block;
+	margin: 2rem 0 0 0;
+	color: lighten(#000, 50%);
+	text-align: center;
+}

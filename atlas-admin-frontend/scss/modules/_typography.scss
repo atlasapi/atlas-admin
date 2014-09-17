@@ -1,0 +1,28 @@
+// @module: typography
+
+// ——————————————————————————————————————————————————————————————
+//  Global typography styling
+// ——————————————————————————————————————————————————————————————
+body {
+	font: 16px/1.4 Helvetica, Arial, sans-serif;
+}
+
+a {
+	color: $mbst-pink;
+}
+
+// app header blocks
+.app-header {
+    .page-title { font-size: 2rem; line-height: 1.4; }
+}
+
+// panel title blocks
+.panel-title {
+    font-size: 1.5rem;
+}
+
+.form-heading {
+    display: block;
+    margin: 3rem 0 1.5rem;
+    font-size: 2rem;
+}

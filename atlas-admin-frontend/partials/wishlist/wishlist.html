@@ -1,0 +1,60 @@
+<div class="app-surface wishlist">
+    <header class="app-header">
+        <h1 class="page-title">Request new sources and features</h1>
+        <p>We are doing our best to add relevant sources to Atlas, and we are constantly working on making the Atlas admin experience better for developers. You can help us by telling us what you would like below.</p>
+    </header>
+
+    <div class="app-content wish-selector">
+        <div class="app-tabber padded">
+            <div ng-click="currentTab = 'sources'" class="app-tab sources" ng-class="{active: currentTab=='sources'}">Sources</div>
+            <div ng-click="currentTab = 'features'" class="app-tab features last" ng-class="{active: currentTab=='features'}">Features</div>
+        </div>
+
+        <section ng-hide="currentTab == 'features'" class="panel-full source-wishlist" ng-controller="CtrlWishlistSources">
+            <div class="requested-sources">
+                <header class="panel-header">
+                    <h2 class="panel-title">Sources you've asked for</h2>
+                </header>
+                <table class="table">
+                    <tr ng-if="asked.length" ng-repeat="item in asked" ng-switch on="item.wish.status">
+                        <td class="source-name">{{item.wish.title}}</td>
+                        <td class="source-options" ng-switch-when="not available">We'll tell you when it becomes available</td>
+                        <td class="source-options" ng-switch-when="in progress">We're working on it</td>
+                        <td class="source-options" ng-switch-when="available">Available!</td>
+                    </tr>
+                    <tr ng-if="!asked.length">
+                        <td class="blank">You haven't asked for any sources yet. To get updates when sources become available, click 'I want this' for any sources you want access to.</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="unrequested-sources">
+                <header class="panel-header">
+                    <h2 class="panel-title">Which sources do you want access to?</h2>
+                </header>
+                <table class="table">
+                    <tr ng-repeat="source in sources">
+                        <td class="source-name">{{source.title}}</td>
+                        <td class="source-options">
+                            <span ng-if="!user_has(source._id)" input-morph="{{source._id}}" data-title="{{source.title}}" class="button-to-input"></span>
+                            <span ng-if="user_has(source._id)" class="button medium stroke disabled">Requested</span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <section ng-hide="currentTab == 'sources'" class="panel-full feature-wishlist" ng-controller="CtrlWishlistFeatures">
+            <div class="unrequested-sources">
+                <header class="panel-header">
+                    <h2 class="panel-title">Features in the pipeline</h2>
+                </header>
+                <table class="table">
+                    <tr ng-repeat="feature in features" feature-row></tr>
+                </table>
+            </div>
+            <!-- <div class="feature-request">
+                <span class="button large" ng-click="customFeatureWish()">Tell us about a feature you'd like</span>
+            </div> -->
+        </section>
+    </div>    
+</div>

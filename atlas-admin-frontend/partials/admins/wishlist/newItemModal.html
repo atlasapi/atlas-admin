@@ -1,0 +1,21 @@
+<div class="app-modal-surface wishlist">
+    <h1>{{modal.title}}</h1>
+    <div class="app-modal-content">
+        <span class="form-row">
+            <label for="">{{modal.type}} name</label>
+            <input type="text" ng-model="formdata.name">
+        </span>
+        <span class="form-row">
+            <label for="">{{modal.type}} status</label>
+            <select ng-model="formdata.status">
+                <option value="not available" ng-selected="selected">Not Available</option>
+                <option value="in progress">In Progress</option>
+                <option value="available">Available</option>
+            </select>
+        </span>
+        <span class="form-row">
+            <button ng-click="submit()" class="primary">Submit</button>
+            <button ng-click="cancel()" class="secondary">Cancel</button>
+        </span>
+    </div>
+</div>

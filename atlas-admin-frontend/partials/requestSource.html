@@ -1,0 +1,93 @@
+<div class="app-surface request-source">
+    <header class="app-header">
+        <h1 class="page-title">Before you can use the <span class="source-highlight">{{source.title}}</span> source, you must complete the steps below</h1>
+    </header>
+    <div class="app-content">
+        <section class="panel-full application-info">
+            <header class="panel-header">
+                <h1>1. Review your information</h1>
+                <em class="form-terms">This information will be sent to the source owner with your request</em>
+            </header>
+            <div class="app-data">
+                <h2>Application information</h2>
+                <span class="form-row">
+                    <label>Application name</label>
+                    <span class="editable-field"><input type="text" ng-model="app.title" value="{{app.title}}" /></span>
+                </span>
+                <span class="form-row">
+                    <label>Application URL</label>
+                    <span class="editable-field"><input type="text" ng-model="app.url" value="{{app.url}}" /></span>
+                </span>
+                <span class="form-row last">
+                    <label>Application Description</label>
+                    <span class="editable-field"><input type="text" ng-model="app.description" value="{{app.description}}" /></span>
+                </span>
+            </div>
+            <div class="user-data">
+                <h2>Your information</h2>
+                <span class="form-row">
+                    <label>Name</label>
+                    <span class="editable-field"><input type="text" ng-model="user.full_name" value="{{user.full_name}}" /></span>
+                </span>
+                <span class="form-row">
+                    <label>Email</label>
+                    <span class="editable-field"><input type="text" ng-model="user.email" value="{{user.email}}" /></span>
+                </span>
+                <span class="form-row">
+                    <label>Company</label>
+                    <span class="editable-field"><input type="text" ng-model="user.company" value="{{user.company}}" /></span>
+                </span>
+                <span class="form-row last">
+                    <label>Website URL</label>
+                    <span class="editable-field"><input type="text" ng-model="user.website" value="{{user.website}}" /></span>
+                </span>
+            </div>
+        </span>
+        </section>
+        <section class="panel-full payment-plans">
+            <header class="panel-header">
+                <h1>2. Choose a payment plan</h1>
+            </header>
+            <div class="payment-plan-contain">
+                <div class="payment-plan plan-{{$index}}" ng-repeat="theplan in planData">
+                    <input ng-model="plan" ng-change="changeOfPlan($index)" type="radio" class="payment-plan-radio" name="payment-opt" value="{{$index}}" id="payment-opt-{{$index}}">
+                    <label for="payment-opt-{{$index}}" class="plan-box">
+                        <span class="plan-features">
+                            <strong>{{theplan.users}}</strong> unique users 
+                        </span>
+                        <span class="plan-price">
+                            <strong class="the-price" ng-if="isNumber(theplan.price)">{{theplan.price | currency:'£'}}</strong>
+                            <strong class="the-price" ng-if="!isNumber(theplan.price)">{{theplan.price}}</strong>
+                            <strong class="price-terms">per month</strong>
+                        </span>
+                    </label>
+                </div>
+            </div>
+            <div class="payment-terms">All prices excluding VAT</div>
+        </section>
+        <section class="panel-full terms">
+            <header class="panel-header">
+                <h1>3. Read the {{source.title}} terms &amp; conditions</h1>
+                <a ng-href="#/terms" class="atlas-terms-link">Read the Atlas terms &amp; conditions</a>
+            </header>
+            <div class="terms-container">
+                <p><b>1.</b> In addition to platform fees, the following data fees are due per API key for which Press Association data is enabled: Number of unique users per month (exc. VAT)</p>
+                <p><b>2.</b> Please include the following credit in an "About" page or similar, within your app and easily accessible to all users:</p>
+                <p class="terms-important">Entertainment data copyright: Press Association" And link to, or provide separately the URL: http://www.pressassociation.com</p>
+            </div>
+            <div class="reason-for-access">
+                <span class="form-row last">
+                    <label>Why do you want access to the {{source.name}} source?</label>
+                    <textarea ng-model="reason" placeholder="Include any extra information you think the provider might need to know"></textarea>
+                </span>
+            </div>
+        </section>
+        <div class="panel-full submit-buttons">
+            <header class="panel-header">
+                <h1>4. Confirm and agree</h1>
+            </header>
+            <button class="group primary medium" ng-click="send()">{{button_txt}}</button>
+            <button class="group secondary medium last" ng-click="cancel()">Cancel</button>
+        </div>
+    </div>
+</div>

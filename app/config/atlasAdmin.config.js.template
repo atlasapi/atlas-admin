@@ -1,9 +1,0 @@
-/*
- * Populate the values in the template below and remove .template 
- * from the filename to configure the application
- * Atlas Host e.g. "http://atlas.example.com"
- * Atlas version e.g. "4.0"
- */
-angular.module('atlasAdminConfig', [])
-    .value('atlasHost','%%ATLASHOST%%')
-    .value('atlasVersion', '%%ATLASVERSION%%');
