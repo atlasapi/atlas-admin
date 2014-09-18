@@ -12,7 +12,6 @@ gulp.task('styles', function() {
 		.pipe(gulp.dest('css'));
 })
 
-// task: watch
 gulp.task('watch', function() {
 	gulp.watch('scss/**/*.scss', ['styles']);
 });
