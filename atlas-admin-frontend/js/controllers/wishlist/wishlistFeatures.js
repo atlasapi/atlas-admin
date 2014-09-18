@@ -1,8 +1,8 @@
 'use strict';
 var app = angular.module('atlasAdmin.controllers.wishlist');
 
-app.controller('CtrlWishlistFeatures', ['$scope', '$rootScope', '$routeParams', 'factoryWishlist', '$q', '$modal',
-    function ($scope, $rootScope, $routeParams, Wishlist, $q, $modal) {
+app.controller('CtrlWishlistFeatures', ['$scope', '$rootScope', '$routeParams', 'factoryWishes', '$q', '$modal',
+    function ($scope, $rootScope, $routeParams, Wishes, $q, $modal) {
     var root = $rootScope;
     $scope.features = {};
     $scope.asked = {};
@@ -18,7 +18,6 @@ app.controller('CtrlWishlistFeatures', ['$scope', '$rootScope', '$routeParams', 
         })
     });
 
-
     $scope.user_has = function(item_id) {
         var t = _.filter($scope.asked, {wish: { _id: item_id }});
         return t.length > 0;
@@ -33,7 +32,7 @@ app.controller('CtrlWishlistFeatures', ['$scope', '$rootScope', '$routeParams', 
             wish: item,
             reason: reason
         }
-        Wishlist.createWish(postdata).then(function(data) {
+        Wishes.create(postdata).then(function(data) {
             $scope.asked.push(data);
         });
     }
@@ -71,7 +70,7 @@ app.directive('featureRow', ['$document', function($document) {
     }
 }]);
 
-app.controller('customFeatureRequestModal', ['$scope', '$rootScope', '$routeParams', 'factoryWishlist', '$q',
-    function($scope, $rootScope, $routeParams, Wishlist, $q) {
+app.controller('customFeatureRequestModal', ['$scope', '$rootScope', '$routeParams', '$q',
+    function($scope, $rootScope, $routeParams, $q) {
         
 }])

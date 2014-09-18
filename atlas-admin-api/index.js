@@ -7,10 +7,14 @@ var config                       = require('./config'),
     MongoClient                  = require('mongodb').MongoClient,
     MongoServer                  = require('mongodb').Server,
     app                          = express(),
+
     auth                         = require('./lib/middleware/auth'),
     prepResponse                 = require('./lib/middleware/prepResponse'),
-    gatewayRequest               = require('./lib/gateways/requests'),
-    gatewayWishlist              = require('./lib/gateways/wishlist');
+
+    gatewayRequests              = require('./lib/gateways/requests'),
+    gatewayPropositions          = require('./lib/gateways/propositions'),
+    gatewayWishes                = require('./lib/gateways/wishes');
+
 
 var _http_port = config.port.http;
 var _mongo_port = config.port.mongo;
@@ -46,8 +50,9 @@ mongoclient.open(function(err, mongo) {
     var db = mongo.db(config.database.name);
 
     // register REST endpoints
-    app.use(config.paths.apiRoot + '/requests', gatewayRequest(db));
-    app.use(config.paths.apiRoot + '/wishlist', gatewayWishlist(db));
+    app.use(config.paths.apiRoot + '/requests', gatewayRequests(db));
+    app.use(config.paths.apiRoot + '/propositions', gatewayPropositions(db));
+    app.use(config.paths.apiRoot + '/wishes', gatewayWishes(db));
 
     // listen for requests to server on _http_port
     console.log('listen on port: ' + _http_port);

@@ -24,24 +24,24 @@ var newSourceItem = function(type) {
 }
 
 
-app.controller('CtrlManageWishlist', ['$scope', '$rootScope', 'factoryWishlist',
-    function($scope, $rootScope, Wishlist) {
+app.controller('CtrlManageWishlist', ['$scope', '$rootScope', 'factoryPropositions', 'factoryWishes',
+    function($scope, $rootScope, Propositions, Wishes) {
     $scope.app = {};
     $rootScope.requestsToday = {};
     $rootScope.currentTab = 'source-requests'
 
-    Wishlist.getAllWishes().then(function(data, status) {
+    Wishes.all().then(function(data, status) {
         $rootScope.wishes = data;
     }, function(err) { console.error(err) });
 
-    Wishlist.all().then(function(data, status) {
+    Propositions.all().then(function(data, status) {
         $rootScope.items = data;
     }, function(err) { console.error(err) });
 }])
 
 
-app.controller('CtrlManageWishlistSourceRequests', [ '$scope', '$rootScope', 'factoryWishlist',
-    function($scope, $rootScope, Wishlist) {
+app.controller('CtrlManageWishlistSourceRequests', [ '$scope', '$rootScope',
+    function($scope, $rootScope) {
 
     // filter out source wishes, then pass to the $scope
     $rootScope.$watch('wishes', function(old_val, new_val) {
@@ -59,8 +59,8 @@ app.controller('CtrlManageWishlistSourceRequests', [ '$scope', '$rootScope', 'fa
 }])
 
 
-app.controller('CtrlManageWishlistFeatureRequests', [ '$scope', '$rootScope', 'factoryWishlist',
-    function($scope, $rootScope, Wishlist) {
+app.controller('CtrlManageWishlistFeatureRequests', [ '$scope', '$rootScope',
+    function($scope, $rootScope) {
 
     // filter out feature wishes, then pass to the $scope
     $rootScope.$watch('wishes', function(old_val, new_val) {
@@ -79,8 +79,8 @@ app.controller('CtrlManageWishlistFeatureRequests', [ '$scope', '$rootScope', 'f
 }])
 
 
-app.controller('CtrlManageWishlistSources', ['$scope', '$rootScope', 'factoryWishlist', '$modal',
-    function($scope, $rootScope, Wishlist, $modal) {
+app.controller('CtrlManageWishlistSources', ['$scope', '$rootScope', '$modal',
+    function($scope, $rootScope, $modal) {
 
     // filter out source wishes, then pass to the $scope
     $rootScope.$watch('items', function(old_val, new_val) {
@@ -107,8 +107,8 @@ app.controller('CtrlManageWishlistSources', ['$scope', '$rootScope', 'factoryWis
 }])
 
 
-app.controller('CtrlManageWishlistFeatures', ['$scope', '$rootScope', 'factoryWishlist', '$modal',
-    function($scope, $rootScope, Wishlist, $modal) {
+app.controller('CtrlManageWishlistFeatures', ['$scope', '$rootScope', '$modal',
+    function($scope, $rootScope, $modal) {
 
     // filter out source wishes, then pass to the $scope
     $rootScope.$watch('items', function(old_val, new_val) {
@@ -135,8 +135,8 @@ app.controller('CtrlManageWishlistFeatures', ['$scope', '$rootScope', 'factoryWi
 }])
 
 
-app.controller('CtrlNewWishlistItemModal', ['$scope', '$rootScope', '$modalInstance', 'factoryWishlist',
-    function($scope, $rootScope, $modalInstance, Wishlist) {
+app.controller('CtrlNewWishlistItemModal', ['$scope', '$rootScope', '$modalInstance', 'factoryPropositions',
+    function($scope, $rootScope, $modalInstance, Propositions) {
     $scope.formdata = {};
     $scope.formdata.status = 'not available';
     $scope.submit = function() {
@@ -149,7 +149,7 @@ app.controller('CtrlNewWishlistItemModal', ['$scope', '$rootScope', '$modalInsta
             "title": $scope.formdata.name,
             "status": $scope.formdata.status
         }
-        Wishlist.createWishlistItem(data).then(function(data) {
+        Propositions.create(data).then(function(data) {
             $modalInstance.close(data);
         });
     }
@@ -159,8 +159,8 @@ app.controller('CtrlNewWishlistItemModal', ['$scope', '$rootScope', '$modalInsta
 }])
 
 
-app.directive('deleteitem', ['$document', 'factoryWishlist', 
-    function factory($document, Wishlist) {
+app.directive('deleteitem', ['$document', 'factoryPropositions', 
+    function factory($document, Propositions) {
     var definitionObj = {
         link: function(scope, $el, attr) {
             $el.on('click', function() {
@@ -171,7 +171,7 @@ app.directive('deleteitem', ['$document', 'factoryWishlist',
                             return n._id === itemId;
                         });
                     })
-                    Wishlist.removeWishlistItem(itemId);
+                    Propositions.remove(itemId);
                 }
             })
         }
@@ -180,8 +180,8 @@ app.directive('deleteitem', ['$document', 'factoryWishlist',
 }])
 
 
-app.directive('changestatus', ['$document', 'factoryWishlist', 
-    function factory($document, Wishlist) {
+app.directive('changestatus', ['$document', 'factoryPropositions', 
+    function factory($document, Propositions) {
     var definitionObj = {
         link: function(scope, $el, attr) {
             $el.on('click', function() {
@@ -191,7 +191,7 @@ app.directive('changestatus', ['$document', 'factoryWishlist',
                 if ('string' === typeof itemId && 'string' === typeof status) {
                     $el.parent().children().removeClass('active');
                     $el.addClass('active');
-                    Wishlist.updateWishlistItemStatus(itemId, status);
+                    Propositions.updateStatus(itemId, status);
                 }
             })
         }

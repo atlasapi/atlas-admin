@@ -2,8 +2,8 @@
 
 var app = angular.module('atlasAdmin.controllers.wishlist');
 
-app.controller('CtrlWishlistSources', ['$scope', '$rootScope', '$routeParams', 'factoryWishlist', '$q', 
-    function ($scope, $rootScope, $routeParams, Wishlist, $q) {
+app.controller('CtrlWishlistSources', ['$scope', '$rootScope', '$routeParams', 'factoryWishes', '$q', 
+    function ($scope, $rootScope, $routeParams, Wishes, $q) {
     var root = $rootScope;
     $scope.sources = [];
     $scope.asked = [];
@@ -39,7 +39,7 @@ app.controller('CtrlWishlistSources', ['$scope', '$rootScope', '$routeParams', '
             wish: item,
             reason: reason
         }
-        Wishlist.createWish(postdata).then(function(data) {
+        Wishes.create(postdata).then(function(data) {
             $scope.asked.push(data);
         });
     }
