@@ -21,7 +21,7 @@
     label {
         display: block;
         margin: 0 0 .4rem 0;
-        color: $mbst-purple;
+        color: $color-purple;
     }
 }
 
@@ -36,13 +36,13 @@ textarea {
     max-width: 38.44rem;
     height: 140px;
     padding: 1rem;
-    border: 1px solid $mbst-pink;
+    border: 1px solid $color-pink;
     border-radius: 3px;
 }
 
 input[type="text"] {
     padding: .296rem;
-    border: 1px solid $mbst-purple;
+    border: 1px solid $color-purple;
     border-radius: .197rem;
 
     &.flush-right {

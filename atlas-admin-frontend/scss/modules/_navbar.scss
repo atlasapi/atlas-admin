@@ -1,79 +1,106 @@
 //	The global navbar
 //
+$navbar-height: 5.06rem;
+
 .navbar {
 	@extend %cf;
 	box-sizing: border-box;
 	display: block;
-	padding: 1rem;
 	width: 100%;
-	background: $mbst-purple;
+	height: $navbar-height;
+	background: $color-purple;
+	color: white;
 }
 
-// remove list defaults 
-.navbar ul { list-style: none; margin: 0; padding: 0; }
-
-.navbar-header {
-	float: left;		
-}
-
-.navbar-menu {
+// atlas logo
+.navbar-brand {
 	@extend %cf;
 	display: block;
-	width: 100%;
+	float: left;	
+	
+	> a { display: inline-block; height: $navbar-height; line-height: $navbar-height; }
+	> a img { display: inline-block; margin: .8rem 0 0 .7rem; }
 }
 
-// navigation bar links
-.navbar-nav {
+// main navigation list
+.navbar-links {
+	@extend %cf;
 	display: block;
 	float: left;
-	margin-left: 3rem;
-	
-	li {
-		display: inline-block;
-		float: left;
+	margin-left: 2.25rem;
 
-		a {
-			display: inline-block;
-			color: white;
-			line-height: 3.125rem;
+	ul {
+		@extend %bare-list;
+		height: $navbar-height;
+		float: left;
+		
+		> li {
+			display: block;
+			float: left;
+			height: $navbar-height;
+			line-height: $navbar-height;
 		}
+
+		> li a {
+			display: inline-block;
+			padding: 0 1.125rem;
+			height: $navbar-height;
+			color: $color-pink;
+			text-decoration: none;
+		}
+
 	}
+
+	.nav-manage { margin-left: 2.25rem; }
 }
 
-// navigation bar user dropdown
-ul.navbar-user {
+// the user avatar and prefs menu 
+//
+.navbar-user {
+	position: relative;
 	display: block;
 	float: right;
+	margin-right: 2.25rem;
+	height: $navbar-height;
+	cursor: pointer;
 
-	> li {
+	.user-avatar { display: block; }
+	
+	.profile-picture {
+		display: inline-block;
+		width: 3.365rem;
+		height: 3.375rem;
+		margin: .8rem 0 0;
+		border-radius: 50%;
+		float: right;
+	}
+
+	.user-name {
 		display: block;
+		float: left;
+		height: $navbar-height;
+		margin-right: 1rem;
+		line-height: $navbar-height;
 	}
-
-	ul.dropdown-menu {
-		margin: 0;
-	}
-
-	.dropdown ul.dropdown-menu { display: none; }
-
-	.dropdown.open ul.dropdown-menu { display: block; }
 }
 
-// admin dropdown
-.nav-dropdown {
-	.dropdown-label {
-		position: relative;
+ul.user-dropdown-menu {
+	@extend %bare-list;
+	position: absolute;
+	top: 90%;
+	right: 0;
+	box-sizing: border-box;
+	width: 11.4rem;
+	padding: 1rem;
+	line-height: 2.25rem;
+	background: white;
+	box-shadow: 0 1px 10px rgba(0,0,0,0.2);
+	border-radius: 4px;
+
+	> li {
 		display: inline-block;
-	}
+		//line-height: 2.25rem;
 
-	&:hover > .dropdown-content { display: block; }
-
-	> .dropdown-content {
-		position: absolute;
-		top: 90%;
-		left: 0;
-		display: none;
-		margin: 0;
-		padding: 0;
-		list-style-type: none;
+		a { display: block; }
 	}
 }

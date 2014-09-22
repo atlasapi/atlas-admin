@@ -1,4 +1,4 @@
-//	Main button component
+//  Main button component
 //
 //  Modifiers:
 //  .stroke       — converts button to a stroke style
@@ -6,65 +6,76 @@
 //  .small        — makes the button size slightly smaller
 //  .medium       — makes the button size slightly larger
 //
-//	.positive     — change button style to communicate a positive action
-//	.negative     — change button style to communicate a negative action
+//  .positive     — change button style to communicate a positive action
+//  .negative     — change button style to communicate a negative action
 //
 //  .primary      — primary button, stands out the most
 //  .secondary    — secondary button, usually used for `cancel`
 //
-//	.new-app      — button used to create a new application
+//  .new-app      — button used to create a new application
 //  .group        — makes buttons behave like they're in a group
 //  .group.last   — applys to the last button in a group
 //
-//	.xhr-progress — hides button text and replases with a spinner
+//  .xhr-progress — hides button text and replases with a spinner
 //
 .button, button {
-	display: inline-block;
-	padding: 1em 1.5rem;
-	background: $mbst-purple;
-	color: white;
-	border: none;
-	border-radius: 4px;
-	cursor: pointer;
+    display: inline-block;
+    padding: 3px 10px;
+    background-color: #eb80b5;
+    background: -moz-linear-gradient(top, #eb80b5, #ef308f);
+    background: -webkit-gradient(linear, left top, left bottom, from(#eb80b5), to(#ef308f));
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid #d371a2;
+    text-shadow: 0 -1px 0 rgba(0,0,0,0.3);
+    box-shadow: 0 1px 5px rgba(0,0,0,0.3);
 
-	&.stroke { background: none; color: $mbst-purple; border: 1px solid $mbst-purple; }
+    &:hover, &:focus {
+        text-decoration: none;
+        border: 1px solid #333;
+        outline: none;
+    }
 
-	&.small { padding: .25em 1rem; }
-	&.medium { font-size: 1rem; padding: .666em 1rem; }
-	&.large { font-size: 1.25rem; padding: 1em 1em; }
+    &.stroke { background: none; color: $color-purple; border: 1px solid $color-purple; }
 
-	&.positive { background: #10B574; }
-	&.negative { background: #D43825; }
+    &.small { padding: .25em 1rem; }
+    &.medium { font-size: 1rem; padding: .666em 1rem; }
+    &.large { font-size: 1.25rem; padding: 1em 1em; }
 
-	&.primary {
-		background: $mbst-pink;	
-		&:hover { background: darken( $mbst-pink, 10% ); }
-	}
-	&.secondary {
-		background: #aaa;
-		&:hover { background: darken( #aaa, 10% ); }
-	}
+    &.positive { background: #10B574; }
+    &.negative { background: #D43825; }
 
-	&.new-app { background: $mbst-pink; }
-	&.group { margin-right: 1rem; }
-	&.group.last { margin-right: 0; }
+    &.primary {
+        background: $color-pink; 
+        &:hover { background: darken( $color-pink, 10% ); }
+    }
+    &.secondary {
+        background: #aaa;
+        &:hover { background: darken( #aaa, 10% ); }
+    }
 
-	&.left-flush {
-		border-top-left-radius: 0;
-		border-bottom-left-radius: 0;
-	}
+    &.new-app { background: $color-pink; }
+    &.group { margin-right: 1rem; }
+    &.group.last { margin-right: 0; }
 
-	// hides button text and replases with a spinner
-	&.xhr-progress {
-		overflow: hidden;
-		background-image: url(../img/preloader.gif);
-		background-repeat: no-repeat;
-		background-position: center;
-		text-indent: -100%;
-	}
+    &.left-flush {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
 
-	&.disabled {
-		color: #aaa;
-		border-color: #aaa;
-	}
+    // hides button text and replases with a spinner
+    &.xhr-progress {
+        overflow: hidden;
+        background-image: url(../img/preloader.gif);
+        background-repeat: no-repeat;
+        background-position: center;
+        text-indent: -100%;
+    }
+
+    &.disabled {
+        color: #aaa;
+        border-color: #aaa;
+    }
 }
+

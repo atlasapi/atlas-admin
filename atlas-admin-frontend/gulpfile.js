@@ -69,7 +69,7 @@ gulp.task('styles', function() {
 
 //  Javascripts
 //
-//  concatenate and compress stylesheets
+//  concatenate and compress javascripts
 //
 gulp.task('javascripts', function() {
     gulp.src(assets.js)
@@ -77,9 +77,9 @@ gulp.task('javascripts', function() {
         .pipe(gulp.dest('js/dist'));
 });
 
-// Watch
+//  Watch
 //
-// watch for changes to the source files and run tasks
+//  watch for changes to the source files and run associated tasks
 //
 gulp.task('watch', function() {
 	gulp.watch('scss/**/*.scss', ['styles']);
@@ -87,6 +87,6 @@ gulp.task('watch', function() {
 });
 
 //  Resgister the default task. 
-//  to run: $ gulp
+//  to run:$ gulp
 //
 gulp.task('default', ['styles', 'javascripts', 'watch']);

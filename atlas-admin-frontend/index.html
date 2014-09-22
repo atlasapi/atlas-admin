@@ -15,11 +15,11 @@
 
     <body>
         <!-- navigation -->
-        <nav class="navbar" role="navigation" ng-cloak ng-show="!show.load">
+        <nav class="navbar" role="navigation" ng-cloak ng-show="!show.load" ng-controller="UserMenuController">
             <div class="navbar-brand">
                 <a class="navbar-logo" href="#"><img src="img/atlas_logo.png" alt="Atlas Admin logo" /></a>
             </div>
-            <div class="navbar-links" ng-controller="UserMenuController" ng-cloak>
+            <div class="navbar-links" ng-cloak>
                 <ul ng-show="status.loggedIn && !show.load" class="navbar-links-user">
                     <li ng-repeat="item in app.menu.users">
                         <a ng-href="#{{item.path}}" active-path="active-menu-item">{{item.label}}</a>
@@ -35,12 +35,11 @@
                 </ul>
             </div>
             <div class="navbar-user" ng-show="status.loggedIn">
-                <span href="#" class="user-dropdown-toggle" data-toggle="dropdown">
-                    {{app.user.profile_image}}
+                <span href="#" class="user-avatar" ng-click="app.toggleDropdown()">
                     <img class="profile-picture" ng-src="{{app.user.profile_image}}" alt="profile picture"/>
-                    <span class="dropdown-user-name">{{app.user.full_name}}</span>
+                    <span class="user-name">{{app.user.full_name}}</span>
                 </span>
-                <ul class="user-dropdown-menu" ng-show="dropdown">
+                <ul class="user-dropdown-menu" ng-show="app.dropdown">
                     <li><a href="#/profile">Your profile</a></li>
                     <li><a href="#/terms">Terms of use</a></li>
                     <li><a href="#/logout">Log out</a></li>
@@ -69,6 +68,5 @@
             $.getScript('js/dist/scripts.js?v='+_timestamp);
         })
         </script>
-        <!--<script src="js/dist/scripts.js"></script>-->
     </body>
 </html>

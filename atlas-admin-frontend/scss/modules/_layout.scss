@@ -1,4 +1,10 @@
 //  Container & structure elements
+.application-container {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    padding: 0 7%;
+}
 
 .app-surface {
     margin-top: 3.375rem;
@@ -41,6 +47,8 @@
     box-sizing: border-box;
     display: block; 
     margin-bottom: 3.375rem;
+
+    &.right { float: right; }
 }
 
 // Panel header

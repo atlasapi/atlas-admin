@@ -43,7 +43,7 @@
 
     // features
     .feature-item {
-        background: lighten($mbst-purple, 80%);
+        background: lighten($color-purple, 80%);
     }
 
     .feature-name {
@@ -66,5 +66,5 @@
 
 .manage-wishlist {
     .item-options .button { background: #bbb; }
-    .item-options .button.active { background: $mbst-pink; }
+    .item-options .button.active { background: $color-pink; }
 }
