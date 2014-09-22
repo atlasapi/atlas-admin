@@ -9,8 +9,7 @@ var gulp        = require('gulp'),
 var assets = {};
 
 // Javascripts must me loaded in order, so hence the large array
-assets.js = ['js/vendor/jquery.min.js',
-            'js/vendor/angular/angular.min.js',
+assets.js = ['js/vendor/angular/angular.min.js',
             'js/vendor/angular/angular-resource.min.js',
             'js/vendor/angular/angular-route.min.js',
             'js/vendor/lodash.js',
