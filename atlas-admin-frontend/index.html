@@ -10,21 +10,16 @@
         <![endif]-->
         <title>Atlas Administration</title>
         <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-        <link rel="stylesheet" href="css/app.css"/>
+        <link rel="stylesheet" href="css/base.css"/>
     </head>
 
     <body>
-        <nav class="navbar navbar-default .navbar-fixed-top" role="navigation"  ng-cloak>
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle"  ng-init="navCollapsed = true" ng-click="navCollapsed = !navCollapsed" title="Toggle navigation">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#"><img src="img/atlas_logo.png" alt="Atlas Admin logo" /></a>
+        <nav class="navbar" role="navigation" ng-cloak ng-show="!show.load">
+            <div class="navbar-brand">
+                <a class="navbar-logo" href="#"><img src="img/atlas_logo.png" alt="Atlas Admin logo" /></a>
             </div>
-            <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'" ng-controller="UserMenuController"  ng-cloak>
-                <ul ng-show="status.loggedIn && !show.load" class="nav navbar-nav">
+            <div class="navbar-links" ng-controller="UserMenuController" ng-cloak>
+                <ul ng-show="status.loggedIn && !show.load" class="navbar-links-user">
                     <li ng-repeat="item in app.menu.users">
                         <a ng-href="#{{item.path}}" active-path="active-menu-item">{{item.label}}</a>
                     </li>
@@ -37,21 +32,22 @@
                         </ul>
                     </li>
                 </ul>
-                <ul ng-show="status.loggedIn" class="nav navbar-nav navbar-right">
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle navsmall" data-toggle="dropdown"><img class="profile-picture" ng-src="{{app.user.profile_image}}" alt="profile picture"/>{{app.user.full_name}}<b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#/profile">Your profile</a></li>
-                            <li><a href="#/terms">Terms of use</a></li>
-                            <li><a href="#/logout">Log out</a></li>
-                        </ul>
-                    </li>
+            </div>
+            <div class="navbar-user" ng-show="status.loggedIn">
+                <span href="#" class="user-dropdown-toggle" data-toggle="dropdown">
+                    <img class="profile-picture" ng-src="{{app.user.profile_image}}" alt="profile picture"/>
+                    <span class="dropdown-user-name">{{app.user.full_name}}</span>
+                </span>
+                <ul class="user-dropdown-menu" ng-show="dropdown">
+                    <li><a href="#/profile">Your profile</a></li>
+                    <li><a href="#/terms">Terms of use</a></li>
+                    <li><a href="#/logout">Log out</a></li>
                 </ul>
             </div>
         </nav>
-        <div class="container loading"  ng-show="show.load" us-spinner="{radius:60, length:40}" ng-cloak>
+        <div class="loading-container loading"  ng-show="show.load" ng-cloak>
         </div>
-        <div class="container" ng-show="!show.load" ng-view></div>
+        <div class="application-container" ng-show="!show.load" ng-view></div>
         <script>
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
                 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -61,52 +57,6 @@
             ga('create', 'UA-51043316-1', 'metabroadcast.com');
             ga('send', 'pageview');
         </script>
-        <!-- vendor -->
-        <script src="js/vendor/jquery.min.js"></script>
-        <script src="js/vendor/angular/angular.min.js"></script>
-        <script src="js/vendor/angular/angular-resource.min.js"></script>
-        <script src="js/vendor/angular/angular-route.min.js"></script>
-        <script src="js/vendor/lodash.js"></script>
-        <script src="lib/ui-bootstrap-tpls-0.10.0.min.js"></script>
-        <!-- application -->
-        <script src="config/atlasAdmin.config.js"></script>
-        <script src="js/app.js"></script>
-        <script src="js/services/auth.js"></script>
-        <script src="js/services/atlas.js"></script>
-        <script src="js/services/users.js"></script>
-        <script src="js/services/applications.js"></script>
-        <script src="js/services/sources.js"></script>
-        <script src="js/services/sourceRequests/sourceRequests.js"></script>
-        <script src="js/services/sourceRequests/factorySourceRequests.js"></script>
-        <script src="js/services/sourceRequests/factorySourcePayments.js"></script>
-        <script src="js/services/sourceLicenses.js"></script>
-        <script src="js/services/userVideoSources.js"></script>
-        <script src="js/services/userVideoSourcesYouTube.js"></script>
-        <script src="js/services/propositions.js"></script>
-        <script src="js/services/wishes.js"></script>
-        <script src="js/filters.js"></script>
-        <script src="js/directives/orderable.js"></script>
-        <script src="js/directives/focus.js"></script>
-        <script src="js/directives/activePath.js"></script>
-        <script src="js/directives/validUsage.js"></script>
-        <script src="js/directives/inputmorph.js"></script>
-        <!--<script src="js/directives/modal.js"></script>-->
-        <script src="js/controllers/errors.js"></script>
-        <script src="js/controllers/auth.js"></script>
-        <script src="js/controllers/sources.js"></script>
-        <script src="js/controllers/sourceRequests.js"></script>
-        <script src="js/controllers/requestSource.js"></script>
-        <script src="js/controllers/userProfile.js"></script>
-        <script src="js/controllers/userVideoSources.js"></script>
-        <script src="js/controllers/userVideoSourcesYouTube.js"></script>
-        <script src="js/controllers/applications/applicationView.js"></script>
-        <script src="js/controllers/applications/applicationEdit.js"></script>
-        <script src="js/controllers/applications/applicationCreateModal.js"></script>
-        <script src="js/controllers/wishlist/wishlist.js"></script>
-        <script src="js/controllers/wishlist/wishlistSources.js"></script>
-        <script src="js/controllers/wishlist/wishlistFeatures.js"></script>
-        <script src="js/controllers/admins/manageWishlist.js"></script>
-        <script src="js/controllers/admins/manageSourceRequests.js"></script>
-        <script src="js/controllers/viewTerms.js"></script>
+        <script src="js/dist/scripts.js"></script>
     </body>
 </html>
