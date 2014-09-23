@@ -41,13 +41,19 @@ $navbar-height: 5.06rem;
 			line-height: $navbar-height;
 		}
 
+		> li.menu-label { color: lighten($color-purple, 60%); }
+
 		> li a {
 			display: inline-block;
 			padding: 0 1.125rem;
 			height: $navbar-height;
 			color: $color-pink;
 			text-decoration: none;
+
+			&:hover { color: white; }
 		}
+
+		> li a.active-menu-item { color: white; }
 
 	}
 
