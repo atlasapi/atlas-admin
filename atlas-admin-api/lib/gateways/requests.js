@@ -7,7 +7,7 @@ var config      = require('../../config'),
     _           = require('lodash'),
     ObjectID    = require('mongodb').ObjectID;
 
-var sendSourceToAtlas = function(appId, sourceId, enable) {
+var sendSourceToAtlas = function(appId, sourceId, enable, callback) {
     if (typeof appId !== 'string' || typeof sourceId !== 'string') {
         console.error('appId and sourceId not present');
         return false;
@@ -22,20 +22,23 @@ var sendSourceToAtlas = function(appId, sourceId, enable) {
 
     // make a call to atlas to create the request, then ask for all
     // requests so we can grab the request id and store it for later
-    Atlas.request('/sources/'+sourceId+'/requests?'+postData, 'POST', getRequest);
-
-    var getRequest = function() {
+    Atlas.request('/sources/'+sourceId+'/requests?'+postData, 'POST', function() {
         Atlas.request('/requests.json', 'GET', function(status, data) {
-            var i, data = JSON.parse(data);
-            console.log(data);
-            for(var i in data) {
-                console.log( (data[i].application_id === appId && data[i].source.id === sourceId)? true : false );
-            }
-            var request = _.find(data, function(n) {
-                
+            var data = JSON.parse(data);
+            var request = _.filter(data['source_requests'], function(n) {
+                return (n.application_id == appId && n.source.id == sourceId)? true : false;
             })
+            if (typeof callback === 'function') callback(request[0]);
         })
-    }  
+    });
+}
+
+var approveSourceRequest = function(request_id) {
+    if (typeof request_id !== 'string') return false;
+    console.log(request_id);
+    Atlas.request('/requests/'+request_id+'/approve', 'POST', function(data) {
+        console.log(data)
+    })
 }
 
 
@@ -48,11 +51,14 @@ var sourceRequest = function(db) {
     router.route('/')
         .post(function(req, res) {
             if (!'app' in req.body ||!'source' in req.body) return false;
-            sendSourceToAtlas(req.body.app.id, req.body.source.id, false);
-            collection.insert(req.body, function(err, data) {
-                if (err) throw err;
-                res.end();
-            })
+            sendSourceToAtlas(req.body.app.id, req.body.source.id, false, function(request) {
+                var body = req.body;
+                body.request = request;
+                collection.insert(req.body, function(err, data) {
+                    if (err) throw err;
+                    res.end();
+                })
+            });
         })
         .get(function(req, res) {
             collection.find({state: 'not approved'}, {}).toArray(function(err, data) {
@@ -61,11 +67,21 @@ var sourceRequest = function(db) {
             });
         })
         .put(function(req, res) {
-            var id = req.body.request_id,
+            var id = req.body.id,
+                request_id = req.body.request_id,
                 new_state = req.body.new_state;
+            if (typeof id !== 'string' || typeof request_id !== 'string' || typeof new_state !== 'string') {
+                res.end('')
+                return false;
+            }
             collection.update( {_id: new ObjectID(id)}, {$set: {state: new_state}}, function(err, count, status) {
                 if (err) throw err;
-                res.end(JSON.stringify(status));
+                var stringStatus = JSON.stringify(status);
+                if (status.ok) {
+                    approveSourceRequest(request_id);
+                    console.log('dun')
+                }
+                res.end(stringStatus);
             });
         })
     return router;

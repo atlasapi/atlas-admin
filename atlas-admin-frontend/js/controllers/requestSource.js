@@ -11,7 +11,7 @@ app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$routeParams', 'Ap
         $scope.user = {};
 
         $scope.isNumber = function (value) {
-          return angular.isNumber(value);
+            return angular.isNumber(value);
         };
 
         // read url params

@@ -15,7 +15,7 @@
                     <td>{{request.source.title}}</td>
                     <td>{{request.app.title}}</td>
                     <td><div class="reason-content">{{request.reason}}</div></td>
-                    <td><span ng-click="approveRequest(request._id, $event)" class="button small positive">Approve</span></td>
+                    <td><span ng-click="approveRequest(request._id, request.request.id, $event)" class="button small positive">Approve</span></td>
                 </tr>
             </table>
         </section>
