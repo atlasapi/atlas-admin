@@ -7,6 +7,13 @@ var config      = require('../../config'),
     _           = require('lodash'),
     ObjectID    = require('mongodb').ObjectID;
 
+
+//  make a call to atlas to create the request, then ask for all
+//  requests so we can grab the request id and store it for later
+//  @param appId {string}
+//  @param sourceId {string}
+//  @param enable {bool}
+//  @param callback {function} @returns request object
 var sendSourceToAtlas = function(appId, sourceId, enable, callback) {
     if (typeof appId !== 'string' || typeof sourceId !== 'string') {
         console.error('appId and sourceId not present');
@@ -19,26 +26,20 @@ var sendSourceToAtlas = function(appId, sourceId, enable, callback) {
         usageType: 'personal',
         licenseAccepted: true
     })
-
-    // make a call to atlas to create the request, then ask for all
-    // requests so we can grab the request id and store it for later
     Atlas.request('/sources/'+sourceId+'/requests?'+postData, 'POST', function() {
         Atlas.request('/requests.json', 'GET', function(status, data) {
             var data = JSON.parse(data);
-            var request = _.filter(data['source_requests'], function(n) {
+            var request = _.find(data['source_requests'], function(n) {
                 return (n.application_id == appId && n.source.id == sourceId)? true : false;
             })
-            if (typeof callback === 'function') callback(request[0]);
+            if (_.isFunction(callback)) { callback(request) };
         })
     });
 }
 
 var approveSourceRequest = function(request_id) {
-    if (typeof request_id !== 'string') return false;
-    console.log(request_id);
-    Atlas.request('/requests/'+request_id+'/approve', 'POST', function(data) {
-        console.log(data)
-    })
+    if (!_.isString(request_id)) { return false; }
+    Atlas.request('/requests/'+request_id+'/approve', 'POST');
 }
 
 
@@ -58,19 +59,19 @@ var sourceRequest = function(db) {
                     if (err) throw err;
                     res.end();
                 })
-            });
+            })
         })
         .get(function(req, res) {
             collection.find({state: 'not approved'}, {}).toArray(function(err, data) {
                 if (err) throw err;
                 res.end(JSON.stringify(data));
-            });
+            })
         })
         .put(function(req, res) {
             var id = req.body.id,
                 request_id = req.body.request_id,
                 new_state = req.body.new_state;
-            if (typeof id !== 'string' || typeof request_id !== 'string' || typeof new_state !== 'string') {
+            if (!_.isString(id) || !_.isString(request_id) || !_.isString(new_state)) {
                 res.end('')
                 return false;
             }
@@ -79,10 +80,9 @@ var sourceRequest = function(db) {
                 var stringStatus = JSON.stringify(status);
                 if (status.ok) {
                     approveSourceRequest(request_id);
-                    console.log('dun')
                 }
                 res.end(stringStatus);
-            });
+            })
         })
     return router;
 }
