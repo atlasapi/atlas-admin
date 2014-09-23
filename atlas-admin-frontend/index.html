@@ -62,11 +62,6 @@
             ga('send', 'pageview');
         </script>
         <script src="js/vendor/jquery.min.js"></script>
-        <script>
-        $(function() {
-            var _timestamp = Date.now();
-            $.getScript('js/dist/scripts.js?v='+_timestamp);
-        })
-        </script>
+        <script src="js/dist/scripts.js?v=%VERSION%"></script>
     </body>
 </html>
