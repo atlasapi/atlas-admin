@@ -1332,7 +1332,7 @@ app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$routeParams', 'Ap
         $scope.user = {};
 
         $scope.isNumber = function (value) {
-          return angular.isNumber(value);
+            return angular.isNumber(value);
         };
 
         // read url params
@@ -2269,11 +2269,13 @@ app.controller('CtrlManageSourceRequests', ['$scope', '$rootScope', '$routeParam
     // send request to approve source to the server, then remove the request
     // from the list
     // @param id {string}  the `_id` value from mongo
+    // @param request_id {string}  the `request.id` value from mongo
     // @param state {string}  new state of request (defaults to 'approved')
-    var changeRequestState = function(id, state) {
+    var changeRequestState = function(id, request_id, state) {
         if (typeof id !== 'string') return false;        
         var payload = {
-            request_id: id,
+            id: id,
+            request_id: request_id, 
             new_state: state || 'approved'
         }
         factorySourceRequests.putChangeRequest(payload).then(function(status) {
@@ -2285,9 +2287,9 @@ app.controller('CtrlManageSourceRequests', ['$scope', '$rootScope', '$routeParam
         })
     }
 
-    $scope.approveRequest = function(request_id, $event) {
+    $scope.approveRequest = function(id, request_id, $event) {
         if (typeof $event !== 'undefined') $($event.currentTarget).addClass('xhr-progress');
-        return changeRequestState(request_id, 'approved');
+        return changeRequestState(id, request_id, 'approved');
     }
 
     // pull request data from the api and push result into the $scope
