@@ -4,6 +4,7 @@ var config      = require('../../config'),
     qs          = require('querystring'),
     express     = require('express'),
     http        = require('http'),
+    _           = require('lodash'),
     ObjectID    = require('mongodb').ObjectID;
 
 var sendSourceToAtlas = function(appId, sourceId, enable) {
@@ -11,7 +12,6 @@ var sendSourceToAtlas = function(appId, sourceId, enable) {
         console.error('appId and sourceId not present');
         return false;
     }
-   
     var postData = qs.stringify({
         appId: appId,
         appUrl: '',
@@ -20,7 +20,22 @@ var sendSourceToAtlas = function(appId, sourceId, enable) {
         licenseAccepted: true
     })
 
-    Atlas.request('/sources/'+sourceId+'/requests?'+postData, 'POST');
+    // make a call to atlas to create the request, then ask for all
+    // requests so we can grab the request id and store it for later
+    Atlas.request('/sources/'+sourceId+'/requests?'+postData, 'POST', getRequest);
+
+    var getRequest = function() {
+        Atlas.request('/requests.json', 'GET', function(status, data) {
+            var i, data = JSON.parse(data);
+            console.log(data);
+            for(var i in data) {
+                console.log( (data[i].application_id === appId && data[i].source.id === sourceId)? true : false );
+            }
+            var request = _.find(data, function(n) {
+                
+            })
+        })
+    }  
 }
 
 
