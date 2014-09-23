@@ -38,7 +38,7 @@ var sendSourceToAtlas = function(appId, sourceId, enable, callback) {
 }
 
 var approveSourceRequest = function(request_id) {
-    if (!_.isString(request_id)) { return false; }
+    if (!_.isString(request_id)) { console.error('request_id must be a string') }
     Atlas.request('/requests/'+request_id+'/approve', 'POST');
 }
 
