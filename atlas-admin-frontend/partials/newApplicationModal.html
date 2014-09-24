@@ -3,7 +3,7 @@
         <h1>Create new application</h1>
     </div>
     <div class="modal-body">
-         <form name="sourceRequestForm" ng-submit="sourceRequestForm.$valid && submit()">
+         <form name="sourceRequestForm" ng-submit="sourceRequestForm.$valid && ok()">
             <div class="form-group">
                 <label for="title">Application title</label>
                 <input type="text" name="appTitle" class="form-control" ng-model="app.title" ng-minlength="3" ng-required="true" focus-me>
@@ -19,15 +19,15 @@
             <div class="form-group">
                 <h2 class="form-heading">Which data sources will your application use?</h2>
                 <span class="form-label">
-                    <input type="radio" name="preset" id="presetUk" ng-model="app.preset" ng-change="showTerms('uk')" value="uk" ng-required="true">
+                    <input type="radio" name="preset" id="presetUk" ng-model="app.preset" ng-change="termsToggle()" value="uk" ng-required="true">
                     <label class="inline-label" for="presetUk">Simple UK listings data</label>
                 </span>
                 <span class="form-label">
-                    <input type="radio" name="preset" id="presetAll" ng-model="app.preset" ng-change="showTerms('all')" value="all" ng-required="true">
+                    <input type="radio" name="preset" id="presetAll" ng-model="app.preset" ng-change="termsToggle()" value="all" ng-required="true">
                     <label class="inline-label" for="presetAll">All listings data</label>
                 </span>
                 <div class="terms-box" ng-show="app.terms">
-                    <label><input type="checkbox" name="acceptUKTerms" id="acceptTerms" ng-model="app.acceptTerms" ng-required="app.sources=='uk'">Do you agree to the <a href="http://www.pressassociation.com/Termsconditions/" target="_blank">PA</a> and <a href="">UK Channel Lineup</a> terms and conditions? Please read carefully. - These may contain information about payments you will have to make</p></label> 
+                    <label><input type="checkbox" name="acceptUKTerms" id="acceptTerms" ng-model="app.acceptTerms" ng-required="app.sources=='uk'">Do you agree to the <a href="http://www.bbc.co.uk/terms/" target="_blank">BBC</a> and <a href="">UK Channel Lineup</a> terms and conditions? Please read carefully. - These may contain information about payments you will have to make</p></label> 
                 </div>
             </div>
             <button type="submit" class="btn btn-primary" ng-disabled="app.wait">Create</button>

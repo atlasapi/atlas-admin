@@ -3,14 +3,14 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <!--[if lte IE 9]>
-        <script>
-        window.location.href = "unsupported.html";
-        </script>
-        <![endif]-->
-        <title>Atlas Administration</title>
-        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-        <link rel="stylesheet" href="css/app.css"/>
+    <!--[if lte IE 9]>
+    <script>
+    window.location.href = "unsupported.html";
+    </script>
+    <![endif]-->
+    <title>Atlas Administration - {{title}}</title>
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/app.css"/>
     </head>
 
     <body>
@@ -26,16 +26,8 @@
             </div>
             <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'" ng-controller="UserMenuController"  ng-cloak>
                 <ul ng-show="status.loggedIn && !show.load" class="nav navbar-nav">
-                    <li ng-repeat="item in app.menu.users">
+                    <li ng-repeat="item in app.menu">
                         <a ng-href="#{{item.path}}" active-path="active-menu-item">{{item.label}}</a>
-                    </li>
-                    <li ng-if="app.menu.admins.length" class="nav-manage">
-                        <ul>
-                            <li class="menu-label">Manage:</li>
-                            <li ng-repeat="item in app.menu.admins">
-                                <a ng-href="#{{item.path}}" active-path="active-menu-item">{{item.label}}</a>
-                            </li>
-                        </ul>
                     </li>
                 </ul>
                 <ul ng-show="status.loggedIn" class="nav navbar-nav navbar-right">
@@ -50,6 +42,7 @@
                 </ul>
             </div>
         </nav>
+
         <div class="container loading"  ng-show="show.load" us-spinner="{radius:60, length:40}" ng-cloak>
         </div>
         <div class="container" ng-show="!show.load" ng-view></div>
@@ -62,15 +55,37 @@
             ga('create', 'UA-51043316-1', 'metabroadcast.com');
             ga('send', 'pageview');
         </script>
-        <script src="js/vendor/jquery.min.js"></script>
-        <script src="js/vendor/angular/angular.min.js"></script>
-        <script src="js/vendor/angular/angular-resource.min.js"></script>
-        <script src="js/vendor/angular/angular-route.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular-resource.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular-route.js"></script>
         <script src="lib/ui-bootstrap-tpls-0.10.0.min.js"></script>
-        <script src="js/vendor/lodash.js"></script>
+        <script src="config/atlasAdmin.config.js"></script>
+        <script src="js/lib/lodash.js"></script>
+        <script src="js/app.js"></script>
+        <script src="js/services/auth.js"></script>
+        <script src="js/services/atlas.js"></script>
+        <script src="js/services/users.js"></script>
+        <script src="js/services/applications.js"></script>
+        <script src="js/services/sources.js"></script>
+        <script src="js/services/sourceRequests.js"></script>
+        <script src="js/services/sourceLicenses.js"></script>
+        <script src="js/services/userVideoSources.js"></script>
+        <script src="js/services/userVideoSourcesYouTube.js"></script>
+        <script src="js/controllers/errors.js"></script>
+        <script src="js/controllers/auth.js"></script>
+        <script src="js/controllers/sources.js"></script>
+        <script src="js/controllers/sourceRequests.js"></script>
+        <script src="js/controllers/applications.js"></script>
+        <script src="js/controllers/requestSource.js"></script>
+        <script src="js/controllers/userProfile.js"></script>
+        <script src="js/controllers/userVideoSources.js"></script>
+        <script src="js/controllers/userVideoSourcesYouTube.js"></script>
+        <script src="js/filters.js"></script>
+        <script src="js/directives/orderable.js"></script>
+        <script src="js/directives/focus.js"></script>
+        <script src="js/directives/activePath.js"></script>
+        <script src="js/directives/validUsage.js"></script>
         <script src="js/spin.min.js"></script>
         <script src="js/angular-spinner.min.js"></script>
-        <script src="config/atlasAdmin.config.js"></script>
-        <script src="js/dist/scripts.js"></script>
     </body>
 </html>

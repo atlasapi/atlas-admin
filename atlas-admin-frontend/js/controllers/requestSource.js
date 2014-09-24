@@ -1,61 +1,51 @@
 'use strict'
 var app = angular.module('atlasAdmin.controllers.requestSource', []);
 
-app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Users', 'factorySourcePayments', 'factorySourceRequests', '$location', 
-    function( $scope, $rootScope, $routeParams, Applications, Users, factorySourcePayments, factorySourceRequests, $location) {
-        $scope.planData = factorySourcePayments();
-        $scope.button_txt = 'Accept';
+/**
+ * @controller CtrlRequestSource
+ */
+app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Users', '$location', 
+    function( $scope, $rootScope, $routeParams, Applications, Users, $location ) {
         $scope.app = {};
-        $scope.plan = 0;
+        $scope.plan = 1;
         $scope.source = {};
         $scope.user = {};
 
-        $scope.isNumber = function (value) {
-            return angular.isNumber(value);
-        };
-
-        // read url params
+        // url params
         var appId    = $routeParams.applicationId,
             sourceId = $routeParams.sourceId;
 
-        // use provider to get source data, then pass result to $scope
+        // get app and source data
         Applications.get(appId).then(function(app) {
             var sources = app.sources.reads;
             var source = _.find(sources, function(src) {
                 return src.id === sourceId;
             });
-            $scope.source = source;
-            $scope.app = app;
-        });
+            // pass app & source data to the view
+            $scope.app.name         = app.title;
+            $scope.app.description  = app.description;
+            $scope.source.title     = source.title;
+        })
 
-        // use provider to get user data, then pass result to $scope
+        // get current user's information
         Users.currentUser().then( function(user) {
+            // pass user data to the view
             $scope.user = user;
-        });
+        })
 
-        // when user switches between payment methods, update the model
-        $scope.changeOfPlan = function(index) {
-            $scope.plan = index;
-        }
-
-        // construct post payload, then send to the provider
+        // send form action
         $scope.send = function() {
-            $scope.button_txt = 'Sending...';
-            var payload = {
+            var post_data = {
                 user: $scope.user,
                 app: $scope.app,
-                plan: $scope.planData[$scope.plan],
                 source: $scope.source,
-                reason: $scope.reason,
-                state: 'not approved'
+                plan: $scope.plan
             }
-            factorySourceRequests.postRequest(payload).then(function(status) {
-                if (status === 200)
-                    $location.path('/applications/'+appId);
-            });
-        };
 
-        // on cancel, change location to application screen
+            // send to server here
+        }
+
+        // cancel form action action
         $scope.cancel = function() {
             $location.path('/applications/'+appId);
         }

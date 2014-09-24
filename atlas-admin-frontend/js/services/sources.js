@@ -1,4 +1,5 @@
 'use strict';
+
 var app = angular.module('atlasAdmin.services.sources', []);
 app.factory('Sources', function (Atlas, Applications, $log) {
     return {

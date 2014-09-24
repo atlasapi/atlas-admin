@@ -6,5 +6,4 @@
  */
 angular.module('atlasAdminConfig', [])
     .value('atlasHost','%%ATLASHOST%%')
-    .value('atlasVersion', '%%ATLASVERSION%%')
-    .value('atlasApiHost', '%%ATLASAPIURL%%');
+    .value('atlasVersion', '%%ATLASVERSION%%');

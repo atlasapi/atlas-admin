@@ -19,7 +19,6 @@ $mbst-pink: #fc0088;
 @import "modules/buttons";
 @import "modules/forms";
 @import "modules/typography";
-@import "modules/tabs";
 // modules/tables
 
 // view styles
@@ -27,5 +26,3 @@ $mbst-pink: #fc0088;
 @import "lib/blank-slate";
 @import "lib/my-apps";
 @import "lib/request-source";
-@import "lib/manage-source-requests";
-@import "lib/wishlist";
