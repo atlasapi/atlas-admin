@@ -1,8 +1,8 @@
 'use strict'
 var app = angular.module('atlasAdmin.controllers.requestSource', []);
 
-app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Users', 'factorySourcePayments', 'factorySourceRequests', '$location', 
-    function( $scope, $rootScope, $routeParams, Applications, Users, factorySourcePayments, factorySourceRequests, $location) {
+app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$sce', '$routeParams', 'Applications', 'Users', 'factorySourcePayments', 'factorySourceRequests', 'SourceLicenses', '$location', 
+    function( $scope, $rootScope, $sce, $routeParams, Applications, Users, factorySourcePayments, factorySourceRequests, SourceLicenses, $location) {
         $scope.planData = factorySourcePayments();
         $scope.button_txt = 'Accept';
         $scope.app = {};
@@ -14,9 +14,15 @@ app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$routeParams', 'Ap
           return angular.isNumber(value);
         };
 
-        // read url params
+        // used for referencing url params
         var appId    = $routeParams.applicationId,
             sourceId = $routeParams.sourceId;
+
+        var getTerms = function(sourceId, callback) {
+            SourceLicenses.get(sourceId).then(function(data) {
+                callback(data);
+            }, function(err) { callback(null); })
+        }
 
         // use provider to get source data, then pass result to $scope
         Applications.get(appId).then(function(app) {
@@ -26,7 +32,10 @@ app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$routeParams', 'Ap
             });
             $scope.source = source;
             $scope.app = app;
-        });
+            getTerms(source.id, function(terms) {
+                $scope.source.terms = _.isObject(terms)? $sce.trustAsHtml(terms.license) : null;
+            })
+        })
 
         // use provider to get user data, then pass result to $scope
         Users.currentUser().then( function(user) {
