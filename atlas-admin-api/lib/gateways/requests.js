@@ -61,12 +61,14 @@ var sourceRequest = function(db) {
                 })
             })
         })
+        
         .get(function(req, res) {
             collection.find({state: 'not approved'}, {}).toArray(function(err, data) {
                 if (err) throw err;
                 res.end(JSON.stringify(data));
             })
         })
+
         .put(function(req, res) {
             var id = req.body.id,
                 request_id = req.body.request_id,
