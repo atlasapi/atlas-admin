@@ -1,12 +1,12 @@
 var app = angular.module('atlasAdmin.controllers.sourceRequests', []);
-app.controller('CtrlRequests', function($scope, $rootScope, $routeParams, SourceRequests, Applications, $q) {
+app.controller('CtrlRequests', function($scope, $rootScope, $routeParams, sourceRequests, Applications, $q) {
     $rootScope.title = 'Requests';
     $scope.app = {};
     $scope.app.predicate = 'approved';
     $scope.app.reverse = false;
     $scope.app.pageSize = 10;
     $scope.app.currentPage = 1;
-    SourceRequests.all().then(function(requests) {
+    sourceRequests.all().then(function(requests) {
         var applications = {};
         var appRequests = [];
         var forbidden = [];

@@ -24,13 +24,13 @@
                 </span>
                 <span class="form-label">
                     <input type="radio" name="preset" id="presetAll" ng-model="app.preset" ng-change="termsToggle()" value="all" ng-required="true">
-                    <label class="inline-label" for="presetAll">All listings data</label>
+                    <label class="inline-label" for="presetAll">Custom</label>
                 </span>
-                <div class="terms-box" ng-show="app.terms">
-                    <label><input type="checkbox" name="acceptUKTerms" id="acceptTerms" ng-model="app.acceptTerms" ng-required="app.sources=='uk'">Do you agree to the <a href="http://www.bbc.co.uk/terms/" target="_blank">BBC</a> and <a href="">UK Channel Lineup</a> terms and conditions? Please read carefully. - These may contain information about payments you will have to make</p></label> 
+                <div class="terms-box" ng-show="app.showTerms">
+                    <label><input type="checkbox" name="acceptUKTerms" id="acceptTerms" ng-model="app.acceptTerms" ng-required="app.preset=='uk'">Do you agree to the <a href="http://www.bbc.co.uk/terms/" target="_blank">PA</a> and <a href="">UK Channel Lineup</a> terms and conditions? Please read carefully. - These may contain information about payments you will have to make</p></label> 
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary" ng-disabled="app.wait">Create</button>
+            <button type="submit" class="btn btn-primary" ng-click="submit()" ng-disabled="app.wait">Create</button>
             <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
          </form>
     </div>
