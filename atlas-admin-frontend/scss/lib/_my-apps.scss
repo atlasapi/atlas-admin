@@ -1,3 +1,5 @@
+.app-title { margin-bottom: 1em; }
+
 .apps-sheet {
 	@extend %cf;
 	width: 100%;
@@ -79,4 +81,12 @@
 	.app-actions {
 
 	}
+}
+
+#addApplication {
+	// block level form label
+	.form-label { display: block; }
+	
+	// inline level form label
+	.inline-label { margin-left: 1rem; }
 }

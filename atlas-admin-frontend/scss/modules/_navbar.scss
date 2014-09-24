@@ -1,5 +1,5 @@
-// @module: navbar
-
+//	The global navbar
+//
 .navbar {
 	@extend %cf;
 	box-sizing: border-box;
@@ -23,17 +23,18 @@
 }
 
 // navigation bar links
-ul.navbar-nav {
+.navbar-nav {
 	display: block;
 	float: left;
 	margin-left: 3rem;
 	
-	> li {
+	li {
 		display: inline-block;
 		float: left;
 
-		> a {
+		a {
 			display: inline-block;
+			color: white;
 			line-height: 3.125rem;
 		}
 	}
@@ -55,4 +56,24 @@ ul.navbar-user {
 	.dropdown ul.dropdown-menu { display: none; }
 
 	.dropdown.open ul.dropdown-menu { display: block; }
+}
+
+// admin dropdown
+.nav-dropdown {
+	.dropdown-label {
+		position: relative;
+		display: inline-block;
+	}
+
+	&:hover > .dropdown-content { display: block; }
+
+	> .dropdown-content {
+		position: absolute;
+		top: 90%;
+		left: 0;
+		display: none;
+		margin: 0;
+		padding: 0;
+		list-style-type: none;
+	}
 }

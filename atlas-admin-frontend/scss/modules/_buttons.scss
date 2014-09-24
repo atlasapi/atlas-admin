@@ -1,18 +1,24 @@
-// @module: buttons
-
-// ——————————————————————————————————————————————————————————————
 //	Main button component
 //
 //  Modifiers:
-//  .primary    — primary button, stands out the most
-//  .secondary  — secondary button, usually used for `cancel`
-//  .medum      — makes the button slightly larger
-//	.new-app    — button used to create a new application
-//  .group      — makes buttons behave like they're in a group
-//  .group.last — applys to the last button in a group
+//  .stroke       — converts button to a stroke style
+//
+//  .small        — makes the button size slightly smaller
+//  .medium       — makes the button size slightly larger
+//
+//	.positive     — change button style to communicate a positive action
+//	.negative     — change button style to communicate a negative action
+//
+//  .primary      — primary button, stands out the most
+//  .secondary    — secondary button, usually used for `cancel`
+//
+//	.new-app      — button used to create a new application
+//  .group        — makes buttons behave like they're in a group
+//  .group.last   — applys to the last button in a group
+//
+//	.xhr-progress — hides button text and replases with a spinner
 //
 .button, button {
-	// base button styles
 	display: inline-block;
 	padding: 1em 1.5rem;
 	background: $mbst-purple;
@@ -21,23 +27,44 @@
 	border-radius: 4px;
 	cursor: pointer;
 
-	// primary & secondary modifiers, primary  
+	&.stroke { background: none; color: $mbst-purple; border: 1px solid $mbst-purple; }
+
+	&.small { padding: .25em 1rem; }
+	&.medium { font-size: 1rem; padding: .666em 1rem; }
+	&.large { font-size: 1.25rem; padding: 1em 1em; }
+
+	&.positive { background: #10B574; }
+	&.negative { background: #D43825; }
+
 	&.primary {
 		background: $mbst-pink;	
-
 		&:hover { background: darken( $mbst-pink, 10% ); }
 	}
 	&.secondary {
 		background: #aaa;
-
 		&:hover { background: darken( #aaa, 10% ); }
-	}
-
-	&.medium {
-		font-size: 1.125rem;
 	}
 
 	&.new-app { background: $mbst-pink; }
 	&.group { margin-right: 1rem; }
-	&.group.last { margin-right: 0; } 
+	&.group.last { margin-right: 0; }
+
+	&.left-flush {
+		border-top-left-radius: 0;
+		border-bottom-left-radius: 0;
+	}
+
+	// hides button text and replases with a spinner
+	&.xhr-progress {
+		overflow: hidden;
+		background-image: url(../img/preloader.gif);
+		background-repeat: no-repeat;
+		background-position: center;
+		text-indent: -100%;
+	}
+
+	&.disabled {
+		color: #aaa;
+		border-color: #aaa;
+	}
 }
