@@ -11,6 +11,12 @@ a {
 	color: $mbst-purple;
 }
 
+.link {
+    color: $mbst-purple;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
 // app header blocks
 .app-header {
     .page-title { font-size: 2rem; line-height: 1.4; }

@@ -1,18 +1,44 @@
 'use strict';
 
 angular.module('atlasAdmin.controllers.applications')
-.controller('CreateApplicationFormModalCtrl', ['$scope', '$modalInstance', 'Applications', 'sourceRequests', '$location', 
-    function($scope, $modalInstance, Applications, SourceRequests, $location) {
+.controller('CreateApplicationFormModalCtrl', ['$scope', '$q', '$sce', '$modalInstance', 'Applications', 'sourceRequests', 'SourceLicenses', '$location', 
+    function($scope, $q, $sce, $modalInstance, Applications, SourceRequests, SourceLicenses, $location) {
     $scope.app.showTerms = false;
     $scope.app.acceptTerms = false;
     $scope.app.title = '';
     $scope.app.url = '';
     $scope.app.description = '';
     $scope.app.preset = null;
+    $scope.license = {};
+    $scope.license.show = false;
+
+    var getTerms = function(source) {
+        var defer = $q.defer();
+        var sourceId = null;
+        if (source === 'PA') {
+            sourceId = 'cpc';
+        }else if (source === 'BBC') {
+            sourceId = 'cpy';
+        }
+        SourceLicenses.get(sourceId).then(function(data) {
+            if (!_.isObject(data)) {return false}
+            var license = $sce.trustAsHtml(data.license);
+            defer.resolve(license);
+        })
+        return defer.promise;
+    }
 
     // decide whether terms should be shown for this source set
     $scope.termsToggle = function(preset) {
         $scope.app.showTerms = ($scope.app.preset == 'uk')
+    }
+
+    // used to show the user terms for source
+    $scope.showTerms = function(source) {
+        getTerms(source).then(function(license) {
+            $scope.license.show = true;
+            $scope.license.html = license;
+        })
     }
 
     $scope.submit = function() {
