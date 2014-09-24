@@ -15,10 +15,11 @@ app.factory('Applications', function (Atlas) {
                 return results.data.application;
             });
         },
-        create: function(title, description) {
+        create: function(title, description, url) {
             var data = {
                 'title': title,
                 'description': description,
+                'url': url,
                 'publisher': {
                     'key': 'metabroadcast.com',
                     'name': 'MetaBroadcast',

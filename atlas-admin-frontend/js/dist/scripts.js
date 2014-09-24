@@ -348,10 +348,11 @@ app.factory('Applications', function (Atlas) {
                 return results.data.application;
             });
         },
-        create: function(title, description) {
+        create: function(title, description, url) {
             var data = {
                 'title': title,
                 'description': description,
+                'url': url,
                 'publisher': {
                     'key': 'metabroadcast.com',
                     'name': 'MetaBroadcast',
@@ -1856,14 +1857,15 @@ angular.module('atlasAdmin.controllers.applications')
 
     $scope.submit = function() {
         var app_title       = $scope.app.title,
+            app_url         = $scope.app.url,
             app_description = $scope.app.description,
             app_preset      = $scope.app.preset,
             app_terms       = $scope.app.acceptTerms;
 
         // save the app data
-        if (_.isString(app_title) && _.isString(app_description) && _.isString(app_preset)) {
+        if (!_.isEmpty(app_title) && !_.isEmpty(app_url) && _.isString(app_preset)) {
             if (app_preset === 'uk' && !app_terms) return;
-            Applications.create(app_title, app_description).then(function(result) {
+            Applications.create(app_title, app_description, app_url).then(function(result) {
                 if (result.data.application.id) {
                     var appId = result.data.application.id;
                     // enable basic sources matching on simple account
@@ -1878,7 +1880,7 @@ angular.module('atlasAdmin.controllers.applications')
                         }
                         // send source requests for default sources
                         _(enableSources).forEach(function(src) {
-                            SourceRequests.send(src.id, appId, '', '', 'personal', true);
+                            SourceRequests.send(src.id, appId, app_url, '', 'personal', true);
                         })
                         Applications.setPrecedence(appId, sourceOrder);
                     }else{
