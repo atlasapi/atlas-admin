@@ -170,7 +170,7 @@ angular.module('atlasAdmin.controllers.applications')
 
         var modalInstance = $modal.open({
             templateUrl: 'partials/viewTermsModal.html',
-            controller: ViewTermsCtrl,
+            controller: 'ViewTermsCtrl',
             scope: $scope
         });
     };

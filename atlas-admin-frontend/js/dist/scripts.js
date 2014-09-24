@@ -1830,7 +1830,7 @@ angular.module('atlasAdmin.controllers.applications')
 
         var modalInstance = $modal.open({
             templateUrl: 'partials/viewTermsModal.html',
-            controller: ViewTermsCtrl,
+            controller: 'ViewTermsCtrl',
             scope: $scope
         });
     };
@@ -2334,7 +2334,7 @@ app.controller('CtrlManageSourceRequests', ['$scope', '$rootScope', '$routeParam
 'use strict';
 var app = angular.module('atlasAdmin.controllers.atlas', []);
 
-function ViewTermsCtrl($scope, $modalInstance, Applications, SourceRequests, $log) {
+function ViewTermsCtrl($scope, $modalInstance, Applications, sourceRequests, $log) {
     $scope.close = function() {
         $modalInstance.dismiss();
     };
