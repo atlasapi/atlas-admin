@@ -72,15 +72,16 @@
             </header>
             <div class="terms-container" ng-bind-html="source.terms"></div>
         </section>
-        <div class="panel-full reason-for-access">
+        <div class="panel-full reason-for-access" ng-hide="source.state=='enableable'">
             <span class="form-row last">
-                <label>Why do you want access to the {{source.name}} source?</label>
+                <label>Why do you want access to the {{source.title}} source?</label>
                 <textarea ng-model="reason" placeholder="Include any extra information you think the provider might need to know"></textarea>
             </span>
         </div>
         <div class="panel-full submit-buttons">
             <header class="panel-header">
                 <h1>Confirm and agree</h1>
+                <p ng-show="source.state=='enableable'">This source will be enabled immediately</p>
             </header>
             <button class="group primary medium" ng-click="send()">{{button_txt}}</button>
             <button class="group secondary medium last" ng-click="cancel()">Cancel</button>
