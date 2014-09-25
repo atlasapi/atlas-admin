@@ -34,24 +34,23 @@ var sendSourceToAtlas = function(appId, sourceId, callback) {
 }
 
 var approveSourceRequest = function(request_id, callback) {
-    if (!_.isString(request_id)) { console.error('request_id must be a string') }
+    if (!_.isString(request_id)) { console.error('request_id must be a string'); return; }
     Atlas.request('/requests/'+request_id+'/approve', 'POST', function(data) {
         if (_.isFunction(callback)) callback();
     });
 }
 
-var autoApproveAdmin = function(appId, sourceId) {
-    var isAdmin = (common.user.role === 'admin')? true : false;
-    if (isAdmin) {
-        getRequest(appId, sourceId, function(request) {
-            if (_.isObject(request)) {
-                approveSourceRequest(request.id);
-            }
-        })
-        return true;
-    }else{
-        return false;
-    }
+var autoApproveAdmin = function(appId, sourceId, callback) {
+    var _err = false;
+    getRequest(appId, sourceId, function(request) {
+        if (_.isObject(request)) {
+            approveSourceRequest(request.id);
+        }else{
+            console.error('No request object present')
+            _err = true;
+        }
+        if (_.isFunction(callback) && _err) callback()
+    })
 }
 
 var getRequest = function(appId, sourceId, callback) {
@@ -60,7 +59,7 @@ var getRequest = function(appId, sourceId, callback) {
         var request = _.find(data['source_requests'], function(n) {
             return (n.application_id == appId && n.source.id == sourceId)? true : false;
         })
-        if (_.isFunction(callback)) { callback(request) };
+        if (_.isFunction(callback)) callback(request);
     })
 }
 
@@ -74,21 +73,20 @@ var sourceRequest = function(db) {
     router.route('/')
         .post(function(req, res) {
             if (!'app' in req.body ||!'source' in req.body) return false;
+            var isAdmin = (common.user.role === 'admin')? true : false;
             sendSourceToAtlas(req.body.app.id, req.body.source.id, function() {
                 var body = req.body;
-                if (autoApproveAdmin(body.app.id, body.source.id)) {
-                    res.end();
-                    return;
+                var send_to_manager = function() {
+                    if (body.source.state != 'enableable' && body.source.state != 'available') {
+                        collection.insert(req.body)
+                    }
                 }
-                // only send source to manager if it requires approval
-                if (body.source.state != 'enableable' && body.source.state != 'available') {
-                    collection.insert(req.body, function(err, data) {
-                        if (err) throw err;
-                        res.end();
-                    })
+                if (isAdmin) {
+                    autoApproveAdmin(body.app.id, body.source.id, send_to_manager);
                 }else{
-                    res.end();
+                    send_to_manager();
                 }
+                res.end('');
             })
         })
         
