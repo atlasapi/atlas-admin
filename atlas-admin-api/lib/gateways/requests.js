@@ -49,7 +49,7 @@ var autoApproveAdmin = function(appId, sourceId, callback) {
             console.error('No request object present')
             _err = true;
         }
-        if (_.isFunction(callback) && _err) callback()
+        if (_.isFunction(callback)) callback(_err)
     })
 }
 
@@ -84,8 +84,13 @@ var sourceRequest = function(db) {
                     }
                 }
                 if (isAdmin) {
-                    autoApproveAdmin(body.app.id, body.source.id, send_to_manager);
-                    res.end('');
+                    autoApproveAdmin(body.app.id, body.source.id, function() {
+                        if (err) {
+                            send_to_manager()
+                        }else{
+                            res.end();
+                        }
+                    });
                 }else{
                     send_to_manager();
                 }
