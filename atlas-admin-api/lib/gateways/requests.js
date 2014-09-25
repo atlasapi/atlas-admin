@@ -78,15 +78,17 @@ var sourceRequest = function(db) {
                 var body = req.body;
                 var send_to_manager = function() {
                     if (body.source.state != 'enableable' && body.source.state != 'available') {
-                        collection.insert(req.body)
+                        collection.insert(req.body, function() {
+                            res.end();
+                        })
                     }
                 }
                 if (isAdmin) {
                     autoApproveAdmin(body.app.id, body.source.id, send_to_manager);
+                    res.end('');
                 }else{
                     send_to_manager();
                 }
-                res.end('');
             })
         })
         
