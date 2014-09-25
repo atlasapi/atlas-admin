@@ -10,6 +10,7 @@ app.controller('CtrlRequests', function($scope, $rootScope, $routeParams, source
         var applications = {};
         var appRequests = [];
         var forbidden = [];
+
         for (var i in requests) {
             if (!applications[requests[i].application_id] && forbidden.indexOf(requests[i].application_id) === -1) {
                 applications[requests[i].application_id] = {};

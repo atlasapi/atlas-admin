@@ -8,7 +8,7 @@ var gulp        = require('gulp'),
 
 var assets = {};
 
-// Javascripts must me loaded in order, so hence the large array
+// Javascripts must be loaded in order, so hence the large array
 assets.js = ['js/app.js',
             'js/services/auth.js',
             'js/services/atlas.js',

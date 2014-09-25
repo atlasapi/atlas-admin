@@ -37,9 +37,11 @@ var sendSourceToAtlas = function(appId, sourceId, enable, callback) {
     });
 }
 
-var approveSourceRequest = function(request_id) {
+var approveSourceRequest = function(request_id, callback) {
     if (!_.isString(request_id)) { console.error('request_id must be a string') }
-    Atlas.request('/requests/'+request_id+'/approve', 'POST');
+    Atlas.request('/requests/'+request_id+'/approve', 'POST', function(data) {
+        if (_.isFunction(callback)) callback();
+    });
 }
 
 
@@ -55,10 +57,15 @@ var sourceRequest = function(db) {
             sendSourceToAtlas(req.body.app.id, req.body.source.id, false, function(request) {
                 var body = req.body;
                 body.request = request;
-                collection.insert(req.body, function(err, data) {
-                    if (err) throw err;
+                // only send source to manager if it requires approval
+                if (body.source.state != 'enableable' && body.source.state != 'available') {
+                    collection.insert(req.body, function(err, data) {
+                        if (err) throw err;
+                        res.end();
+                    })
+                }else{
                     res.end();
-                })
+                }
             })
         })
         
@@ -69,22 +76,23 @@ var sourceRequest = function(db) {
             })
         })
 
+        // used for updating request status on atlas and in request manager
         .put(function(req, res) {
             var id = req.body.id,
                 request_id = req.body.request_id,
                 new_state = req.body.new_state;
+                console.log(req.body);
             if (!_.isString(id) || !_.isString(request_id) || !_.isString(new_state)) {
                 res.end('')
                 return false;
             }
-            collection.update( {_id: new ObjectID(id)}, {$set: {state: new_state}}, function(err, count, status) {
-                if (err) throw err;
-                var stringStatus = JSON.stringify(status);
-                if (status.ok) {
-                    approveSourceRequest(request_id);
-                }
-                res.end(stringStatus);
-            })
+            approveSourceRequest(request_id, function() {
+                collection.update( {_id: new ObjectID(id)}, {$set: {state: new_state}}, function(err, count, status) {
+                    if (err) throw err;
+                    var stringStatus = JSON.stringify(status);
+                    res.end(stringStatus);
+                })
+            });
         })
     return router;
 }

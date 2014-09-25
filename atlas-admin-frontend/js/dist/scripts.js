@@ -25,6 +25,7 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.controllers.user',
                                 'atlasAdmin.controllers.uservideosources',
                                 'atlasAdmin.controllers.uservideosources.youtube',
+                                'atlasAdmin.controllers.admins.manageSourceRequests',
                                 'ui.bootstrap',
                                 'ngResource',
                                 'ngRoute',
@@ -35,7 +36,7 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/sources', {templateUrl: 'partials/sources.html', controller: 'CtrlSources'});
     $routeProvider.when('/sources/:sourceId/readers', {templateUrl: 'partials/sourceReaders.html', controller: 'CtrlSourceReaders'});
     $routeProvider.when('/sources/:sourceId/writers', {templateUrl: 'partials/sourceWriters.html', controller: 'CtrlSourceWriters'});
-    $routeProvider.when('/requests', {templateUrl: 'partials/requests.html', controller: 'CtrlRequests'});
+    $routeProvider.when('/requests', {templateUrl: 'partials/admins/manageSourceRequests.html', controller: 'CtrlManageSourceRequests'});
     $routeProvider.when('/applications', {templateUrl: 'partials/applications.html', controller: 'CtrlApplications'});
     $routeProvider.when('/applications/:applicationId', {templateUrl: 'partials/applicationEdit.html', controller: 'CtrlApplicationEdit'});
     $routeProvider.when('/applications/:applicationId/requestSource/:sourceId', {templateUrl: 'partials/requestSource.html', controller: 'CtrlRequestSource'});
@@ -51,7 +52,7 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/logout', {templateUrl: 'partials/logout.html', controller: 'CtrlLogout'});
     $routeProvider.when('/error', {templateUrl: 'partials/error.html', controller: 'ErrorController', reloadOnSearch: false});
     $routeProvider.otherwise({redirectTo: '/applications'});
-  }])
+}])
 app.config(['$httpProvider', function($httpProvider) {
     $httpProvider.defaults.useXDomain = true;
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
@@ -1287,6 +1288,7 @@ app.controller('CtrlRequests', function($scope, $rootScope, $routeParams, source
         var applications = {};
         var appRequests = [];
         var forbidden = [];
+
         for (var i in requests) {
             if (!applications[requests[i].application_id] && forbidden.indexOf(requests[i].application_id) === -1) {
                 applications[requests[i].application_id] = {};
