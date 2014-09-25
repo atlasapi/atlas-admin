@@ -81,7 +81,6 @@ var sourceRequest = function(db) {
             var id = req.body.id,
                 request_id = req.body.request_id,
                 new_state = req.body.new_state;
-                console.log(req.body);
             if (!_.isString(id) || !_.isString(request_id) || !_.isString(new_state)) {
                 res.end('')
                 return false;
