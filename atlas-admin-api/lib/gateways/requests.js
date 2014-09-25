@@ -44,7 +44,9 @@ var autoApproveAdmin = function(appId, sourceId) {
     var isAdmin = (common.user.role === 'admin')? true : false;
     if (isAdmin) {
         getRequest(appId, sourceId, function(request) {
-            approveSourceRequest(request.id);
+            if (_.isObject(request)) {
+                approveSourceRequest(request.id);
+            }
         })
         return true;
     }else{
