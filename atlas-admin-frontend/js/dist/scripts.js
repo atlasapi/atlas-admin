@@ -2304,28 +2304,28 @@ app.controller('CtrlManageSourceRequests', ['$scope', '$rootScope', '$routeParam
 
     // send request to approve source to the server, then remove the request
     // from the list
-    // @param id {string}  the `_id` value from mongo
-    // @param request_id {string}  the `request.id` value from mongo
+    // @param appId {string}  the `app.id` value from mongo
+    // @param sourceId {string}  the `source.id` value from mongo
     // @param state {string}  new state of request (defaults to 'approved')
-    var changeRequestState = function(id, request_id, state) {
-        if (typeof id !== 'string') return false;        
+    var changeRequestState = function(appId, sourceId, state) {
+        if (!_.isString(appId) && !_.isString(sourceId)) return false;        
         var payload = {
-            id: id,
-            request_id: request_id, 
+            appId: appId,
+            sourceId: sourceId, 
             new_state: state || 'approved'
         }
         factorySourceRequests.putChangeRequest(payload).then(function(status) {
             if (status.ok && status.n === 1) {
                 _.remove($scope.app.requests, function(n) {
-                    return n._id === id;
+                    return ((n.app.id === appId) && (n.source.id === sourceId));
                 })
             }
         })
     }
 
-    $scope.approveRequest = function(id, request_id, $event) {
+    $scope.approveRequest = function(appId, sourceId, $event) {
         if (typeof $event !== 'undefined') $($event.currentTarget).addClass('xhr-progress');
-        return changeRequestState(id, request_id, 'approved');
+        return changeRequestState(appId, sourceId, 'approved');
     }
 
     // pull request data from the api and push result into the $scope

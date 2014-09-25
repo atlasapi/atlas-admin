@@ -1,5 +1,6 @@
 'use strict';
 var config      = require('../../config'),
+    common      = require('../../common'),
     Atlas       = require('../services/atlasProvider'),
     qs          = require('querystring'),
     express     = require('express'),
@@ -12,9 +13,8 @@ var config      = require('../../config'),
 //  requests so we can grab the request id and store it for later
 //  @param appId {string}
 //  @param sourceId {string}
-//  @param enable {bool}
 //  @param callback {function} @returns request object
-var sendSourceToAtlas = function(appId, sourceId, enable, callback) {
+var sendSourceToAtlas = function(appId, sourceId, callback) {
     if (typeof appId !== 'string' || typeof sourceId !== 'string') {
         console.error('appId and sourceId not present');
         return false;
@@ -26,14 +26,10 @@ var sendSourceToAtlas = function(appId, sourceId, enable, callback) {
         usageType: 'personal',
         licenseAccepted: true
     })
-    Atlas.request('/sources/'+sourceId+'/requests?'+postData, 'POST', function() {
-        Atlas.request('/requests.json', 'GET', function(status, data) {
-            var data = JSON.parse(data);
-            var request = _.find(data['source_requests'], function(n) {
-                return (n.application_id == appId && n.source.id == sourceId)? true : false;
-            })
-            if (_.isFunction(callback)) { callback(request) };
-        })
+    Atlas.request('/sources/'+sourceId+'/requests?'+postData, 'POST', function(status, data) {
+        if (status === 200) {
+           callback(true);
+        }
     });
 }
 
@@ -42,6 +38,28 @@ var approveSourceRequest = function(request_id, callback) {
     Atlas.request('/requests/'+request_id+'/approve', 'POST', function(data) {
         if (_.isFunction(callback)) callback();
     });
+}
+
+var autoApproveAdmin = function(appId, sourceId) {
+    var isAdmin = (common.user.role === 'admin')? true : false;
+    if (isAdmin) {
+        getRequest(appId, sourceId, function(request) {
+            approveSourceRequest(request.id);
+        })
+        return true;
+    }else{
+        return false;
+    }
+}
+
+var getRequest = function(appId, sourceId, callback) {
+    Atlas.request('/requests.json', 'GET', function(status, data) {
+        var data = JSON.parse(data);
+        var request = _.find(data['source_requests'], function(n) {
+            return (n.application_id == appId && n.source.id == sourceId)? true : false;
+        })
+        if (_.isFunction(callback)) { callback(request) };
+    })
 }
 
 
@@ -54,9 +72,12 @@ var sourceRequest = function(db) {
     router.route('/')
         .post(function(req, res) {
             if (!'app' in req.body ||!'source' in req.body) return false;
-            sendSourceToAtlas(req.body.app.id, req.body.source.id, false, function(request) {
+            sendSourceToAtlas(req.body.app.id, req.body.source.id, function() {
                 var body = req.body;
-                body.request = request;
+                if (autoApproveAdmin(body.app.id, body.source.id)) {
+                    res.end();
+                    return;
+                }
                 // only send source to manager if it requires approval
                 if (body.source.state != 'enableable' && body.source.state != 'available') {
                     collection.insert(req.body, function(err, data) {
@@ -78,20 +99,30 @@ var sourceRequest = function(db) {
 
         // used for updating request status on atlas and in request manager
         .put(function(req, res) {
-            var id = req.body.id,
-                request_id = req.body.request_id,
-                new_state = req.body.new_state;
-            if (!_.isString(id) || !_.isString(request_id) || !_.isString(new_state)) {
-                res.end('')
-                return false;
-            }
-            approveSourceRequest(request_id, function() {
-                collection.update( {_id: new ObjectID(id)}, {$set: {state: new_state}}, function(err, count, status) {
-                    if (err) throw err;
-                    var stringStatus = JSON.stringify(status);
-                    res.end(stringStatus);
-                })
-            });
+            getRequest(req.body.appId, req.body.sourceId, function(request) {
+                if (!_.isObject(request)) {
+                    res.end();
+                    return;
+                }
+
+                var appId = req.body.appId,
+                    sourceId = req.body.sourceId,
+                    new_state = req.body.new_state,
+                    request_id = request.id;
+
+                if (!_.isString(appId) || !_.isString(request_id) || !_.isString(new_state)) {
+                    res.end()
+                    return false;
+                }
+
+                approveSourceRequest(request_id, function() {
+                    collection.update( {'app.id': appId, 'source.id': sourceId}, {$set: {state: new_state}}, function(err, count, status) {
+                        if (err) throw err;
+                        var stringStatus = JSON.stringify(status);
+                        res.end(stringStatus);
+                    })
+                });
+            })
         })
     return router;
 }
