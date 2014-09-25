@@ -84,7 +84,7 @@ var sourceRequest = function(db) {
                     }
                 }
                 if (isAdmin) {
-                    autoApproveAdmin(body.app.id, body.source.id, function() {
+                    autoApproveAdmin(body.app.id, body.source.id, function(err) {
                         if (err) {
                             send_to_manager()
                         }else{
