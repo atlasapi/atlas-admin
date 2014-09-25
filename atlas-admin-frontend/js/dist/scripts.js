@@ -352,7 +352,7 @@ app.factory('Applications', function (Atlas) {
             var data = {
                 'title': title,
                 'description': description,
-                'url': url,
+                //'url': url,
                 'publisher': {
                     'key': 'metabroadcast.com',
                     'name': 'MetaBroadcast',
