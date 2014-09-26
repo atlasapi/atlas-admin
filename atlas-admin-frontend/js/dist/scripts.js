@@ -1477,19 +1477,29 @@ app.controller('UserMenuController', function($scope, Users, $rootScope, Authent
 
     var buildMenu = function(user) {
         // if profile not complete the do not show menu
-        var allMenu = [{path:'/applications', label:'Applications'},
-            {path:'/sources', label:'Sources', role:'admin'},
-            {path:'/requests', label:'Requests', role:'admin'},
-            {path:'/users', label:'Users', role:'admin'}];
+        var allMenu = [
+            {path:'/applications', label:'Applications'},
+            {path:'/wishlist', label:'Wishlist'},
+            // admin only
+            {path:'/cat/sources', label:'Sources', role:'admin'},
+            {path:'/cat/requests', label:'Requests', role:'admin'},
+            {path:'/cat/users', label:'Users', role:'admin'},
+            {path:'/cat/wishlist', label:'Wishlist', role:'admin'}];
 
         var menu = [];
+        var admin_menu = [];
         for (var i = 0; i < allMenu.length; i++) {
             var item = allMenu[i];
-            if (!item.role || item.role === user.role) {
+            if (!item.role || item.role !== 'admin') {
                 menu.push(item);
+            }else if (user.role === 'admin') {
+                admin_menu.push(item);
             }
         }
-        return menu;
+        return {
+            users: menu,
+            admins: admin_menu
+        }
     };
 
     if (Authentication.getToken()) {
