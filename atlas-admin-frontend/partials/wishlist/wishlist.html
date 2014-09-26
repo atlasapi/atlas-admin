@@ -16,11 +16,11 @@
                     <h2 class="panel-title">Sources you've asked for</h2>
                 </header>
                 <table class="table">
-                    <tr ng-if="asked.length" ng-repeat="item in asked" ng-switch on="item.wish.status">
+                    <tr ng-if="asked.length" ng-repeat="item in asked">
                         <td class="source-name">{{item.wish.title}}</td>
-                        <td class="source-options" ng-switch-when="not available">We'll tell you when it becomes available</td>
-                        <td class="source-options" ng-switch-when="in progress">We're working on it</td>
-                        <td class="source-options" ng-switch-when="available">Available!</td>
+                        <td class="source-options" ng-show="item.wish.status=='not available'">We'll tell you when it becomes available</td>
+                        <td class="source-options" ng-show="item.wish.status=='in progress'">We're working on it</td>
+                        <td class="source-options" ng-show="item.wish.status=='available'">Available!</td>
                     </tr>
                     <tr ng-if="!asked.length">
                         <td class="blank">You haven't asked for any sources yet. To get updates when sources become available, click 'I want this' for any sources you want access to.</td>
