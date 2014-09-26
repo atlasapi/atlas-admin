@@ -90,10 +90,10 @@ app.controller('UserMenuController', function($scope, Users, $rootScope, Authent
             {path:'/applications', label:'Applications'},
             {path:'/wishlist', label:'Wishlist'},
             // admin only
-            {path:'/cat/sources', label:'Sources', role:'admin'},
-            {path:'/cat/requests', label:'Requests', role:'admin'},
-            {path:'/cat/users', label:'Users', role:'admin'},
-            {path:'/cat/wishlist', label:'Wishlist', role:'admin'}];
+            {path:'/manage/sources', label:'Sources', role:'admin'},
+            {path:'/manage/requests', label:'Requests', role:'admin'},
+            {path:'/manage/users', label:'Users', role:'admin'},
+            {path:'/manage/wishlist', label:'Wishlist', role:'admin'}];
 
         var menu = [];
         var admin_menu = [];
