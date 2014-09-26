@@ -1,45 +1,83 @@
 'use strict';
 
 angular.module('atlasAdmin.controllers.applications')
-.controller('CreateApplicationFormModalCtrl', ['$scope', '$modalInstance', 'Applications', '$location', 
-    function($scope, $modalInstance, Applications, $location) {
-
-    $scope.app.terms = false;
+.controller('CreateApplicationFormModalCtrl', ['$scope', '$q', '$sce', '$modalInstance', 'Applications', 'sourceRequests', 'SourceLicenses', '$location', 
+    function($scope, $q, $sce, $modalInstance, Applications, SourceRequests, SourceLicenses, $location) {
+    $scope.app.showTerms = false;
+    $scope.app.acceptTerms = false;
     $scope.app.title = '';
     $scope.app.url = '';
     $scope.app.description = '';
     $scope.app.preset = null;
+    $scope.license = {};
+    $scope.license.show = false;
+
+    var getTerms = function(source) {
+        var defer = $q.defer();
+        var sourceId = null;
+        if (source === 'PA') {
+            sourceId = 'cpc';
+        }else if (source === 'BBC') {
+            sourceId = 'cpy';
+        }
+        SourceLicenses.get(sourceId).then(function(data) {
+            if (!_.isObject(data)) {return false}
+            var license = $sce.trustAsHtml(data.license);
+            defer.resolve(license);
+        })
+        return defer.promise;
+    }
 
     // decide whether terms should be shown for this source set
-    $scope.showTerms = function(preset) {
-        $scope.app.terms = 'uk' === preset;
+    $scope.termsToggle = function(preset) {
+        $scope.app.showTerms = ($scope.app.preset == 'uk')
+    }
+
+    // used to show the user terms for source
+    $scope.showTerms = function(source) {
+        getTerms(source).then(function(license) {
+            $scope.license.show = true;
+            $scope.license.html = license;
+        })
     }
 
     $scope.submit = function() {
         var app_title       = $scope.app.title,
+            app_url         = $scope.app.url,
             app_description = $scope.app.description,
-            app_preset      = $scope.app.preset;
+            app_preset      = $scope.app.preset,
+            app_terms       = $scope.app.acceptTerms;
 
         // save the app data
-        Applications.create(app_title, app_description)
-            .then(function(result) {
+        if (!_.isEmpty(app_title) && !_.isEmpty(app_url) && _.isString(app_preset)) {
+            if (app_preset === 'uk' && !app_terms) return;
+            Applications.create(app_title, app_description, app_url).then(function(result) {
                 if (result.data.application.id) {
                     var appId = result.data.application.id;
-                    // enable matching on simple account
+                    // enable basic sources matching on simple account
                     if (app_preset === 'uk') {
-                        var sourceOrder = [];
+                        var _item, sourceOrder = [], enableSources = [];
                         for (var source in result.data.application.sources.reads) {
-                            sourceOrder.push(result.data.application.sources.reads[source].id);
+                            _item = result.data.application.sources.reads[source];
+                            if (_item.title === 'BBC' || _item.title === 'PA') {
+                                enableSources.push(_item);
+                            }
+                            sourceOrder.push(_item.id);
                         }
+                        // send source requests for default sources
+                        _(enableSources).forEach(function(src) {
+                            SourceRequests.send(src.id, appId, app_url, '', 'personal', true);
+                        })
                         Applications.setPrecedence(appId, sourceOrder);
                     }else{
                         $location.path('/applications/'+appId);
                     }
-                    // close modal and return data
+                    // close modal and return data tot he $scope
                     result.data.application.source = $scope.app.sources;
                     $modalInstance.close(result.data.application);
                 }
             });
+        }
     };
 
     // cancel and close modal

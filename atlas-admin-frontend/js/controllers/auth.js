@@ -2,9 +2,16 @@
 var app = angular.module('atlasAdmin.controllers.auth', []);
 
 app.controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routeParams, Atlas, atlasVersion, $location, Authentication, $log) {
-    $scope.view_title = "Hi there, please sign in to continue";
+    // add 'align-mid' class to the title element
+    var h2_el = angular.element($rootElement).find('h2');
+    var app_title = _.find(h2_el, function(el) {
+        return angular.element(el).hasClass('app-title');
+    });
+    angular.element(app_title).addClass('align-mid')
+    $rootScope.title = "Hi there, please sign in to continue";
 
     // Ask atlas for access here 
+    //Authentication.reset();
     Atlas.getAuthProviders().then(function(results) {
         var providers = [];
         for (var i=0; i<results.length; i++) {

@@ -12,17 +12,13 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.services.users', 
                                 'atlasAdmin.services.uservideosources',
                                 'atlasAdmin.services.uservideosources.youtube',
-                                'atlasAdmin.services.propositions',
                                 'atlasAdmin.directives.orderable', 
                                 'atlasAdmin.directives.focus',
                                 'atlasAdmin.directives.activePath',
                                 'atlasAdmin.directives.validUsage',
-                                'atlasAdmin.directives.inputmorph',
                                 'atlasAdmin.controllers.auth',
-                                'atlasAdmin.controllers.atlas',
                                 'atlasAdmin.controllers.errors',
                                 'atlasAdmin.controllers.applications',
-                                'atlasAdmin.controllers.wishlist',
                                 'atlasAdmin.controllers.sources',
                                 'atlasAdmin.controllers.requestSource',
                                 'atlasAdmin.controllers.sourceRequests',
@@ -30,38 +26,32 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.controllers.uservideosources',
                                 'atlasAdmin.controllers.uservideosources.youtube',
                                 'atlasAdmin.controllers.admins.manageSourceRequests',
-                                'atlasAdmin.controllers.admins.manageWishlist',
                                 'ui.bootstrap',
                                 'ngResource',
                                 'ngRoute',
                                 'atlasAdminConfig'
 ]);
 app.config(['$routeProvider', function($routeProvider) {
-    // admin only routes
-    $routeProvider.when('/cat/requests', {templateUrl: 'partials/admins/manageSourceRequests.html', controller: 'CtrlManageSourceRequests'});
-    $routeProvider.when('/cat/sources', {templateUrl: 'partials/sources.html', controller: 'CtrlSources'});
-    $routeProvider.when('/cat/sources/:sourceId/readers', {templateUrl: 'partials/sourceReaders.html', controller: 'CtrlSourceReaders'});
-    $routeProvider.when('/cat/sources/:sourceId/writers', {templateUrl: 'partials/sourceWriters.html', controller: 'CtrlSourceWriters'});
-    $routeProvider.when('/cat/users/:uid', {templateUrl: 'partials/profile.html', controller: 'UserProfileController'});
-    $routeProvider.when('/cat/users', {templateUrl: 'partials/users.html', controller: 'AllUsersController'});
-    $routeProvider.when('/cat/wishlist', {templateUrl: 'partials/admins/wishlist/manageWishlist.html', controller: 'CtrlManageWishlist'});
-
-    // application user routes
+    $routeProvider.when('/sources', {templateUrl: 'partials/sources.html', controller: 'CtrlSources'});
+    $routeProvider.when('/sources/:sourceId/readers', {templateUrl: 'partials/sourceReaders.html', controller: 'CtrlSourceReaders'});
+    $routeProvider.when('/sources/:sourceId/writers', {templateUrl: 'partials/sourceWriters.html', controller: 'CtrlSourceWriters'});
+    $routeProvider.when('/requests', {templateUrl: 'partials/admins/manageSourceRequests.html', controller: 'CtrlManageSourceRequests'});
     $routeProvider.when('/applications', {templateUrl: 'partials/applications.html', controller: 'CtrlApplications'});
     $routeProvider.when('/applications/:applicationId', {templateUrl: 'partials/applicationEdit.html', controller: 'CtrlApplicationEdit'});
     $routeProvider.when('/applications/:applicationId/requestSource/:sourceId', {templateUrl: 'partials/requestSource.html', controller: 'CtrlRequestSource'});
-    $routeProvider.when('/wishlist', {templateUrl: 'partials/wishlist/wishlist.html', controller: 'CtrlWishlist'})
     $routeProvider.when('/login', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
     $routeProvider.when('/login/:providerNamespace', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
     $routeProvider.when('/oauth/:providerNamespace', {templateUrl: 'partials/oauth.html', controller: 'CtrlOAuth', reloadOnSearch: false});
     $routeProvider.when('/terms', {templateUrl: 'partials/terms.html', controller: 'UserLicenseController'});
     $routeProvider.when('/profile', {templateUrl: 'partials/profile.html', controller: 'UserProfileController'});
+    $routeProvider.when('/users/:uid', {templateUrl: 'partials/profile.html', controller: 'UserProfileController'});
+    $routeProvider.when('/users', {templateUrl: 'partials/users.html', controller: 'AllUsersController'});
     $routeProvider.when('/videosource/providers', {templateUrl: 'partials/videoSourceProviders.html', controller: 'CtrlVideoSourceProviders'});
     $routeProvider.when('/videosource/config/youtube', {templateUrl: 'partials/videoSourceYouTubeConfig.html', controller: 'CtrlVideoSourceYouTubeConfig'});
     $routeProvider.when('/logout', {templateUrl: 'partials/logout.html', controller: 'CtrlLogout'});
     $routeProvider.when('/error', {templateUrl: 'partials/error.html', controller: 'ErrorController', reloadOnSearch: false});
     $routeProvider.otherwise({redirectTo: '/applications'});
-  }])
+}])
 app.config(['$httpProvider', function($httpProvider) {
     $httpProvider.defaults.useXDomain = true;
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
@@ -158,7 +148,7 @@ app.factory('Authentication', function ($rootScope, ProfileStatus) {
             }
 
             $rootScope.status.loggedIn = true;
-            
+
             if (url.indexOf('?') !== -1) {
                 return url + '&' + oauthParams;
             }
@@ -260,7 +250,6 @@ app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $
         },
         startOauthAuthentication: function(provider, callbackUrl, targetUri) {
             var url = atlasHost + provider.authRequestUrl + ".json?callbackUrl=" + callbackUrl;
-            console.log(provider.authRequestUrl);
             Authentication.setProvider(provider.namespace);
             return $http.get(url).then(function(result) {
                 return result.data.oauth_request.login_url;
@@ -359,10 +348,11 @@ app.factory('Applications', function (Atlas) {
                 return results.data.application;
             });
         },
-        create: function(title, description) {
+        create: function(title, description, url) {
             var data = {
                 'title': title,
                 'description': description,
+                //'url': url,
                 'publisher': {
                     'key': 'metabroadcast.com',
                     'name': 'MetaBroadcast',
@@ -398,6 +388,7 @@ app.factory('Applications', function (Atlas) {
     };
  });
 'use strict';
+
 var app = angular.module('atlasAdmin.services.sources', []);
 app.factory('Sources', function (Atlas, Applications, $log) {
     return {
@@ -1049,9 +1040,16 @@ app.controller('ErrorController', function($scope, $rootScope, $routeParams) {
 var app = angular.module('atlasAdmin.controllers.auth', []);
 
 app.controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routeParams, Atlas, atlasVersion, $location, Authentication, $log) {
-    $scope.view_title = "Hi there, please sign in to continue";
+    // add 'align-mid' class to the title element
+    var h2_el = angular.element($rootElement).find('h2');
+    var app_title = _.find(h2_el, function(el) {
+        return angular.element(el).hasClass('app-title');
+    });
+    angular.element(app_title).addClass('align-mid')
+    $rootScope.title = "Hi there, please sign in to continue";
 
     // Ask atlas for access here 
+    //Authentication.reset();
     Atlas.getAuthProviders().then(function(results) {
         var providers = [];
         for (var i=0; i<results.length; i++) {
@@ -1278,17 +1276,18 @@ function AddWriterTypeaheadCtrl($scope, $modalInstance, Applications) {
 }
 
 var app = angular.module('atlasAdmin.controllers.sourceRequests', []);
-app.controller('CtrlRequests', function($scope, $rootScope, $routeParams, SourceRequests, Applications, $q) {
+app.controller('CtrlRequests', function($scope, $rootScope, $routeParams, sourceRequests, Applications, $q) {
     $rootScope.title = 'Requests';
     $scope.app = {};
     $scope.app.predicate = 'approved';
     $scope.app.reverse = false;
     $scope.app.pageSize = 10;
     $scope.app.currentPage = 1;
-    SourceRequests.all().then(function(requests) {
+    sourceRequests.all().then(function(requests) {
         var applications = {};
         var appRequests = [];
         var forbidden = [];
+
         for (var i in requests) {
             if (!applications[requests[i].application_id] && forbidden.indexOf(requests[i].application_id) === -1) {
                 applications[requests[i].application_id] = {};
@@ -1308,7 +1307,7 @@ app.controller('CtrlRequests', function($scope, $rootScope, $routeParams, Source
     });
 
     $scope.approveRequest = function(request) {
-        SourceRequests.approve(request.id)
+        sourceRequests.approve(request.id)
         .then(function() {
                 request.approved = true;
             },
@@ -1321,8 +1320,8 @@ app.controller('CtrlRequests', function($scope, $rootScope, $routeParams, Source
 'use strict'
 var app = angular.module('atlasAdmin.controllers.requestSource', []);
 
-app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Users', 'factorySourcePayments', 'factorySourceRequests', '$location', 
-    function( $scope, $rootScope, $routeParams, Applications, Users, factorySourcePayments, factorySourceRequests, $location) {
+app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$sce', '$routeParams', 'Applications', 'Users', 'factorySourcePayments', 'factorySourceRequests', 'SourceLicenses', '$location', 
+    function( $scope, $rootScope, $sce, $routeParams, Applications, Users, factorySourcePayments, factorySourceRequests, SourceLicenses, $location) {
         $scope.planData = factorySourcePayments();
         $scope.button_txt = 'Accept';
         $scope.app = {};
@@ -1334,9 +1333,15 @@ app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$routeParams', 'Ap
           return angular.isNumber(value);
         };
 
-        // read url params
+        // used for referencing url params
         var appId    = $routeParams.applicationId,
             sourceId = $routeParams.sourceId;
+
+        var getTerms = function(sourceId, callback) {
+            SourceLicenses.get(sourceId).then(function(data) {
+                callback(data);
+            }, function(err) { callback(null); })
+        }
 
         // use provider to get source data, then pass result to $scope
         Applications.get(appId).then(function(app) {
@@ -1346,7 +1351,10 @@ app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$routeParams', 'Ap
             });
             $scope.source = source;
             $scope.app = app;
-        });
+            getTerms(source.id, function(terms) {
+                $scope.source.terms = _.isObject(terms)? $sce.trustAsHtml(terms.license) : null;
+            })
+        })
 
         // use provider to get user data, then pass result to $scope
         Users.currentUser().then( function(user) {
@@ -1472,29 +1480,19 @@ app.controller('UserMenuController', function($scope, Users, $rootScope, Authent
 
     var buildMenu = function(user) {
         // if profile not complete the do not show menu
-        var allMenu = [
-            {path:'/applications', label:'Applications'},
-            {path:'/wishlist', label:'Wishlist'},
-            // admin only
-            {path:'/cat/sources', label:'Sources', role:'admin'},
-            {path:'/cat/requests', label:'Requests', role:'admin'},
-            {path:'/cat/users', label:'Users', role:'admin'},
-            {path:'/cat/wishlist', label:'Wishlist', role:'admin'}];
+        var allMenu = [{path:'/applications', label:'Applications'},
+            {path:'/sources', label:'Sources', role:'admin'},
+            {path:'/requests', label:'Requests', role:'admin'},
+            {path:'/users', label:'Users', role:'admin'}];
 
         var menu = [];
-        var admin_menu = [];
         for (var i = 0; i < allMenu.length; i++) {
             var item = allMenu[i];
-            if (!item.role || item.role !== 'admin') {
+            if (!item.role || item.role === user.role) {
                 menu.push(item);
-            }else if (user.role === 'admin') {
-                admin_menu.push(item);
             }
         }
-        return {
-            users: menu,
-            admins: admin_menu
-        }
+        return menu;
     };
 
     if (Authentication.getToken()) {
@@ -1837,7 +1835,7 @@ angular.module('atlasAdmin.controllers.applications')
 
         var modalInstance = $modal.open({
             templateUrl: 'partials/viewTermsModal.html',
-            controller: ViewTermsCtrl,
+            controller: 'ViewTermsCtrl',
             scope: $scope
         });
     };
@@ -1867,45 +1865,83 @@ angular.module('atlasAdmin.controllers.applications')
 'use strict';
 
 angular.module('atlasAdmin.controllers.applications')
-.controller('CreateApplicationFormModalCtrl', ['$scope', '$modalInstance', 'Applications', '$location', 
-    function($scope, $modalInstance, Applications, $location) {
-
-    $scope.app.terms = false;
+.controller('CreateApplicationFormModalCtrl', ['$scope', '$q', '$sce', '$modalInstance', 'Applications', 'sourceRequests', 'SourceLicenses', '$location', 
+    function($scope, $q, $sce, $modalInstance, Applications, SourceRequests, SourceLicenses, $location) {
+    $scope.app.showTerms = false;
+    $scope.app.acceptTerms = false;
     $scope.app.title = '';
     $scope.app.url = '';
     $scope.app.description = '';
     $scope.app.preset = null;
+    $scope.license = {};
+    $scope.license.show = false;
+
+    var getTerms = function(source) {
+        var defer = $q.defer();
+        var sourceId = null;
+        if (source === 'PA') {
+            sourceId = 'cpc';
+        }else if (source === 'BBC') {
+            sourceId = 'cpy';
+        }
+        SourceLicenses.get(sourceId).then(function(data) {
+            if (!_.isObject(data)) {return false}
+            var license = $sce.trustAsHtml(data.license);
+            defer.resolve(license);
+        })
+        return defer.promise;
+    }
 
     // decide whether terms should be shown for this source set
-    $scope.showTerms = function(preset) {
-        $scope.app.terms = 'uk' === preset;
+    $scope.termsToggle = function(preset) {
+        $scope.app.showTerms = ($scope.app.preset == 'uk')
+    }
+
+    // used to show the user terms for source
+    $scope.showTerms = function(source) {
+        getTerms(source).then(function(license) {
+            $scope.license.show = true;
+            $scope.license.html = license;
+        })
     }
 
     $scope.submit = function() {
         var app_title       = $scope.app.title,
+            app_url         = $scope.app.url,
             app_description = $scope.app.description,
-            app_preset      = $scope.app.preset;
+            app_preset      = $scope.app.preset,
+            app_terms       = $scope.app.acceptTerms;
 
         // save the app data
-        Applications.create(app_title, app_description)
-            .then(function(result) {
+        if (!_.isEmpty(app_title) && !_.isEmpty(app_url) && _.isString(app_preset)) {
+            if (app_preset === 'uk' && !app_terms) return;
+            Applications.create(app_title, app_description, app_url).then(function(result) {
                 if (result.data.application.id) {
                     var appId = result.data.application.id;
-                    // enable matching on simple account
+                    // enable basic sources matching on simple account
                     if (app_preset === 'uk') {
-                        var sourceOrder = [];
+                        var _item, sourceOrder = [], enableSources = [];
                         for (var source in result.data.application.sources.reads) {
-                            sourceOrder.push(result.data.application.sources.reads[source].id);
+                            _item = result.data.application.sources.reads[source];
+                            if (_item.title === 'BBC' || _item.title === 'PA') {
+                                enableSources.push(_item);
+                            }
+                            sourceOrder.push(_item.id);
                         }
+                        // send source requests for default sources
+                        _(enableSources).forEach(function(src) {
+                            SourceRequests.send(src.id, appId, app_url, '', 'personal', true);
+                        })
                         Applications.setPrecedence(appId, sourceOrder);
                     }else{
                         $location.path('/applications/'+appId);
                     }
-                    // close modal and return data
+                    // close modal and return data tot he $scope
                     result.data.application.source = $scope.app.sources;
                     $modalInstance.close(result.data.application);
                 }
             });
+        }
     };
 
     // cancel and close modal
@@ -2271,26 +2307,28 @@ app.controller('CtrlManageSourceRequests', ['$scope', '$rootScope', '$routeParam
 
     // send request to approve source to the server, then remove the request
     // from the list
-    // @param id {string}  the `_id` value from mongo
+    // @param appId {string}  the `app.id` value from mongo
+    // @param sourceId {string}  the `source.id` value from mongo
     // @param state {string}  new state of request (defaults to 'approved')
-    var changeRequestState = function(id, state) {
-        if (typeof id !== 'string') return false;        
+    var changeRequestState = function(appId, sourceId, state) {
+        if (!_.isString(appId) && !_.isString(sourceId)) return false;        
         var payload = {
-            request_id: id,
+            appId: appId,
+            sourceId: sourceId, 
             new_state: state || 'approved'
         }
         factorySourceRequests.putChangeRequest(payload).then(function(status) {
             if (status.ok && status.n === 1) {
                 _.remove($scope.app.requests, function(n) {
-                    return n._id === id;
+                    return ((n.app.id === appId) && (n.source.id === sourceId));
                 })
             }
         })
     }
 
-    $scope.approveRequest = function(request_id, $event) {
+    $scope.approveRequest = function(appId, sourceId, $event) {
         if (typeof $event !== 'undefined') $($event.currentTarget).addClass('xhr-progress');
-        return changeRequestState(request_id, 'approved');
+        return changeRequestState(appId, sourceId, 'approved');
     }
 
     // pull request data from the api and push result into the $scope
@@ -2301,7 +2339,7 @@ app.controller('CtrlManageSourceRequests', ['$scope', '$rootScope', '$routeParam
 'use strict';
 var app = angular.module('atlasAdmin.controllers.atlas', []);
 
-function ViewTermsCtrl($scope, $modalInstance, Applications, SourceRequests, $log) {
+function ViewTermsCtrl($scope, $modalInstance, Applications, sourceRequests, $log) {
     $scope.close = function() {
         $modalInstance.dismiss();
     };

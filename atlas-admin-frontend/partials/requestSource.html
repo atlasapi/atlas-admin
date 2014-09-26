@@ -5,7 +5,7 @@
     <div class="app-content">
         <section class="panel-full application-info">
             <header class="panel-header">
-                <h1>1. Review your information</h1>
+                <h1>Review your information</h1>
                 <em class="form-terms">This information will be sent to the source owner with your request</em>
             </header>
             <div class="app-data">
@@ -44,9 +44,9 @@
             </div>
         </span>
         </section>
-        <section class="panel-full payment-plans">
+        <section class="panel-full payment-plans" ng-show="source.title=='PA'">
             <header class="panel-header">
-                <h1>2. Choose a payment plan</h1>
+                <h1>Choose a payment plan</h1>
             </header>
             <div class="payment-plan-contain">
                 <div class="payment-plan plan-{{$index}}" ng-repeat="theplan in planData">
@@ -65,26 +65,23 @@
             </div>
             <div class="payment-terms">All prices excluding VAT</div>
         </section>
-        <section class="panel-full terms">
+        <section class="panel-full terms" ng-show="source.terms!==null">
             <header class="panel-header">
-                <h1>3. Read the {{source.title}} terms &amp; conditions</h1>
-                <a ng-href="#/terms" class="atlas-terms-link">Read the Atlas terms &amp; conditions</a>
+                <h1>Read the {{source.title}} terms &amp; conditions</h1>
+                <a ng-href="#/terms" target="_blank" class="atlas-terms-link">Read the Atlas terms &amp; conditions</a>
             </header>
-            <div class="terms-container">
-                <p><b>1.</b> In addition to platform fees, the following data fees are due per API key for which Press Association data is enabled: Number of unique users per month (exc. VAT)</p>
-                <p><b>2.</b> Please include the following credit in an "About" page or similar, within your app and easily accessible to all users:</p>
-                <p class="terms-important">Entertainment data copyright: Press Association" And link to, or provide separately the URL: http://www.pressassociation.com</p>
-            </div>
-            <div class="reason-for-access">
-                <span class="form-row last">
-                    <label>Why do you want access to the {{source.name}} source?</label>
-                    <textarea ng-model="reason" placeholder="Include any extra information you think the provider might need to know"></textarea>
-                </span>
-            </div>
+            <div class="terms-container" ng-bind-html="source.terms"></div>
         </section>
+        <div class="panel-full reason-for-access" ng-hide="source.state=='enableable'">
+            <span class="form-row last">
+                <label>Why do you want access to the {{source.title}} source?</label>
+                <textarea ng-model="reason" placeholder="Include any extra information you think the provider might need to know"></textarea>
+            </span>
+        </div>
         <div class="panel-full submit-buttons">
             <header class="panel-header">
-                <h1>4. Confirm and agree</h1>
+                <h1>Confirm and agree</h1>
+                <p ng-show="source.state=='enableable'">This source will be enabled immediately</p>
             </header>
             <button class="group primary medium" ng-click="send()">{{button_txt}}</button>
             <button class="group secondary medium last" ng-click="cancel()">Cancel</button>

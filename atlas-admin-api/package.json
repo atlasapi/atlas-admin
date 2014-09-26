@@ -1,9 +1,10 @@
 {
-    "name": "atlasAdminAPI",
-    "description": "Atlas administration front end service",
-    "dependencies": {
-        "body-parser": "^1.6.6",
-        "express": "^4.8.5",
-        "mongodb": "^1.4.8"
-    }
+  "name": "atlasAdminAPI",
+  "description": "Atlas administration front end service",
+  "dependencies": {
+    "body-parser": "^1.6.6",
+    "express": "^4.8.5",
+    "lodash": "^2.4.1",
+    "mongodb": "^1.4.8"
+  }
 }

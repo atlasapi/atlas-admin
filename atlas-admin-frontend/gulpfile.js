@@ -8,14 +8,8 @@ var gulp        = require('gulp'),
 
 var assets = {};
 
-// Javascripts must me loaded in order, so hence the large array
-assets.js = ['js/vendor/angular/angular.min.js',
-            'js/vendor/angular/angular-resource.min.js',
-            'js/vendor/angular/angular-route.min.js',
-            'js/vendor/lodash.js',
-            'lib/ui-bootstrap-tpls-0.10.0.min.js',
-            'config/atlasAdmin.config.js',
-            'js/app.js',
+// Javascripts must be loaded in order, so hence the large array
+assets.js = ['js/app.js',
             'js/services/auth.js',
             'js/services/atlas.js',
             'js/services/users.js',

@@ -32,7 +32,7 @@ var Atlas = function() {
                 data += chunk;
             })
             .on('end', function() { 
-                return (typeof callback === 'function')? callback(status, data) : null;
+                return (typeof callback === 'function')? callback(status, data) : true;
             });
         });
         request.end();

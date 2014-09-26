@@ -13,7 +13,9 @@
 //  elements:
 //  label   — block label sits in it's own row
 .form-row {
+    @extend %cf;
     display: block;
+    width: 100%;
     margin-bottom: 1.5rem;
 
     &.last { margin-bottom: 0; }
