@@ -37,7 +37,12 @@
         outline: none;
     }
 
-    &.stroke { background: none; color: $color-purple; border: 1px solid $color-purple; }
+    &.stroke { 
+        background: none; 
+        color: $color-purple; 
+        border: 1px solid $color-purple; 
+        box-shadow: none;
+    }
 
     &.small { padding: .25em 1rem; }
     &.medium { font-size: 1rem; padding: .666em 1rem; }

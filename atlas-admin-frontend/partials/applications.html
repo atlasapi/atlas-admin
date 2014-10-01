@@ -1,19 +1,14 @@
 <div class="app-surface applications">
     <header class="app-header">
         <h1 class="page-title">{{view_title}}</h1>
+        <button type="button" class="btn btn-primary create-application" ng-click="createApplication()">Create application</button>
     </header>
 
-    <section ng-show="state=='table'" class="app-content applications-list">
-        <div class="panel-half">
-            <button type="button" class="btn btn-primary" ng-click="createApplication()">Create application</button>
+    <section ng-show="state=='table'" class="panel-full applications-list">
+        <div class="query-filter">
+            <input type="text" aria-role="search" ng-model="query" placeholder="Filter applications" id="queryFilter">
         </div>
-        <div class="panel-half right query-filter">
-            <label for="queryFilter">Filter: </label>
-            <input aria-role="search" ng-model="query" id="queryFilter">
-        </div>
-    </section>
 
-    <section ng-show="state=='table'" class="panel-full">
         <table class="tbl">
             <thead>
                 <tr>

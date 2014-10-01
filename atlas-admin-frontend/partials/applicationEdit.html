@@ -24,7 +24,7 @@
     <section class="edit-form">
         <form name="detailsForm" class="panel-full">
             <div class="row">
-                <div class="panel-half padded stroke-right">
+                <div class="panel-half padded-right stroke-right">
                     <div class="form-row">
                         <label for="appTitle">Title</label>
                         <input type="text" class="form-control" id="appTitle" name="appTitle" placeholder="title" ng-model="app.application.title" ng-change="app.edited.meta=true" ng-minlength="3">
@@ -34,7 +34,7 @@
                         <textarea id="appDescription" placeholder="description" ng-model="app.application.description" ng-change="app.edited.meta=true"></textarea>
                     </div>
                 </div>
-                <div class="panel-half padded">
+                <div class="panel-half padded-left">
                     <div class="form-row api-key-holder">
                         <label for="appApiKey">API Key</label>
                         <input type="text" class="form-control" id="appApiKey" ng-model="app.application.credentials.apiKey" ng-readonly="true">
@@ -45,22 +45,20 @@
             </div>
 
             <div class="panel-full">
+                <header class="panel-header">
+                    <h1>Sources</h1> 
+                    <p>Atlas automatically matches the same programmes across different sources. With equivalence precedence turned off, we'll return all equivalent content as separate items in the response. With precedence turned on we'll merge the best data from every source into a single item, based on the order you set here.</p>
+                    <p>Hint: If you have access to Press Association data, you probably want it at the top.</p>
+                </header>
                 <div class="form-row">
-                    <label for="appApiKey">Sources (Read)</label>
-                    <div>
-                        <p>Atlas automatically matches the same programmes across different sources. With equivalence precedence turned off, we'll return all equivalent content as separate items in the response. With precedence turned on we'll merge the best data from every source into a single item, based on the order you set here.</p>
-                        <p>Hint: If you have access to Press Association data, you probably want it at the top.</p>
-                    </div>
-                    <div>
-                        <button type="button" class="btn btn-success" ng-show="app.application.sources.precedence === false" ng-click="enablePrecedence()">Enable Matching</button>
-                        <button type="button" class="btn btn-danger" ng-show="app.application.sources.precedence === true" ng-click="disablePrecedence()">Disable Matching</button>
-                    </div>
+                    <button type="button" class="btn btn-success" ng-show="app.application.sources.precedence === false" ng-click="enablePrecedence()">Enable Matching</button>
+                    <button type="button" class="btn btn-danger" ng-show="app.application.sources.precedence === true" ng-click="disablePrecedence()">Disable Matching</button>
                 </div>
             </div>
 
             <div class="panel-full">
                 <header class="panel-header">
-                    <h1>Enabled</h1> 
+                    <h2>Enabled</h2> 
                     <span ng-show="app.application.sources.precedence === true">(Drag and drop sources to rearrange precedence ordering)</span>
                 </header>
                 <ul class="list-group" sortable-list>
@@ -78,7 +76,7 @@
 
             <div class="panel-full available-sources">
                 <header class="panel-header">
-                    <h1>Available</h1> 
+                    <h2>Available</h2> 
                 </header>
                 <ul class="list-group">
                     <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:false">
@@ -90,7 +88,7 @@
 
             <div class="panel-full requested-sources">
                 <header class="panel-header">
-                    <h1>Requesed</h1> 
+                    <h2>Requesed</h2> 
                 </header>
                 <ul class="list-group">
                     <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'requested' ">
@@ -101,7 +99,7 @@
 
             <div class="panel-full unavailabe-sources">
                 <header class="panel-header">
-                    <h1>Unavailable</h1> 
+                    <h2>Unavailable</h2> 
                 </header>
                 <ul class="list-group">
                     <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'unavailable|enableable'">
@@ -113,7 +111,7 @@
 
             <div class="panel-full revoked-sources">
                 <header class="panel-header">
-                    <h1>Revoked</h1> 
+                    <h2>Revoked</h2> 
                 </header>
                 <ul class="list-group">
                     <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'revoked'">

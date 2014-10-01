@@ -1715,7 +1715,7 @@ angular.module('atlasAdmin.controllers.applications')
         $scope.app.writes = {};
         $scope.app.writes.predicate = 'name';
         $scope.app.writes.reverse = false;
-        $scope.view_subtitle = $scope.app.title;
+        $scope.view_subtitle = application.title;
     });
 
     $scope.app.disableSource = function(source) {

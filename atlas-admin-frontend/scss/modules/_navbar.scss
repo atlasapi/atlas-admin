@@ -17,9 +17,10 @@ $navbar-height: 5.06rem;
 	@extend %cf;
 	display: block;
 	float: left;	
+	margin-left: 2.25rem;
 	
 	> a { display: inline-block; height: $navbar-height; line-height: $navbar-height; }
-	> a img { display: inline-block; margin: .8rem 0 0 .7rem; }
+	> a img { display: inline-block; margin: .8rem 0 0 0; }
 }
 
 // main navigation list
@@ -44,6 +45,7 @@ $navbar-height: 5.06rem;
 		> li a {
 			display: inline-block;
 			height: $navbar-height;
+			padding: 0 .25rem;
 			color: white;
 			text-decoration: none;
 
@@ -52,7 +54,7 @@ $navbar-height: 5.06rem;
 
 		.menu-button {
 			padding: .5rem 1rem;
-			border-radius: 5px;
+			border-radius: 3px;
 		}
 
 		> li a.active-menu-item { color: $color-pink; }
