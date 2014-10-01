@@ -1,5 +1,6 @@
 /* Tables */
-.tbl {
+.tbl,
+.table {
     width: 100%;
     margin-bottom: 20px;
     background: #fff;
@@ -7,11 +8,13 @@
     text-transform: none;
 }
 
-.tbl thead {
+.tbl thead,
+.table thead {
     border-bottom: 1px solid #ccc;
 }
 
-.tbl thead tr {
+.tbl thead tr,
+.table thead tr {
     border: 1px solid #684090;
     background-color: #8e5dbf;
     background: -moz-linear-gradient(top, #8e5dbf, #3e126a);
@@ -20,7 +23,8 @@
     text-shadow: 0 -1px 0 rgba(0,0,0,0.6);
 }
 
-.tbl thead th {
+.tbl thead th,
+.table thead th {
     padding: 3px 5px 5px;
     color: #fff;
     font-size: 16px;
@@ -28,12 +32,14 @@
     border-left: 1px solid #684090;
 }
 
-.tbl tbody {
+.tbl tbody,
+.table tbody {
     border-bottom: 1px solid #684090;
 }
 
-.tbl tbody td {
-    padding: 5px 5px;
+.tbl tbody td,
+.table tbody td {
+    padding: .666rem .444rem;
     font-size: 14px;
     border-left: 1px solid #ddd;
     border-right: 1px solid #8e5dbf;

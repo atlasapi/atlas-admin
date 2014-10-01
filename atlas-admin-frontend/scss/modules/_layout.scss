@@ -11,6 +11,13 @@
     width: 100%;
 }
 
+.row {
+    @extend %cf;
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+}
+
 .app-header {
     display: block;
     width: 100%;
@@ -38,6 +45,9 @@
 //  .panel-third     — 1/3 width block, floated left
 //  .panel-quarter   — 1/4 width block, floated left
 //
+//  .right           —
+//  .padded          —
+//
 .panel-full { width: 100%; }
 .panel-half { width: 50%; float: left; }
 .panel-third { width: 33.333%; float: left; }
@@ -49,10 +59,19 @@
     margin-bottom: 3.375rem;
 
     &.right { float: right; }
+
+    &.stroke-right {
+        border-right: 1px solid #ccc;
+    }
+
+    &.padded {
+        padding: 2.25rem;
+    }
 }
 
 // Panel header
 .panel-header {
+    @extend %cf;
     margin-bottom: 1.5rem;
 }
 

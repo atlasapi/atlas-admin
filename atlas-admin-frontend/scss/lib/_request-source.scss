@@ -109,11 +109,17 @@
     // ——————————————————————————————————————————————————————————————
     //  terms and conditions block
     // ——————————————————————————————————————————————————————————————
+    .terms-box {
+        display: block;
+        padding: 1rem;
+        margin-top: 1rem;
+        background: #FFEB9F;
 
-    .reason-for-access {
-        margin-top: 1.25rem;
+        input, p { display: inline-block; margin: 0; }
+        input { margin: 0 .8rem 0 0; }
+        label { display: inline-block; font-weight: normal; margin: 0; }
     }
-
+    
     .terms {
         .panel-header { @extend %cf; }
         .panel-header h1 { float: left; }
@@ -144,21 +150,3 @@
         }
     }
 }
-
-.terms-box {
-        display: block;
-        padding: 1rem;
-        margin-top: 1rem;
-        background: #FFEB9F;
-
-        input, p { display: inline-block; margin: 0; }
-        input { margin: 0 .8rem 0 0; }
-        label { display: inline-block; font-weight: normal; margin: 0; }
-    }
-    
-    .terms-box-extended {
-        box-sizing: border-box;
-        background: #eee;
-        padding: 1rem;
-        border: 1px solid #FFEB9F;
-    }

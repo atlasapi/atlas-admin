@@ -12,13 +12,17 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.services.users', 
                                 'atlasAdmin.services.uservideosources',
                                 'atlasAdmin.services.uservideosources.youtube',
+                                'atlasAdmin.services.propositions',
                                 'atlasAdmin.directives.orderable', 
                                 'atlasAdmin.directives.focus',
                                 'atlasAdmin.directives.activePath',
                                 'atlasAdmin.directives.validUsage',
+                                'atlasAdmin.directives.inputmorph',
                                 'atlasAdmin.controllers.auth',
+                                'atlasAdmin.controllers.atlas',
                                 'atlasAdmin.controllers.errors',
                                 'atlasAdmin.controllers.applications',
+                                'atlasAdmin.controllers.wishlist',
                                 'atlasAdmin.controllers.sources',
                                 'atlasAdmin.controllers.requestSource',
                                 'atlasAdmin.controllers.sourceRequests',
@@ -26,19 +30,27 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.controllers.uservideosources',
                                 'atlasAdmin.controllers.uservideosources.youtube',
                                 'atlasAdmin.controllers.admins.manageSourceRequests',
+                                'atlasAdmin.controllers.admins.manageWishlist',
                                 'ui.bootstrap',
                                 'ngResource',
                                 'ngRoute',
                                 'atlasAdminConfig'
-]);
+                            ]);
 app.config(['$routeProvider', function($routeProvider) {
-    $routeProvider.when('/sources', {templateUrl: 'partials/sources.html', controller: 'CtrlSources'});
-    $routeProvider.when('/sources/:sourceId/readers', {templateUrl: 'partials/sourceReaders.html', controller: 'CtrlSourceReaders'});
-    $routeProvider.when('/sources/:sourceId/writers', {templateUrl: 'partials/sourceWriters.html', controller: 'CtrlSourceWriters'});
-    $routeProvider.when('/requests', {templateUrl: 'partials/admins/manageSourceRequests.html', controller: 'CtrlManageSourceRequests'});
+    // admin only routes
+    $routeProvider.when('/manage/requests', {templateUrl: 'partials/admins/manageSourceRequests.html', controller: 'CtrlManageSourceRequests'});
+    $routeProvider.when('/manage/sources', {templateUrl: 'partials/sources.html', controller: 'CtrlSources'});
+    $routeProvider.when('/manage/sources/:sourceId/readers', {templateUrl: 'partials/sourceReaders.html', controller: 'CtrlSourceReaders'});
+    $routeProvider.when('/manage/sources/:sourceId/writers', {templateUrl: 'partials/sourceWriters.html', controller: 'CtrlSourceWriters'});
+    $routeProvider.when('/manage/users/:uid', {templateUrl: 'partials/profile.html', controller: 'UserProfileController'});
+    $routeProvider.when('/manage/users', {templateUrl: 'partials/users.html', controller: 'AllUsersController'});
+    $routeProvider.when('/manage/wishlist', {templateUrl: 'partials/admins/wishlist/manageWishlist.html', controller: 'CtrlManageWishlist'});
+
+    // application user routes
     $routeProvider.when('/applications', {templateUrl: 'partials/applications.html', controller: 'CtrlApplications'});
     $routeProvider.when('/applications/:applicationId', {templateUrl: 'partials/applicationEdit.html', controller: 'CtrlApplicationEdit'});
     $routeProvider.when('/applications/:applicationId/requestSource/:sourceId', {templateUrl: 'partials/requestSource.html', controller: 'CtrlRequestSource'});
+    $routeProvider.when('/wishlist', {templateUrl: 'partials/wishlist/wishlist.html', controller: 'CtrlWishlist'})
     $routeProvider.when('/login', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
     $routeProvider.when('/login/:providerNamespace', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
     $routeProvider.when('/oauth/:providerNamespace', {templateUrl: 'partials/oauth.html', controller: 'CtrlOAuth', reloadOnSearch: false});
@@ -1471,6 +1483,7 @@ app.controller('AllUsersController', function($scope, $rootScope, $routeParams, 
     $scope.app.currentPage = 1;
 });
 app.controller('UserMenuController', function($scope, Users, $rootScope, Authentication, $location) {
+    // only try to get user if logged in
     $scope.app = {};
     $scope.app.dropdown = false;
 
@@ -1481,18 +1494,27 @@ app.controller('UserMenuController', function($scope, Users, $rootScope, Authent
     var buildMenu = function(user) {
         // if profile not complete the do not show menu
         var allMenu = [{path:'/applications', label:'Applications'},
-            {path:'/sources', label:'Sources', role:'admin'},
-            {path:'/requests', label:'Requests', role:'admin'},
-            {path:'/users', label:'Users', role:'admin'}];
+            {path:'/wishlist', label:'Wishlist'},
+            // admin only
+            {path:'/manage/sources', label:'Sources', role:'admin'},
+            {path:'/manage/requests', label:'Requests', role:'admin'},
+            {path:'/manage/users', label:'Users', role:'admin'},
+            {path:'/manage/wishlist', label:'Wishlist', role:'admin'}];
 
         var menu = [];
+        var admin_menu = [];
         for (var i = 0; i < allMenu.length; i++) {
             var item = allMenu[i];
-            if (!item.role || item.role === user.role) {
+            if (!item.role || item.role !== 'admin') {
                 menu.push(item);
+            }else if (user.role === 'admin') {
+                admin_menu.push(item);
             }
         }
-        return menu;
+        return {
+            users: menu,
+            admins: admin_menu
+        }
     };
 
     if (Authentication.getToken()) {
@@ -1674,6 +1696,7 @@ angular.module('atlasAdmin.controllers.applications')
     $scope.app.edited = {'meta':false,'precedenceState':false,'precedenceOrder':false};
     $scope.app.changed = false;
     var leavingPageText = 'You have unsaved changes!';
+    $scope.view_title = 'Edit application';
 
     window.onbeforeunload = function() {
         if ($scope.app.changed) {
@@ -1692,8 +1715,7 @@ angular.module('atlasAdmin.controllers.applications')
         $scope.app.writes = {};
         $scope.app.writes.predicate = 'name';
         $scope.app.writes.reverse = false;
-        $rootScope.title = 'Edit application';
-        console.log(application);
+        $scope.view_subtitle = $scope.app.title;
     });
 
     $scope.app.disableSource = function(source) {
@@ -1818,7 +1840,6 @@ angular.module('atlasAdmin.controllers.applications')
 
     $scope.app.viewTerms = function(source) {
         // Source Licence is a API name and a T&Cs
-        // get a source
         SourceLicenses.get(source.id).then(function(data) {
             // not all sources have licenses
             if (data && data.license) {

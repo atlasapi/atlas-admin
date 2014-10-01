@@ -1,0 +1,22 @@
+ul.pagination { @extend %bare-list; }
+
+.pagination {
+    @extend %cf;
+
+    > li {
+        display: inline-block;
+        float: left;
+    }
+
+    > li a {
+        display: inline-block;
+        padding: .44rem .66rem;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .active a {
+        background: $color-pink;
+        color: white;
+    }
+}

@@ -1,11 +1,6 @@
-//  Forms
-//
 
 
-//  layout helpers
-//  ———————————————
-
-//  wrapper for form components
+//  Wrappers for differnent form components
 //
 //  modifiers:
 //  .last   — remove margin from the bottom of element
@@ -15,7 +10,6 @@
 .form-row {
     @extend %cf;
     display: block;
-    width: 100%;
     margin-bottom: 1.5rem;
 
     &.last { margin-bottom: 0; }
@@ -27,22 +21,19 @@
     }
 }
 
-
-//  form components
-//  ———————————————
-
-// 
 textarea {
+    box-sizing: border-box;
     display: block;
     width: 100%;
     max-width: 38.44rem;
     height: 140px;
     padding: 1rem;
-    border: 1px solid $color-pink;
+    border: 1px solid $color-purple;
     border-radius: 3px;
 }
 
-input[type="text"] {
+input[type="text"],
+.text-input {
     padding: .296rem;
     border: 1px solid $color-purple;
     border-radius: .197rem;

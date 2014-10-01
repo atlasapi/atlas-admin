@@ -22,7 +22,14 @@
             <div class="navbar-links" ng-cloak>
                 <ul ng-show="status.loggedIn && !show.load" class="navbar-links-user">
                     <li ng-repeat="item in app.menu.users">
-                        <a ng-href="#{{item.path}}" active-path="active-menu-item">{{item.label}}</a>
+                        <a ng-href="#{{item.path}}" active-path="active-menu-item"><span class="menu-button">{{item.label}}</span></a>
+                    </li>
+                    <li ng-if="app.menu.admins.length" class="nav-manage">
+                        <ul>
+                            <li ng-repeat="item in app.menu.admins">
+                                <a ng-href="#{{item.path}}" active-path="active-menu-item"><span class="menu-button">{{item.label}}</span></a>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </div>
@@ -40,7 +47,7 @@
         </nav><!-- end navigation -->
 
         <!-- loading container -->
-        <div class="loading-container loading"  ng-show="show.load" ng-cloak></div>
+        <div class="loading-container loading"  ng-show="show.load" ng-cloak><span class="page-loader">Loading...</span></div>
         <!-- application container -->
         <div class="application-container" ng-show="!show.load" ng-view></div>
         
@@ -59,8 +66,6 @@
         <script src="js/vendor/angular/angular-route.min.js"></script>
         <script src="lib/ui-bootstrap-tpls-0.10.0.min.js"></script>
         <script src="js/vendor/lodash.js"></script>
-        <script src="js/spin.min.js"></script>
-        <script src="js/angular-spinner.min.js"></script>
         <script src="config/atlasAdmin.config.js"></script>
         <script src="js/dist/scripts.js"></script>
     </body>

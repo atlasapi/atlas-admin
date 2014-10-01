@@ -41,23 +41,30 @@ $navbar-height: 5.06rem;
 			line-height: $navbar-height;
 		}
 
-		> li.menu-label { color: lighten($color-purple, 60%); }
-
 		> li a {
 			display: inline-block;
-			padding: 0 1.125rem;
 			height: $navbar-height;
-			color: $color-pink;
+			color: white;
 			text-decoration: none;
 
 			&:hover { color: white; }
 		}
 
-		> li a.active-menu-item { color: white; }
+		.menu-button {
+			padding: .5rem 1rem;
+			border-radius: 5px;
+		}
+
+		> li a.active-menu-item { color: $color-pink; }
+		> li a.active-menu-item .menu-button {
+			background: white;
+		}
 
 	}
 
-	.nav-manage { margin-left: 2.25rem; }
+	.nav-manage { 
+		margin-left: 2.25rem; 
+	}
 }
 
 // the user avatar and prefs menu 

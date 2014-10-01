@@ -9,6 +9,7 @@ angular.module('atlasAdmin.controllers.applications')
     $scope.app.edited = {'meta':false,'precedenceState':false,'precedenceOrder':false};
     $scope.app.changed = false;
     var leavingPageText = 'You have unsaved changes!';
+    $scope.view_title = 'Edit application';
 
     window.onbeforeunload = function() {
         if ($scope.app.changed) {
@@ -27,8 +28,7 @@ angular.module('atlasAdmin.controllers.applications')
         $scope.app.writes = {};
         $scope.app.writes.predicate = 'name';
         $scope.app.writes.reverse = false;
-        $rootScope.title = 'Edit application';
-        console.log(application);
+        $scope.view_subtitle = $scope.app.title;
     });
 
     $scope.app.disableSource = function(source) {
@@ -153,7 +153,6 @@ angular.module('atlasAdmin.controllers.applications')
 
     $scope.app.viewTerms = function(source) {
         // Source Licence is a API name and a T&Cs
-        // get a source
         SourceLicenses.get(source.id).then(function(data) {
             // not all sources have licenses
             if (data && data.license) {
