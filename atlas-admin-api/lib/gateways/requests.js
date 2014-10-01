@@ -53,6 +53,7 @@ var autoApproveAdmin = function(appId, sourceId, callback) {
     })
 }
 
+// used for getting a request object from Atlas
 var getRequest = function(appId, sourceId, callback) {
     Atlas.request('/requests.json', 'GET', function(status, data) {
         var data = JSON.parse(data);
@@ -71,6 +72,8 @@ var sourceRequest = function(db) {
         collection  = db.collection('sourceRequests');
 
     router.route('/')
+        // used for making a request to use a source. Admin users automatically have their
+        // sources enabled by default
         .post(function(req, res) {
             if (!'app' in req.body ||!'source' in req.body) return false;
             var isAdmin = (common.user.role === 'admin')? true : false;
@@ -84,7 +87,7 @@ var sourceRequest = function(db) {
                     }
                 }
                 if (isAdmin) {
-                    autoApproveAdmin(body.app.id, body.source.id, function() {
+                    autoApproveAdmin(body.app.id, body.source.id, function(err) {
                         if (err) {
                             send_to_manager()
                         }else{
@@ -97,6 +100,7 @@ var sourceRequest = function(db) {
             })
         })
         
+        // used for returning all requests flagged as 'not approved'
         .get(function(req, res) {
             collection.find({state: 'not approved'}, {}).toArray(function(err, data) {
                 if (err) throw err;
