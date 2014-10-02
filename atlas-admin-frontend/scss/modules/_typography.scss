@@ -13,6 +13,11 @@ a {
     }
 }
 
+.link {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
 // Headings base styles
 //
 h1, h2, h3, h4, h5, h6 {font-weight: normal;}
@@ -45,4 +50,8 @@ h5 {
 h6 {
     font-size: $h6-size;
     color: $color-pink;
+}
+
+.form-heading {
+    margin-bottom: 1em;
 }

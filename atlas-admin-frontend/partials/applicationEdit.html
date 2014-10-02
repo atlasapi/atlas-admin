@@ -1,24 +1,24 @@
 <div class="app-surface application-edit">
     <header class="app-header">
         <h1 class="page-title">{{view_title}}</h1>
-        <p>{{view_subtitle}}</p>
     </header>
     
-    <section class="notifications" ng-show="app.changed || successMessage || errorMessage">
+    <section class="save-status" ng-show="app.changed || !successMessage">
+        <div class="panel-full">
+            <span class="label label-just-saying" ng-show="app.changed">Unsaved changes</span>
+            <button ng-show="!successMessage || app.changed" type="button" class="button submit" ng-click="save()">Save</button>
+        </div>
+    </section>
+
+    <section class="notifications" ng-show="successMessage || errorMessage">
         <div class="panel-full">
             <div ng-show="successMessage && !app.changed" class="alert alert-success">
                 {{successMessage}}
             </div>
-            <div ng-show="errorMessage" class="alert alert-danger">
+            <div ng-show="errorMessage" class="alert">
                 {{errorMessage}}
             </div>
         </div>
-        <div class="panel-full" ng-show="!successMessage || app.changed">
-            <div class="panel-body">
-                <button type="button" class="btn btn-danger" ng-click="save()" ng-disabled="!app.changed">Save</button>
-                <span class="label label-warning" ng-show="app.changed">Unsaved changes</span>
-            </div>
-        </div>        
     </section>
 
     <section class="edit-form">
@@ -38,8 +38,8 @@
                     <div class="form-row api-key-holder">
                         <label for="appApiKey">API Key</label>
                         <input type="text" class="form-control" id="appApiKey" ng-model="app.application.credentials.apiKey" ng-readonly="true">
-                        <button type="button" class="btn btn-danger" ng-show="app.application.revoked === false" ng-click="revokeApplication()">Revoke key</button>
-                        <button type="button" class="btn btn-danger" ng-show="app.application.revoked === true" ng-click="unRevokeApplication()">Unrevoke key</button>
+                        <button type="button" class="button" ng-show="app.application.revoked === false" ng-click="revokeApplication()">Revoke key</button>
+                        <button type="button" class="button" ng-show="app.application.revoked === true" ng-click="unRevokeApplication()">Unrevoke key</button>
                     </div>
                 </div>
             </div>
@@ -51,25 +51,31 @@
                     <p>Hint: If you have access to Press Association data, you probably want it at the top.</p>
                 </header>
                 <div class="form-row">
-                    <button type="button" class="btn btn-success" ng-show="app.application.sources.precedence === false" ng-click="enablePrecedence()">Enable Matching</button>
-                    <button type="button" class="btn btn-danger" ng-show="app.application.sources.precedence === true" ng-click="disablePrecedence()">Disable Matching</button>
+                    <button type="button" class="button button-success" ng-show="app.application.sources.precedence === false" ng-click="enablePrecedence()">Enable Matching</button>
+                    <button type="button" class="button" ng-show="app.application.sources.precedence === true" ng-click="disablePrecedence()">Disable Matching</button>
                 </div>
             </div>
 
-            <div class="panel-full">
+            <div class="panel-full enabled-sources">
                 <header class="panel-header">
                     <h2>Enabled</h2> 
                     <span ng-show="app.application.sources.precedence === true">(Drag and drop sources to rearrange precedence ordering)</span>
                 </header>
                 <ul class="list-group" sortable-list>
                     <li class="list-group-item source-item-entry" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:true" orderable id="source-{{source.id}}" ng-show="app.application.sources.precedence === true">
-                        <span ng-show="app.application.sources.precedence === true" class="box-shadow-menu"></span>
+                        <span ng-show="app.application.sources.precedence === true" class="grabby-thing"></span>
                         {{source.title}}
-                        <button type="button" class="btn btn-link btn-xs" ng-click="app.disableSource(source)">Disable</button> <button type="button" class="btn btn-link btn-xs" ng-click="app.viewTerms(source)">View Terms</button>
+                        <span class="source-options">
+                            <button type="button" class="button button-link" ng-click="app.disableSource(source)">Disable</button>
+                            <button type="button" class="button button-link" ng-click="app.viewTerms(source)">View Terms</button>
+                        </span>
                     </li>
                     <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:true" id="source-{{source.id}}" ng-show="app.application.sources.precedence === false">
                         {{source.title}}
-                        <button type="button" class="btn btn-link btn-xs" ng-click="app.viewTerms(source)">View Terms</button> <button type="button" class="btn btn-link btn-xs" ng-click="app.disableSource(source)">Disable</button>
+                        <span class="source-options">
+                            <button type="button" class="button button-link" ng-click="app.viewTerms(source)">View Terms</button> 
+                            <button type="button" class="button button-link" ng-click="app.disableSource(source)">Disable</button>
+                        </span>
                     </li>
                 </ul>
             </div>
@@ -81,7 +87,9 @@
                 <ul class="list-group">
                     <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:false">
                         {{source.title}}
-                        <button type="button" class="btn btn-link btn-xs" ng-click="app.enableSource(source)">Enable</button>
+                        <span class="source-options">
+                            <button type="button" class="button button-link" ng-click="app.enableSource(source)">Enable</button>
+                        </span>
                     </li>
                 </ul>
             </div>
@@ -97,14 +105,16 @@
                 </ul>
             </div>
 
-            <div class="panel-full unavailabe-sources">
+            <div class="panel-full unavailable-sources">
                 <header class="panel-header">
                     <h2>Unavailable</h2> 
                 </header>
                 <ul class="list-group">
                     <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'unavailable|enableable'">
                         {{source.title}}
-                        <a type="button" class="btn btn-link btn-xs" ng-href="#/applications/{{app.application.id}}/requestSource/{{source.id}}">Request Access</a>
+                        <span class="source-options">
+                            <a type="button" class="button" ng-href="#/applications/{{app.application.id}}/requestSource/{{source.id}}">Request Access</a>
+                        </span>
                     </li>
                 </ul>
             </div>
@@ -133,7 +143,7 @@
 
             <div class="panel panel-default" ng-show="!successMessage || app.changed">
                 <div class="panel-body">
-                    <button type="button" class="btn btn-danger" ng-click="save()" ng-disabled="!app.changed">Save</button>
+                    <button type="button" class="button submit" ng-click="save()" ng-disabled="!app.changed">Save</button>
                     <span class="label label-warning" ng-show="app.changed">Unsaved changes</span>
                 </div>
             </div>

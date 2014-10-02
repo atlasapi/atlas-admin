@@ -1,18 +1,20 @@
-.create-application.btn {
-    margin-top: 1.5rem;
-}
+.applications {
+    .create-application.btn {
+        margin-top: 1.5rem;
+    }
 
-.query-filter {
-    @extend %cf;
-    box-sizing: border-box;
-    margin-bottom: 1.618rem;
-    width: 100%;
-    font-size: 1.618rem;
-
-    > input {
+    .query-filter {
+        @extend %cf;
         box-sizing: border-box;
-        display: block;
-        padding: .25rem .5rem;
+        margin-bottom: 1.618rem;
         width: 100%;
+        font-size: 1.618rem;
+
+        > input {
+            box-sizing: border-box;
+            display: block;
+            padding: .25rem .5rem;
+            width: 100%;
+        }
     }
 }

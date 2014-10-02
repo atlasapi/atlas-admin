@@ -22,17 +22,18 @@
                     <input type="radio" name="preset" id="presetUk" ng-model="app.preset" ng-change="termsToggle()" value="uk" ng-required="true">
                     <label class="inline-label" for="presetUk">Simple UK listings data</label>
                 </span>
-                <span class="form-row">
+                <span class="form-label">
                     <input type="radio" name="preset" id="presetAll" ng-model="app.preset" ng-change="termsToggle()" value="all" ng-required="true">
                     <label class="inline-label" for="presetAll">Custom</label>
                 </span>
                 <div class="terms-box" ng-show="app.showTerms">
-                    <input type="checkbox" name="acceptUKTerms" id="acceptTerms" ng-model="app.acceptTerms" ng-required="app.preset=='uk'">Do you agree to the <span class="link" ng-click="console.log(showTerms('PA'))" target="_blank">PA</span> and <span class="link" ng-click="showTerms('BBC')">UK Channel Lineup</span> terms and conditions? Please read carefully. - These may contain information about payments you will have to make</p> 
+                    <input type="checkbox" name="acceptUKTerms" id="acceptTerms" ng-model="app.acceptTerms" ng-required="app.preset=='uk'">
+                    <p>Do you agree to the <span class="link" ng-click="console.log(showTerms('PA'))" target="_blank">PA</span> and <span class="link" ng-click="showTerms('BBC')">UK Channel Lineup</span> terms and conditions? Please read carefully. - These may contain information about payments you will have to make</p> 
                 </div>
                 <div class="terms-box-extended" ng-show="license.show && app.showTerms" ng-bind-html="license.html"></div>
             </div>
-            <button type="submit" class="btn btn-primary" ng-click="submit()" ng-disabled="app.wait">Create</button>
-            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+            <button type="submit" class="btn submit" ng-click="submit()" ng-disabled="app.wait">Create</button>
+            <button class="btn" ng-click="cancel()">Cancel</button>
          </form>
     </div>
 </div> 

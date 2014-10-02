@@ -1,5 +1,10 @@
 $color-pink: #fc0088 !default;
 $color-purple: #250053 !default;
+$color-grey: #f4eff3 !default;
+$color-grey-dark: darken($color-grey, 10%) !default;
+
+$color-silver: #eee !default;
+$color-silver-dark: darken($color-silver, 10%) !default;
 
 $primary-text-color: #333 !default;
 

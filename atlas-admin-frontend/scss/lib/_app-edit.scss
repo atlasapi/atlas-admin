@@ -1,0 +1,57 @@
+.application-edit {
+    .list-group {
+        @extend %bare-list;
+
+        .grabby-thing {
+            position: relative;
+            display: inline-block;
+            width: .8rem;
+            height: 2px;
+            background: $color-purple;
+            overflow: visible;
+            cursor: move;
+
+            &:before, &:after { 
+                content: ""; 
+                position: absolute; 
+                left: 0; 
+                display: block; 
+                width: .8rem;
+                height: 2px;
+                background: $color-purple; 
+            }
+
+            &:before { top: -4px; }
+            &:after { top: -8px; }
+        }
+
+        .source-options {
+            display: inline-block;
+            float: right;
+
+            .btn { margin-left: 1rem; }
+        }
+
+        > li {
+            @extend %cf;
+            height: 3.125rem;
+            margin: .25rem 0;
+            padding: 0 .75rem;
+            background: lighten($color-grey, 10%);
+            border: 1px solid $color-grey-dark;
+            line-height: 3.125rem;
+            border-radius: 4px;
+        }
+    }
+
+    .enabled-sources,
+    .available-sources,
+    .requested-sources,
+    .unavailable-sources,
+    .revoked-sources {
+        padding: 2rem;
+        background: $color-grey;
+        border: 1px solid $color-grey-dark;
+        border-radius: 3px;
+    }
+}
