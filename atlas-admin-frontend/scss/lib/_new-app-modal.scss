@@ -1,0 +1,22 @@
+.terms-box {
+    @extend %cf;
+    box-sizing: border-box;
+    padding: 1rem;
+    background: #ffe4b6;
+
+    p, input { 
+        display: block;
+        float: left; 
+    }
+
+    input { width: 5%; }
+    p { margin: 0; width: 95%; }
+}
+
+.terms-box-extended {
+    @extend %cf;
+    display: block;
+    padding: 1rem;
+    margin-top: 1rem;
+    background: $color-grey;
+}

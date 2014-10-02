@@ -1,11 +1,6 @@
-//  Forms
-//
 
 
-//  layout helpers
-//  ———————————————
-
-//  wrapper for form components
+//  Wrappers for differnent form components
 //
 //  modifiers:
 //  .last   — remove margin from the bottom of element
@@ -15,7 +10,6 @@
 .form-row {
     @extend %cf;
     display: block;
-    width: 100%;
     margin-bottom: 1.5rem;
 
     &.last { margin-bottom: 0; }
@@ -23,28 +17,48 @@
     label {
         display: block;
         margin: 0 0 .4rem 0;
-        color: $mbst-purple;
+        color: $color-purple;
     }
 }
 
+//  Labels
+.inline-label {
+    @extend %cf;
+    display: inline-block;
+}
 
-//  form components
-//  ———————————————
+.form-label {
+    @extend %cf;
+    display: block;
 
-// 
+    > input[type="radio"],
+    > .radio-input,
+    > input[type="checkbox"],
+    > .checkbox-input, { float: left; margin-right: 1rem; }
+}
+
+// Textarea
+//
 textarea {
+    box-sizing: border-box;
     display: block;
     width: 100%;
     max-width: 38.44rem;
-    height: 140px;
+    min-height: 5.0625rem;
     padding: 1rem;
-    border: 1px solid $mbst-pink;
+    border: 1px solid $color-purple;
     border-radius: 3px;
 }
 
-input[type="text"] {
+
+//  Text input
+//
+//  
+input[type="text"],
+input[type="url"],
+.text-input {
     padding: .296rem;
-    border: 1px solid $mbst-purple;
+    border: 1px solid $color-purple;
     border-radius: .197rem;
 
     &.flush-right {
@@ -56,4 +70,10 @@ input[type="text"] {
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
     }
+}
+
+//  Radio buttons
+input[type="radio"],
+.radio-input {
+    float: left;
 }

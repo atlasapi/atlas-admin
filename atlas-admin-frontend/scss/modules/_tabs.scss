@@ -5,9 +5,9 @@
 //  Modifiers:
 //  .padded    – adds a touch of padding before the first tab
 //
-$tab-border-color: $mbst-purple;
+$tab-border-color: $color-purple;
 $tab-active-bg-color: #fff;
-$tab-inactive-bg-color: desaturate(lighten($mbst-purple, 75%), 80%);
+$tab-inactive-bg-color: desaturate(lighten($color-purple, 75%), 80%);
 
 .app-tabber {
     @extend %cf;
@@ -35,7 +35,7 @@ $tab-inactive-bg-color: desaturate(lighten($mbst-purple, 75%), 80%);
     padding: 0 2rem;
     height: 3.375rem;
     background: $tab-inactive-bg-color;
-    color: $mbst-purple;
+    color: $color-purple;
     line-height: 3.375rem;
     border: 1px solid $tab-border-color;
     border-right-width: 0;
@@ -73,7 +73,7 @@ $tab-inactive-bg-color: desaturate(lighten($mbst-purple, 75%), 80%);
     height: 1.5rem;
     margin-right: .5rem;
     padding: 0 .5rem;
-    background: $mbst-purple;
+    background: $color-purple;
     color: white;
     font-size: 14px;
     font-weight: bold;
@@ -81,5 +81,5 @@ $tab-inactive-bg-color: desaturate(lighten($mbst-purple, 75%), 80%);
     text-align: center;
     border-radius: 100px;
 
-    .app-tab.active & { background: $mbst-pink; }
+    .app-tab.active & { background: $color-pink; }
 }

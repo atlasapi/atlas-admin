@@ -83,6 +83,11 @@ app.controller('AllUsersController', function($scope, $rootScope, $routeParams, 
 app.controller('UserMenuController', function($scope, Users, $rootScope, Authentication, $location) {
     // only try to get user if logged in
     $scope.app = {};
+    $scope.app.dropdown = false;
+
+    $scope.app.toggleDropdown = function() {
+        $scope.app.dropdown = !$scope.app.dropdown;
+    }
 
     var buildMenu = function(user) {
         // if profile not complete the do not show menu

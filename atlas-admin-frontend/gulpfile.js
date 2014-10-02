@@ -52,7 +52,7 @@ assets.js = ['js/app.js',
 //  concatenate and compress stylesheets
 //
 gulp.task('styles', function() {
-	gulp.src('scss/app.scss')
+	gulp.src('scss/base.scss')
 		.pipe(scss({
 			outputStyle: 'compressed'
 			}))

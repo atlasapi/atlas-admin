@@ -1,0 +1,41 @@
+// bootstrap modal window styling
+body.modal-open { overflow: hidden; }
+body.modal-open .navbar,
+body.modal-open .application-container { filter: blur(3px); }
+
+.modal-backdrop,
+.modal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.modal {
+    overflow: scroll;
+}
+
+.modal-backdrop { 
+    background: white; 
+    opacity: .4; 
+}
+
+.modal-dialog {
+    position: relative;
+    z-index: 2000;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2.25rem;
+    background: white;
+    border-radius: 0 0 5px 5px;
+    box-shadow: 0 5px 15px rgba(0,0,0,.2);
+
+    .modal-content {
+        
+    }
+}

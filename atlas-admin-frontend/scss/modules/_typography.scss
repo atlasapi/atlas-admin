@@ -1,34 +1,57 @@
-// @module: typography
-
-// ——————————————————————————————————————————————————————————————
-//  Global typography styling
-// ——————————————————————————————————————————————————————————————
 body {
-	font: 16px/1.4 Helvetica, Arial, sans-serif;
+    font-size: $base-font-size;
 }
 
+// Links base styles
+//
 a {
-	color: $mbst-purple;
+    color: $color-purple;
+    text-decoration: underline;
+
+    &:hover {
+        color: $color-pink;
+    }
 }
 
 .link {
-    color: $mbst-purple;
-    cursor: pointer;
     text-decoration: underline;
+    cursor: pointer;
 }
 
-// app header blocks
-.app-header {
-    .page-title { font-size: 2rem; line-height: 1.4; }
+// Headings base styles
+//
+h1, h2, h3, h4, h5, h6 {font-weight: normal;}
+
+h1 {
+    font-size: $h1-size;
+    color: $color-purple;
 }
 
-// panel title blocks
-.panel-title {
-    font-size: 1.5rem;
+h2 {
+    font-size: $h2-size;
+    color: $color-pink;
+}
+
+h3 {
+    font-size: $h3-size;
+    color: $color-purple;
+}
+
+h4 {
+    font-size: $h4-size;
+    color: $color-pink;
+}
+
+h5 {
+    font-size: $h5-size;
+    color: $color-purple;
+}
+
+h6 {
+    font-size: $h6-size;
+    color: $color-pink;
 }
 
 .form-heading {
-    display: block;
-    margin: 3rem 0 1.5rem;
-    font-size: 2rem;
+    margin-bottom: 1em;
 }

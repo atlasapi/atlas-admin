@@ -14,7 +14,7 @@ var newSourceItem = function(type) {
     $scope.modal.type = type;
     $scope.modal.title = "Add new source";
     var modalInstance = $modal.open({
-        templateUrl: 'partials/admins/wishlist/newItemModal.html',
+        templateUrl: '/partials/admins/wishlist/newItemModal.html',
         controller: 'CtrlNewWishlistItemModal',
         scope: $scope
     })
