@@ -34,8 +34,7 @@ var app = angular.module('atlasAdmin', [
                                 'ui.bootstrap',
                                 'ngResource',
                                 'ngRoute',
-                                'atlasAdminConfig'
-                            ]);
+                                'atlasAdminConfig']);
 app.config(['$routeProvider', function($routeProvider) {
     // admin only routes
     $routeProvider.when('/manage/requests', {templateUrl: 'partials/admins/manageSourceRequests.html', controller: 'CtrlManageSourceRequests'});
