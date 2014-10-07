@@ -1058,7 +1058,7 @@ app.controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routePar
     $rootScope.title = "Hi there, please sign in to continue";
 
     // Ask atlas for access here 
-    //Authentication.reset();
+    Authentication.reset();
     Atlas.getAuthProviders().then(function(results) {
         var providers = [];
         for (var i=0; i<results.length; i++) {
