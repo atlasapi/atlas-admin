@@ -1,0 +1,35 @@
+<div class="app-surface manage-sources">
+    <header class="app-header">
+        <h1 class="page-title">{{view_title}}</h1>
+        <a class="button primary" ng-href="#/videosource/providers">Add Video Source</a>
+    </header>
+
+    <section class="panel-full sources">
+        <div class="query-filter">
+            <input type="text" aria-role="search" ng-model="query" id="queryFilter" placeholder="Filter sources">
+        </div>
+        <div class="panel-full">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th ng-click="app.predicate='name'; app.reverse=!app.reverse;">Name</th>
+                        <th ng-click="app.predicate='key'; app.reverse=!app.reverse;">Key</th>
+                        <th ng-click="app.predicate='country.name'; app.reverse=!app.reverse;">Country</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="source in app.sources | filter:query | orderBy:app.predicate:app.reverse | startFrom:(app.currentPage-1)*app.pageSize  | limitTo:app.pageSize">
+                        <td><a href="#/sources/{{source.id}}/readers">{{source.name}}</a></td>
+                        <td>{{source.key}}</td>
+                        <td>{{source.country.name}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="panel-full">
+            <pagination total-items="(app.sources|filter:query).length" page="app.currentPage" max-size="app.pageSize" boundary-links="true"></pagination>
+        </div>
+    </section>
+
+</div>
+

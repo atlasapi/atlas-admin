@@ -4,7 +4,14 @@
     }
     
     // table behaviour
+    .source-name {
+        display: block;
+        float: left;
+    }
+
     .source-options {
+        display: block;
+        float: right;
         text-align: right;
     }
 
@@ -17,31 +24,6 @@
         > .button { display: inline-block; }
     }
 
-    .button-to-input {
-        display: block;
-        float: right;
-        height: 45px;
-        transition: all 500ms;
-
-        .button-state { display: inline-block; }
-        .form-state { display: none; }
-
-        &.input-mode {
-            .button-state { display: none; }
-            .form-state { 
-                display: block; 
-                input { width: 370px; height: 30px; }
-                .button { 
-                    float: right;
-                    height: 30px; 
-                    line-height: 25px;
-                }
-            }
-        }
-    }
-
-
-    // features
     .feature-item {
         background: lighten($color-purple, 80%);
     }
@@ -65,6 +47,7 @@
 }
 
 .manage-wishlist {
-    .item-options .button { background: #bbb; }
-    .item-options .button.active { background: $color-pink; }
+    .item-options .button + .button { margin-left: .5rem; }
+    .item-options .button.negative { margin-left: 3rem; }
+    .item-options .button.active { @extend .button.positive; }
 }

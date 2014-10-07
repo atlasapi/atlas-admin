@@ -51,8 +51,16 @@
     &.medium { font-size: 1rem; padding: .666em 1rem; }
     &.large { font-size: 1.25rem; padding: 1em 1em; }
 
-    &.positive { background: #10B574; }
-    &.negative { background: #D43825; }
+    &.positive { 
+        @include background-gradient($color-green, darken($color-green, 13%));
+        color: white;
+        border-color: darken($color-green, 15%);
+    }
+    &.negative {
+        @include background-gradient($color-red, darken($color-red, 13%));
+        color: white;
+        border-color: darken($color-red, 15%);
+    }
 
     &.primary {
         background: $color-pink;
@@ -74,9 +82,9 @@
     }
 
     &.submit {
-        @include background-gradient(#47d500, darken(#47d500, 13%));
+        @include background-gradient($color-green, darken($color-green, 13%));
         color: white;
-        border-color: darken(#47d500, 15%);
+        border-color: darken($color-green, 15%);
     }
 
     // hides button text and replases with a spinner
@@ -99,3 +107,31 @@
 }
 
 a.button:hover { color: $color-purple; }
+
+
+//  Button to input component
+//  Morphs from a single button to a button and a text input
+//
+//  Angular directive: inputMorph
+.button-to-input {
+    display: block;
+    float: right;
+    height: 45px;
+    transition: all 500ms;
+
+    .button-state { display: inline-block; }
+    .form-state { display: none; }
+
+    &.input-mode {
+        .button-state { display: none; }
+        .form-state { 
+            display: block; 
+            input { width: 370px; height: 30px; }
+            .button { 
+                float: right;
+                height: 30px; 
+                line-height: 25px;
+            }
+        }
+    }
+}

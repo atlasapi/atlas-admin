@@ -57,7 +57,10 @@
             <div class="panel-full add" ng-click="newSourceItem()">+ Add new source to the wishlist</div>
             <table class="table">
                 <thead>
-                    <th>Source name</th>
+                    <tr>
+                        <th>Source name</th>
+                        <th>Options</th>
+                    </tr>
                 </thead>
                 <tbody>
                     <tr ng-repeat="source in sources">
@@ -66,7 +69,7 @@
                             <span class="button small status-selector" ng-class="{active: source.status == 'not available'}" data-id="{{source._id}}" changestatus="not available">Not available</span>
                             <span class="button small status-selector" ng-class="{active: source.status == 'in progress'}" data-id="{{source._id}}" changestatus="in progress">In progress</span>
                             <span class="button small status-selector" ng-class="{active: source.status == 'available'}" data-id="{{source._id}}" changestatus="available">Available</span>
-                            <span class="button small status-selector" deleteitem data-id="{{source._id}}">Delete</span>
+                            <span class="button small negative" deleteitem data-id="{{source._id}}">Delete</span>
                         </td>
                     </tr>
                 </tbody>
@@ -87,7 +90,7 @@
                             <span class="button small status-selector" ng-class="{active: feature.status == 'not available'}" data-id="{{feature._id}}" changestatus="not available">Not available</span>
                             <span class="button small status-selector" ng-class="{active: feature.status == 'in progress'}" data-id="{{feature._id}}" changestatus="in progress">In progress</span>
                             <span class="button small status-selector" ng-class="{active: feature.status == 'available'}" data-id="{{feature._id}}" changestatus="available">Available</span>
-                            <span class="button small status-selector" deleteitem data-id="{{feature._id}}">Delete</span>
+                            <span class="button small negative" deleteitem data-id="{{feature._id}}">Delete</span>
                         </td>
                     </tr>
                 </tbody>

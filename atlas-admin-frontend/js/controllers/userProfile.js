@@ -70,7 +70,7 @@ app.controller('UserProfileController', function($scope, $rootScope, $routeParam
     };
 });
 app.controller('AllUsersController', function($scope, $rootScope, $routeParams, Users) {
-    $rootScope.title = 'All users';
+    $rootScope.view_title = 'Manage users';
     $scope.app = {};
     Users.all().then(function(users) {
          $scope.app.users = users;

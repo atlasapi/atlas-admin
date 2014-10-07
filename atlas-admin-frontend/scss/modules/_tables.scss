@@ -1,4 +1,4 @@
-/* Tables */
+//  Tables
 .tbl,
 .table {
     width: 100%;
@@ -63,4 +63,16 @@ td.fourth {
 
 tr:nth-child(even) {
     background: #F2EDF8;
+}
+
+//  Tabular structure with blocks
+ul.tabular { @extend %bare-list; }
+.tabular {
+    @extend %cf;
+}
+.tabular-row {
+    @extend %cf;
+    display: block;
+    padding: 1.125rem 0;
+    border-bottom: 1px solid $color-grey;
 }

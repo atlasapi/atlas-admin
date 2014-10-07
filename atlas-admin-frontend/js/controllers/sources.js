@@ -1,7 +1,7 @@
 'use strict';
 var app = angular.module('atlasAdmin.controllers.sources', []);
 app.controller('CtrlSources', function($scope, $rootScope, $routeParams, Sources) {
-    $rootScope.title = "Sources";
+    $rootScope.view_title = "Manage sources";
     $scope.app = {};
     Sources.all().then(function(sources) {
         $scope.app.sources = sources;

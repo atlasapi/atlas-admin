@@ -3,12 +3,10 @@
         <h1 class="page-title">{{view_title}}</h1>
         <button type="button" class="btn btn-primary create-application" ng-click="createApplication()">Create application</button>
     </header>
-
     <section ng-show="state=='table'" class="panel-full applications-list">
         <div class="query-filter">
             <input type="text" aria-role="search" ng-model="query" placeholder="Filter applications" id="queryFilter">
         </div>
-
         <table class="tbl">
             <thead>
                 <tr>
@@ -29,7 +27,6 @@
     <div class="panel-full" ng-show="state=='table'" class="container">
         <pagination total-items="(app.applications|filter:appSearchFilter).length" page="app.currentPage" max-size="app.pageSize" boundary-links="true"></pagination>
     </div>
-
     <section ng-show="state=='blank'" class="row blank-slate">
         <h1 class="no-apps-message">You don't have any applications yet</h1>
         <a ng-click="createApplication()" class="create-link">Create one</a>
