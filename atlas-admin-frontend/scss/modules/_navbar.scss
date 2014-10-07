@@ -1,6 +1,8 @@
 //	The global navbar
 //
 $navbar-height: 5.06rem;
+$navbar-color: #EEEEEE;
+$navbar-shadow-color: rgba( red($color-purple), green($color-purple), blue($color-purple), .4);
 
 .navbar {
 	@extend %cf;
@@ -8,8 +10,10 @@ $navbar-height: 5.06rem;
 	display: block;
 	width: 100%;
 	height: $navbar-height;
-	background: $color-purple;
-	color: white;
+	background: $navbar-color;
+	color: $primary-text-color;
+	border-bottom: 1px solid $color-pink;
+	box-shadow: 0 1px 2px $navbar-shadow-color;
 }
 
 // atlas logo
@@ -43,23 +47,37 @@ $navbar-height: 5.06rem;
 		}
 
 		> li a {
-			display: inline-block;
+			display: block;
 			height: $navbar-height;
-			padding: 0 .25rem;
-			color: white;
+			padding: 0 1rem;
+			color: $primary-text-color;
 			text-decoration: none;
 
-			&:hover { color: white; }
+			&:hover { color: $primary-text-color; }
 		}
 
 		.menu-button {
-			padding: .5rem 1rem;
-			border-radius: 3px;
+			display: inline-block;
+			height: 3.375rem;
+			vertical-align: bottom;
+			line-height: 3.375rem;
 		}
 
-		> li a.active-menu-item { color: white; }
+		> li a.active-menu-item { color: $primary-text-color; }
 		> li a.active-menu-item .menu-button {
-			background: $color-pink;
+			position: relative;
+			color: $color-pink;
+			&:after {
+				content: "";
+				position: absolute;
+				bottom: 0;
+				left: 50%;
+				display: block;
+				margin-left: -3px;
+				border-left: 6px solid transparent;
+				border-right: 6px solid transparent;
+				border-bottom: 6px solid $color-pink;
+			}
 		}
 
 	}
@@ -83,11 +101,11 @@ $navbar-height: 5.06rem;
 		content: "";
 		display: block;
 		position: absolute;
-		top: 35px;
-		right: 15px;
-		border-left: 5px solid transparent;
-		border-right: 5px solid transparent;
-		border-top: 5px solid white;
+		top: 36px;
+		right: 1rem;
+		border-left: 6px solid transparent;
+		border-right: 6px solid transparent;
+		border-top: 6px solid $color-pink;
 	}
 
 	.user-avatar { display: block; }
@@ -97,7 +115,7 @@ $navbar-height: 5.06rem;
 		width: 3.365rem;
 		height: 3.375rem;
 		margin: .8rem 0 0;
-		border-radius: 50%;
+		border-radius: 22px;
 		float: right;
 	}
 
@@ -114,19 +132,21 @@ ul.user-dropdown-menu {
 	@extend %bare-list;
 	position: absolute;
 	top: 90%;
-	right: 0;
+	right: 1rem;
 	box-sizing: border-box;
 	width: 11.4rem;
 	padding: 1rem;
 	line-height: 2.25rem;
-	background: white;
+	background: $navbar-color;
+	border: 1px solid $color-pink;
 	box-shadow: 0 1px 10px rgba(0,0,0,0.2);
 	border-radius: 4px;
 
 	> li {
-		display: inline-block;
-		//line-height: 2.25rem;
+		display: block;
+		text-align: right;
 
-		a { display: block; }
+		a { display: block; text-decoration: none; }
+		a:hover { color: $color-pink; }
 	}
 }

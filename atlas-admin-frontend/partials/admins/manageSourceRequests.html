@@ -5,18 +5,22 @@
     <div class="app-content">
         <section class="panel-full requests-table">
             <table class="table table-striped">
-                <tr>
-                    <th>Source name</th>
-                    <th>Application</th>
-                    <th>Reason for access</th>
-                    <th>Respond</th>
-                </tr>
-                <tr ng-repeat="request in app.requests | orderBy:sortBySourceName">
-                    <td>{{request.source.title}}</td>
-                    <td>{{request.app.title}}</td>
-                    <td><div class="reason-content">{{request.reason}}</div></td>
-                    <td><span ng-click="approveRequest(request.app.id, request.source.id, $event)" class="button small positive">Approve</span></td>
-                </tr>
+                <thead>
+                    <tr>
+                        <th>Source name</th>
+                        <th>Application</th>
+                        <th>Reason for access</th>
+                        <th>Respond</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="request in app.requests | orderBy:sortBySourceName">
+                        <td>{{request.source.title}}</td>
+                        <td>{{request.app.title}}</td>
+                        <td><div class="reason-content">{{request.reason}}</div></td>
+                        <td><span ng-click="approveRequest(request.app.id, request.source.id, $event)" class="button small positive">Approve</span></td>
+                    </tr>
+                </tbody>
             </table>
         </section>
     </div>
