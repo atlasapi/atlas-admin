@@ -49,6 +49,8 @@
 //  .panel-third     — 1/3 width block, floated left
 //  .panel-quarter   — 1/4 width block, floated left
 //
+//  .snug            — remove the margin from the bottom of the element
+//
 //  .right           — float to the right
 //
 //  .stroke-*        — adds a stroke to the element
@@ -64,6 +66,8 @@
     box-sizing: border-box;
     display: block; 
     margin-bottom: 3.375rem;
+
+    &.snug { margin-bottom: 0; }
 
     &.right { float: right; }
 
