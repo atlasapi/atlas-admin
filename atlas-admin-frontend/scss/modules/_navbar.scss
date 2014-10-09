@@ -49,9 +49,10 @@ $navbar-shadow-color: rgba( red($color-purple), green($color-purple), blue($colo
 		> li a {
 			display: block;
 			height: $navbar-height;
-			padding: 0 1rem;
 			color: $primary-text-color;
+			font-size: 1.125rem;
 			text-decoration: none;
+			text-transform: lowercase;
 
 			&:hover { color: $primary-text-color; }
 		}
@@ -59,6 +60,7 @@ $navbar-shadow-color: rgba( red($color-purple), green($color-purple), blue($colo
 		.menu-button {
 			display: inline-block;
 			height: 3.375rem;
+			padding: 0 1rem;
 			vertical-align: bottom;
 			line-height: 3.375rem;
 		}
@@ -73,10 +75,10 @@ $navbar-shadow-color: rgba( red($color-purple), green($color-purple), blue($colo
 				bottom: 0;
 				left: 50%;
 				display: block;
-				margin-left: -3px;
-				border-left: 6px solid transparent;
-				border-right: 6px solid transparent;
-				border-bottom: 6px solid $color-pink;
+				margin-left: -8px;
+				border-left: 8px solid transparent;
+				border-right: 8px solid transparent;
+				border-bottom: 8px solid $color-pink;
 			}
 		}
 
@@ -115,7 +117,7 @@ $navbar-shadow-color: rgba( red($color-purple), green($color-purple), blue($colo
 		width: 3.365rem;
 		height: 3.375rem;
 		margin: .8rem 0 0;
-		border-radius: 22px;
+		border-radius: 50%;
 		float: right;
 	}
 
@@ -131,6 +133,7 @@ $navbar-shadow-color: rgba( red($color-purple), green($color-purple), blue($colo
 ul.user-dropdown-menu {
 	@extend %bare-list;
 	position: absolute;
+	z-index: 200;
 	top: 90%;
 	right: 1rem;
 	box-sizing: border-box;

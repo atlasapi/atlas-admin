@@ -6,8 +6,8 @@
 //  .small        — makes the button size slightly smaller
 //  .medium       — makes the button size slightly larger
 //
-//  .positive     — change button style to communicate a positive action
-//  .negative     — change button style to communicate a negative action
+//  .positive     — green button
+//  .negative     — red button
 //
 //  .primary      — primary button, stands out the most
 //  .secondary    — secondary button, usually used for `cancel`
@@ -55,11 +55,13 @@
         @include background-gradient($color-green, darken($color-green, 13%));
         color: white;
         border-color: darken($color-green, 15%);
+        &:hover { border-color: darken($color-green, 30%); }
     }
     &.negative {
         @include background-gradient($color-red, darken($color-red, 13%));
         color: white;
         border-color: darken($color-red, 15%);
+        &:hover { border-color: darken($color-red, 30%); }
     }
 
     &.primary {
