@@ -1,7 +1,13 @@
+.loading-container  {
+    width: 100%;
+}
+
 .page-loader {
-    display: inline-block;
-    margin: 1rem 0 0;
+    display: block;
+    width: 100%;
     padding: .5rem 1rem;
     background: $color-pink;
     color: white;
+    text-align: center;
+    animation: load-in 200ms $bezier-easeInOut both;
 }

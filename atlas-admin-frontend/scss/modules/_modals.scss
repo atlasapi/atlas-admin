@@ -1,7 +1,9 @@
+$modal-shadow-color: rgba( red(darken($color-purple, 10%)), green(darken($color-purple, 10%)), blue(darken($color-purple, 10%)), .3);
+
 // bootstrap modal window styling
 body.modal-open { overflow: hidden; }
-body.modal-open .navbar,
-body.modal-open .application-container { filter: blur(3px); }
+//body.modal-open .navbar,
+//body.modal-open .application-container { filter: blur(3px); }
 
 .modal-backdrop,
 .modal {
@@ -20,7 +22,7 @@ body.modal-open .application-container { filter: blur(3px); }
 
 .modal-backdrop { 
     background: white; 
-    opacity: .4; 
+    opacity: .85; 
 }
 
 .modal-dialog {
@@ -33,7 +35,7 @@ body.modal-open .application-container { filter: blur(3px); }
     padding: 2.25rem;
     background: white;
     border-radius: 0 0 5px 5px;
-    box-shadow: 0 5px 15px rgba(0,0,0,.2);
+    box-shadow: 0 5px 15px $modal-shadow-color;
 
     .modal-content {
         

@@ -54,6 +54,7 @@ textarea {
 input[type="text"],
 input[type="url"],
 .text-input {
+    box-sizing: border-box;
     padding: .296rem;
     border: 1px solid $color-purple;
     border-radius: .197rem;

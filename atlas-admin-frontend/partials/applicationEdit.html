@@ -23,23 +23,23 @@
 
     <section class="edit-form">
         <form name="detailsForm" class="panel-full">
-            <div class="row">
-                <div class="panel-half padded-right stroke-right">
+            <div class="panel-full padded edit-app-info">
+                <div class="panel-half padded-right stroke-right snug">
                     <div class="form-row">
-                        <label for="appTitle">Title</label>
+                        <label for="appTitle">Application name</label>
                         <input type="text" class="form-control" id="appTitle" name="appTitle" placeholder="title" ng-model="app.application.title" ng-change="app.edited.meta=true" ng-minlength="3">
                     </div>
                     <div class="form-row">
-                        <label for="appDescription">Description</label>
+                        <label for="appDescription">Application description</label>
                         <textarea id="appDescription" placeholder="description" ng-model="app.application.description" ng-change="app.edited.meta=true"></textarea>
                     </div>
                 </div>
-                <div class="panel-half padded-left">
+                <div class="panel-half padded-left snug">
                     <div class="form-row api-key-holder">
                         <label for="appApiKey">API Key</label>
                         <input type="text" class="form-control" id="appApiKey" ng-model="app.application.credentials.apiKey" ng-readonly="true">
-                        <button type="button" class="button" ng-show="app.application.revoked === false" ng-click="revokeApplication()">Revoke key</button>
-                        <button type="button" class="button" ng-show="app.application.revoked === true" ng-click="unRevokeApplication()">Unrevoke key</button>
+                        <button type="button" class="button negative" ng-show="app.application.revoked === false" ng-click="revokeApplication()">Revoke key</button>
+                        <button type="button" class="button positive" ng-show="app.application.revoked === true" ng-click="unRevokeApplication()">Unrevoke key</button>
                     </div>
                 </div>
             </div>

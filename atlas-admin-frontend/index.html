@@ -15,13 +15,13 @@
 
     <body>
         <!-- navigation -->
-        <nav class="navbar" role="navigation" ng-cloak ng-show="!show.load" ng-controller="UserMenuController" ng-cloak>
+        <nav class="navbar" role="navigation" ng-controller="UserMenuController">
             <div class="navbar-brand">
                 <a class="navbar-logo" href="#"><img src="img/atlas_logo.png" alt="Atlas Admin logo" /></a>
             </div>
 
-            <div class="navbar-links">
-                <ul ng-show="status.loggedIn && !show.load" class="navbar-links-user">
+            <div class="navbar-links" ng-cloak>
+                <ul ng-show="status.loggedIn" class="navbar-links-user">
                     <li ng-repeat="item in app.menu.users">
                         <a ng-href="#{{item.path}}" active-path="active-menu-item"><span class="menu-button">{{item.label}}</span></a>
                     </li>
@@ -34,7 +34,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="navbar-user" ng-show="status.loggedIn" ng-click="app.toggleDropdown()">
+            <div class="navbar-user" ng-show="status.loggedIn" ng-click="app.toggleDropdown()" ng-cloak ng-show="!show.load">
                 <span href="#" class="user-avatar">
                     <img class="profile-picture" ng-src="{{app.user.profile_image}}" alt="profile picture"/>
                     <span class="user-name">{{app.user.full_name}}</span>

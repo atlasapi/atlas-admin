@@ -1,4 +1,15 @@
 .application-edit {
+    .edit-app-info {
+        background: $color-grey;
+        border: 1px solid $color-grey-dark;
+        border-radius: 4px;
+    }
+
+    .api-key-holder {
+        input[type="text"] { width: 100%; }
+        button { margin-top: 1rem; float: right; }
+    }
+
     .list-group {
         @extend %bare-list;
 
