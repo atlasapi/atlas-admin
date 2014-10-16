@@ -29,6 +29,7 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.controllers.user',
                                 'atlasAdmin.controllers.uservideosources',
                                 'atlasAdmin.controllers.uservideosources.youtube',
+                                'atlasAdmin.controllers.admins.usage',
                                 'atlasAdmin.controllers.admins.manageSourceRequests',
                                 'atlasAdmin.controllers.admins.manageWishlist',
                                 'ui.bootstrap',
@@ -44,6 +45,7 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/manage/users/:uid', {templateUrl: 'partials/admins/profile.html', controller: 'UserProfileController'});
     $routeProvider.when('/manage/users', {templateUrl: 'partials/admins/users.html', controller: 'AllUsersController'});
     $routeProvider.when('/manage/wishlist', {templateUrl: 'partials/admins/wishlist/manageWishlist.html', controller: 'CtrlManageWishlist'});
+    $routeProvider.when('/manage/usage', {templateUrl: 'partials/admins/usage/requests.html', controller: 'CtrlUsage'});
 
     // application user routes
     $routeProvider.when('/applications', {templateUrl: 'partials/applications.html', controller: 'CtrlApplications'});
@@ -1497,6 +1499,7 @@ app.controller('UserMenuController', function($scope, Users, $rootScope, Authent
             {path:'/manage/sources', label:'Sources', role:'admin'},
             {path:'/manage/requests', label:'Requests', role:'admin'},
             {path:'/manage/users', label:'Users', role:'admin'},
+            {path:'/manage/usage', label:'API Usage', role:'admin'},
             {path:'/manage/wishlist', label:'Wishlist', role:'admin'}];
 
         var menu = [];
@@ -2354,6 +2357,11 @@ app.controller('CtrlManageSourceRequests', ['$scope', '$rootScope', '$routeParam
     factorySourceRequests.getUnapprovedRequests().then(function(data) {
         $scope.app.requests = data;
     });
+}])
+var app = angular.module('atlasAdmin.controllers.admins.usage', []);
+
+app.controller('CtrlUsage', ['$scope', '$rootScope', function($scope, $rootScope) {
+
 }])
 'use strict';
 var app = angular.module('atlasAdmin.controllers.atlas', []);

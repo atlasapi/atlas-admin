@@ -29,6 +29,7 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.controllers.user',
                                 'atlasAdmin.controllers.uservideosources',
                                 'atlasAdmin.controllers.uservideosources.youtube',
+                                'atlasAdmin.controllers.admins.usage',
                                 'atlasAdmin.controllers.admins.manageSourceRequests',
                                 'atlasAdmin.controllers.admins.manageWishlist',
                                 'ui.bootstrap',
@@ -44,6 +45,7 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/manage/users/:uid', {templateUrl: 'partials/admins/profile.html', controller: 'UserProfileController'});
     $routeProvider.when('/manage/users', {templateUrl: 'partials/admins/users.html', controller: 'AllUsersController'});
     $routeProvider.when('/manage/wishlist', {templateUrl: 'partials/admins/wishlist/manageWishlist.html', controller: 'CtrlManageWishlist'});
+    $routeProvider.when('/manage/usage', {templateUrl: 'partials/admins/usage/requests.html', controller: 'CtrlUsage'});
 
     // application user routes
     $routeProvider.when('/applications', {templateUrl: 'partials/applications.html', controller: 'CtrlApplications'});

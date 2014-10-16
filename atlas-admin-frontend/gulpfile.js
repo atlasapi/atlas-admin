@@ -45,6 +45,7 @@ assets.js = ['js/app.js',
             'js/controllers/wishlist/wishlistFeatures.js',
             'js/controllers/admins/manageWishlist.js',
             'js/controllers/admins/manageSourceRequests.js',
+            'js/controllers/admins/usage/requests.js',
             'js/controllers/viewTerms.js'];
 
 //  Styles
