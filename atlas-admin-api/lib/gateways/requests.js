@@ -11,6 +11,7 @@ var config      = require('../../config'),
 
 //  make a call to atlas to create the request, then ask for all
 //  requests so we can grab the request id and store it for later
+//
 //  @param appId {string}
 //  @param sourceId {string}
 //  @param callback {function} @returns request object
@@ -66,14 +67,15 @@ var getRequest = function(appId, sourceId, callback) {
 
 
 // create REST interface for source requests feature
+//
 // @param db {object} the mongo database object
-var sourceRequest = function(db) {
+function SourceRequest(db) {
     var router      = express.Router(),
         collection  = db.collection('sourceRequests');
 
     router.route('/')
         // used for making a request to use a source. Admin users automatically have their
-        // sources enabled by default
+        // source requests authorised 
         .post(function(req, res) {
             if (!'app' in req.body ||!'source' in req.body) return false;
             var isAdmin = (common.user.role === 'admin')? true : false;
@@ -115,7 +117,6 @@ var sourceRequest = function(db) {
                     res.end();
                     return;
                 }
-
                 var appId = req.body.appId,
                     sourceId = req.body.sourceId,
                     new_state = req.body.new_state,
@@ -125,7 +126,6 @@ var sourceRequest = function(db) {
                     res.end()
                     return false;
                 }
-
                 approveSourceRequest(request_id, function() {
                     collection.update( {'app.id': appId, 'source.id': sourceId}, {$set: {state: new_state}}, function(err, count, status) {
                         if (err) throw err;
@@ -138,4 +138,4 @@ var sourceRequest = function(db) {
     return router;
 }
 
-module.exports = sourceRequest;
+module.exports = SourceRequest;

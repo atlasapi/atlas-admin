@@ -1,5 +1,4 @@
 'use strict';
-
 var config                       = require('./config'),
     common                       = require('./common'),
     express                      = require('express'),
@@ -7,10 +6,8 @@ var config                       = require('./config'),
     MongoClient                  = require('mongodb').MongoClient,
     MongoServer                  = require('mongodb').Server,
     app                          = express(),
-
     auth                         = require('./lib/middleware/auth'),
     prepResponse                 = require('./lib/middleware/prepResponse'),
-
     gatewayRequests              = require('./lib/gateways/requests'),
     gatewayPropositions          = require('./lib/gateways/propositions'),
     gatewayWishes                = require('./lib/gateways/wishes');
