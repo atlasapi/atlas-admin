@@ -1,5 +1,6 @@
 'use strict';
 var config      = require('../../config'),
+    Q           = require('q'),
     common      = require('../../common'),
     Atlas       = require('../services/atlasProvider'),
     qs          = require('querystring'),
@@ -9,64 +10,99 @@ var config      = require('../../config'),
     ObjectID    = require('mongodb').ObjectID;
 
 
-//  make a call to atlas to create the request, then ask for all
+//  Make a call to atlas to create the request, then ask for all
 //  requests so we can grab the request id and store it for later
+//
 //  @param appId {string}
 //  @param sourceId {string}
-//  @param callback {function} @returns request object
-var sendSourceToAtlas = function(appId, sourceId, callback) {
+//  @returns promise 
+//
+var sendSourceToAtlas = function(appId, sourceId) {
+    var defer = Q.defer();
     if (typeof appId !== 'string' || typeof sourceId !== 'string') {
-        console.error('appId and sourceId not present');
+        defer.reject('appId and sourceId not present');
         return false;
     }
-    var postData = qs.stringify({
+    var qsData = qs.stringify({
         appId: appId,
         appUrl: '',
         reason: '',
         usageType: 'personal',
         licenseAccepted: true
     })
-    Atlas.request('/sources/'+sourceId+'/requests?'+postData, 'POST', function(status, data) {
+    Atlas.request('/sources/'+sourceId+'/requests?'+qsData, 'POST', function(status, data) {
         if (status === 200) {
-           callback(true);
+            defer.resolve(data);
+        }else{
+            defer.reject(status);
         }
     });
+    return defer.promise;
 }
 
-var approveSourceRequest = function(request_id, callback) {
-    if (!_.isString(request_id)) { console.error('request_id must be a string'); return; }
+//  For approving the request to a source based on request_id
+//
+//  @param request_id {string}
+//  @returns promise
+//
+var approveSourceRequest = function(request_id) {
+    var defer = Q.defer();
+    if (!_.isString(request_id)) { 
+        defer.reject('request_id must be a string');
+        return;
+    }
     Atlas.request('/requests/'+request_id+'/approve', 'POST', function(data) {
-        if (_.isFunction(callback)) callback();
+        defer.resolve(data);
     });
 }
 
-var autoApproveAdmin = function(appId, sourceId, callback) {
+//  For automatically approving a request if thre logged in
+//  user has admin privileges
+//
+//  @param appId {string}
+//  @param sourceId {string}
+//  @returns primise
+//  
+var autoApproveAdmin = function(appId, sourceId) {
+    var defer = Q.defer();
     var _err = false;
     getRequest(appId, sourceId, function(request) {
         if (_.isObject(request)) {
-            approveSourceRequest(request.id);
+            approveSourceRequest(request.id).then(defer.resolve, 
+                function(err) {
+                console.error('request_id must be a string');
+            });
         }else{
-            console.error('No request object present')
             _err = true;
+            defer.reject('No request object present')
         }
-        if (_.isFunction(callback)) callback(_err)
     })
+    return defer.promise;
 }
 
-// used for getting a request object from Atlas
-var getRequest = function(appId, sourceId, callback) {
+//  Used for getting a request object from Atlas
+//
+//  @param appId {string}
+//  @param sourceId {string}
+//  @returns promise
+//  
+var getRequest = function(appId, sourceId) {
+    var defer = Q.defer();
     Atlas.request('/requests.json', 'GET', function(status, data) {
         var data = JSON.parse(data);
         var request = _.find(data['source_requests'], function(n) {
             return (n.application_id == appId && n.source.id == sourceId)? true : false;
         })
-        if (_.isFunction(callback)) callback(request);
+        defer.resolve(request);
     })
+    return defer.promise;
 }
 
 
-// create REST interface for source requests feature
-// @param db {object} the mongo database object
+//  For exposing the REST interface to source requests feature
+//
+//  @param db {object} the mongo database object
+//
 var sourceRequest = function(db) {
     var router      = express.Router(),
         collection  = db.collection('sourceRequests');
@@ -75,9 +111,13 @@ var sourceRequest = function(db) {
         // used for making a request to use a source. Admin users automatically have their
         // sources enabled by default
         .post(function(req, res) {
-            if (!'app' in req.body ||!'source' in req.body) return false;
+            if (!'app' in req.body ||!'source' in req.body) {
+                console.error('app and source params must be sent with POST request')
+                res.end();
+            }
             var isAdmin = (common.user.role === 'admin')? true : false;
-            sendSourceToAtlas(req.body.app.id, req.body.source.id, function() {
+
+            sendSourceToAtlas(req.body.app.id, req.body.source.id).then(function() {
                 var body = req.body;
                 var send_to_manager = function() {
                     if (body.source.state != 'enableable' && body.source.state != 'available') {
@@ -87,7 +127,7 @@ var sourceRequest = function(db) {
                     }
                 }
                 if (isAdmin) {
-                    autoApproveAdmin(body.app.id, body.source.id, function(err) {
+                    autoApproveAdmin(body.app.id, body.source.id).then(function(err) {
                         if (err) {
                             send_to_manager()
                         }else{
@@ -97,7 +137,7 @@ var sourceRequest = function(db) {
                 }else{
                     send_to_manager();
                 }
-            })
+            }, function(status) { console.error(status); })
         })
         
         // used for returning all requests flagged as 'not approved'
@@ -110,7 +150,7 @@ var sourceRequest = function(db) {
 
         // used for updating request status on atlas and in request manager
         .put(function(req, res) {
-            getRequest(req.body.appId, req.body.sourceId, function(request) {
+            getRequest(req.body.appId, req.body.sourceId).then(function(request) {
                 if (!_.isObject(request)) {
                     res.end();
                     return;
