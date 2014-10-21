@@ -1,17 +1,18 @@
 'use strict';
 var common = require('../../common'),
     config = require('../../config'),
-    http   = require('http');
+    http   = require('http'),
+    _      = require('lodash');
 
 var Atlas = function() {
-    var appendOauthToken = function(path) {
+    function appendOauthToken(path) {
         if (!common.oauth.token || !common.oauth.provider) return false;
         var path = path || '',
             prepend = (path.indexOf('?') > -1)? '&' : '?';
         return path+prepend+'oauth_provider='+common.oauth.provider+'&oauth_token='+common.oauth.token;
     }
 
-    var request = function(path, type, callback) {
+    function request(path, type, callback) {
         var type = type || 'GET';
         var path = path || '';
         var opts = {
@@ -32,7 +33,7 @@ var Atlas = function() {
                 data += chunk;
             })
             .on('end', function() { 
-                return (typeof callback === 'function')? callback(status, data) : true;
+                if (_.isFunction(callback)) callback(status, data);
             });
         });
         request.end();

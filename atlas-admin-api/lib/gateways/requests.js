@@ -61,19 +61,19 @@ var approveSourceRequest = function(request_id) {
 //
 //  @param appId {string}
 //  @param sourceId {string}
-//  @returns primise
+//  @returns promise
 //  
 var autoApproveAdmin = function(appId, sourceId) {
     var defer = Q.defer();
-    var _err = false;
-    getRequest(appId, sourceId, function(request) {
+    getRequest(appId, sourceId).then(function(request) {
         if (_.isObject(request)) {
-            approveSourceRequest(request.id).then(defer.resolve, 
-                function(err) {
+            approveSourceRequest(request.id).then(function success() {
+                defer.resolve();
+            }, 
+            function error(err) {
                 console.error('request_id must be a string');
             });
         }else{
-            _err = true;
             defer.reject('No request object present')
         }
     })
@@ -116,28 +116,26 @@ var sourceRequest = function(db) {
                 res.end();
             }
             var isAdmin = (common.user.role === 'admin')? true : false;
-
-            sendSourceToAtlas(req.body.app.id, req.body.source.id).then(function() {
-                var body = req.body;
-                var send_to_manager = function() {
-                    if (body.source.state != 'enableable' && body.source.state != 'available') {
-                        collection.insert(req.body, function() {
-                            res.end();
-                        })
-                    }
+            var send_to_manager = function(body) {
+                if (body.source.state != 'enableable' && body.source.state != 'available') {
+                    collection.insert(body);
                 }
+            }
+            sendSourceToAtlas(req.body.app.id, req.body.source.id).then(function success(data) {
+                var body = req.body;
                 if (isAdmin) {
-                    autoApproveAdmin(body.app.id, body.source.id).then(function(err) {
-                        if (err) {
-                            send_to_manager()
-                        }else{
-                            res.end();
-                        }
+                    autoApproveAdmin(body.app.id, body.source.id).then(null, function error(err) {
+                        console.error('Could not auto approve source request for admin')
+                        send_to_manager(body)
                     });
                 }else{
-                    send_to_manager();
+                    send_to_manager(body);
                 }
-            }, function(status) { console.error(status); })
+                res.end();
+            }, function error(status) { 
+                console.error(status); 
+                res.end();
+            })
         })
         
         // used for returning all requests flagged as 'not approved'
