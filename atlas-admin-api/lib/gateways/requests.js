@@ -54,6 +54,7 @@ var approveSourceRequest = function(request_id) {
     Atlas.request('/requests/'+request_id+'/approve', 'POST', function(data) {
         defer.resolve(data);
     });
+    return defer.promise;
 }
 
 //  For automatically approving a request if the logged in
@@ -65,7 +66,7 @@ var approveSourceRequest = function(request_id) {
 //  
 var autoApproveAdmin = function(appId, sourceId) {
     var defer = Q.defer();
-    getRequest(appId, sourceId).then(function(request) {
+    getRequestInfo(appId, sourceId).then(function(request) {
         if (_.isObject(request)) {
             approveSourceRequest(request.id).then(function success() {
                 defer.resolve();
@@ -86,7 +87,7 @@ var autoApproveAdmin = function(appId, sourceId) {
 //  @param sourceId {string}
 //  @returns promise
 //  
-var getRequest = function(appId, sourceId) {
+var getRequestInfo = function(appId, sourceId) {
     var defer = Q.defer();
     Atlas.request('/requests.json', 'GET', function(status, data) {
         var data = JSON.parse(data);
@@ -117,21 +118,26 @@ var sourceRequest = function(db) {
             }
             var isAdmin = (common.user.role === 'admin')? true : false;
             var send_to_manager = function(body) {
-                if (body.source.state != 'enableable' && body.source.state != 'available') {
-                    collection.insert(body);
+                if (body.source.state !== 'enableable' && body.source.state !== 'available') {
+                    collection.insert(body, function(err) {
+                        console.log(err);
+                    });
                 }
             }
-            sendSourceToAtlas(req.body.app.id, req.body.source.id).then(function success(data) {
+            sendSourceToAtlas(req.body.app.id, req.body.source.id).then(function success() {
                 var body = req.body;
                 if (isAdmin) {
-                    autoApproveAdmin(body.app.id, body.source.id).then(null, function error(err) {
-                        console.error('Could not auto approve source request for admin')
+                    autoApproveAdmin(body.app.id, body.source.id).then(function success() {
+                        res.end();
+                    }, function error(err) {
+                        console.error('Could not auto approve source request for admin user');
                         send_to_manager(body)
+                        res.end();
                     });
                 }else{
+                    res.end();
                     send_to_manager(body);
                 }
-                res.end();
             }, function error(status) { 
                 console.error(status); 
                 res.end();
@@ -148,12 +154,11 @@ var sourceRequest = function(db) {
 
         // used for updating request status on atlas and in request manager
         .put(function(req, res) {
-            getRequest(req.body.appId, req.body.sourceId).then(function(request) {
+            getRequestInfo(req.body.appId, req.body.sourceId).then(function success(request) {
                 if (!_.isObject(request)) {
                     res.end();
                     return;
                 }
-
                 var appId = req.body.appId,
                     sourceId = req.body.sourceId,
                     new_state = req.body.new_state,
@@ -161,15 +166,18 @@ var sourceRequest = function(db) {
 
                 if (!_.isString(appId) || !_.isString(request_id) || !_.isString(new_state)) {
                     res.end()
-                    return false;
+                    return;
                 }
-
-                approveSourceRequest(request_id, function() {
+                approveSourceRequest(request_id).then(function success() {
                     collection.update( {'app.id': appId, 'source.id': sourceId}, {$set: {state: new_state}}, function(err, count, status) {
                         if (err) throw err;
                         var stringStatus = JSON.stringify(status);
                         res.end(stringStatus);
                     })
+                },
+                function error() {
+                    console.error('Could not approve source request: '+request_id);
+                    res.end()
                 });
             })
         })
