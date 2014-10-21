@@ -26,6 +26,6 @@ module.exports = function() {
             apiRoot: instanceConfig.apiRootPath || '/api'
         },
 
-        allowedDomains: instanceConfig.allowedDomains || ['http://dev.mbst.tv:8000', 'http://dev.mbst.tv:9000']
+        allowedDomains: instanceConfig.allowedDomains || ['http://localhost:8000', 'http://dev.mbst.tv:8000']
     };
 }();
