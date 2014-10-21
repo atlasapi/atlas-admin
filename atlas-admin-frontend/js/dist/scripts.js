@@ -13,6 +13,7 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.services.uservideosources',
                                 'atlasAdmin.services.uservideosources.youtube',
                                 'atlasAdmin.services.propositions',
+                                'atlasAdmin.services.usage',
                                 'atlasAdmin.directives.orderable', 
                                 'atlasAdmin.directives.focus',
                                 'atlasAdmin.directives.activePath',
@@ -590,9 +591,7 @@ var app = angular.module('atlasAdmin.services.propositions', []);
 
 app.factory('factoryPropositions', ['$http', 'Authentication', 'atlasApiHost', '$q', 
     function($http, Authentication, atlasApiHost, $q) {
-
     var endpoint = atlasApiHost + '/propositions';
-
 
     //  Get all propositions
     // 
@@ -687,6 +686,38 @@ app.factory('factoryPropositions', ['$http', 'Authentication', 'atlasApiHost', '
         updateStatus: updatePropositionStatus
     }
 }])
+'use strict';
+var app = angular.module('atlasAdmin.services.usage', []);
+
+app.factory('APIUsage', ['$http', 'Authentication', 'atlasApiHost', '$q',
+    function($http, Authentication, atlasApiHost, $q) {
+    var _endpoint = atlasApiHost + '/usage';
+
+    function key_use_day(apiKey) {
+        var defer = $q.defer();
+        var endpoint = [];
+        endpoint.push(_endpoint);
+        endpoint.push(apiKey)
+        endpoint.push('day')
+        endpoint = endpoint.join('/');
+        $http({
+            method: 'get',
+            url: Authentication.appendTokenToUrl(endpoint)
+        })
+        .success(function(data, status) { 
+            if (status === 200) {
+                defer.resolve(data);
+            }else{
+                defer.reject(status);
+            }
+        });
+        return defer.promise;
+    }
+
+    return {
+        day: key_use_day
+    }
+}]);
 'use strict';
 
 var app = angular.module('atlasAdmin.services.propositions');
@@ -2358,9 +2389,44 @@ app.controller('CtrlManageSourceRequests', ['$scope', '$rootScope', '$routeParam
         $scope.app.requests = data;
     });
 }])
+'use strict';
 var app = angular.module('atlasAdmin.controllers.admins.usage', []);
 
-app.controller('CtrlUsage', ['$scope', '$rootScope', function($scope, $rootScope) {
+app.controller('CtrlUsage', ['$scope', '$rootScope', 'APIUsage', 
+    function($scope, $rootScope, Usage) {
+     
+
+
+    Usage.day('84097c4de516445eb7bb58f4b73d2842').then(function(data) {
+        var histogram = data.facets[0].entries;;
+        console.log(histogram);
+        $scope.graph = {};
+        $scope.graph.histogram = histogram;
+
+        // define all the things for the graph
+        var margin = {top: 30, right: 30, bottom: 60, left: 60},
+            width = 1000 - margin.left - margin.right,
+            height = 400 - margin.top - margin.bottom;
+
+        var x = d3.scale.linear().domain([0, 400]).range([0, width]);
+        var y = d3.scale.linear().domain([0, 1400]).range([height, 0]);
+
+        var req_per_min = d3.select('.rpm-chart-container').append('svg:svg')
+                            .attr("width", width + margin.left + margin.right)
+                            .attr("height", height + margin.top + margin.bottom)
+                            .append('svg:g')
+                            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        var line = d3.svg.line()
+            .x(function(d,i) { 
+                return x(i); 
+            })
+            .y(function(d) { 
+                return y(d.count); 
+            })
+
+        req_per_min.append('svg:path').arrt('d', line(histogram));
+    });
     
 }]);
 'use strict';
