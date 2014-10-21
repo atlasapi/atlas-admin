@@ -2358,6 +2358,11 @@ app.controller('CtrlManageSourceRequests', ['$scope', '$rootScope', '$routeParam
         $scope.app.requests = data;
     });
 }])
+var app = angular.module('atlasAdmin.controllers.admins.usage', []);
+
+app.controller('CtrlUsage', ['$scope', '$rootScope', function($scope, $rootScope) {
+    
+}]);
 'use strict';
 var app = angular.module('atlasAdmin.controllers.atlas', []);
 

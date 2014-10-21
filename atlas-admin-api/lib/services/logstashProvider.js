@@ -39,19 +39,6 @@ function Logstash() {
         });
 
         _query = {
-            "aggs" : {
-                "articles_over_time": {
-                    "date_histogram": {
-                        "field": "@timestamp",
-                        "interval": _defaults.interval,
-                    }
-                },
-                "date_range": {
-                    "field": "@timestamp",
-                    "ranges": [{"from": _defaults.timestamp.from , "to": _defaults.timestamp.to}]
-                }
-            }
-
             "facets": {
                 "0": {
                     "date_histogram": {
@@ -70,7 +57,8 @@ function Logstash() {
                                     },
                                     "filter": {
                                         "bool": {
-                                            "must": [{
+                                            "must": [
+                                            {
                                                 "range": {
                                                     "@timestamp": {
                                                         "from": _defaults.timestamp.from,
@@ -84,32 +72,20 @@ function Logstash() {
                                                         "query_string": {
                                                             "query": _defaults.query
                                                         }
-                                                    }
+                                                    },
+                                                    "_cache": true
                                                 }
-                                            }]
+                                            }
+                                            ]
                                         }
                                     }
                                 }
                             }
                         }
                     }
-                }
-            },
-            "size": 0,
-            "sort": [
-            {
-                "@timestamp": {
-                    "order": "desc",
-                    "ignore_unmapped": true
-                }
-            },
-            {
-                "@timestamp": {
-                    "order": "desc",
-                    "ignore_unmapped": true
-                }
+                },
+                "size": 0
             }
-            ]
         };
         return _query;
     }
@@ -133,7 +109,7 @@ function Logstash() {
         // so we can use them in our search query
         var _request = new_elasticsearch_query({
             interval: timeInterval,
-            query: 'apiKey: '+apiKey,
+            query: 'apiKey: "'+apiKey+'"',
             timestamp: {
                 from: toTimestamp(startDate),
                 to: toTimestamp(endDate)
