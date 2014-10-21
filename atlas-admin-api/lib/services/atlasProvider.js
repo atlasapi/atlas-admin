@@ -45,7 +45,7 @@ function Atlas() {
         });
         request.end();
     }
-    
+
 
     return {
         appendOauthToken: appendOauthToken,
