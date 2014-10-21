@@ -56,7 +56,7 @@ var approveSourceRequest = function(request_id) {
     });
 }
 
-//  For automatically approving a request if thre logged in
+//  For automatically approving a request if the logged in
 //  user has admin privileges
 //
 //  @param appId {string}
