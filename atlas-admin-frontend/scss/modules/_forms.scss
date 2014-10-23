@@ -68,6 +68,11 @@ input[type="url"],
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
     }
+
+    &.large {
+        padding: .25rem .5rem;
+        font-size: 1.125rem;
+    }
 }
 
 //  Radio buttons

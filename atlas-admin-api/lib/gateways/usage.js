@@ -26,11 +26,12 @@ function Usage() {
                     Logstash.search.past_day(key).then(function(data) {
                         res.end(data);
                     });
+                    break;
                 case 'week':
                     Logstash.search.past_week(key).then(function(data) {
                         res.end(data);
                     });
-
+                    break;
                 case 'month':
                     Logstash.search.past_month(key).then(function(data) {
                         res.end(data);

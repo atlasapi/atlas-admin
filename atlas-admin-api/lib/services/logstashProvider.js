@@ -15,7 +15,7 @@ function Logstash() {
     //  @param dateObj {date} the date to be converted
     //  @returns {string}
     function toTimestamp(dateObj){
-        return Math.floor(dateObj.getTime()/1000);
+        return Math.floor(dateObj.getTime());
     }
 
 
@@ -29,16 +29,16 @@ function Logstash() {
         var _query, _defaults
             options = options || {};
 
-        _defaults = _.assign(options, {
+        _defaults = _.assign({
             interval: '1m',
             timestamp: {
                 from: null,
                 to: null
             },
             query: '*'
-        });
+        }, options);
 
-        _query = {
+        var _query = {
             "facets": {
                 "0": {
                     "date_histogram": {
@@ -52,7 +52,7 @@ function Logstash() {
                                 "filtered": {
                                     "query": {
                                         "query_string": {
-                                            "query": "*"
+                                            "query": _defaults.query
                                         }
                                     },
                                     "filter": {
@@ -65,16 +65,6 @@ function Logstash() {
                                                         "to": _defaults.timestamp.to
                                                     }
                                                 }
-                                            },
-                                            {
-                                                "fquery": {
-                                                    "query": {
-                                                        "query_string": {
-                                                            "query": _defaults.query
-                                                        }
-                                                    },
-                                                    "_cache": true
-                                                }
                                             }
                                             ]
                                         }
@@ -83,9 +73,9 @@ function Logstash() {
                             }
                         }
                     }
-                },
-                "size": 0
-            }
+                }
+            },
+            "size": 0,
         };
         return _query;
     }
@@ -93,14 +83,17 @@ function Logstash() {
 
     //  For making a request to elasticsearch 
     //
-    //  @param key {string} the api key to search on
+    //  @param startDate {date}
+    //  @param endDate {date}
+    //  @param apiKey {string}
+    //  @param timeInterval {string} '1m' '1h' etc
     //  @returns promise
     //
     function query_elasticsearch(startDate, endDate, apiKey, timeInterval) {
         var defer = Q.defer();
         var timeInterval = timeInterval || '1m';
         if (!_.isString(apiKey) || !_.isDate(startDate) || !_.isDate(endDate)) {
-            console.error('query_elasticsearch() - invalid ark type');
+            console.error('query_elasticsearch() - invalid arg type');
             defer.reject();
             return defer.promise;
         }
@@ -109,21 +102,17 @@ function Logstash() {
         // so we can use them in our search query
         var _request = new_elasticsearch_query({
             interval: timeInterval,
-            query: 'apiKey: "'+apiKey+'"',
+            query: 'apiKey:'+apiKey,
             timestamp: {
                 from: toTimestamp(startDate),
                 to: toTimestamp(endDate)
             }
         });
 
-        // construct the dates of the logs we want to search in
-        var logstash_start_date = startDate.getFullYear()+'.'+(startDate.getMonth()+1)+'.'+startDate.getDate(),
-            logstash_end_date = endDate.getFullYear()+'.'+(endDate.getMonth()+1)+'.'+endDate.getDate();
-
         var _opts = {
             hostname: _logstash_host,
             port: 9200,
-            path: '/_search?',
+            path: '/_search',
             method: 'XGET'
         }
 
@@ -137,6 +126,11 @@ function Logstash() {
                 defer.resolve(_data);
             });
         });
+
+        req.on('error', function(err) {
+            console.error('Problem with logstash request');
+            console.log(err);
+        })
 
         // send the query data along with the request
         req.write(JSON.stringify(_request));      
@@ -153,13 +147,12 @@ function Logstash() {
     function search_on_past_hour(key) {
         var defer = Q.defer();
         if (!_.isString(key)) {
-            console.error('day() - key arg must be a string');
+            console.error('search_on_past_hour() - key arg must be a string');
             defer.reject();
             return defer.promise;
         }
-        // TODO: set the date 
         var _end = new Date();
-        var _start = new Date(new Date().setDate(_end.getDate()-1));
+        var _start = new Date(new Date().setHours(_end.getHours() - 1));
         query_elasticsearch(_start, _end, key).then(defer.resolve);
         return defer.promise;
     }
@@ -173,12 +166,12 @@ function Logstash() {
     function search_on_past_day(key) {
         var defer = Q.defer();
         if (!_.isString(key)) {
-            console.error('day() - key arg must be a string');
+            console.error('search_on_past_day() - key arg must be a string');
             defer.reject();
             return defer.promise;
         }
         var _end = new Date();
-        var _start = new Date(new Date().setDate(_end.getDate()-1));
+        var _start = new Date(new Date().setHours(_end.getHours() - 24));
         query_elasticsearch(_start, _end, key).then(defer.resolve);
         return defer.promise;
     }
@@ -192,7 +185,7 @@ function Logstash() {
     function search_on_past_week(key) {
         var defer = Q.defer();
         if (!_.isString(key)) {
-            console.error('day() - key arg must be a string');
+            console.error('search_on_past_week() - key arg must be a string');
             defer.reject();
             return defer.promise;
         }
@@ -211,12 +204,12 @@ function Logstash() {
     function search_on_past_month(key) {
         var defer = Q.defer();
         if (!_.isString(key)) {
-            console.error('day() - key arg must be a string');
+            console.error('search_on_past_month() - key arg must be a string');
             defer.reject();
             return defer.promise;
         }
         var _end = new Date();
-        var _start = new Date(new Date().setDate(_end.getDate()-7));
+        var _start = new Date(new Date().setDate(_end.getDate()-30));
         query_elasticsearch(_start, _end, key).then(defer.resolve);
         return defer.promise;
     }

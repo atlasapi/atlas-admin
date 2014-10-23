@@ -9,8 +9,8 @@ app.factory('APIUsage', ['$http', 'Authentication', 'atlasApiHost', '$q',
         var defer = $q.defer();
         var endpoint = [];
         endpoint.push(_endpoint);
-        endpoint.push(apiKey)
-        endpoint.push('day')
+        endpoint.push(apiKey);
+        endpoint.push('day');
         endpoint = endpoint.join('/');
         $http({
             method: 'get',
