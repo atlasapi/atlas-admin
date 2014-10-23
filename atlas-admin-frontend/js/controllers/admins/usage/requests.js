@@ -14,8 +14,9 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'APIUsage',
 
         // define all the things for the graph
         var endTime = new Date();
-        var startTime = new Date(new Date().setDate(endTime.getDate()-1));
-        var timeStep = 1400;
+        var startTime = new Date(new Date().setHours(endTime.getHours()-24));
+        console.log(startTime)
+        console.log(endTime)
 
         var margin = {top: 30, right: 30, bottom: 60, left: 60},
             width = 1000 - margin.left - margin.right,

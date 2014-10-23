@@ -153,6 +153,7 @@ function Logstash() {
         }
         var _end = new Date();
         var _start = new Date(new Date().setHours(_end.getHours() - 1));
+        console.log('hour: '+_start);
         query_elasticsearch(_start, _end, key).then(defer.resolve);
         return defer.promise;
     }
@@ -172,6 +173,7 @@ function Logstash() {
         }
         var _end = new Date();
         var _start = new Date(new Date().setHours(_end.getHours() - 24));
+        console.log('day: '+_start);
         query_elasticsearch(_start, _end, key).then(defer.resolve);
         return defer.promise;
     }
@@ -191,6 +193,7 @@ function Logstash() {
         }
         var _end = new Date();
         var _start = new Date(new Date().setDate(_end.getDate()-7));
+        console.log('week: '+_start);
         query_elasticsearch(_start, _end, key).then(defer.resolve);
         return defer.promise;
     }
@@ -210,10 +213,10 @@ function Logstash() {
         }
         var _end = new Date();
         var _start = new Date(new Date().setDate(_end.getDate()-30));
+        console.log('month: '+_start);
         query_elasticsearch(_start, _end, key).then(defer.resolve);
         return defer.promise;
     }
-
 
     return {
         search: {
