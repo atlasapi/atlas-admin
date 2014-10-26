@@ -10,7 +10,7 @@ function Logstash() {
     var _logstash_host = 'node1.logstash.mbst.tv';
 
 
-    //  For converting a date into a unix timestamp
+    //  For converting a date into a timestamp
     //  
     //  @param dateObj {date} the date to be converted
     //  @returns {string}
@@ -98,9 +98,7 @@ function Logstash() {
             return defer.promise;
         }
 
-        // set the start and end params to be now and one day ago
-        // so we can use them in our search query
-        var _request = new_elasticsearch_query({
+        var _query = new_elasticsearch_query({
             interval: timeInterval,
             query: 'apiKey:'+apiKey,
             timestamp: {
@@ -133,7 +131,7 @@ function Logstash() {
         })
 
         // send the query data along with the request
-        req.write(JSON.stringify(_request));      
+        req.write(JSON.stringify(_query));      
         req.end();
         return defer.promise;
     }

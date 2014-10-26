@@ -48,7 +48,7 @@ var sendSourceToAtlas = function(appId, sourceId) {
 var approveSourceRequest = function(request_id) {
     var defer = Q.defer();
     if (!_.isString(request_id)) { 
-        defer.reject('request_id must be a string');
+        defer.reject('approveSourceRequest(): request_id must be a string');
         return;
     }
     Atlas.request('/requests/'+request_id+'/approve', 'POST', function(data) {
@@ -72,7 +72,7 @@ var autoApproveAdmin = function(appId, sourceId) {
                 defer.resolve();
             }, 
             function error(err) {
-                console.error('request_id must be a string');
+                defer.reject(err);
             });
         }else{
             defer.reject('No request object present')
