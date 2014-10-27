@@ -123,10 +123,14 @@ function Logstash() {
             response.on('end', function() {
                 defer.resolve(_data);
             });
+            response.on('error', function(err) {
+                console.log('ES response error');
+                console.log(err);
+            })
         });
 
         req.on('error', function(err) {
-            console.error('Problem with logstash request');
+            console.error('Problem with ES request');
             console.log(err);
         })
 
