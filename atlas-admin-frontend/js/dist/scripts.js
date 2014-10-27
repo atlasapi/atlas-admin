@@ -698,7 +698,26 @@ app.factory('APIUsage', ['$http', 'Authentication', 'atlasApiHost', '$q',
         if (args_length > 0) {
             var parts = Array.prototype.slice.call(arguments, 0);
             return parts.join('/');
+        }else{
+            return null;
         }
+    }
+
+    function key_use_hour(apiKey) {
+        var defer = $q.defer();
+        var endpoint = urlJoin(_endpoint, apiKey, 'hour');
+        $http({
+            method: 'get',
+            url: Authentication.appendTokenToUrl(endpoint)
+        })
+        .success(function(data, status) { 
+            if (status === 200) {
+                defer.resolve(data);
+            }else{
+                defer.reject(status);
+            }
+        });
+        return defer.promise;
     }
 
     function key_use_day(apiKey) {
@@ -735,9 +754,28 @@ app.factory('APIUsage', ['$http', 'Authentication', 'atlasApiHost', '$q',
         return defer.promise;
     }
 
+    function key_use_month(apiKey) {
+        var defer = $q.defer();
+        var endpoint = urlJoin(_endpoint, apiKey, 'month');
+        $http({
+            method: 'get',
+            url: Authentication.appendTokenToUrl(endpoint)
+        })
+        .success(function(data, status) { 
+            if (status === 200) {
+                defer.resolve(data);
+            }else{
+                defer.reject(status);
+            }
+        });
+        return defer.promise;
+    }
+
     return {
+        hour: key_use_hour,
         day: key_use_day,
-        week: key_use_week
+        week: key_use_week,
+        month: key_use_month
     }
 }]);
 'use strict';
@@ -2423,16 +2461,14 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'APIUsage',
             return n.count;
         });
 
+        this.clear_graph();
+
         var margin = {top: 30, right: 30, bottom: 60, left: 60},
             width = 1000 - margin.left - margin.right,
             height = 400 - margin.top - margin.bottom;
 
         this.startTime = null;
         this.endTime = null;
-
-        this.clear_graph = function() {
-            // clear the graph
-        }
 
         this.create_axes = function() {
             var x = d3.time.scale().domain([this.startTime, this.endTime]).range([0, width]);
@@ -2446,47 +2482,60 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'APIUsage',
                 })
 
             var xAxis = d3.svg.axis().scale(x).tickSize(-height).tickSubdivide(true);
-            this.graph.append("svg:g")
+            Graph.prototype.graph.append("svg:g")
                  .attr("class", "x axis")
                  .attr("transform", "translate(0,"+height+")")
                  .call(xAxis);
 
             var yAxis = d3.svg.axis().scale(y).ticks(4).orient("left");
-            this.graph.append("svg:g")
+            Graph.prototype.graph.append("svg:g")
                       .attr("class", "y axis")
                       .attr("transform", "translate(-25,0)")
                       .call(yAxis);
-            this.graph.append('svg:path').attr('d', line(histogram));
+            Graph.prototype.graph.append('svg:path').attr('d', line(histogram));
         }
 
         this.draw = function() {
-            this.graph = d3.select('.rpm-chart-container').append('svg:svg')
-                                .attr("width", width + margin.left + margin.right)
-                                .attr("height", height + margin.top + margin.bottom)
-                                .append('svg:g')
-                                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            Graph.prototype.graph = d3.select('.rpm-chart-container')
+                           .append('svg:svg')
+                           .attr("width", width + margin.left + margin.right)
+                           .attr("height", height + margin.top + margin.bottom)
+                           .append('svg:g')
+                           .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
             this.create_axes();
+        }
+    }
+
+    Graph.prototype.graph = null;
+    Graph.prototype.clear_graph = function() {
+        if (this.graph) {
+            $('.rpm-chart-container svg').remove();
+            this.graph = null;
         }
     }
 
     $scope.switchTime = function(timeRange) {
         switch(timeRange) {
+            case 'hour':
+                loadGraphHour();
+                break;
             case 'day':
-                drawGraphDay();
+                loadGraphDay();
                 break;
             case 'week':
-                drawGraphWeek();
+                loadGraphWeek();
                 break;
             case 'month':
+                loadGraphMonth();
                 break;
         }
     }
 
-    var drawGraphDay = function() {
-        Usage.day('84097c4de516445eb7bb58f4b73d2842').then(function(data) {
+    var loadGraphHour = function() {
+        $scope.tabState = 'hour';
+        Usage.hour('84097c4de516445eb7bb58f4b73d2842').then(function(data) {
             var endTime = new Date(),
-                startTime = new Date(new Date().setHours(endTime.getHours()-24));
-
+                startTime = new Date(new Date().setHours(endTime.getHours()-1));
             var graph = new Graph(data);
             graph.endTime = endTime;
             graph.startTime = startTime;
@@ -2494,8 +2543,33 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'APIUsage',
         });
     }
 
-    var drawGraphWeek = function() {
+    var loadGraphDay = function() {
+        $scope.tabState = 'day';
+        Usage.day('84097c4de516445eb7bb58f4b73d2842').then(function(data) {
+            var endTime = new Date(),
+                startTime = new Date(new Date().setHours(endTime.getHours()-24));
+            var graph = new Graph(data);
+            graph.endTime = endTime;
+            graph.startTime = startTime;
+            graph.draw();
+        });
+    }
+
+    var loadGraphWeek = function() {
+        $scope.tabState = 'week';
         Usage.week('84097c4de516445eb7bb58f4b73d2842').then(function(data) {
+            var endTime = new Date(),
+                startTime = new Date(new Date().setDate(endTime.getDate()-7));
+            var graph = new Graph(data);
+            graph.endTime = endTime;
+            graph.startTime = startTime;
+            graph.draw();
+        });
+    }
+
+    var loadGraphMonth = function() {
+        $scope.tabState = 'month';
+        Usage.month('84097c4de516445eb7bb58f4b73d2842').then(function(data) {
             var endTime = new Date(),
                 startTime = new Date(new Date().setDate(endTime.getDate()-30));
             var graph = new Graph(data);
@@ -2504,6 +2578,8 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'APIUsage',
             graph.draw();
         });
     }
+
+    loadGraphDay();
 }]);
 'use strict';
 var app = angular.module('atlasAdmin.controllers.atlas', []);
