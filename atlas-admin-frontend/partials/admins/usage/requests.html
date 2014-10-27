@@ -4,9 +4,10 @@
     </header>
     <div class="app-content">
         <div class="api-key-field">
-            <input class="large" type="text" value="" placeholder="enter the application's api key">
+            <input class="large" type="text" value="" placeholder="enter the application's api key" ng-model="apiKey">
         </div>
         <div class="chart-card">
+            <div class="notifications" ng-show="errorMessage"></div>
             <div class="rpm-chart-container">
                 
             </div>  

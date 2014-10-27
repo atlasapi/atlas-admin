@@ -28,6 +28,9 @@ app.factory('APIUsage', ['$http', 'Authentication', 'atlasApiHost', '$q',
             }else{
                 defer.reject(status);
             }
+        })
+        .error(function(data, status) {
+            defer.reject(status);
         });
         return defer.promise;
     }
@@ -45,6 +48,9 @@ app.factory('APIUsage', ['$http', 'Authentication', 'atlasApiHost', '$q',
             }else{
                 defer.reject(status);
             }
+        })
+        .error(function(data, status) {
+            defer.reject(status);
         });
         return defer.promise;
     }
@@ -62,6 +68,9 @@ app.factory('APIUsage', ['$http', 'Authentication', 'atlasApiHost', '$q',
             }else{
                 defer.reject(status);
             }
+        })
+        .error(function(data, status) {
+            defer.reject(status);
         });
         return defer.promise;
     }
@@ -79,6 +88,9 @@ app.factory('APIUsage', ['$http', 'Authentication', 'atlasApiHost', '$q',
             }else{
                 defer.reject(status);
             }
+        })
+        .error(function(data, status) {
+            defer.reject(status);
         });
         return defer.promise;
     }

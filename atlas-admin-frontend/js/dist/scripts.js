@@ -716,6 +716,9 @@ app.factory('APIUsage', ['$http', 'Authentication', 'atlasApiHost', '$q',
             }else{
                 defer.reject(status);
             }
+        })
+        .error(function(data, status) {
+            defer.reject(status);
         });
         return defer.promise;
     }
@@ -733,6 +736,9 @@ app.factory('APIUsage', ['$http', 'Authentication', 'atlasApiHost', '$q',
             }else{
                 defer.reject(status);
             }
+        })
+        .error(function(data, status) {
+            defer.reject(status);
         });
         return defer.promise;
     }
@@ -750,6 +756,9 @@ app.factory('APIUsage', ['$http', 'Authentication', 'atlasApiHost', '$q',
             }else{
                 defer.reject(status);
             }
+        })
+        .error(function(data, status) {
+            defer.reject(status);
         });
         return defer.promise;
     }
@@ -767,6 +776,9 @@ app.factory('APIUsage', ['$http', 'Authentication', 'atlasApiHost', '$q',
             }else{
                 defer.reject(status);
             }
+        })
+        .error(function(data, status) {
+            defer.reject(status);
         });
         return defer.promise;
     }
@@ -2454,7 +2466,12 @@ var app = angular.module('atlasAdmin.controllers.admins.usage', []);
 
 app.controller('CtrlUsage', ['$scope', '$rootScope', 'APIUsage', 
     function($scope, $rootScope, Usage) {
-     
+    $scope.apiKey = '';
+
+    $scope.errorMessage = function(msg) {
+        console.log(msg);
+    }
+
     function Graph(data) {
         var histogram = data.facets[0].entries;
         var maxCount = _.max(histogram, function(n) {
@@ -2532,51 +2549,71 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'APIUsage',
     }
 
     var loadGraphHour = function() {
-        $scope.tabState = 'hour';
-        Usage.hour('84097c4de516445eb7bb58f4b73d2842').then(function(data) {
-            var endTime = new Date(),
-                startTime = new Date(new Date().setHours(endTime.getHours()-1));
-            var graph = new Graph(data);
-            graph.endTime = endTime;
-            graph.startTime = startTime;
-            graph.draw();
-        });
+        var _key = $scope.apiKey || '';
+        if (_key.length) {
+            $scope.tabState = 'hour';
+            Usage.hour(_key).then(function(data) {
+                var endTime = new Date(),
+                    startTime = new Date(new Date().setHours(endTime.getHours()-1));
+                var graph = new Graph(data);
+                graph.endTime = endTime;
+                graph.startTime = startTime;
+                graph.draw();
+            }, function(err) {
+                $scope.errorMessage('Can\'t load data for the api key')
+            });
+        }
     }
 
     var loadGraphDay = function() {
-        $scope.tabState = 'day';
-        Usage.day('84097c4de516445eb7bb58f4b73d2842').then(function(data) {
-            var endTime = new Date(),
-                startTime = new Date(new Date().setHours(endTime.getHours()-24));
-            var graph = new Graph(data);
-            graph.endTime = endTime;
-            graph.startTime = startTime;
-            graph.draw();
-        });
+        var _key = $scope.apiKey || '';
+        if (_key.length) {
+            $scope.tabState = 'day';
+            Usage.day(_key).then(function(data) {
+                var endTime = new Date(),
+                    startTime = new Date(new Date().setHours(endTime.getHours()-24));
+                var graph = new Graph(data);
+                graph.endTime = endTime;
+                graph.startTime = startTime;
+                graph.draw();
+            }, function(err) {
+                $scope.errorMessage('Can\'t load data for the api key')
+            });
+        }
     }
 
     var loadGraphWeek = function() {
-        $scope.tabState = 'week';
-        Usage.week('84097c4de516445eb7bb58f4b73d2842').then(function(data) {
-            var endTime = new Date(),
-                startTime = new Date(new Date().setDate(endTime.getDate()-7));
-            var graph = new Graph(data);
-            graph.endTime = endTime;
-            graph.startTime = startTime;
-            graph.draw();
-        });
+        var _key = $scope.apiKey || '';
+        if (_key.length) {
+            $scope.tabState = 'week';
+            Usage.week(_key).then(function(data) {
+                var endTime = new Date(),
+                    startTime = new Date(new Date().setDate(endTime.getDate()-7));
+                var graph = new Graph(data);
+                graph.endTime = endTime;
+                graph.startTime = startTime;
+                graph.draw();
+            }, function(err) {
+                $scope.errorMessage('Can\'t load data for the api key')
+            });
+        }
     }
 
     var loadGraphMonth = function() {
-        $scope.tabState = 'month';
-        Usage.month('84097c4de516445eb7bb58f4b73d2842').then(function(data) {
-            var endTime = new Date(),
-                startTime = new Date(new Date().setDate(endTime.getDate()-30));
-            var graph = new Graph(data);
-            graph.endTime = endTime;
-            graph.startTime = startTime;
-            graph.draw();
-        });
+        var _key = $scope.apiKey || '';
+        if (_key.length) {
+            $scope.tabState = 'month';
+            Usage.month(_key).then(function(data) {
+                var endTime = new Date(),
+                    startTime = new Date(new Date().setDate(endTime.getDate()-30));
+                var graph = new Graph(data);
+                graph.endTime = endTime;
+                graph.startTime = startTime;
+                graph.draw();
+            }, function(err) {
+                $scope.errorMessage('Can\'t load data for the api key')
+            });
+        }
     }
 
     loadGraphDay();
