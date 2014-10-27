@@ -8,6 +8,9 @@ var common = require('../../common'),
 
 function Logstash() {
     var _logstash_host = 'node1.logstash.mbst.tv';
+    var _errors = {
+        connection: {'error': 'There was a problem connecting to elasticsearch'}
+    }
 
 
     //  For converting a date into a timestamp
@@ -126,11 +129,12 @@ function Logstash() {
             response.on('error', function(err) {
                 console.log('ES response error');
                 console.log(err);
+                defer.reject(JSON.stringify(_errors.connection));
             })
         });
 
         req.on('error', function(err) {
-            console.error('Problem with ES request');
+            console.log('Problem with ES request');
             console.log(err);
         })
 
@@ -155,8 +159,7 @@ function Logstash() {
         }
         var _end = new Date();
         var _start = new Date(new Date().setHours(_end.getHours() - 1));
-        console.log('hour: '+_start);
-        query_elasticsearch(_start, _end, key).then(defer.resolve);
+        query_elasticsearch(_start, _end, key).then(defer.resolve, defer.reject);
         return defer.promise;
     }
 
@@ -175,8 +178,7 @@ function Logstash() {
         }
         var _end = new Date();
         var _start = new Date(new Date().setHours(_end.getHours() - 24));
-        console.log('day: '+_start);
-        query_elasticsearch(_start, _end, key).then(defer.resolve);
+        query_elasticsearch(_start, _end, key).then(defer.resolve, defer.reject);
         return defer.promise;
     }
 
@@ -195,8 +197,7 @@ function Logstash() {
         }
         var _end = new Date();
         var _start = new Date(new Date().setDate(_end.getDate()-7));
-        console.log('week: '+_start);
-        query_elasticsearch(_start, _end, key).then(defer.resolve);
+        query_elasticsearch(_start, _end, key).then(defer.resolve, defer.reject);
         return defer.promise;
     }
 
@@ -215,8 +216,7 @@ function Logstash() {
         }
         var _end = new Date();
         var _start = new Date(new Date().setDate(_end.getDate()-30));
-        console.log('month: '+_start);
-        query_elasticsearch(_start, _end, key).then(defer.resolve);
+        query_elasticsearch(_start, _end, key).then(defer.resolve, defer.reject);
         return defer.promise;
     }
 

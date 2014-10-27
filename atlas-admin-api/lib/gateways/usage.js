@@ -20,21 +20,29 @@ function Usage() {
                 case 'hour':
                     Logstash.search.past_hour(key).then(function(data) {
                         res.end(data);
+                    }, function(err) {
+                        res.end(err);
                     });
                     break;
                 case 'day':
                     Logstash.search.past_day(key).then(function(data) {
                         res.end(data);
+                    }, function(err) {
+                        res.end(err);
                     });
                     break;
                 case 'week':
                     Logstash.search.past_week(key).then(function(data) {
                         res.end(data);
+                    }, function(err) {
+                        res.end(err);
                     });
                     break;
                 case 'month':
                     Logstash.search.past_month(key).then(function(data) {
                         res.end(data);
+                    }, function(err) {
+                        res.end(err);
                     });
                     break;
             }
