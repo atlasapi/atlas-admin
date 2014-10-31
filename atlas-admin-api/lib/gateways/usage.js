@@ -13,6 +13,11 @@ function Usage() {
     // used for requesting usage data about a api key over a certain time period
     router.route('/:apiKey/:timePeriod')
         .get(function(req, res) {
+            var isAdmin = (common.user.role === 'admin')? true : false;
+            if (!isAdmin) {
+                res.end(JSON.stringify(common.errors.not_permitted));
+                return;
+            }
             var key = req.param('apiKey'),
                 time_period = req.param('timePeriod');
 
