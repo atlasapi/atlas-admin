@@ -22,7 +22,7 @@
                 <tbody>
                     <tr ng-repeat="user in app.users | filter:query | orderBy:app.predicate:app.reverse | startFrom:(app.currentPage-1)*app.pageSize | limitTo:app.pageSize">
                         <td>
-                            <a ng-href="#/users/{{user.id}}">
+                            <a ng-href="#/manage/users/{{user.id}}">
                                <span ng-show="user.full_name">{{user.full_name}}</span>
                                <span ng-show="user.full_name == null">No details for {{user.id}}</span>
                             </a>
