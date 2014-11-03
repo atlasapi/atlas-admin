@@ -9,6 +9,7 @@ var config                       = require('./config'),
     gatewayRequests              = require('./lib/gateways/requests'),
     gatewayPropositions          = require('./lib/gateways/propositions'),
     gatewayUsage                 = require('./lib/gateways/usage'),
+    gatewayFeeds                 = require('./lib/gateways/feeds'),
     gatewayWishes                = require('./lib/gateways/wishes');
 
 var _http_port = config.port.http;
@@ -42,6 +43,7 @@ mongoclient.open(function(err, mongo) {
     app.use(config.paths.apiRoot + '/propositions', gatewayPropositions(db));
     app.use(config.paths.apiRoot + '/wishes',       gatewayWishes(db));
     app.use(config.paths.apiRoot + '/usage',        gatewayUsage(db));
+    app.use(config.paths.apiRoot + '/feeds',        gatewayFeeds(db));
 
     // return group info for current user
     app.use(config.paths.apiRoot + '/groups', require('./lib/middleware/userGroups').query(db));

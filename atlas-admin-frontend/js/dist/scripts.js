@@ -14,6 +14,7 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.services.uservideosources.youtube',
                                 'atlasAdmin.services.propositions',
                                 'atlasAdmin.services.usage',
+                                'atlasAdmin.services.feeds',
                                 'atlasAdmin.directives.orderable', 
                                 'atlasAdmin.directives.focus',
                                 'atlasAdmin.directives.activePath',
@@ -28,6 +29,7 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.controllers.requestSource',
                                 'atlasAdmin.controllers.sourceRequests',
                                 'atlasAdmin.controllers.user',
+                                'atlasAdmin.controllers.feeds',
                                 'atlasAdmin.controllers.uservideosources',
                                 'atlasAdmin.controllers.uservideosources.youtube',
                                 'atlasAdmin.controllers.admins.usage',
@@ -58,6 +60,8 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/oauth/:providerNamespace', {templateUrl: 'partials/oauth.html', controller: 'CtrlOAuth', reloadOnSearch: false});
     $routeProvider.when('/terms', {templateUrl: 'partials/terms.html', controller: 'UserLicenseController'});
     $routeProvider.when('/profile', {templateUrl: 'partials/profile.html', controller: 'UserProfileController'});
+    $routeProvider.when('/feeds', {templateUrl: 'partials/feeds/feeds.html', controller: 'CtrlFeeds'});
+    $routeProvider.when('/feeds/:feedId', {templateUrl: 'partials/feeds/console.html', controller: 'CtrlFeedsConsole'});
     $routeProvider.when('/videosource/providers', {templateUrl: 'partials/videoSourceProviders.html', controller: 'CtrlVideoSourceProviders'});
     $routeProvider.when('/videosource/config/youtube', {templateUrl: 'partials/videoSourceYouTubeConfig.html', controller: 'CtrlVideoSourceYouTubeConfig'});
     $routeProvider.when('/logout', {templateUrl: 'partials/logout.html', controller: 'CtrlLogout'});
@@ -285,7 +289,8 @@ app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $
 /* Services */
 var app = angular.module('atlasAdmin.services.users', []);
 
-app.factory('Users', function(Atlas, $rootScope, ProfileStatus, $log) {
+app.factory('Users', ['Atlas', '$rootScope', 'ProfileStatus', '$log', 'atlasApiHost', '$q',
+    function(Atlas, $rootScope, ProfileStatus, $log, atlasApiHost, $q) {
     return {
         currentUser: function() {
             return Atlas.getRequest('/auth/user.json').then(function(result) {
@@ -332,7 +337,7 @@ app.factory('Users', function(Atlas, $rootScope, ProfileStatus, $log) {
             );
         }
     };
-});
+}]);
 app.factory('ProfileStatus', function() {
     return {
         setComplete: function(status) {
@@ -868,6 +873,35 @@ app.factory('factoryWishes', ['$http', 'Authentication', 'atlasApiHost', '$q',
         user: getUserWishes
     }
 }])
+'use strict';
+var app = angular.module('atlasAdmin.services.feeds', []);
+
+app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
+    function($http, Authentication, atlasApiHost, $q) {
+
+    var getFeeds = function() {
+        var defer = $q.defer();
+        $http({
+            method: 'get',
+            url: Authentication.appendTokenToUrl(atlasApiHost+'/feeds')
+        })
+        .success(function(data, status) {
+            if (status === 200) {
+                defer.resolve(data)
+            }else{
+                defer.reject(err);
+            }
+        })
+        .error(function(data, status) {
+            defer.reject(status);
+        });
+        return defer.promise;
+    }
+
+    return {
+        get: getFeeds
+    }
+}]);
 'use strict';
 
 /* Filters */
@@ -1740,6 +1774,29 @@ app.controller('CtrlVideoSourceYouTubeConfig', function($scope, $rootScope, User
         });
     };
 });
+'use strict';
+var app = angular.module('atlasAdmin.controllers.feeds', []);
+
+app.controller('CtrlFeeds', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q',
+    function($scope, $rootScope, $routeParams, Feeds, $q) {
+    $scope.view_title = 'Feeds'
+    
+    Feeds.get().then(function(data) {
+        console.log(data);
+        if (!_.isEmpty(data)) {
+            $scope.feeds = data;
+        }
+    });
+}])
+'use strict';
+var app = angular.module('atlasAdmin.controllers.feeds');
+
+app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q',
+    function($scope, $rootScope, $routeParams, Feeds, $q) {
+    $scope.view_title = 'Feeds Console'
+    
+    
+}])
 'use strict';
 
 // define 'applications' module to be used for application controllers
