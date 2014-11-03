@@ -21,7 +21,9 @@ var wishlistInterface = function(db) {
             var user = common.user;
             if (user.role === 'admin') {
                 wishesCollection.find({}, {}).toArray(function(err, data) {
-                    if (err) throw err;
+                    if (err) {
+                        console.error(err);
+                    }
                     var output = JSON.stringify(data) || JSON.stringify(common.errors.no_data);
                     res.end(output);
                 })
@@ -74,7 +76,9 @@ var wishlistInterface = function(db) {
             }
             if (userId === 'current') userId = common.user.id;
             wishesCollection.find({'user.id': userId}, {}).toArray(function(err, data) {
-                if (err) throw err;
+                if (err) {
+                    console.error(err);
+                }
                 var output = JSON.stringify(data) || JSON.stringify(common.errors.no_data);
                 res.end(output);
             })

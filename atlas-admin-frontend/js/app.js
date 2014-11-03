@@ -13,6 +13,7 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.services.uservideosources',
                                 'atlasAdmin.services.uservideosources.youtube',
                                 'atlasAdmin.services.propositions',
+                                'atlasAdmin.services.usage',
                                 'atlasAdmin.directives.orderable', 
                                 'atlasAdmin.directives.focus',
                                 'atlasAdmin.directives.activePath',
@@ -29,6 +30,7 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.controllers.user',
                                 'atlasAdmin.controllers.uservideosources',
                                 'atlasAdmin.controllers.uservideosources.youtube',
+                                'atlasAdmin.controllers.admins.usage',
                                 'atlasAdmin.controllers.admins.manageSourceRequests',
                                 'atlasAdmin.controllers.admins.manageWishlist',
                                 'ui.bootstrap',
@@ -44,6 +46,7 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/manage/users', {templateUrl: 'partials/admins/users.html', controller: 'AllUsersController'});
     $routeProvider.when('/manage/users/:uid', {templateUrl: 'partials/admins/profile.html', controller: 'UserProfileController'});
     $routeProvider.when('/manage/wishlist', {templateUrl: 'partials/admins/wishlist/manageWishlist.html', controller: 'CtrlManageWishlist'});
+    $routeProvider.when('/manage/usage', {templateUrl: 'partials/admins/usage/requests.html', controller: 'CtrlUsage'});
 
     // application user routes
     $routeProvider.when('/applications', {templateUrl: 'partials/applications.html', controller: 'CtrlApplications'});
@@ -101,7 +104,7 @@ app.config(['$httpProvider', function($httpProvider) {
             return $q.reject(response);
         }
 
-        return function (promise) {
+        return function(promise) {
             // get $rootScope via $injector because of circular dependency problem
             rootScope = rootScope || $injector.get('$rootScope');
             if (!rootScope.show) {

@@ -48,7 +48,7 @@ var sendSourceToAtlas = function(appId, sourceId) {
 var approveSourceRequest = function(request_id) {
     var defer = Q.defer();
     if (!_.isString(request_id)) { 
-        defer.reject('request_id must be a string');
+        defer.reject('approveSourceRequest(): request_id must be a string');
         return;
     }
     Atlas.request('/requests/'+request_id+'/approve', 'POST', function(data) {
@@ -72,7 +72,7 @@ var autoApproveAdmin = function(appId, sourceId) {
                 defer.resolve();
             }, 
             function error(err) {
-                console.error('request_id must be a string');
+                defer.reject(err);
             });
         }else{
             defer.reject('No request object present')
@@ -104,13 +104,13 @@ var getRequestInfo = function(appId, sourceId) {
 //
 //  @param db {object} the mongo database object
 //
-var sourceRequest = function(db) {
+function SourceRequest(db) {
     var router      = express.Router(),
         collection  = db.collection('sourceRequests');
 
     router.route('/')
         // used for making a request to use a source. Admin users automatically have their
-        // sources enabled by default
+        // source requests authorised 
         .post(function(req, res) {
             if (!'app' in req.body ||!'source' in req.body) {
                 console.error('app and source params must be sent with POST request')
@@ -184,4 +184,4 @@ var sourceRequest = function(db) {
     return router;
 }
 
-module.exports = sourceRequest;
+module.exports = SourceRequest;

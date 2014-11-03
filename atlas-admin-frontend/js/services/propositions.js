@@ -4,9 +4,7 @@ var app = angular.module('atlasAdmin.services.propositions', []);
 
 app.factory('factoryPropositions', ['$http', 'Authentication', 'atlasApiHost', '$q', 
     function($http, Authentication, atlasApiHost, $q) {
-
     var endpoint = atlasApiHost + '/propositions';
-
 
     //  Get all propositions
     // 
