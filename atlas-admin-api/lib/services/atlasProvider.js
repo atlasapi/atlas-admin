@@ -31,7 +31,7 @@ function Atlas() {
             port: 80,
             method: type,
             host: config.atlasHost,
-            path: appendOauthToken('/4'+path),
+            path: appendOauthToken(path),
             headers: {
                 'Accept': 'application/json'
             }
