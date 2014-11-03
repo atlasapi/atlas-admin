@@ -1,10 +1,56 @@
 <div class="app-surface feedsConsole">
     <header class="app-header">
         <h1 class="page-title">{{view_title}}</h1>
+        <div class="overall-stats">
+            <h2 class="">Overall stats</h2>
+            <div class="stats-field">
+                <span class="stats-label">Queue size</span>
+                <span class="stats-data">1328</span>
+            </div>
+            <div class="stats-field">
+                <span class="stats-label">Latency</span>
+                <span class="stats-data">120ms</span>
+            </div>
+            <div class="stats-field">
+                <span class="stats-label">Uptime</span>
+                <span class="stats-data">1day, 14hrs</span>
+            </div>
+        </div>
     </header>
 
     <section class="panel-full console">
-      
+        <div class="transactions-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>
+                            <input class="search-cell" type="text">
+                        </th>
+                        <th>
+                            <input class="search-cell" type="text">
+                        </th>
+                        <th></th>
+                        <th>
+                            <input class="search-cell" type="text">
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>Content URI</th>
+                        <th>Transaction ID</th>
+                        <th>Upload time</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="transaction in transactions">
+                        <td></td>
+                        <td>{{transaction.id}}</td>
+                        <td>{{transaction.upload_time}}</td>
+                        <td>{{transaction.status}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </section>
 </div>
 
