@@ -13,13 +13,13 @@ var config      = require('../../config'),
 //
 //  @returns promise
 //
-function proxyRequest(request) {
+function proxyRequest(endpoint, request) {
     var defer           = Q.defer(),
         _apikey         = '1a8c17b3ed3040aca8c30a46bd38e685',
-        _endpoint       = request.params.endpoint,
+        _endpoint       = endpoint,
         _annotations    = request.query.annotations || null,
         query           = qs.stringify({ apiKey: _apikey, annotations: _annotations });
-    Atlas.request('/3.0/feeds/youview/bbc_nitro/'+_endpoint+'.json?'+query, 'GET', function(status, data) {
+    Atlas.request('/3.0/feeds/youview/bbc_nitro/'+_endpoint+'?'+query, 'GET', function(status, data) {
         defer.resolve(JSON.parse(data));
     });
     return defer.promise;
@@ -44,7 +44,17 @@ var feedsInterface = function() {
     //  auth checks before returning any data
     router.route('/youview/bbc_nitro/:endpoint.json')
         .get(function(req, res) {
-            proxyRequest(req).then(function(result) {
+            proxyRequest(req.params.endpoint+'.json', req).then(function(result) {
+                res.end(JSON.stringify(result));
+            }, function(err) {
+                console.error(err)
+                res.end(JSON.stringify(common.errors.request_error));
+            });
+        });
+
+    router.route('/youview/bbc_nitro/transactions/:transaction.json')
+        .get(function(req, res) {
+            proxyRequest('transactions/'+req.params.transaction+'.json', req).then(function(result) {
                 res.end(JSON.stringify(result));
             }, function(err) {
                 console.error(err)
