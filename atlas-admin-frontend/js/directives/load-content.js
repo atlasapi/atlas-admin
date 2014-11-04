@@ -7,7 +7,7 @@ app.directive('loadContent', ['$document', 'FeedsService', '$q',
     var loadContent = function(content) {
         var defer = $q.defer();
         if (!_loaded) {
-            Feeds.request('youview/bbc_nitro?uri='+content).then(function(xmlData){
+            Feeds.request('youview/bbc_nitro.xml?uri='+content).then(function(xmlData){
                 defer.resolve(xmlData);
                 _loaded = true;
             });
@@ -24,9 +24,12 @@ app.directive('loadContent', ['$document', 'FeedsService', '$q',
         $scope.showData = false;
 
         $('.loadData', $el).on('click', function() {
+            var _this = $(this);
+            _this.text('Loading data...');
             loadContent(_content).then(function(xml) {
                 $scope.xml = xml;
                 $scope.showData = true;
+                _this.remove();
             });
         })
     }

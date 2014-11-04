@@ -1,0 +1,40 @@
+// matrix is a simple table
+.matrix {
+    @extend %cf;
+    width: 50%;
+    border: 1px solid $color-purple;
+    border-radius: 5px;
+}
+
+.matrix-title {
+    box-sizing: border-box;
+    padding: 1rem;
+}
+
+.matrix-body {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 1rem;
+}
+
+.matrix-title {
+    @extend %cf;
+    display: block;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.matrix-row {
+    @extend %cf;
+    width: 100%;
+    margin: .5rem;
+    border-bottom: 1px solid $color-purple;
+}
+
+.matrix-label {
+    @extend %cf;
+    display: block;
+    float: left;
+    width: 50%;
+}

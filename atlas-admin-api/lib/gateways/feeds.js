@@ -6,7 +6,9 @@ var config      = require('../../config'),
     Q           = require('q'),
     qs          = require('querystring'),
     _           = require('lodash'),
-    Atlas       = require('../services/atlasProvider');
+    Feeds       = require('../services/feedsProvider'),
+    Atlas       = require('../services/atlasProvider'),
+    _apikey     = null;
 
 
 //  Used for proxying requests to atlas and returning the result
@@ -15,7 +17,6 @@ var config      = require('../../config'),
 //
 function proxyRequest(endpoint, request) {
     var defer           = Q.defer(),
-        _apikey         = '1a8c17b3ed3040aca8c30a46bd38e685',
         _endpoint       = endpoint,
         _annotations    = request.query.annotations || null,
         query           = qs.stringify({ apiKey: _apikey, annotations: _annotations });
@@ -27,11 +28,10 @@ function proxyRequest(endpoint, request) {
 
 function getXML(uri) {
     var defer = Q.defer(),
-        _apikey = '1a8c17b3ed3040aca8c30a46bd38e685',
         _uri = uri || null,
         query = qs.stringify({apiKey: _apikey, uri: _uri});
     if (_uri) {
-        Atlas.request('/3.0/feeds/youview/bbc_nitro?'+query, 'GET', function(status, data) {
+        Atlas.request('/3.0/feeds/youview/bbc_nitro.xml?'+query, 'GET', function(status, data) {
             defer.resolve(data);
         });
     }
@@ -48,12 +48,17 @@ var feedsInterface = function() {
         endpoint: "/3.0/feeds/youview"
     }];
 
+    Feeds.getAll().then(function(feeds) {
+        _apikey = feeds[0].apiKey;
+    })
+
     router.route('/')
         .get(function(req, res) {
             res.end(JSON.stringify(_feeds));
         });
 
-    router.route('/youview/bbc_nitro')
+    //  return xml data
+    router.route('/youview/bbc_nitro.xml')
         .get(function(req, res) {
             var _uri = req.query.uri || null;
             if (_uri) {

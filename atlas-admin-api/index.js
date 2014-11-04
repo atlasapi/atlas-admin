@@ -37,6 +37,7 @@ var mongoclient = new MongoClient(
 mongoclient.open(function(err, mongo) {
     if (err) console.error(err); 
     var db = mongo.db(config.database.name);
+    common.db = db;
 
     // register gateway REST endpoints
     app.use(config.paths.apiRoot + '/requests',     gatewayRequests(db));

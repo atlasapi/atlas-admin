@@ -921,12 +921,10 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
     //
     var request = function(feed_uri) {
         var defer = $q.defer();
-
         if (!_.isString(feed_uri)) {
             defer.reject('Feed uri must be included as first argument')
             return defer.promise;
         }
-
         $http({
             method: 'get',
             url: Authentication.appendTokenToUrl(atlasApiHost+'/feeds/'+feed_uri)
@@ -934,7 +932,6 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
         .success(function(data, status) {
             defer.resolve(data);
         });
-
         return defer.promise;
     }
     
@@ -1224,7 +1221,7 @@ app.directive('loadContent', ['$document', 'FeedsService', '$q',
     var loadContent = function(content) {
         var defer = $q.defer();
         if (!_loaded) {
-            Feeds.request('youview/bbc_nitro?uri='+content).then(function(xmlData){
+            Feeds.request('youview/bbc_nitro.xml?uri='+content).then(function(xmlData){
                 defer.resolve(xmlData);
                 _loaded = true;
             });
@@ -1241,9 +1238,12 @@ app.directive('loadContent', ['$document', 'FeedsService', '$q',
         $scope.showData = false;
 
         $('.loadData', $el).on('click', function() {
+            var _this = $(this);
+            _this.text('Loading data...');
             loadContent(_content).then(function(xml) {
                 $scope.xml = xml;
                 $scope.showData = true;
+                _this.remove();
             });
         })
     }
@@ -1874,13 +1874,26 @@ var app = angular.module('atlasAdmin.controllers.feeds');
 
 app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q',
     function($scope, $rootScope, $routeParams, Feeds, $q) {
-    $scope.view_title = 'Feeds Console'
+    $scope.error = {};
+    $scope.error.show = false;
+    $scope.view_title = 'Feeds Console';
+
+    // set up ordering
+    $scope.table = {};
+    $scope.table.reverse = false;
+    $scope.table.order = 'id';
+
+    $scope.search = {};
 
     Feeds.request('youview/bbc_nitro/transactions.json')
     .then(function(data) {
+        if (_.isObject(data.error)) {
+            $scope.error.show = true;
+            $scope.error.obj = data.error;
+        }
         $scope.transactions = data.transactions;
-        console.log(data);
     });
+
 
     //  Used for calculating uptime since last outage
     //
@@ -1897,7 +1910,6 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     .then(function(data) {
         $scope.statistics = data.feed_stats[0];
         $scope.statistics.uptime = calculateUptime( new Date(data.feed_stats[0].last_outage) );
-        console.log(data.feed_stats[0]);
     });
 }])
 var app = angular.module('atlasAdmin.controllers.feeds');
@@ -1910,7 +1922,6 @@ app.controller('CtrlFeedsBreakdown', ['$scope', '$rootScope', '$routeParams', 'F
     Feeds.request('youview/bbc_nitro/transactions/'+$routeParams.transactionId+'.json?annotations=status_detail')
     .then(function(transaction) {
         var _transaction = transaction.transactions[0];
-        console.log(_transaction)
         $scope.transaction = _transaction;
         $scope.view_title = "Breakdown for "+_transaction.id;
     });
@@ -1920,7 +1931,6 @@ app.controller('CtrlFeedsBreakdown', ['$scope', '$rootScope', '$routeParams', 'F
 
 // define 'applications' module to be used for application controllers
 angular.module('atlasAdmin.controllers.applications', []);
-
 
 angular.module('atlasAdmin.controllers.applications')
 .controller('CtrlApplications', ['$scope', '$rootScope', '$routeParams', 'Applications', '$modal', '$location',

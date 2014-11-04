@@ -3,13 +3,26 @@ var app = angular.module('atlasAdmin.controllers.feeds');
 
 app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q',
     function($scope, $rootScope, $routeParams, Feeds, $q) {
-    $scope.view_title = 'Feeds Console'
+    $scope.error = {};
+    $scope.error.show = false;
+    $scope.view_title = 'Feeds Console';
+
+    // set up ordering
+    $scope.table = {};
+    $scope.table.reverse = false;
+    $scope.table.order = 'id';
+
+    $scope.search = {};
 
     Feeds.request('youview/bbc_nitro/transactions.json')
     .then(function(data) {
+        if (_.isObject(data.error)) {
+            $scope.error.show = true;
+            $scope.error.obj = data.error;
+        }
         $scope.transactions = data.transactions;
-        console.log(data);
     });
+
 
     //  Used for calculating uptime since last outage
     //
@@ -26,6 +39,5 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     .then(function(data) {
         $scope.statistics = data.feed_stats[0];
         $scope.statistics.uptime = calculateUptime( new Date(data.feed_stats[0].last_outage) );
-        console.log(data.feed_stats[0]);
     });
 }])
