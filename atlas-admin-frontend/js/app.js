@@ -20,6 +20,7 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.directives.activePath',
                                 'atlasAdmin.directives.validUsage',
                                 'atlasAdmin.directives.inputmorph',
+                                'atlasAdmin.directives.loadContent',
                                 'atlasAdmin.controllers.auth',
                                 'atlasAdmin.controllers.atlas',
                                 'atlasAdmin.controllers.errors',
@@ -62,6 +63,7 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/profile', {templateUrl: 'partials/profile.html', controller: 'UserProfileController'});
     $routeProvider.when('/feeds', {templateUrl: 'partials/feeds/feeds.html', controller: 'CtrlFeeds'});
     $routeProvider.when('/feeds/:feedId', {templateUrl: 'partials/feeds/console.html', controller: 'CtrlFeedsConsole'});
+    $routeProvider.when('/feeds/:feedId/:transactionId', {templateUrl: 'partials/feeds/breakdown.html', controller: 'CtrlFeedsBreakdown'});
     $routeProvider.when('/videosource/providers', {templateUrl: 'partials/videoSourceProviders.html', controller: 'CtrlVideoSourceProviders'});
     $routeProvider.when('/videosource/config/youtube', {templateUrl: 'partials/videoSourceYouTubeConfig.html', controller: 'CtrlVideoSourceYouTubeConfig'});
     $routeProvider.when('/logout', {templateUrl: 'partials/logout.html', controller: 'CtrlLogout'});

@@ -29,14 +29,14 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
 
     //  Used for making a request
     //
+    //  @param feed_uri {string}
     //  @returns promise
     //
-    var request = function(feed_uri, annotations) {
-        var defer = $q.defer(),
-            _annotations = annotations || null;
+    var request = function(feed_uri) {
+        var defer = $q.defer();
 
         if (!_.isString(feed_uri)) {
-            defer.reject('Feed uri must be included')
+            defer.reject('Feed uri must be included as first argument')
             return defer.promise;
         }
 

@@ -25,6 +25,19 @@ function proxyRequest(endpoint, request) {
     return defer.promise;
 }
 
+function getXML(uri) {
+    var defer = Q.defer(),
+        _apikey = '1a8c17b3ed3040aca8c30a46bd38e685',
+        _uri = uri || null,
+        query = qs.stringify({apiKey: _apikey, uri: _uri});
+    if (_uri) {
+        Atlas.request('/3.0/feeds/youview/bbc_nitro?'+query, 'GET', function(status, data) {
+            defer.resolve(data);
+        });
+    }
+    return defer.promise;
+}
+
 //  REST interface for feeds 
 //
 var feedsInterface = function() {
@@ -40,11 +53,25 @@ var feedsInterface = function() {
             res.end(JSON.stringify(_feeds));
         });
 
+    router.route('/youview/bbc_nitro')
+        .get(function(req, res) {
+            var _uri = req.query.uri || null;
+            if (_uri) {
+                getXML(_uri).then(function(xml) {
+                    res.setHeader('Content-Type', 'application/xml');
+                    res.end(xml);
+                })
+            }else{
+                res.end(JSON.stringify(common.errors.invalid_data));
+            }
+        });
+
     //  hardwired for now, catch the request to atlas so we can run 
     //  auth checks before returning any data
-    router.route('/youview/bbc_nitro/:endpoint.json')
+    router.route('/youview/bbc_nitro/:endpoint')
         .get(function(req, res) {
-            proxyRequest(req.params.endpoint+'.json', req).then(function(result) {
+            proxyRequest(req.params.endpoint, req).then(function(result) {
+                var _output;
                 res.end(JSON.stringify(result));
             }, function(err) {
                 console.error(err)
@@ -52,6 +79,7 @@ var feedsInterface = function() {
             });
         });
 
+    // For getting data about a particular transaction 
     router.route('/youview/bbc_nitro/transactions/:transaction.json')
         .get(function(req, res) {
             proxyRequest('transactions/'+req.params.transaction+'.json', req).then(function(result) {

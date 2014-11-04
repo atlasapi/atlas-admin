@@ -1,0 +1,28 @@
+<div class="app-surface feedsBreakdown">
+    <header class="app-header">
+        <h1 class="page-title">{{view_title}}</h1>
+        <div class="header-support">
+            <a class="button" href="#/feeds/youview">&larr; Back to console</a>
+        </div>
+    </header>
+
+    <section class="panel-full breakdown-status">
+        <div class="grid">
+            <header class="grid-title">
+                <h1>Status</h1>
+            </header>
+            <div class="grid-content">
+                <div class="grid-row">
+                    <span class="grid-label">Transaction status</span><span class="grid-content">{{transaction.status}} <a href="">See details</a></span>
+                    <span class="grid-label">Publisher</span><span class="grid-content">{{transaction.publisher}}</span>
+                    <span class="grid-label">Upload time</span><span class="grid-content">{{transaction.upload_time}}</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel-full breakdown-content">
+        <div class="load-xml" load-content ng-repeat="content in transaction.content" content="{{content}}"></div>
+    </section>
+</div>
+

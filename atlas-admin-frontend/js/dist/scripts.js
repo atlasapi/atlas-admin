@@ -20,6 +20,7 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.directives.activePath',
                                 'atlasAdmin.directives.validUsage',
                                 'atlasAdmin.directives.inputmorph',
+                                'atlasAdmin.directives.loadContent',
                                 'atlasAdmin.controllers.auth',
                                 'atlasAdmin.controllers.atlas',
                                 'atlasAdmin.controllers.errors',
@@ -62,6 +63,7 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/profile', {templateUrl: 'partials/profile.html', controller: 'UserProfileController'});
     $routeProvider.when('/feeds', {templateUrl: 'partials/feeds/feeds.html', controller: 'CtrlFeeds'});
     $routeProvider.when('/feeds/:feedId', {templateUrl: 'partials/feeds/console.html', controller: 'CtrlFeedsConsole'});
+    $routeProvider.when('/feeds/:feedId/:transactionId', {templateUrl: 'partials/feeds/breakdown.html', controller: 'CtrlFeedsBreakdown'});
     $routeProvider.when('/videosource/providers', {templateUrl: 'partials/videoSourceProviders.html', controller: 'CtrlVideoSourceProviders'});
     $routeProvider.when('/videosource/config/youtube', {templateUrl: 'partials/videoSourceYouTubeConfig.html', controller: 'CtrlVideoSourceYouTubeConfig'});
     $routeProvider.when('/logout', {templateUrl: 'partials/logout.html', controller: 'CtrlLogout'});
@@ -289,8 +291,8 @@ app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $
 /* Services */
 var app = angular.module('atlasAdmin.services.users', []);
 
-app.factory('Users', ['Atlas', '$rootScope', 'ProfileStatus', '$log', 'atlasApiHost', '$q',
-    function(Atlas, $rootScope, ProfileStatus, $log, atlasApiHost, $q) {
+app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'ProfileStatus', '$log', 'atlasApiHost', '$q',
+    function($http, Atlas, $rootScope, Authentication, ProfileStatus, $log, atlasApiHost, $q) {
     return {
         currentUser: function() {
             return Atlas.getRequest('/auth/user.json').then(function(result) {
@@ -335,6 +337,16 @@ app.factory('Users', ['Atlas', '$rootScope', 'ProfileStatus', '$log', 'atlasApiH
                     $log.error(error);
                 }
             );
+        },
+        groups: function() {
+            var defer = $q.defer();
+            $http({
+                method: 'get',
+                url: Authentication.appendTokenToUrl(atlasApiHost+'/groups')
+            })
+            .success(defer.resolve)
+            .error(defer.reject);
+            return defer.promise;
         }
     };
 }]);
@@ -904,14 +916,14 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
 
     //  Used for making a request
     //
+    //  @param feed_uri {string}
     //  @returns promise
     //
-    var request = function(feed_uri, annotations) {
-        var defer = $q.defer(),
-            _annotations = annotations || null;
+    var request = function(feed_uri) {
+        var defer = $q.defer();
 
         if (!_.isString(feed_uri)) {
-            defer.reject('Feed uri must be included')
+            defer.reject('Feed uri must be included as first argument')
             return defer.promise;
         }
 
@@ -1202,6 +1214,44 @@ app.directive('inputMorph', ['$document', function($document) {
             }
         })
     }
+}]);
+'use strict';
+var app = angular.module('atlasAdmin.directives.loadContent', []);
+
+app.directive('loadContent', ['$document', 'FeedsService', '$q',
+    function($document, Feeds, $q) {
+    var _loaded = false;
+    var loadContent = function(content) {
+        var defer = $q.defer();
+        if (!_loaded) {
+            Feeds.request('youview/bbc_nitro?uri='+content).then(function(xmlData){
+                defer.resolve(xmlData);
+                _loaded = true;
+            });
+        }else{
+            defer.reject(null);
+        }
+        return defer.promise;
+    }
+
+    var controller = function($scope, element, attr) {
+        var _content = attr.content,
+            $el = $(element);
+
+        $scope.showData = false;
+
+        $('.loadData', $el).on('click', function() {
+            loadContent(_content).then(function(xml) {
+                $scope.xml = xml;
+                $scope.showData = true;
+            });
+        })
+    }
+
+    return {
+        template: '<header>{{content}}<span class="button small loadData">Show data</span></header><div ng-show="showData" class="xml-data"><code>{{xml}}</code></div>',
+        link: controller
+    } 
 }]);
 'use strict';
 var app = angular.module('atlasAdmin.controllers.errors', []);
@@ -1648,7 +1698,8 @@ app.controller('AllUsersController', function($scope, $rootScope, $routeParams, 
     $scope.app.pageSize = 10;
     $scope.app.currentPage = 1;
 });
-app.controller('UserMenuController', function($scope, Users, $rootScope, Authentication, $location) {
+app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authentication', '$location', 'FeedsService',
+    function($scope, Users, $rootScope, Authentication, $location, Feeds) {
     // only try to get user if logged in
     $scope.app = {};
     $scope.app.dropdown = false;
@@ -1691,7 +1742,7 @@ app.controller('UserMenuController', function($scope, Users, $rootScope, Authent
             $scope.app.menu = buildMenu($scope.app.user);
         });
     }
-});
+}]);
 app.controller('UserLicenseController', function($scope, $rootScope, $routeParams, Users, $location, $window, $sce, $log) {
     // only try to get user if logged in
     $scope.app = {};
@@ -1831,11 +1882,39 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
         console.log(data);
     });
 
+    //  Used for calculating uptime since last outage
+    //
+    //  @param last_outage {date}
+    //
+    var calculateUptime = function(last_outage) {
+        var _now = new Date(),
+            _then = last_outage,
+            _delta = Math.round(Math.abs((_now.getTime() - _then.getTime()))/(24*60*60*1000));
+        return _delta.toString();
+    }
+
     Feeds.request('youview/bbc_nitro/statistics.json')
     .then(function(data) {
-        $scope.statistics = data;
-        console.log(data);
+        $scope.statistics = data.feed_stats[0];
+        $scope.statistics.uptime = calculateUptime( new Date(data.feed_stats[0].last_outage) );
+        console.log(data.feed_stats[0]);
     });
+}])
+var app = angular.module('atlasAdmin.controllers.feeds');
+
+app.controller('CtrlFeedsBreakdown', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q',
+    function($scope, $rootScope, $routeParams, Feeds, $q) {
+
+    $scope.transactionID = $routeParams.transactionId;
+
+    Feeds.request('youview/bbc_nitro/transactions/'+$routeParams.transactionId+'.json?annotations=status_detail')
+    .then(function(transaction) {
+        var _transaction = transaction.transactions[0];
+        console.log(_transaction)
+        $scope.transaction = _transaction;
+        $scope.view_title = "Breakdown for "+_transaction.id;
+    });
+
 }])
 'use strict';
 

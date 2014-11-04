@@ -80,7 +80,8 @@ app.controller('AllUsersController', function($scope, $rootScope, $routeParams, 
     $scope.app.pageSize = 10;
     $scope.app.currentPage = 1;
 });
-app.controller('UserMenuController', function($scope, Users, $rootScope, Authentication, $location) {
+app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authentication', '$location', 'FeedsService',
+    function($scope, Users, $rootScope, Authentication, $location, Feeds) {
     // only try to get user if logged in
     $scope.app = {};
     $scope.app.dropdown = false;
@@ -123,7 +124,7 @@ app.controller('UserMenuController', function($scope, Users, $rootScope, Authent
             $scope.app.menu = buildMenu($scope.app.user);
         });
     }
-});
+}]);
 app.controller('UserLicenseController', function($scope, $rootScope, $routeParams, Users, $location, $window, $sce, $log) {
     // only try to get user if logged in
     $scope.app = {};
