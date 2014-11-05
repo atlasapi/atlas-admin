@@ -31,6 +31,7 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.controllers.sourceRequests',
                                 'atlasAdmin.controllers.user',
                                 'atlasAdmin.controllers.feeds',
+                                'atlasAdmin.controllers.epgWidget',
                                 'atlasAdmin.controllers.uservideosources',
                                 'atlasAdmin.controllers.uservideosources.youtube',
                                 'atlasAdmin.controllers.admins.usage',
@@ -50,6 +51,9 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/manage/users/:uid', {templateUrl: 'partials/profile.html', controller: 'UserProfileController'});
     $routeProvider.when('/manage/wishlist', {templateUrl: 'partials/admins/wishlist/manageWishlist.html', controller: 'CtrlManageWishlist'});
     $routeProvider.when('/manage/usage', {templateUrl: 'partials/admins/usage/requests.html', controller: 'CtrlUsage'});
+
+    // Add blackout widget page
+    $routeProvider.when('/epg/bt-tv', {templateUrl: 'partials/epg-widget.html', controller: 'CtrlEPGWidget'});
 
     // application user routes
     $routeProvider.when('/applications', {templateUrl: 'partials/applications.html', controller: 'CtrlApplications'});
@@ -1720,6 +1724,11 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
             {path:'/manage/usage', label:'API Usage', role:'admin'},
             {path:'/manage/wishlist', label:'Wishlist', role:'admin'}];
 
+        // Add blackout widget page
+        if (user.id === 'hk98') {
+            allMenu.push({path: '/epg/bt-tv', label: 'EPG'});
+        }
+
         var menu = [];
         var admin_menu = [];
         for (var i = 0; i < allMenu.length; i++) {
@@ -2403,6 +2412,12 @@ app.controller('customFeatureRequestModal', ['$scope', '$rootScope', '$routePara
     function($scope, $rootScope, $routeParams, $q) {
         
 }])
+var app = angular.module('atlasAdmin.controllers.epgWidget', []);
+
+app.controller('CtrlEPGWidget', ['$scope', '$rootScope', '$routeParams', '$q',
+    function($scope, $rootScope, $routeParams, $q) {
+    $scope.view_title = "BT Blackout widget";
+}]);
 'use strict';
 var app = angular.module('atlasAdmin.controllers.admins.manageWishlist', []);
 

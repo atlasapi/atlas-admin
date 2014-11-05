@@ -27,9 +27,6 @@ app.use( require('./lib/middleware/allowAccess') );
 // middleware: proxy atlas requests
 app.use( require('./lib/middleware/auth') );
 
-// middleware: user grouping
-app.use( require('./lib/middleware/userGroups').middleware );
-
 // open up a connection to mongodb, then register endpoints and boot the server
 var mongoclient = new MongoClient(
     new MongoServer(config.database.host, _mongo_port), {native_parser: true});
@@ -45,9 +42,6 @@ mongoclient.open(function(err, mongo) {
     app.use(config.paths.apiRoot + '/wishes',       gatewayWishes(db));
     app.use(config.paths.apiRoot + '/usage',        gatewayUsage(db));
     app.use(config.paths.apiRoot + '/feeds',        gatewayFeeds(db));
-
-    // return group info for current user
-    app.use(config.paths.apiRoot + '/groups', require('./lib/middleware/userGroups').query(db));
 
     // listen for requests to server on _http_port
     console.log('listen on port: ' + _http_port);
