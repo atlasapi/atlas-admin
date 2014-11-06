@@ -1620,7 +1620,7 @@ app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$sce', '$routePara
             $location.path('/applications/'+appId);
         }
 }]);
-'use strict';
+\'use strict';
 
 /* User Profile Controller */
 
@@ -1725,6 +1725,7 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
             {path:'/manage/wishlist', label:'Wishlist', role:'admin'}];
 
         // Add blackout widget page
+        console.log(user);
         if (user.id === 'hk98') {
             allMenu.push({path: '/epg/bt-tv', label: 'EPG'});
         }
@@ -2418,21 +2419,21 @@ app.controller('CtrlEPGWidget', ['$scope', '$rootScope', '$routeParams', '$q',
     function($scope, $rootScope, $routeParams, $q) {
     $scope.view_title = "BT Blackout widget";
 
-    $.getScript('http://widgets.metabroadcast.com/loader/1/load.js', function() {
-        MBST = MBST || {};
-        MBST.load({
-            client: 'btblackout',
-            widgets: [{
-                name: 'epg',
-                version: '1',
-                modules: {
-                    grid: {
-                        holder: '.epg-widget'
-                    }
-                }
-            }]
-        });
-    });
+    //$.getScript('http://widgets.metabroadcast.com/loader/1/load.js', function() {
+    //    MBST = MBST || {};
+    //    MBST.load({
+    //        client: 'btblackout',
+    //        widgets: [{
+    //            name: 'epg',
+    //            version: '1',
+    //            modules: {
+    //                grid: {
+    //                    holder: '.epg-widget'
+    //                }
+    //            }
+    //        }]
+    //    });
+    //});
 
 }]);
 'use strict';
