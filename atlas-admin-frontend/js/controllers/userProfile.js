@@ -101,6 +101,16 @@ app.controller('UserMenuController', function($scope, Users, $rootScope, Authent
             {path:'/manage/usage', label:'API Usage', role:'admin'},
             {path:'/manage/wishlist', label:'Wishlist', role:'admin'}];
 
+        // Add blackout widget page to navigation 
+        if (user.id === 'hk98' || 
+            user.id === 'hmbc' || 
+            user.id === 'hmjh' || 
+            user.id === 'hmjg' || 
+            user.id === 'hmjc' ||
+            user.id === 'hmbb') {
+            allMenu.push({path: '/epg/bt-tv', label: 'EPG'});
+        }
+
         var menu = [];
         var admin_menu = [];
         for (var i = 0; i < allMenu.length; i++) {
