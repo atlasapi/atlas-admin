@@ -102,9 +102,8 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
             {path:'/manage/usage', label:'API Usage', role:'admin'},
             {path:'/manage/wishlist', label:'Wishlist', role:'admin'}];
 
-        // Add blackout widget page
-        console.log(user);
-        if (user.id === 'hk98') {
+        // Add blackout widget page to navigation 
+        if (user.id === 'hk98' || user.id === 'hmbc' || user.id === 'hmbb') {
             allMenu.push({path: '/epg/bt-tv', label: 'EPG'});
         }
 
