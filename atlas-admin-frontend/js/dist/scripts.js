@@ -1620,7 +1620,7 @@ app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$sce', '$routePara
             $location.path('/applications/'+appId);
         }
 }]);
-\'use strict';
+'use strict';
 
 /* User Profile Controller */
 
