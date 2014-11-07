@@ -30,11 +30,8 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.controllers.requestSource',
                                 'atlasAdmin.controllers.sourceRequests',
                                 'atlasAdmin.controllers.user',
-<<<<<<< HEAD
                                 'atlasAdmin.controllers.epgWidget',
-=======
                                 'atlasAdmin.controllers.feeds',
->>>>>>> MBST-9831-feeds-console
                                 'atlasAdmin.controllers.uservideosources',
                                 'atlasAdmin.controllers.uservideosources.youtube',
                                 'atlasAdmin.controllers.admins.usage',
@@ -75,7 +72,7 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/videosource/config/youtube', {templateUrl: 'partials/videoSourceYouTubeConfig.html', controller: 'CtrlVideoSourceYouTubeConfig'});
     $routeProvider.when('/logout', {templateUrl: 'partials/logout.html', controller: 'CtrlLogout'});
     $routeProvider.when('/error', {templateUrl: 'partials/error.html', controller: 'ErrorController', reloadOnSearch: false});
-    //$routeProvider.otherwise({redirectTo: '/applications'});
+    $routeProvider.otherwise({redirectTo: '/applications'});
   }])
 app.config(['$httpProvider', function($httpProvider) {
     $httpProvider.defaults.useXDomain = true;
