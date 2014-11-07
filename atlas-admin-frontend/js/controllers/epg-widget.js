@@ -17,20 +17,34 @@ app.controller('CtrlEPGWidget', ['$scope', '$rootScope', 'Users', '$routeParams'
             $scope.widget = true;
         }
     });
-    //$.getScript('http://widgets.metabroadcast.com/loader/1/load.js', function() {
-    //    MBST = MBST || {};
-    //    MBST.load({
-    //        client: 'btblackout',
-    //        widgets: [{
-    //            name: 'epg',
-    //            version: '1',
-    //            modules: {
-    //                grid: {
-    //                    holder: '.epg-widget'
-    //                }
-    //            }
-    //        }]
-    //    });
-    //});
+    $.getScript('http://widgets-stage.metabroadcast.com/loader/1/load.js', function() {
+        MBST = MBST || {};
+        MBST.load({
+            client: 'btblackout',
+            widgets: [
+            {
+                name: 'epg',
+                version: '1',
+                modules: {
+                    common: {
+                        apiKey: '345acf0445f74d16afe23968ca17db4b'
+                    },
+                    grid: {
+                        holder: '.epg-grid',
+                        nav: {
+                            days: 21,
+                            fixed: true
+                        }
+                    }
+                }
+            }
+            ]
+        }, function () {
+            if (MBST.ENV === 'prod') {
+                var host = 'https://atlas.metabroadcast.com';
+                MBST.widgets.epg.common.atlasHost = [host, host, host];
+            }
+        });
+    });
 
 }]);
