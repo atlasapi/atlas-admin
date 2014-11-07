@@ -18,6 +18,8 @@
 @import "modules/loaders";
 @import "modules/modals";
 @import "modules/labels";
+@import "modules/matrix";
+@import "modules/breadcrumb";
 
 // view styles
 @import "lib/sign-in";
@@ -29,3 +31,4 @@
 @import "lib/manage-source-requests";
 @import "lib/wishlist";
 @import "lib/api-usage";
+@import "lib/feeds";

@@ -30,7 +30,7 @@ var sendSourceToAtlas = function(appId, sourceId) {
         usageType: 'personal',
         licenseAccepted: true
     })
-    Atlas.request('/sources/'+sourceId+'/requests?'+qsData, 'POST', function(status, data) {
+    Atlas.request('/4/sources/'+sourceId+'/requests?'+qsData, 'POST', function(status, data) {
         if (status === 200) {
             defer.resolve(data);
         }else{
@@ -51,7 +51,7 @@ var approveSourceRequest = function(request_id) {
         defer.reject('approveSourceRequest(): request_id must be a string');
         return;
     }
-    Atlas.request('/requests/'+request_id+'/approve', 'POST', function(data) {
+    Atlas.request('/4/requests/'+request_id+'/approve', 'POST', function(data) {
         defer.resolve(data);
     });
     return defer.promise;
@@ -89,7 +89,7 @@ var autoApproveAdmin = function(appId, sourceId) {
 //  
 var getRequestInfo = function(appId, sourceId) {
     var defer = Q.defer();
-    Atlas.request('/requests.json', 'GET', function(status, data) {
+    Atlas.request('/4/requests.json', 'GET', function(status, data) {
         var data = JSON.parse(data);
         var request = _.find(data['source_requests'], function(n) {
             return (n.application_id == appId && n.source.id == sourceId)? true : false;

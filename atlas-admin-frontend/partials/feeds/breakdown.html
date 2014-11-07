@@ -1,0 +1,38 @@
+<div class="app-surface feedsBreakdown">
+    <header class="app-header">
+        <h1 class="page-title">{{view_title}}</h1>
+        <div class="breadcrumb">
+            <a class="crumb" href="#/">Atlas</a>
+            <a class="crumb" href="#/feeds/">Feeds</a>
+            <a class="crumb" href="#/feeds/youview">Youview</a>
+            <span class="crumb">Transaction</span>
+        </div>
+    </header>
+
+    <section class="panel-full breakdown-status">
+        <div class="matrix">
+            <header class="matrix-title">
+                <h1>Status</h1>
+            </header>
+            <div class="matrix-body">
+                <div class="matrix-row">
+                    <span class="matrix-label">Transaction status</span><span class="matrix-content">{{transaction.status}} <a href="">See details</a></span>
+                </div>
+                <div class="matrix-row">
+                    <span class="matrix-label">Publisher</span><span class="matrix-content">{{transaction.publisher}}</span>
+                </div>
+                <div class="matrix-row">
+                    <span class="matrix-label">Upload time</span><span class="matrix-content">{{transaction.upload_time}}</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel-full breakdown-content">
+        <header class="panel-header">
+            <h1>Content</h1>
+        </header>
+        <div class="load-xml" load-content ng-repeat="content in transaction.content" content="{{content}}"></div>
+    </section>
+</div>
+

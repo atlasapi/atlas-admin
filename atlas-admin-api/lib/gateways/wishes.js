@@ -14,7 +14,6 @@ var wishlistInterface = function(db) {
     var router  = express.Router(),
         wishesCollection = db.collection('wishlistRequests');
 
-
     router.route('/')
 
         .get( function(req, res) {

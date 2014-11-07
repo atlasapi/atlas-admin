@@ -1,0 +1,86 @@
+// For the feeds console view
+.feedsConsole {
+    
+}
+
+.filter-bar {
+
+}
+
+.overall-stats {
+    @extend %cf;
+    box-sizing: border-box;
+    float: left;
+    width: 20rem;
+    padding: 1.5rem;
+    margin-top: 2.25rem;
+    background: $color-grey;
+    border: 1px solid $color-pink;
+    border-radius: 5px;
+
+    h2 { margin-bottom: 1rem; }
+
+    .stats-field {
+        padding: .5rem 0;
+        font-size: 1.125rem;
+
+        &:last-child { padding-bottom: 0; }
+    }
+
+    .stats-label {
+        box-sizing: border-box;
+        display: inline-block;
+        width: 50%;
+        padding-right: 1rem;
+        font-weight: 600;
+
+        &:after { content: ":"; }
+    }
+
+    .stats-data {
+        display: inline-block;
+    }
+}
+
+.search-cell {
+    display: block;
+    width: 100%;
+    color: $color-purple;
+}
+
+.transactions-table {
+    a { display: block; }
+
+    > table {
+        width: 100%;
+    }
+
+    th.sortable {
+        cursor: pointer;
+
+        &:hover { background: black; }
+    }
+}
+
+// the load content directive
+.load-xml {
+    @extend %cf;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 1rem;
+    margin: .5rem 0;
+    background: $color-purple;
+    color: white;
+    border-radius: 5px;
+
+    .xml-data {
+        box-sizing: border-box;
+        width: 100%;
+        padding: 1.5rem;
+        color: #333;
+        background: white;
+    }
+
+    header > .button { float: right; }
+}
+

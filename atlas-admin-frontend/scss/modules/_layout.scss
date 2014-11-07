@@ -5,6 +5,7 @@
 
 //  Container & structure elements
 .application-container {
+    @extend %cf;
     box-sizing: border-box;
     display: block;
     width: 100%;
@@ -12,6 +13,7 @@
 }
 
 .app-surface {
+    @extend %cf;
     margin-top: 3.375rem;
     width: 100%;
 }
@@ -24,6 +26,7 @@
 }
 
 .app-header {
+    @extend %cf;
     display: block;
     width: 100%;
     max-width: 41.625rem;
@@ -31,6 +34,7 @@
 }
 
 .app-content {
+    @extend %cf;
     width: 100%;
 }
 

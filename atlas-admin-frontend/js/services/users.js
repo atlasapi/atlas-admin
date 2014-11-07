@@ -3,7 +3,8 @@
 /* Services */
 var app = angular.module('atlasAdmin.services.users', []);
 
-app.factory('Users', function(Atlas, $rootScope, ProfileStatus, $log) {
+app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'ProfileStatus', '$log', 'atlasApiHost', '$q',
+    function($http, Atlas, $rootScope, Authentication, ProfileStatus, $log, atlasApiHost, $q) {
     return {
         currentUser: function() {
             return Atlas.getRequest('/auth/user.json').then(function(result) {
@@ -48,9 +49,19 @@ app.factory('Users', function(Atlas, $rootScope, ProfileStatus, $log) {
                     $log.error(error);
                 }
             );
+        },
+        groups: function() {
+            var defer = $q.defer();
+            $http({
+                method: 'get',
+                url: Authentication.appendTokenToUrl(atlasApiHost+'/groups')
+            })
+            .success(defer.resolve)
+            .error(defer.reject);
+            return defer.promise;
         }
     };
-});
+}]);
 app.factory('ProfileStatus', function() {
     return {
         setComplete: function(status) {

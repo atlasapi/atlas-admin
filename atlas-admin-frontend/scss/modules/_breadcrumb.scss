@@ -1,0 +1,27 @@
+.breadcrumb {
+    @extend %cf;
+    display: block;
+    width: 100%;
+    margin: 1.5rem 0 1rem;
+
+    .crumb {
+        display: block;
+        float: left;
+        color: $color-purple;
+    }
+
+    a.crumb {
+        color: $color-pink;
+
+        &:after {
+            content: "/";
+            display: inline-block;
+            margin: 0 .25rem;
+            color: $color-purple;
+        }
+
+        &:hover {
+            color: $color-purple;
+        }
+    }
+}

@@ -1,0 +1,18 @@
+<div class="app-surface feeds">
+    <header class="app-header">
+        <h1 class="page-title">{{view_title}}</h1>
+        <div class="breadcrumb">
+            <a class="crumb" href="#/">Atlas</a>
+            <span class="crumb">Feeds</span>
+        </div>
+    </header>
+
+    <section class="panel-full feeds">
+        <div class="feed" ng-repeat="feed in feeds">
+            <a href="#{{feed.location}}">
+                <h1 class="feed-title">{{feed.name}}</h1>
+            </a>
+        </div>
+    </section>
+</div>
+

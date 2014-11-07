@@ -3,7 +3,6 @@
 // define 'applications' module to be used for application controllers
 angular.module('atlasAdmin.controllers.applications', []);
 
-
 angular.module('atlasAdmin.controllers.applications')
 .controller('CtrlApplications', ['$scope', '$rootScope', '$routeParams', 'Applications', '$modal', '$location',
     function($scope, $rootScope, $routeParams, Applications, $modal, $location) {
