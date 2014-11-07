@@ -66,7 +66,7 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/videosource/config/youtube', {templateUrl: 'partials/videoSourceYouTubeConfig.html', controller: 'CtrlVideoSourceYouTubeConfig'});
     $routeProvider.when('/logout', {templateUrl: 'partials/logout.html', controller: 'CtrlLogout'});
     $routeProvider.when('/error', {templateUrl: 'partials/error.html', controller: 'ErrorController', reloadOnSearch: false});
-    //$routeProvider.otherwise({redirectTo: '/applications'});
+    $routeProvider.otherwise({redirectTo: '/applications'});
   }])
 app.config(['$httpProvider', function($httpProvider) {
     $httpProvider.defaults.useXDomain = true;
