@@ -66,7 +66,7 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/videosource/config/youtube', {templateUrl: 'partials/videoSourceYouTubeConfig.html', controller: 'CtrlVideoSourceYouTubeConfig'});
     $routeProvider.when('/logout', {templateUrl: 'partials/logout.html', controller: 'CtrlLogout'});
     $routeProvider.when('/error', {templateUrl: 'partials/error.html', controller: 'ErrorController', reloadOnSearch: false});
-    //$routeProvider.otherwise({redirectTo: '/applications'});
+    $routeProvider.otherwise({redirectTo: '/applications'});
   }])
 app.config(['$httpProvider', function($httpProvider) {
     $httpProvider.defaults.useXDomain = true;
@@ -1770,7 +1770,7 @@ app.controller('CtrlEPGWidget', ['$scope', '$rootScope', 'Users', '$routeParams'
     $scope.widget = false;
     $scope.widgetURL = '';
 
-    $http.get( Authentication.appendTokenToUrl(atlasApiHost +'/user/permissions') )
+    $http.get( Authentication.appendTokenToUrl(atlasApiHost +'/user/groups') )
     .success(function(groups, status) {
         var key = groups[0].data.apiKey || null;
         if (key) {
