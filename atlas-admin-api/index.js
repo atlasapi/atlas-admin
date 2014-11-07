@@ -11,6 +11,7 @@ var config                       = require('./config'),
     gatewayRequests              = require('./lib/gateways/requests'),
     gatewayPropositions          = require('./lib/gateways/propositions'),
     gatewayUsage                 = require('./lib/gateways/usage'),
+    gatewayUsers                 = require('./lib/gateways/users'),
     gatewayWishes                = require('./lib/gateways/wishes');
 
 var _http_port = config.port.http;
@@ -51,6 +52,7 @@ mongoclient.open(function(err, mongo) {
     app.use(config.paths.apiRoot + '/propositions', gatewayPropositions(db));
     app.use(config.paths.apiRoot + '/wishes', gatewayWishes(db));
     app.use(config.paths.apiRoot + '/usage', gatewayUsage(db));
+    app.use(config.paths.apiRoot + '/user', gatewayUsers(db));
 
     // listen for requests to server on _http_port
     console.log('listen on port: ' + _http_port);
