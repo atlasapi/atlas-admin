@@ -51,7 +51,7 @@ app.config(['$routeProvider', function($routeProvider) {
 
     // Add blackout widget page
     $routeProvider.when('/epg/bt-tv', {templateUrl: 'partials/epg-widget.html', controller: 'CtrlEPGWidget'});
-    
+
     // application user routes
     $routeProvider.when('/applications', {templateUrl: 'partials/applications.html', controller: 'CtrlApplications'});
     $routeProvider.when('/applications/:applicationId', {templateUrl: 'partials/applicationEdit.html', controller: 'CtrlApplicationEdit'});
@@ -1757,10 +1757,23 @@ app.controller('CtrlVideoSourceYouTubeConfig', function($scope, $rootScope, User
 });
 var app = angular.module('atlasAdmin.controllers.epgWidget', []);
 
-app.controller('CtrlEPGWidget', ['$scope', '$rootScope', '$routeParams', '$q',
-    function($scope, $rootScope, $routeParams, $q) {
-    $scope.view_title = "BT Blackout widget";
+app.controller('CtrlEPGWidget', ['$scope', '$rootScope', 'Users', '$routeParams', '$q',
+    function($scope, $rootScope, Users, $routeParams, $q) {
+    $scope.view_title = "";
+    $scope.widget = false;
 
+    Users.currentUser().then(function(user) {
+        if (user.id === 'hk98' || 
+            user.id === 'hmbc' || 
+            user.id === 'hmjh' || 
+            user.id === 'hmjg' || 
+            user.id === 'hmjc' ||
+            user.id === 'hmcz' ||
+            user.id === 'hmbb') {
+            $scope.view_title = "BT Blackout widget";
+            $scope.widget = true;
+        }
+    });
     //$.getScript('http://widgets.metabroadcast.com/loader/1/load.js', function() {
     //    MBST = MBST || {};
     //    MBST.load({
