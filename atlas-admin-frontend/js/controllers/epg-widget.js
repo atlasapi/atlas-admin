@@ -4,15 +4,15 @@ app.controller('CtrlEPGWidget', ['$scope', '$rootScope', 'Users', '$routeParams'
     function($scope, $rootScope, Users, $routeParams, $q, $http, Authentication, atlasApiHost) {
     $scope.view_title = "";
     $scope.widget = false;
-    $scope.srcURL = ''
+    $scope.widgetURL = '';
 
-    $http.get( Authentication.appendTokenToUrl(atlasApiHost +'/user/permissions') ).then(function(data) {
-        $scope.view_title = "BT Blackout widget";
-        $scope.widget = true;
-        var key = data.data[0].data.apiKey;
-
-        if (data.length) {
-
+    $http.get( Authentication.appendTokenToUrl(atlasApiHost +'/user/permissions') )
+    .success(function(groups, status) {
+        var key = groups[0].data.apiKey || null;
+        if (key) {
+            $scope.view_title = "BT Blackout";
+            $scope.widget = true;
+            $scope.widgetURL = '//widgets-stage.metabroadcast.com/loader/1/btblackout.html?apiKey='+key;
         }
     })
 }]);

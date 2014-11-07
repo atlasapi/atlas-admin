@@ -122,6 +122,13 @@ app.config(['$httpProvider', function($httpProvider) {
     $httpProvider.responseInterceptors.push(interceptor);
 }]);
 
+app.config(['$sceDelegateProvider', function($sceDelegateProvider) {
+    $sceDelegateProvider.resourceUrlWhitelist([
+        'self',
+        'http://*.metabroadcast.com/**'
+        ]);
+}]);
+
 app.config(['$locationProvider', function($locationProvider) {
     //$locationProvider.html5Mode(false).hashPrefix('!');
 }]);
