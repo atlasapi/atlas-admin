@@ -26,8 +26,9 @@ var userInterface = function(db) {
         });
     })
 
-    .post(function() {
-
+    .post(function(req, res) {
+        var body = req.body || null;
+        res.end()
     })
 
     return router;

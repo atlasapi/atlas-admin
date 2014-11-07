@@ -11,6 +11,7 @@ function User() {
             groups: db.collection('groups')
         };
 
+
     //  Used for finding out which groups this user has access too
     //
     //  @returns promise
@@ -44,13 +45,20 @@ function User() {
         return defer.promise;
     }
 
-    var isUserinGroup = function(groupname) {
 
+    //  Used for finding out if the loggied in user is part of a certain group
+    //
+    //  @param groupname {string}
+    //  @returns promise
+    //
+    var isUserinGroup = function(groupname) {
+        var defer = Q.defer();
+        return defer.promise;
     }
 
     return {
-        groups: listGroups
-,        inGroup: isUserinGroup
+        groups: listGroups,
+        inGroup: isUserinGroup
     }
 }
 
