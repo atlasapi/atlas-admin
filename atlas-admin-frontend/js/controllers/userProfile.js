@@ -136,6 +136,7 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
         });
     }
 }]);
+
 app.controller('UserLicenseController', function($scope, $rootScope, $routeParams, Users, $location, $window, $sce, $log) {
     // only try to get user if logged in
     $scope.app = {};
