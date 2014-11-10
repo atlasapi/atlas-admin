@@ -103,13 +103,14 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
             {path:'/manage/wishlist', label:'Wishlist', role:'admin'}];
 
         // Add blackout widget page to navigation 
-        if (user.id === 'hk98' || 
-            user.id === 'hmbc' || 
-            user.id === 'hmjh' || 
-            user.id === 'hmjg' || 
-            user.id === 'hmjc' ||
-            user.id === 'hmcz' ||
-            user.id === 'hmbb') {
+        if (user.id === "hk98" ||
+            user.id === "hmbc" ||
+            user.id === "hmjh" ||
+            user.id === "hmjg" ||
+            user.id === "hmjc" ||
+            user.id === "hmcz" ||
+            user.id === "hmbb" ||
+            user.id === "hk7v") {
             allMenu.push({path: '/epg/bt-tv', label: 'EPG'});
         }
 
