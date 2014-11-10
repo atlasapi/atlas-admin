@@ -11,6 +11,19 @@ var config      = require('../../config'),
     _apikey     = null;
 
 
+//  Used for determining if a string is valid JSON or not
+//
+//  @returns {bool}
+//
+function IsJSON(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
+
 //  Used for proxying requests to atlas and returning the result
 //
 //  @returns promise
@@ -19,9 +32,25 @@ function proxyRequest(endpoint, request) {
     var defer           = Q.defer(),
         _endpoint       = endpoint,
         _annotations    = request.query.annotations || null,
-        query           = qs.stringify({ apiKey: _apikey, annotations: _annotations });
-    Atlas.request('/3.0/feeds/youview/bbc_nitro/'+_endpoint+'?'+query, 'GET', function(status, data) {
-        defer.resolve(JSON.parse(data));
+        _querystring    = { apiKey: _apikey };
+
+    for (var query in request.query) {
+        if ('status' === query 
+            || 'uri' === query 
+            || 'transaction_id' === query
+            || 'limit' === query
+            || 'offset' === query
+            || 'annotations' === query) {
+            _querystring[query] = request.query[query];
+        }
+    }
+    Atlas.request('/3.0/feeds/youview/bbc_nitro/'+_endpoint+'?'+qs.stringify(_querystring), 'GET', function(status, data) {
+        if (IsJSON(data)) {
+            defer.resolve(JSON.parse(data));
+        }else{
+            console.error('Response is invalid')
+            defer.reject(common.errors.invalid_json);
+        }
     });
     return defer.promise;
 }

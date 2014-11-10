@@ -32,29 +32,28 @@
                 <thead>
                     <tr class="filter-bar">
                         <th>
-                            <input placeholder="Filter by Content URI" ng-model="search.content" class="search-cell" type="text">
+                            <input placeholder="Filter by Content URI" ng-model="search.content" ng-change="filter.uri()" class="search-cell" type="text">
                         </th>
                         <th>
-                            <input placeholder="Filter by Transaction ID" ng-model="search.id" class="search-cell" type="text">
+                            <input placeholder="Filter by Transaction ID" ng-change="filter.transaction_id()" ng-model="search.id" class="search-cell" type="text">
                         </th>
                         <th></th>
                         <th>
-                            <select ng-model="search.status" placeholder="Filter by Status" class="search-cell">
+                            <select ng-change="filter.status()" ng-model="search.status" placeholder="Filter by Status" class="search-cell">
                                 <option ng-selected value="">Filter by status</option>
-                                <option value="ACCEPTED">Accepted</option>
-                                <option value="FAILED">Failed</option>
+                                <option ng-repeat="status in statusFilter" value="{{status}}">{{status}}</option>
                             </select>
                         </th>
                     </tr>
                     <tr>
                         <th class="sortable" ng-click="table.order='content[0]'; table.reverse=!table.reverse">Content URI</th>
-                        <th class="sortable" ng-click="table.order='id'; table.reverse=!table.reverse">Transaction ID</th>
-                        <th class="sortable"  ng-click="table.order='upload_time'; table.reverse=!table.reverse">Upload time</th>
+                        <th class="sortable" ng-click="table.order='id'; table.reverse=!table.reverse">YouView transaction ID</th>
+                        <th class="sortable" ng-click="table.order='upload_time'; table.reverse=!table.reverse">Upload time</th>
                         <th class="sortable" ng-click="table.order='status'; table.reverse=!table.reverse">Status</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="transaction in transactions | filter:search | orderBy:table.order:table.reverse">
+                    <tr ng-repeat="transaction in transactions | orderBy:table.order:table.reverse">
                         <td><a ng-href="#/feeds/youview/{{transaction.id}}">{{transaction.content[0]}}</a></td>
                         <td><a ng-href="#/feeds/youview/{{transaction.id}}">{{transaction.id}}</a></td>
                         <td><a ng-href="#/feeds/youview/{{transaction.id}}">{{transaction.upload_time}}</a></td>
@@ -62,6 +61,8 @@
                     </tr>
                 </tbody>
             </table>
+
+            <div class="" data-pagination="" data-num-pages="page.page_count" data-current-page="page.current" data-max-size="page.limit" data-boundary-links="true"></div>
         </div>
     </section>
 </div>

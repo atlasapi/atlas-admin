@@ -6,7 +6,6 @@ app.controller('CtrlFeeds', ['$scope', '$rootScope', '$routeParams', 'FeedsServi
     $scope.view_title = 'Feeds'
     
     Feeds.get().then(function(data) {
-        console.log(data);
         if (!_.isEmpty(data)) {
             $scope.feeds = data;
         }
