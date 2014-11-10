@@ -57,7 +57,7 @@ app.factory('AuthenticationInterceptor', function ($q, $location, $window, atlas
                  }
                  $rootScope.autologout = $timeout(function () {
                      $location.path('/logout');
-                 }, 20 * 60 * 1000);
+                 }, 525000 * 60 * 1000);
                  return response;
             },
             function (response) {
