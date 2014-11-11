@@ -1254,13 +1254,21 @@ app.directive('loadContent', ['$document', 'FeedsService', '$q',
             loadContent(_content).then(function(xml) {
                 $scope.xml = xml;
                 $scope.showData = true;
-                _this.remove();
+                _this.text('Hide data');
+                _this.on('click', function() {
+                    if ($scope.showData) {
+                        _this.text('Show data');
+                    }else{
+                        _this.text('Hide data');
+                    }
+                    $scope.showData = !$scope.showData;
+                })
             });
         })
     }
 
     return {
-        template: '<header>{{content}}<span class="button small loadData">Show data</span></header><div ng-show="showData" class="xml-data"><code>{{xml}}</code></div>',
+        template: '<header><h2>{{content}}</h2><span class="button small loadData">Show data</span></header><div ng-show="showData" class="xml-data"><code>{{xml}}</code></div>',
         link: controller
     } 
 }]);
@@ -1921,12 +1929,6 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     $scope.view_title = 'Feeds Console';
     $scope.statusFilter = ['accepted', 'validating', 'failed', 'quarantined', 'committing', 'committed', 'publishing', 'published'];
 
-    // pagination settings
-    $scope.page = {};
-    $scope.page.current = 0;
-    $scope.page.limit = 9;
-    $scope.page.offset = 0;
-
     // set up ordering and search
     $scope.table = {}; 
     $scope.table.order = 'upload_time';
@@ -1934,31 +1936,55 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     $scope.activeFilter = '';
     $scope.search = {};
 
+    // this controlls the loading state of the feeds console
+    $scope.isloading = false;
 
-    $scope.filter = function(on) {
-        if (!_.isString(on)) return;
-        if ($scope.search[on].length > 3 || $scope.search[on].length == 0) {
-            $scope.activeFilter = on;
+
+    // Used for initiating filtering on a field. changes the activeFilter
+    // param and then reloads the transactions list.
+    //
+    // @param filter_on {string} value to set for activeFilter
+    //
+    $scope.filter = function(filter_on) {
+        if (!_.isString(filter_on)) return;
+        if ($scope.search[filter_on].length > 3 || $scope.search[filter_on].length == 0) {
+            $scope.isloading = true;
+            $scope.activeFilter = filter_on;
             $scope.page.current = 0;
             getTransactions()
         }
     }
 
-    $scope.page.next = function() {
-        ++$scope.page.current;
-    }
 
-    $scope.page.previous = function() {
-        if ($scope.page.current > 0) --$scope.page.current;
-    }
+    // Used for controlling pagination functionality. The idea is that
+    // page.current is watched for changes, then the transactions list
+    // is reloaded from the server with new offset params 
+    $scope.page = {};
+    $scope.page.current = 0;
+    $scope.page.limit = 10;
+    $scope.page.offset = 0;
 
-    // watch for pagination changes
     $scope.$watch('page.current', function(new_val, old_val) {
         $scope.page.offset = $scope.page.current * $scope.page.limit;
         getTransactions()
     });
+    
+    $scope.page.next = function() {
+        if ($scope.transactions.length === $scope.page.limit && !$scope.isloading) {
+            $scope.isloading = true;
+            ++$scope.page.current;
+        }
+    }
+    $scope.page.previous = function() {
+        if ($scope.page.current > 0 && !$scope.isloading) {
+            $scope.isloading = true;
+            --$scope.page.current;
+        }
+    }
 
-    // for loading all the transactions
+
+    // For loading sets of transactions from atlas. Filters and offsets
+    // are inserted automatically based on $scope variables
     var getTransactions = function() {
         var _filter = '';
         if ($scope.activeFilter === 'uri' && !_.isEmpty($scope.search.uri)) {
@@ -1968,15 +1994,14 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
         }else if ($scope.activeFilter === 'transaction_id' && !_.isEmpty($scope.search.transaction_id)){
             _filter = '&transaction_id='+$scope.search.transaction_id;
         }
-
         var request_url = 'youview/bbc_nitro/transactions.json?limit='+$scope.page.limit+'&offset='+$scope.page.offset+_filter;
-        console.log(request_url)
         Feeds.request(request_url).then(function(data) {
             pushTransactionsTable(data);
         });
     }
 
-    // for loading in the feed stats
+
+    // For loading the feed statistics from atlas
     var getStats = function() {
         Feeds.request('youview/bbc_nitro/statistics.json').then(function(data) {
             $scope.statistics = data.feed_stats[0];
@@ -1985,22 +2010,19 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     }
     getStats();
 
-    //  Used for loading data into the transactions scope
-    //
-    //  @param data {object} the transactions object
-    //
+    // Used for loading data into the transactions scope
+    // @param data {object} the transactions object
     var pushTransactionsTable = function(data) {
         if (_.isObject(data.error)) {
             $scope.error.show = true;
             $scope.error.obj = data.error;
         }
+        $scope.isloading = false;
         $scope.transactions = data.transactions;
     }
 
-    //  Used for calculating uptime since last outage
-    //
-    //  @param last_outage {date}
-    //
+    // Used for calculating uptime since last outage
+    // @param last_outage {date}
     var calculateUptime = function(last_outage) {
         var _now = new Date(),
             _then = last_outage,
@@ -2010,18 +2032,36 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
 }])
 var app = angular.module('atlasAdmin.controllers.feeds');
 
-app.controller('CtrlFeedsBreakdown', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q',
-    function($scope, $rootScope, $routeParams, Feeds, $q) {
-
+app.controller('CtrlFeedsBreakdown', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modal',
+    function($scope, $rootScope, $routeParams, Feeds, $q, $modal) {
     $scope.transactionID = $routeParams.transactionId;
 
-    Feeds.request('youview/bbc_nitro/transactions/'+$routeParams.transactionId+'.json?annotations=status_detail')
-    .then(function(transaction) {
-        var _transaction = transaction.transactions[0];
-        $scope.transaction = _transaction;
-        $scope.view_title = "Breakdown for "+_transaction.id;
-    });
+    $scope.showDetails = function() {
+        var modalInstance = $modal.open({
+            templateUrl: 'partials/feeds/statusDetailModal.html',
+            controller: 'CtrlStatusDetail',
+            scope: $scope
+        });
+        modalInstance.result.then(function() {
+ 
+        });
+    }
 
+    var loadTransaction = function() {
+        Feeds.request('youview/bbc_nitro/transactions/'+$routeParams.transactionId+'.json?annotations=status_detail')
+            .then(function(transaction) {
+                var _transaction = transaction.transactions[0];
+                $scope.transaction = _transaction;
+                $scope.view_title = "Breakdown for transaction: "+_transaction.id;
+            });
+    }
+    loadTransaction();
+
+}])
+
+app.controller('CtrlStatusDetail', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modalInstance',
+    function($scope, $rootScope, $routeParams, $q, $modalInstance) {
+        
 }])
 'use strict';
 

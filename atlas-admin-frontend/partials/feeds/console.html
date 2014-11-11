@@ -62,10 +62,22 @@
                 </tbody>
             </table>
 
+            <div class="loading-status" ng-show="isloading">
+                <div class="line-spinner">
+                    <div class="rect1"></div>
+                    <div class="rect2"></div>
+                    <div class="rect3"></div>
+                    <div class="rect4"></div>
+                    <div class="rect5"></div>
+                </div>
+            </div>
+
             <div class="pagination">
-                <span ng-class="{inactive: (page.current < 1)}" class="prev-page button primary" ng-click="page.previous()">Previous</span>
-                <span class="current-page">Showing results: {{page.offset+1}} to {{(page.offset+1) + (transactions.length-1)}}</span>
-                <span ng-class="{inactive: (transactions.length < page.limit)}" class="next-page button primary" ng-click="page.next()">Next</span>
+                <div class="pagination-buttons" ng-hide="(page.current < 1) && (transactions.length < page.limit)">
+                    <span ng-hide="(page.current < 1)" ng-class="{inactive: isloading}" class="prev-page button primary" ng-click="page.previous()">Previous</span>
+                    <span ng-hide="(transactions.length < page.limit)" ng-class="{inactive: isloading}" class="next-page button primary" ng-click="page.next()">Next</span>
+                </div>
+                <span class="pagination-status" ng-hide="isloading">Showing results: {{page.offset+1}} to {{(page.offset+1) + (transactions.length-1)}}</span>
             </div>
         </div>
     </section>

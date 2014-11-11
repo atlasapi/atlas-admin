@@ -99,6 +99,11 @@
     margin-bottom: 1.5rem;
 }
 
+.panel-content {
+    @extend %cf;
+    width: 100%;
+}
+
 
 //  Headings & title blocks
 //
