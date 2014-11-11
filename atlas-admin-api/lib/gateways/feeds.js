@@ -44,7 +44,8 @@ function proxyRequest(endpoint, request) {
             _querystring[query] = request.query[query];
         }
     }
-    Atlas.request('/3.0/feeds/youview/bbc_nitro/'+_endpoint+'?'+qs.stringify(_querystring), 'GET', function(status, data) {
+
+    Atlas.api('/3.0/feeds/youview/bbc_nitro/'+_endpoint+'?'+qs.stringify(_querystring), 'GET', function(status, data) {
         if (IsJSON(data)) {
             defer.resolve(JSON.parse(data));
         }else{
@@ -60,7 +61,7 @@ function getXML(uri) {
         _uri = uri || null,
         query = qs.stringify({apiKey: _apikey, uri: _uri});
     if (_uri) {
-        Atlas.request('/3.0/feeds/youview/bbc_nitro.xml?'+query, 'GET', function(status, data) {
+        Atlas.api('/3.0/feeds/youview/bbc_nitro.xml?'+query, 'GET', function(status, data) {
             defer.resolve(data);
         });
     }

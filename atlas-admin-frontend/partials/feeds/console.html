@@ -32,14 +32,14 @@
                 <thead>
                     <tr class="filter-bar">
                         <th>
-                            <input placeholder="Filter by Content URI" ng-model="search.content" ng-change="filter.uri()" class="search-cell" type="text">
+                            <input placeholder="Filter by Content URI" ng-model="search.uri" ng-change="filter('uri')" class="search-cell" type="text">
                         </th>
                         <th>
-                            <input placeholder="Filter by Transaction ID" ng-change="filter.transaction_id()" ng-model="search.id" class="search-cell" type="text">
+                            <input placeholder="Filter by Transaction ID" ng-change="filter('transaction_id')" ng-model="search.transaction_id" class="search-cell" type="text">
                         </th>
                         <th></th>
                         <th>
-                            <select ng-change="filter.status()" ng-model="search.status" placeholder="Filter by Status" class="search-cell">
+                            <select ng-change="filter('status')" ng-model="search.status" placeholder="Filter by Status" class="search-cell">
                                 <option ng-selected value="">Filter by status</option>
                                 <option ng-repeat="status in statusFilter" value="{{status}}">{{status}}</option>
                             </select>
@@ -62,7 +62,11 @@
                 </tbody>
             </table>
 
-            <div class="" data-pagination="" data-num-pages="page.page_count" data-current-page="page.current" data-max-size="page.limit" data-boundary-links="true"></div>
+            <div class="pagination">
+                <span ng-class="{inactive: (page.current < 1)}" class="prev-page button primary" ng-click="page.previous()">Previous</span>
+                <span class="current-page">Showing results: {{page.offset+1}} to {{(page.offset+1) + (transactions.length-1)}}</span>
+                <span ng-class="{inactive: (transactions.length < page.limit)}" class="next-page button primary" ng-click="page.next()">Next</span>
+            </div>
         </div>
     </section>
 </div>

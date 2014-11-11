@@ -3,6 +3,7 @@ var app = angular.module('atlasAdmin.controllers.feeds');
 
 app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q',
     function($scope, $rootScope, $routeParams, Feeds, $q) {
+    $scope.transactions = [];
     $scope.error = {};
     $scope.error.show = false;
     $scope.view_title = 'Feeds Console';
@@ -10,66 +11,58 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
 
     // pagination settings
     $scope.page = {};
-    $scope.page.current = 1;
-    $scope.page.limit = 1;
-    $scope.page.offset = 1;
+    $scope.page.current = 0;
+    $scope.page.limit = 9;
+    $scope.page.offset = 0;
 
-    $scope.page.page_count = function() {
-        return Math.ceil($scope.transactions.length / $scope.page.limit);
-    }
-
-    $scope.$watch('page.current + page.limit', function() {
-        console.log('yop');
-    });
-
-    // set up ordering
-    $scope.table = {};
-    $scope.table.order = 'id';
-    $scope.table.reverse = false;
-
-    // search
+    // set up ordering and search
+    $scope.table = {}; 
+    $scope.table.order = 'upload_time';
+    $scope.table.reverse = true;
+    $scope.activeFilter = '';
     $scope.search = {};
 
-    $scope.filter = {};
-    $scope.filter.uri = function() {
-        var filter = $scope.search.content[0];
-        if (!filter) {
-            getAllTransactions();
-        }else{
-            Feeds.request('youview/bbc_nitro/transactions.json?uri='+filter).then(function(data) {
-                pushTransactionsTable(data);
-            });
+
+    $scope.filter = function(on) {
+        if (!_.isString(on)) return;
+        if ($scope.search[on].length > 3 || $scope.search[on].length == 0) {
+            $scope.activeFilter = on;
+            $scope.page.current = 0;
+            getTransactions()
         }
     }
 
-    $scope.filter.status = function() {
-        var filter = $scope.search.status;
-        if (!filter) {
-            getAllTransactions();
-        }else{
-            Feeds.request('youview/bbc_nitro/transactions.json?status='+filter).then(function(data) {
-                pushTransactionsTable(data);
-            });
-        }
+    $scope.page.next = function() {
+        ++$scope.page.current;
     }
 
-    $scope.filter.transaction_id = function() {
-        var filter = $scope.search.id;
-        clearTimeout(timeout);
-        var timeout = setTimeout(function() {
-            Feeds.request('youview/bbc_nitro/transactions.json?transaction_id='+filter).then(function(data) {
-                pushTransactionsTable(data);
-            });
-        }, 200);
+    $scope.page.previous = function() {
+        if ($scope.page.current > 0) --$scope.page.current;
     }
+
+    // watch for pagination changes
+    $scope.$watch('page.current', function(new_val, old_val) {
+        $scope.page.offset = $scope.page.current * $scope.page.limit;
+        getTransactions()
+    });
 
     // for loading all the transactions
-    var getAllTransactions = function() {
-        Feeds.request('youview/bbc_nitro/transactions.json?limit='+$scope.page.limit+'&offset=4').then(function(data) {
+    var getTransactions = function() {
+        var _filter = '';
+        if ($scope.activeFilter === 'uri' && !_.isEmpty($scope.search.uri)) {
+            _filter = '&uri='+$scope.search.uri;
+        }else if ($scope.activeFilter === 'status' && !_.isEmpty($scope.search.status)) {
+            _filter = '&status='+$scope.search.status;
+        }else if ($scope.activeFilter === 'transaction_id' && !_.isEmpty($scope.search.transaction_id)){
+            _filter = '&transaction_id='+$scope.search.transaction_id;
+        }
+
+        var request_url = 'youview/bbc_nitro/transactions.json?limit='+$scope.page.limit+'&offset='+$scope.page.offset+_filter;
+        console.log(request_url)
+        Feeds.request(request_url).then(function(data) {
             pushTransactionsTable(data);
         });
     }
-    getAllTransactions();
 
     // for loading in the feed stats
     var getStats = function() {
