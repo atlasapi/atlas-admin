@@ -9,12 +9,6 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     $scope.view_title = 'Feeds Console';
     $scope.statusFilter = ['accepted', 'validating', 'failed', 'quarantined', 'committing', 'committed', 'publishing', 'published'];
 
-    // pagination settings
-    $scope.page = {};
-    $scope.page.current = 0;
-    $scope.page.limit = 9;
-    $scope.page.offset = 0;
-
     // set up ordering and search
     $scope.table = {}; 
     $scope.table.order = 'upload_time';
@@ -22,12 +16,19 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     $scope.activeFilter = '';
     $scope.search = {};
 
+    // this controlls the loading state of the feeds console
+    $scope.isloading = false;
 
-    // Used for initiating filtering on a field
+
+    // Used for initiating filtering on a field. changes the activeFilter
+    // param and then reloads the transactions list.
+    //
     // @param filter_on {string} value to set for activeFilter
+    //
     $scope.filter = function(filter_on) {
         if (!_.isString(filter_on)) return;
         if ($scope.search[filter_on].length > 3 || $scope.search[filter_on].length == 0) {
+            $scope.isloading = true;
             $scope.activeFilter = filter_on;
             $scope.page.current = 0;
             getTransactions()
@@ -37,17 +38,29 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
 
     // Used for controlling pagination functionality. The idea is that
     // page.current is watched for changes, then the transactions list
-    // is reloaded from the server with new offset params
-     $scope.page.next = function() {
-        ++$scope.page.current;
-    }
-    $scope.page.previous = function() {
-        if ($scope.page.current > 0) --$scope.page.current;
-    }
+    // is reloaded from the server with new offset params 
+    $scope.page = {};
+    $scope.page.current = 0;
+    $scope.page.limit = 10;
+    $scope.page.offset = 0;
+
     $scope.$watch('page.current', function(new_val, old_val) {
         $scope.page.offset = $scope.page.current * $scope.page.limit;
         getTransactions()
     });
+    
+    $scope.page.next = function() {
+        if ($scope.transactions.length === $scope.page.limit && !$scope.isloading) {
+            $scope.isloading = true;
+            ++$scope.page.current;
+        }
+    }
+    $scope.page.previous = function() {
+        if ($scope.page.current > 0 && !$scope.isloading) {
+            $scope.isloading = true;
+            --$scope.page.current;
+        }
+    }
 
 
     // For loading sets of transactions from atlas. Filters and offsets
@@ -62,7 +75,6 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
             _filter = '&transaction_id='+$scope.search.transaction_id;
         }
         var request_url = 'youview/bbc_nitro/transactions.json?limit='+$scope.page.limit+'&offset='+$scope.page.offset+_filter;
-        console.log(request_url)
         Feeds.request(request_url).then(function(data) {
             pushTransactionsTable(data);
         });
@@ -85,6 +97,7 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
             $scope.error.show = true;
             $scope.error.obj = data.error;
         }
+        $scope.isloading = false;
         $scope.transactions = data.transactions;
     }
 

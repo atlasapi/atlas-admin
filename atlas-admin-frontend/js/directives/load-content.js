@@ -29,13 +29,21 @@ app.directive('loadContent', ['$document', 'FeedsService', '$q',
             loadContent(_content).then(function(xml) {
                 $scope.xml = xml;
                 $scope.showData = true;
-                _this.remove();
+                _this.text('Hide data');
+                _this.on('click', function() {
+                    if ($scope.showData) {
+                        _this.text('Show data');
+                    }else{
+                        _this.text('Hide data');
+                    }
+                    $scope.showData = !$scope.showData;
+                })
             });
         })
     }
 
     return {
-        template: '<header>{{content}}<span class="button small loadData">Show data</span></header><div ng-show="showData" class="xml-data"><code>{{xml}}</code></div>',
+        template: '<header><h2>{{content}}</h2><span class="button small loadData">Show data</span></header><div ng-show="showData" class="xml-data"><code>{{xml}}</code></div>',
         link: controller
     } 
 }]);

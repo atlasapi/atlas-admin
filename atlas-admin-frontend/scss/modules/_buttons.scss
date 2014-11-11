@@ -2,6 +2,7 @@
 //
 //  Modifiers:
 //  .stroke       — converts button to a stroke style
+//  .flat         — makes it look flat
 //
 //  .small        — makes the button size slightly smaller
 //  .medium       — makes the button size slightly larger
@@ -30,13 +31,17 @@
     border: 1px solid darken($color-silver, 30%);
     box-shadow: 0 1px 1px rgba(0,0,0,0.3);
 
-    &.button-link {
-
+    &.flat {
+        background: $color-purple;
+        color: white;
+        border-radius: 5px;
+        border: none;
+        box-shadow: none;
     }
 
     &:hover, &:focus {
         text-decoration: none;
-        border: 1px solid #333;
+        border-color: #333;
         outline: none;
     }
 

@@ -16,8 +16,8 @@
         &:after {
             content: "/";
             display: inline-block;
-            margin: 0 .25rem;
-            color: $color-purple;
+            margin: 0 .4rem;
+            color: lighten($color-purple, 60%);
         }
 
         &:hover {

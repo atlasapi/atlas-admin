@@ -1,0 +1,28 @@
+<div class="modal-body">
+    <header class="modal-header">
+        <h3>Status detail</h3>
+        <span class="status-detail-status">{{transaction.status_detail.status}}</span>
+        <span class="status-detail-msg">{{transaction.status_detail.message}}</span>
+    </header>
+    <div class="modal-body">
+        <h3 class="fragments-title">Fragment reports</h3>
+        <div class="matrix invisible transaction-fragments" ng-repeat="fragment in transaction.status_detail.fragment_reports" >
+            <header class="matrix-title">
+                <span class="fragment-status success" ng-if="fragment.success">Successful</span><span class="fragment-status fail" ng-if="!fragment.success">Failed</span>
+                <span class="record-id">{{fragment.record_id}}</span>
+                <span class="fragment-id">{{fragment.fragment_id}}</span>
+            </header>
+            <div class="matrix-body">
+                <div class="matrix-row">
+                    {{fragment.message.length}} message(s)
+                </div>
+                <div class="matrix-row message" ng-repeat="msg in fragment.message">
+                    <div class="msg-title"><span ng-class="{error: msg.severity == 'ERROR'}">{{msg.severity}}</span></div>
+                    <div class="msg-comment">{{msg.comment.value}}</div>
+                    <div class="msg-location">{{msg.location}}</div>
+                    <div class="msg-location">{{msg.reason_code}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

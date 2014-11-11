@@ -16,7 +16,7 @@
             </header>
             <div class="matrix-body">
                 <div class="matrix-row">
-                    <span class="matrix-label">Transaction status</span><span class="matrix-content">{{transaction.status}} <a href="">See details</a></span>
+                    <span class="matrix-label">Transaction status</span><span class="matrix-content">{{transaction.status}} <span class="see-details" ng-click="showDetails()">See details</span></span>
                 </div>
                 <div class="matrix-row">
                     <span class="matrix-label">Publisher</span><span class="matrix-content">{{transaction.publisher}}</span>
@@ -32,7 +32,9 @@
         <header class="panel-header">
             <h1>Content</h1>
         </header>
-        <div class="load-xml" load-content ng-repeat="content in transaction.content" content="{{content}}"></div>
+        <div class="panel-content">
+            <div class="load-xml" data-load-content ng-repeat="content in transaction.content" content="{{content}}"></div>
+        </div>
     </section>
 </div>
 
