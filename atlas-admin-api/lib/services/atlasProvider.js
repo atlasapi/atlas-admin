@@ -50,10 +50,42 @@ function Atlas() {
         request.end();
     }
 
+    //  Used for making a request to atlas api without oauth token
+    //
+    //  @param path {string}
+    //  @param type {string} POST, GET, etc
+    //  @param callback {function}
+    //
+    function apiRequest(path, type, callback) {
+        var type = type || 'GET';
+        var path = path || '';
+        var opts = {
+            port: 80,
+            method: type,
+            host: config.atlasHost,
+            path: path,
+            headers: {
+                'Accept': 'application/json'
+            }
+        }
+        var request = http.request(opts, function(response) {
+            response.setEncoding('utf8');
+            var data = '',
+                status = response.statusCode;
+            response.on('data', function(chunk) {
+                data += chunk;
+            })
+            .on('end', function() { 
+                if (_.isFunction(callback)) callback(status, data);
+            });
+        });
+        request.end();
+    }
 
     return {
         appendOauthToken: appendOauthToken,
-        request: request
+        request: request,
+        api: apiRequest
     }
 }
 

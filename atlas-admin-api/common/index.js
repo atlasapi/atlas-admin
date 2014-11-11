@@ -11,6 +11,7 @@ var common = {
         no_data: {'error': 'No data to return'},
         no_post_data: {'error': 'Request contains no data'},
         invalid_data: {'error': 'Payload data is invalid'},
+        invalid_json: {'error': 'Response is not valid JSON'},
         request_error: {'error': 'There was a problem with the request'},
         not_permitted: {'error': 'You dont have permission to access this resource'}
     },
