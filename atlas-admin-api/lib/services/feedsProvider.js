@@ -1,26 +1,26 @@
 'use strict';
 var common  = require('../../common'),
     config  = require('../../config'),
+    User    = require('./userProvider'),
     Q       = require('q'),
     _       = require('lodash');
 
 
 function Feeds() {
 
+    // return all feeds for this user
     var getAllFeeds = function() {
-        var defer = Q.defer();
+        var defer = Q.defer(),
+            feeds = [];
 
-        if (common.db) {
-            var feedsCollection = common.db.collection('feeds');
-            feedsCollection.find({},{}).toArray(function(err, data) {
-                if (err) console.log(err);
-                defer.resolve(data);
-            })
-        }else{
-            console.log('Cannot load feeds, no DB connection');
-            defer.reject('No database connection');
-        }
-
+        User.groups().then(function(groups) {
+            feeds = _.map(groups, function(n) {
+                if (_.isArray(n.data.feeds)) {
+                    return n.data.feeds;
+                }
+            });
+            defer.resolve(_.compact(feeds)[0])
+        }, defer.reject)
         return defer.promise;
     }
 

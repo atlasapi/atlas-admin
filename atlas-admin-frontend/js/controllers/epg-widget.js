@@ -6,7 +6,7 @@ app.controller('CtrlEPGWidget', ['$scope', '$rootScope', 'Users', '$routeParams'
     $scope.widget = false;
     $scope.widgetURL = '';
 
-    $http.get( Authentication.appendTokenToUrl(atlasApiHost +'/user/permissions') )
+    $http.get( Authentication.appendTokenToUrl(atlasApiHost +'/user/groups') )
     .success(function(groups, status) {
         var key = groups[0].data.apiKey || null;
         if (key) {

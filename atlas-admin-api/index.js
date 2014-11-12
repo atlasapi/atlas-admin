@@ -5,13 +5,8 @@ var config                       = require('./config'),
     bodyParser                   = require('body-parser'),
     MongoClient                  = require('mongodb').MongoClient,
     MongoServer                  = require('mongodb').Server,
-    app                          = express(),
-    gatewayRequests              = require('./lib/gateways/requests'),
-    gatewayPropositions          = require('./lib/gateways/propositions'),
-    gatewayUsage                 = require('./lib/gateways/usage'),
-    gatewayUsers                 = require('./lib/gateways/users'),
-    gatewayFeeds                 = require('./lib/gateways/feeds'),
-    gatewayWishes                = require('./lib/gateways/wishes');
+
+    app                          = express();
 
 var _http_port = config.port.http;
 var _mongo_port = config.port.mongo;
@@ -23,13 +18,10 @@ app.use( bodyParser.json() );
 app.use( require('./lib/middleware/prepResponse') );
 
 // middleware: check calls against whitelisted domains
-app.use( require('./lib/middleware/allowAccess') );
+app.use( require('./lib/middleware/crossOrigin') );
 
 // middleware: proxy atlas requests
 app.use( require('./lib/middleware/auth') );
-
-// middleware: user grouping
-app.use( require('./lib/middleware/userGroups').middleware );
 
 // open up a connection to mongodb, then register endpoints and boot the server
 var mongoclient = new MongoClient(
@@ -37,16 +29,18 @@ var mongoclient = new MongoClient(
 
 mongoclient.open(function(err, mongo) {
     if (err) console.error(err); 
+
+    // create mongo connection and drop into common
     var db = mongo.db(config.database.name);
     common.db = db;
 
-    // register gateway REST endpoints
-    app.use(config.paths.apiRoot + '/requests',     gatewayRequests(db));
-    app.use(config.paths.apiRoot + '/propositions', gatewayPropositions(db));
-    app.use(config.paths.apiRoot + '/wishes', gatewayWishes(db));
-    app.use(config.paths.apiRoot + '/usage', gatewayUsage(db));
-    app.use(config.paths.apiRoot + '/user', gatewayUsers(db));
-    app.use(config.paths.apiRoot + '/feeds',        gatewayFeeds(db));
+    // register REST endpoints
+    app.use(config.paths.apiRoot + '/requests',     require('./lib/gateways/requests')(db));
+    app.use(config.paths.apiRoot + '/propositions', require('./lib/gateways/propositions')(db));
+    app.use(config.paths.apiRoot + '/wishes',       require('./lib/gateways/wishes')(db));
+    app.use(config.paths.apiRoot + '/usage',        require('./lib/gateways/usage')(db));
+    app.use(config.paths.apiRoot + '/user',         require('./lib/gateways/user')(db));
+    app.use(config.paths.apiRoot + '/feeds',        require('./lib/gateways/feeds')(db));
 
     // listen for requests to server on _http_port
     console.log('listen on port: ' + _http_port);

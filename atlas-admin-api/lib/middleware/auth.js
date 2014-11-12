@@ -1,9 +1,9 @@
 'use strict';
 
-var config = require('../../config');
-var common = require('../../common');
-var http = require('http');
-var url = require('url');
+var config = require('../../config'),
+    common = require('../../common'),
+    http = require('http'),
+    url = require('url');
 
 // proxy auth request to atlas auth server
 var auth = function(request, response, next) {

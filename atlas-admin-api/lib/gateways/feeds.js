@@ -8,7 +8,7 @@ var config      = require('../../config'),
     _           = require('lodash'),
     Feeds       = require('../services/feedsProvider'),
     Atlas       = require('../services/atlasProvider'),
-    _apikey     = null;
+    _feeds      = [];
 
 
 //  Used for determining if a string is valid JSON or not
@@ -24,6 +24,15 @@ function IsJSON(str) {
     return true;
 }
 
+function getAPIKey() {
+    for (var feed in _feeds) {
+        if (_feeds[feed].name == 'BBC to YouView') {
+            return _feeds[feed].apiKey;
+        }
+    }
+    return null;
+}
+
 //  Used for proxying requests to atlas and returning the result
 //
 //  @returns promise
@@ -32,7 +41,7 @@ function proxyRequest(endpoint, request) {
     var defer           = Q.defer(),
         _endpoint       = endpoint,
         _annotations    = request.query.annotations || null,
-        _querystring    = { apiKey: _apikey };
+        _querystring    = { apiKey: getAPIKey() };
 
     for (var query in request.query) {
         if ('status' === query 
@@ -59,7 +68,7 @@ function proxyRequest(endpoint, request) {
 function getXML(uri) {
     var defer = Q.defer(),
         _uri = uri || null,
-        query = qs.stringify({apiKey: _apikey, uri: _uri});
+        query = qs.stringify({apiKey: getAPIKey(), uri: _uri});
     if (_uri) {
         Atlas.api('/3.0/feeds/youview/bbc_nitro.xml?'+query, 'GET', function(status, data) {
             defer.resolve(data);
@@ -68,19 +77,18 @@ function getXML(uri) {
     return defer.promise;
 }
 
+function loadFeeds(req, res, next) {
+    Feeds.getAll().then(function(feeds) {
+        _feeds = feeds;
+        next();
+    }, next);
+}
+
 //  REST interface for feeds 
 //
 var feedsInterface = function() {
     var router  = express.Router();
-    var _feeds = [{
-        name: "BBC to YouView",
-        location: "/feeds/youview",
-        endpoint: "/3.0/feeds/youview"
-    }];
-
-    Feeds.getAll().then(function(feeds) {
-        _apikey = feeds[0].apiKey;
-    })
+    router.all('*', loadFeeds);
 
     router.route('/')
         .get(function(req, res) {
