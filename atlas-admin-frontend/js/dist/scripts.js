@@ -1901,7 +1901,7 @@ app.controller('CtrlEPGWidget', ['$scope', '$rootScope', 'Users', '$routeParams'
         if (key) {
             $scope.view_title = "BT Blackout";
             $scope.widget = true;
-            $scope.widgetURL = '//widgets-stage.metabroadcast.com/loader/1/btblackout.html?apiKey='+key;
+            $scope.widgetURL = '//widgets.metabroadcast.com/loader/1/btblackout.html?apiKey='+key;
         }
     })
 }]);
