@@ -31,6 +31,7 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.controllers.sourceRequests',
                                 'atlasAdmin.controllers.user',
                                 'atlasAdmin.controllers.feeds',
+                                'atlasAdmin.controllers.epgWidget',
                                 'atlasAdmin.controllers.uservideosources',
                                 'atlasAdmin.controllers.uservideosources.youtube',
                                 'atlasAdmin.controllers.admins.usage',
@@ -50,6 +51,9 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/manage/users/:uid', {templateUrl: 'partials/profile.html', controller: 'UserProfileController'});
     $routeProvider.when('/manage/wishlist', {templateUrl: 'partials/admins/wishlist/manageWishlist.html', controller: 'CtrlManageWishlist'});
     $routeProvider.when('/manage/usage', {templateUrl: 'partials/admins/usage/requests.html', controller: 'CtrlUsage'});
+
+    // Add blackout widget page
+    $routeProvider.when('/epg/bt-tv', {templateUrl: 'partials/epg-widget.html', controller: 'CtrlEPGWidget'});
 
     // application user routes
     $routeProvider.when('/applications', {templateUrl: 'partials/applications.html', controller: 'CtrlApplications'});
@@ -122,6 +126,13 @@ app.config(['$httpProvider', function($httpProvider) {
     }];
 
     $httpProvider.responseInterceptors.push(interceptor);
+}]);
+
+app.config(['$sceDelegateProvider', function($sceDelegateProvider) {
+    $sceDelegateProvider.resourceUrlWhitelist([
+        'self',
+        'http://*.metabroadcast.com/**'
+        ]);
 }]);
 
 app.config(['$locationProvider', function($locationProvider) {
@@ -1728,6 +1739,17 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
             {path:'/manage/usage', label:'API Usage', role:'admin'},
             {path:'/manage/wishlist', label:'Wishlist', role:'admin'}];
 
+        // Add blackout widget page to navigation 
+        if (user.id === 'hk98' || 
+            user.id === 'hmbc' || 
+            user.id === 'hmjh' || 
+            user.id === 'hmjg' || 
+            user.id === 'hmjc' ||
+            user.id === 'hmcz' ||
+            user.id === 'hmbb') {
+            allMenu.push({path: '/epg/bt-tv', label: 'EPG'});
+        }
+
         var menu = [];
         var admin_menu = [];
         for (var i = 0; i < allMenu.length; i++) {
@@ -1863,6 +1885,24 @@ app.controller('CtrlVideoSourceYouTubeConfig', function($scope, $rootScope, User
         });
     };
 });
+var app = angular.module('atlasAdmin.controllers.epgWidget', []);
+
+app.controller('CtrlEPGWidget', ['$scope', '$rootScope', 'Users', '$routeParams', '$q', '$http', 'Authentication', 'atlasApiHost',
+    function($scope, $rootScope, Users, $routeParams, $q, $http, Authentication, atlasApiHost) {
+    $scope.view_title = "";
+    $scope.widget = false;
+    $scope.widgetURL = '';
+
+    $http.get( Authentication.appendTokenToUrl(atlasApiHost +'/user/groups') )
+    .success(function(groups, status) {
+        var key = groups[0].data.apiKey || null;
+        if (key) {
+            $scope.view_title = "BT Blackout";
+            $scope.widget = true;
+            $scope.widgetURL = '//widgets-stage.metabroadcast.com/loader/1/btblackout.html?apiKey='+key;
+        }
+    })
+}]);
 'use strict';
 var app = angular.module('atlasAdmin.controllers.feeds', []);
 

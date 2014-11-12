@@ -16,8 +16,8 @@ var common = {
         not_permitted: {'error': 'You dont have permission to access this resource'}
     },
 
-    db: null,
-    user: null
+    user: null,
+    db: null
 }
 
 module.exports = common;
