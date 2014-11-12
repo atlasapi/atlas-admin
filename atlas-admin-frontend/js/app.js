@@ -31,6 +31,7 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.controllers.sourceRequests',
                                 'atlasAdmin.controllers.user',
                                 'atlasAdmin.controllers.epgWidget',
+                                'atlasAdmin.controllers.feeds',
                                 'atlasAdmin.controllers.uservideosources',
                                 'atlasAdmin.controllers.uservideosources.youtube',
                                 'atlasAdmin.controllers.admins.usage',

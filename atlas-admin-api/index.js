@@ -39,6 +39,7 @@ mongoclient.open(function(err, mongo) {
     app.use(config.paths.apiRoot + '/wishes',       require('./lib/gateways/wishes')(db));
     app.use(config.paths.apiRoot + '/usage',        require('./lib/gateways/usage')(db));
     app.use(config.paths.apiRoot + '/user',         require('./lib/gateways/user')(db));
+    app.use(config.paths.apiRoot + '/feeds',        require('./lib/gateways/feeds')(db));
 
     // listen for requests to server on _http_port
     console.log('listen on port: ' + _http_port);

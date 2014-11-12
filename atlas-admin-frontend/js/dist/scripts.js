@@ -30,8 +30,8 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.controllers.requestSource',
                                 'atlasAdmin.controllers.sourceRequests',
                                 'atlasAdmin.controllers.user',
-                                'atlasAdmin.controllers.feeds',
                                 'atlasAdmin.controllers.epgWidget',
+                                'atlasAdmin.controllers.feeds',
                                 'atlasAdmin.controllers.uservideosources',
                                 'atlasAdmin.controllers.uservideosources.youtube',
                                 'atlasAdmin.controllers.admins.usage',
@@ -1746,6 +1746,7 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
             user.id === 'hmjg' || 
             user.id === 'hmjc' ||
             user.id === 'hmcz' ||
+            user.id === 'hk7v' ||
             user.id === 'hmbb') {
             allMenu.push({path: '/epg/bt-tv', label: 'EPG'});
         }
@@ -1885,24 +1886,6 @@ app.controller('CtrlVideoSourceYouTubeConfig', function($scope, $rootScope, User
         });
     };
 });
-var app = angular.module('atlasAdmin.controllers.epgWidget', []);
-
-app.controller('CtrlEPGWidget', ['$scope', '$rootScope', 'Users', '$routeParams', '$q', '$http', 'Authentication', 'atlasApiHost',
-    function($scope, $rootScope, Users, $routeParams, $q, $http, Authentication, atlasApiHost) {
-    $scope.view_title = "";
-    $scope.widget = false;
-    $scope.widgetURL = '';
-
-    $http.get( Authentication.appendTokenToUrl(atlasApiHost +'/user/groups') )
-    .success(function(groups, status) {
-        var key = groups[0].data.apiKey || null;
-        if (key) {
-            $scope.view_title = "BT Blackout";
-            $scope.widget = true;
-            $scope.widgetURL = '//widgets-stage.metabroadcast.com/loader/1/btblackout.html?apiKey='+key;
-        }
-    })
-}]);
 'use strict';
 var app = angular.module('atlasAdmin.controllers.feeds', []);
 
@@ -2061,6 +2044,24 @@ app.controller('CtrlStatusDetail', ['$scope', '$rootScope', '$routeParams', 'Fee
     function($scope, $rootScope, $routeParams, $q, $modalInstance) {
         
 }])
+var app = angular.module('atlasAdmin.controllers.epgWidget', []);
+
+app.controller('CtrlEPGWidget', ['$scope', '$rootScope', 'Users', '$routeParams', '$q', '$http', 'Authentication', 'atlasApiHost',
+    function($scope, $rootScope, Users, $routeParams, $q, $http, Authentication, atlasApiHost) {
+    $scope.view_title = "";
+    $scope.widget = false;
+    $scope.widgetURL = '';
+
+    $http.get( Authentication.appendTokenToUrl(atlasApiHost +'/user/groups') )
+    .success(function(groups, status) {
+        var key = groups[0].data.apiKey || null;
+        if (key) {
+            $scope.view_title = "BT Blackout";
+            $scope.widget = true;
+            $scope.widgetURL = '//widgets-stage.metabroadcast.com/loader/1/btblackout.html?apiKey='+key;
+        }
+    })
+}]);
 'use strict';
 
 // define 'applications' module to be used for application controllers

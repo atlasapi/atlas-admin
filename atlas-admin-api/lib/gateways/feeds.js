@@ -8,7 +8,7 @@ var config      = require('../../config'),
     _           = require('lodash'),
     Feeds       = require('../services/feedsProvider'),
     Atlas       = require('../services/atlasProvider'),
-    _apikey     = null;
+    _feeds      = [];
 
 
 //  Used for determining if a string is valid JSON or not
@@ -32,7 +32,13 @@ function proxyRequest(endpoint, request) {
     var defer           = Q.defer(),
         _endpoint       = endpoint,
         _annotations    = request.query.annotations || null,
-        _querystring    = { apiKey: _apikey };
+        _querystring    = { apiKey: null };
+
+    for (var feed in _feeds) {
+        if (_feeds[feed].name == 'BBC to YouView') {
+            _querystring.apiKey = _feeds[feed].apiKey;
+        }
+    }
 
     for (var query in request.query) {
         if ('status' === query 
@@ -68,19 +74,18 @@ function getXML(uri) {
     return defer.promise;
 }
 
+function loadFeeds(req, res, next) {
+    Feeds.getAll().then(function(feeds) {
+        _feeds = feeds;
+        next();
+    });
+}
+
 //  REST interface for feeds 
 //
 var feedsInterface = function() {
     var router  = express.Router();
-    var _feeds = [{
-        name: "BBC to YouView",
-        location: "/feeds/youview",
-        endpoint: "/3.0/feeds/youview"
-    }];
-
-    Feeds.getAll().then(function(feeds) {
-        _apikey = feeds[0].apiKey;
-    })
+    router.all('*', loadFeeds);
 
     router.route('/')
         .get(function(req, res) {
