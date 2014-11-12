@@ -24,6 +24,15 @@ function IsJSON(str) {
     return true;
 }
 
+function getAPIKey() {
+    for (var feed in _feeds) {
+        if (_feeds[feed].name == 'BBC to YouView') {
+            return _feeds[feed].apiKey;
+        }
+    }
+    return null;
+}
+
 //  Used for proxying requests to atlas and returning the result
 //
 //  @returns promise
@@ -32,13 +41,7 @@ function proxyRequest(endpoint, request) {
     var defer           = Q.defer(),
         _endpoint       = endpoint,
         _annotations    = request.query.annotations || null,
-        _querystring    = { apiKey: null };
-
-    for (var feed in _feeds) {
-        if (_feeds[feed].name == 'BBC to YouView') {
-            _querystring.apiKey = _feeds[feed].apiKey;
-        }
-    }
+        _querystring    = { apiKey: getAPIKey() };
 
     for (var query in request.query) {
         if ('status' === query 
@@ -65,7 +68,7 @@ function proxyRequest(endpoint, request) {
 function getXML(uri) {
     var defer = Q.defer(),
         _uri = uri || null,
-        query = qs.stringify({apiKey: _apikey, uri: _uri});
+        query = qs.stringify({apiKey: getAPIKey(), uri: _uri});
     if (_uri) {
         Atlas.api('/3.0/feeds/youview/bbc_nitro.xml?'+query, 'GET', function(status, data) {
             defer.resolve(data);
@@ -78,7 +81,7 @@ function loadFeeds(req, res, next) {
     Feeds.getAll().then(function(feeds) {
         _feeds = feeds;
         next();
-    });
+    }, next);
 }
 
 //  REST interface for feeds 

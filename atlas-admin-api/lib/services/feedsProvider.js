@@ -10,9 +10,11 @@ function Feeds() {
 
     // return all feeds for this user
     var getAllFeeds = function() {
-        var defer = Q.defer();
+        var defer = Q.defer(),
+            feeds = [];
+
         User.groups().then(function(groups) {
-            var feeds = _.map(groups, function(n) {
+            feeds = _.map(groups, function(n) {
                 if (_.isArray(n.data.feeds)) {
                     return n.data.feeds;
                 }
