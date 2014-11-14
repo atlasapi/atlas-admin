@@ -22,7 +22,7 @@ var userInterface = function(db) {
             res.end(JSON.stringify(groups)); 
         }, function(reason) {
             res.statusCode = 400;
-            res.end(reason);
+            res.end(JSON.stringify(reason));
         });
     })
 

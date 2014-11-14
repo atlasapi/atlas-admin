@@ -5,7 +5,6 @@ var config                       = require('./config'),
     bodyParser                   = require('body-parser'),
     MongoClient                  = require('mongodb').MongoClient,
     MongoServer                  = require('mongodb').Server,
-
     app                          = express();
 
 var _http_port = config.port.http;

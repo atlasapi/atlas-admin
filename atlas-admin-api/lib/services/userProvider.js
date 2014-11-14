@@ -18,16 +18,19 @@ function User() {
     //
     var listGroups = function() {
         var defer           = Q.defer(),
-            _currentuser    = common.user || null;
+            _currentuser    = common.user || null,
+            groups          = null;
 
         if (_.isEmpty(_currentuser)) {
-            defer.reject();
+            defer.reject(common.errors.not_permitted);
             return defer.promise;
         }
 
         collections.groups.find({}, {}).toArray(function(err, data) {
-            var groups = _.compact( _.map(data, function(n) {
-                if (_.isArray(n.users)) {
+            groups = _.compact( _.map(data, function(n) {
+                if (_currentuser.role === 'admin') {
+                    return { name: n.groupName, data: n.data };
+                }else if (_.isArray(n.users)) {
                     for (var user in n.users) {
                         if (n.users[user] === _currentuser.id) {
                             return { name: n.groupName, data: n.data };
@@ -39,7 +42,7 @@ function User() {
             if (!_.isEmpty(groups)) {
                 defer.resolve(groups)
             }else{
-                defer.reject()
+                defer.reject(common.errors.not_permitted)
             }
         });
         return defer.promise;
