@@ -35,12 +35,9 @@ app.factory('Authentication', function ($rootScope, ProfileStatus) {
 
             $rootScope.status.loggedIn = true;
 
-            if (url.indexOf('?') !== -1) {
-                return url + '&' + oauthParams;
-            }
-            else {
-                return url + '?' + oauthParams;
-            }
+            return (url.indexOf('?') === -1) ?
+                        url + '?' + oauthParams :
+                        url + '&' + oauthParams;
         }
     };
 });
@@ -79,17 +76,14 @@ app.factory('ProfileCompleteInterceptor', function (ProfileStatus, $location, $q
         return promise.then(
             function (response) {
                 var url = response.config.url;
-
                 if (url.indexOf('partials/error') !== -1) {
                     return response;
                 }
-
                 if (ProfileStatus.isProfileComplete() ||
                     response.status === 400 ||
                     response.config.url.indexOf('/auth/') !== -1) {
                     return response;
                 }
-
                 if (url.indexOf('partials/request') !== -1 ||
                     url.indexOf('partials/source') !== -1 ||
                     url.indexOf('partials/application') !== -1) {
@@ -99,7 +93,6 @@ app.factory('ProfileCompleteInterceptor', function (ProfileStatus, $location, $q
                         return $q.reject(response);
                     }
                 }
-                
                 return response;
             },
             function (response) {

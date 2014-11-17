@@ -41,6 +41,8 @@ var app = angular.module('atlasAdmin', [
                                 'ngResource',
                                 'ngRoute',
                                 'atlasAdminConfig']);
+
+
 app.config(['$routeProvider', function($routeProvider) {
     // admin only routes
     $routeProvider.when('/manage/requests', {templateUrl: 'partials/admins/manageSourceRequests.html', controller: 'CtrlManageSourceRequests'});
@@ -74,11 +76,13 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/error', {templateUrl: 'partials/error.html', controller: 'ErrorController', reloadOnSearch: false});
     $routeProvider.otherwise({redirectTo: '/applications'});
   }])
+
+
 app.config(['$httpProvider', function($httpProvider) {
     $httpProvider.defaults.useXDomain = true;
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
     $httpProvider.responseInterceptors.push('AuthenticationInterceptor');
-    $httpProvider.responseInterceptors.push('ProfileCompleteInterceptor');
+    //$httpProvider.responseInterceptors.push('ProfileCompleteInterceptor');
     // loading notifications
     var $http,
     interceptor = ['$q', '$injector', function ($q, $injector) {
@@ -128,6 +132,7 @@ app.config(['$httpProvider', function($httpProvider) {
     $httpProvider.responseInterceptors.push(interceptor);
 }]);
 
+// This is used for telling angular to allow transposing of url's in $scope
 app.config(['$sceDelegateProvider', function($sceDelegateProvider) {
     $sceDelegateProvider.resourceUrlWhitelist([
         'self',
@@ -176,12 +181,9 @@ app.factory('Authentication', function ($rootScope, ProfileStatus) {
 
             $rootScope.status.loggedIn = true;
 
-            if (url.indexOf('?') !== -1) {
-                return url + '&' + oauthParams;
-            }
-            else {
-                return url + '?' + oauthParams;
-            }
+            return (url.indexOf('?') === -1) ?
+                        url + '?' + oauthParams :
+                        url + '&' + oauthParams;
         }
     };
 });
@@ -220,17 +222,14 @@ app.factory('ProfileCompleteInterceptor', function (ProfileStatus, $location, $q
         return promise.then(
             function (response) {
                 var url = response.config.url;
-
                 if (url.indexOf('partials/error') !== -1) {
                     return response;
                 }
-
                 if (ProfileStatus.isProfileComplete() ||
                     response.status === 400 ||
                     response.config.url.indexOf('/auth/') !== -1) {
                     return response;
                 }
-
                 if (url.indexOf('partials/request') !== -1 ||
                     url.indexOf('partials/source') !== -1 ||
                     url.indexOf('partials/application') !== -1) {
@@ -240,7 +239,6 @@ app.factory('ProfileCompleteInterceptor', function (ProfileStatus, $location, $q
                         return $q.reject(response);
                     }
                 }
-                
                 return response;
             },
             function (response) {
@@ -359,6 +357,7 @@ app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'Profile
         }
     };
 }]);
+
 app.factory('ProfileStatus', function() {
     return {
         setComplete: function(status) {
