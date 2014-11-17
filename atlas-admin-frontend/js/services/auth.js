@@ -1,6 +1,4 @@
 'use strict';
-
-/* Services */
 var app = angular.module('atlasAdmin.services.auth', []);
 
 app.factory('Authentication', function ($rootScope, ProfileStatus) {
@@ -51,7 +49,7 @@ app.factory('AuthenticationInterceptor', function ($q, $location, $window, atlas
     return function (promise) {
         return promise.then(
             function (response) {
-                 // Set up auto logout after 20 mins. Cancel any existing instance.
+                 // Set up auto logout after one year. Cancel any existing instance.
                  if ($rootScope.autologout) {
                      $timeout.cancel($rootScope.autologout);
                  }
@@ -101,7 +99,7 @@ app.factory('ProfileCompleteInterceptor', function (ProfileStatus, $location, $q
                         return $q.reject(response);
                     }
                 }
-
+                
                 return response;
             },
             function (response) {
