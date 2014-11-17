@@ -7,6 +7,7 @@
 //  label   — block label sits in it's own row
 .form-row {
     @extend %cf;
+    position: relative;
     display: block;
     margin-bottom: 1.5rem;
 
@@ -28,6 +29,7 @@
 
 .form-label {
     @extend %cf;
+    position: relative;
     display: block;
 
     > input[type="radio"],
@@ -53,6 +55,7 @@ textarea {
 //  
 input[type="text"],
 input[type="url"],
+input[type="email"],
 .text-input {
     box-sizing: border-box;
     padding: .296rem;
@@ -73,12 +76,25 @@ input[type="url"],
         padding: .25rem .5rem;
         font-size: 1.125rem;
     }
+
+    // Angular state classes
+    &.ng-invalid {
+        border-color: $color-pink;
+    }
 }
 
 //  Radio buttons
 input[type="radio"],
 .radio-input {
     float: left;
+}
+
+// Form helpers are normally displayed next to a form field 
+// to provide contextual help
+.form-field-helper {
+    display: block;
+    padding: 1rem 0 0;
+    color: $color-pink;
 }
 
 

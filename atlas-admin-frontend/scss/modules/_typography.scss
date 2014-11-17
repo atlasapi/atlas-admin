@@ -57,10 +57,15 @@ h6 {
 }
 
 .page-title {
-
     &.align-mid {
         color: #333;
         font-size: 2rem;
         text-align: center;
     }
+}
+
+.subheading {
+    display: block;
+    margin: 1rem 0;
+    font-size: 1rem;
 }

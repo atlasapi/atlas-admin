@@ -1,0 +1,8 @@
+.profile-holder {
+    box-sizing: border-box;
+    float: left;
+    padding: 3.375rem;
+    background: $color-silver;
+    border-radius: 5px;
+    border: 1px solid darken($color-silver, 10%);
+}
