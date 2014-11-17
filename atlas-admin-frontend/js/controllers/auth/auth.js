@@ -8,12 +8,15 @@ app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location
         $location.path("/applications");
         return;
     }
+
     $rootScope.title = "Signing in...";
     Authentication.setProvider($routeParams.providerNamespace);
+    
     var oauth_token = "";
     var oauth_verifier = "";
     var code = "";
     var searchParts = window.location.search.replace("?","").split("&");
+
     for (var i in searchParts) {
         var parts = searchParts[i].split("=");
         if (parts[0] == "oauth_token") {
@@ -25,7 +28,8 @@ app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location
         }
     }
     
-    Atlas.getAccessToken(oauth_token, oauth_verifier, code).then(function(results) {
+    Atlas.getAccessToken(oauth_token, oauth_verifier, code)
+        .then(function(results) {
         if (!results.data.oauth_result) {
             return;
         }
@@ -38,6 +42,7 @@ app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location
             $log.error(error);
         });
     },
+
     function(error) {
         $log.error("Error getting access token.");
         $log.error(error);

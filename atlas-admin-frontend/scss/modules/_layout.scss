@@ -1,3 +1,5 @@
+html, body { height: 100%; }
+
 // automatically hide cloaked parts of page until it loads
 [ng\:cloak],
 [ng-cloak],
@@ -9,6 +11,7 @@
     box-sizing: border-box;
     display: block;
     width: 100%;
+    height: 100%;
     padding: 0 7%;
 }
 

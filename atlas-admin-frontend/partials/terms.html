@@ -1,8 +1,12 @@
-<div class="panel panel-default">
-  <div class="panel-body"  id="termsAndConditions" ng-bind-html="app.license">
-  </div>
-  <div class="panel-footer">
-    <button type="button" class="btn btn-success" ng-click="app.accept()" ng-hide="app.user.license_accepted && app.user.profile_complete">Accept</button>
-    <button type="button" class="btn btn-primary pull-right" ng-click="app.reject()" ng-hide="app.user.license_accepted && app.user.profile_complete">Reject</button>
-  </div>
+<div class="app-surface terms">
+    <header class="app-header">
+        <h1 class="page-title">{{view_title}}</h1>
+    </header>
+    <section class="panel-full terms-holder">
+        <div class="app-content terms-text" id="termsAndConditions" ng-bind-html="app.license"></div>
+        <div class="panel-full terms-actions">
+            <button type="button" class="" ng-click="app.reject()" ng-hide="app.user.license_accepted && app.user.profile_complete">Reject</button>
+            <button type="button" class="positive" ng-click="app.accept()" ng-hide="app.user.license_accepted && app.user.profile_complete">Accept</button>
+        </div>
+    </section>
 </div>

@@ -9,50 +9,50 @@
 </div>
 <div class="panel panel-default" ng-show="!successMessage || app.changed">
   <div class="panel-body">
-     <button type="button" class="btn btn-danger" ng-click="save()">Save</button>
-     <span class="label label-warning pull-right" ng-show="app.changed">Unsaved changes</span>
-  </div>
+   <button type="button" class="btn btn-danger" ng-click="save()">Save</button>
+   <span class="label label-warning pull-right" ng-show="app.changed">Unsaved changes</span>
+</div>
 </div>
 <form name="userForm" class="form-horizontal" role="form">
-<div>
-  <div class="form-group">
-    <label for="fullName" class="col-sm-2 control-label">Full name</label>
-    <div class="col-sm-10">
-        <input type="text" class="form-control" id="full_name" name="full_name" placeholder="name" ng-model="app.user.full_name" ng-change="app.changed=true" ng-minlength=2 required>
-        <span ng-show="userForm.full_name.$error.required || userForm.full_name.$error.minlength" class="help-block">Please provide your name</span>
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="company" class="col-sm-2 control-label">Company</label>
-    <div class="col-sm-10">
-        <input type="text" class="form-control" id="company" name="company" placeholder="" ng-model="app.user.company" ng-change="app.changed=true">
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="email" class="col-sm-2 control-label">Email</label>
-    <div class="col-sm-10">
-        <input type="email" class="form-control" id="email" name="email" placeholder="me@example.com" ng-model="app.user.email" ng-change="app.changed=true" required>
-        <span ng-show="userForm.email.$error.email || userForm.email.$error.required" class="help-block">Please enter a valid email address</span>
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="website" class="col-sm-2 control-label">Website</label>
-    <div class="col-sm-10">
-        <input type="url" class="form-control" id="website" name="website" placeholder="http://example.com" ng-model="app.user.website" ng-change="app.changed=true">
-        <span ng-show="userForm.website.$error.url" class="help-block">Please enter a valid website address</span> 
-    </div>
-  </div>
-  <div class="form-group" ng-show="app.isAdmin">
-    <label for="website" class="col-sm-2 control-label">Role</label>
-    <div class="col-sm-10">
-        <div class="btn-group">
-            <button type="button" class="btn btn-primary role-btn" ng-model="app.user.role" btn-radio="'admin'">Administrator</button>
-            <button type="button" class="btn btn-primary role-btn" ng-model="app.user.role" btn-radio="'regular'">Regular</button>
-            <button type="button" class="btn btn-primary role-btn" ng-model="app.user.role" btn-radio="'source'">Source</button>
+    <div>
+      <div class="form-group">
+        <label for="fullName" class="col-sm-2 control-label">Full name</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="full_name" name="full_name" placeholder="name" ng-model="app.user.full_name" ng-change="app.changed=true" ng-minlength=2 required>
+            <span ng-show="userForm.full_name.$error.required || userForm.full_name.$error.minlength" class="help-block">Please provide your name</span>
         </div>
-        <span ng-show="userForm.website.$error.url" class="help-block">User access level (admin only)</span> 
     </div>
-  </div>
+    <div class="form-group">
+        <label for="company" class="col-sm-2 control-label">Company</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="company" name="company" placeholder="" ng-model="app.user.company" ng-change="app.changed=true">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="email" class="col-sm-2 control-label">Email</label>
+        <div class="col-sm-10">
+            <input type="email" class="form-control" id="email" name="email" placeholder="me@example.com" ng-model="app.user.email" ng-change="app.changed=true" required>
+            <span ng-show="userForm.email.$error.email || userForm.email.$error.required" class="help-block">Please enter a valid email address</span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="website" class="col-sm-2 control-label">Website</label>
+        <div class="col-sm-10">
+            <input type="url" class="form-control" id="website" name="website" placeholder="http://example.com" ng-model="app.user.website" ng-change="app.changed=true">
+            <span ng-show="userForm.website.$error.url" class="help-block">Please enter a valid website address</span> 
+        </div>
+    </div>
+    <div class="form-group" ng-show="app.isAdmin">
+        <label for="website" class="col-sm-2 control-label">Role</label>
+        <div class="col-sm-10">
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary role-btn" ng-model="app.user.role" btn-radio="'admin'">Administrator</button>
+                <button type="button" class="btn btn-primary role-btn" ng-model="app.user.role" btn-radio="'regular'">Regular</button>
+                <button type="button" class="btn btn-primary role-btn" ng-model="app.user.role" btn-radio="'source'">Source</button>
+            </div>
+            <span ng-show="userForm.website.$error.url" class="help-block">User access level (admin only)</span> 
+        </div>
+    </div>
 </div>
 </form>
 <div ng-show="app.isAdmin" class="panel panel-default">
@@ -62,7 +62,7 @@
     <div class="panel-body">
       <div class="row" ng-show="app.applications.length == 0">
           <div class="container">
-          <p>No applications registered.</p>
+              <p>No applications registered.</p>
           </div>
       </div>
       <div class="row" ng-show="app.applications.length > 0">
@@ -71,19 +71,18 @@
             <th ng-click="app.predicate='title'; app.reverse=!app.reverse;">Application</th>
             <th ng-click="app.predicate='credentials.apiKey'; app.reverse=!app.reverse;">API Key</th>
             <th ng-click="app.predicate='created'; app.reverse=!app.reverse;">Created</th>
-          </tr>
-          <tr ng-repeat="application in app.applications | orderBy:app.predicate:app.reverse  | startFrom:(app.currentPage-1)*app.pageSize  | limitTo:app.pageSize ">
+        </tr>
+        <tr ng-repeat="application in app.applications | orderBy:app.predicate:app.reverse  | startFrom:(app.currentPage-1)*app.pageSize  | limitTo:app.pageSize ">
             <td><a ng-href="#/applications/{{application.id}}">{{application.title}}</a></td>
             <td>{{application.credentials.apiKey}}</td>
             <td>{{application.created|date:'dd MMM yyyy H:mm'}}</td>
-          </tr>
-        </table>
-     </div>
-    <div class="container" ng-show="app.applications.length > 0">
-      <pagination total-items="(app.applications|filter:appSearchFilter).length" page="app.currentPage" max-size="app.pageSize" boundary-links="true"></pagination>
-    </div>
-   </div>
+        </tr>
+    </table>
+</div>
+<div class="container" ng-show="app.applications.length > 0">
+  <pagination total-items="(app.applications|filter:appSearchFilter).length" page="app.currentPage" max-size="app.pageSize" boundary-links="true"></pagination>
+</div>
+</div>
 </div>
 
 
-    

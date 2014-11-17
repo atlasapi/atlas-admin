@@ -81,8 +81,12 @@ app.config(['$routeProvider', function($routeProvider) {
 app.config(['$httpProvider', function($httpProvider) {
     $httpProvider.defaults.useXDomain = true;
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
+
+    // these are used for intercepting the request and running checks 
+    // for authentication and profile complete-ness
     $httpProvider.responseInterceptors.push('AuthenticationInterceptor');
-    //$httpProvider.responseInterceptors.push('ProfileCompleteInterceptor');
+    $httpProvider.responseInterceptors.push('ProfileCompleteInterceptor');
+
     // loading notifications
     var $http,
     interceptor = ['$q', '$injector', function ($q, $injector) {
@@ -1290,12 +1294,15 @@ app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location
         $location.path("/applications");
         return;
     }
+
     $rootScope.title = "Signing in...";
     Authentication.setProvider($routeParams.providerNamespace);
+    
     var oauth_token = "";
     var oauth_verifier = "";
     var code = "";
     var searchParts = window.location.search.replace("?","").split("&");
+
     for (var i in searchParts) {
         var parts = searchParts[i].split("=");
         if (parts[0] == "oauth_token") {
@@ -1307,7 +1314,8 @@ app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location
         }
     }
     
-    Atlas.getAccessToken(oauth_token, oauth_verifier, code).then(function(results) {
+    Atlas.getAccessToken(oauth_token, oauth_verifier, code)
+        .then(function(results) {
         if (!results.data.oauth_result) {
             return;
         }
@@ -1320,6 +1328,7 @@ app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location
             $log.error(error);
         });
     },
+
     function(error) {
         $log.error("Error getting access token.");
         $log.error(error);
@@ -1771,6 +1780,7 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
 
 app.controller('UserLicenseController', function($scope, $rootScope, $routeParams, Users, $location, $window, $sce, $log) {
     // only try to get user if logged in
+    $scope.view_title = 'Atlas Terms and Conditions'
     $scope.app = {};
     Users.currentUser().then(function(user) {
         $scope.app.user = user;

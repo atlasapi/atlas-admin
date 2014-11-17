@@ -140,6 +140,7 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
 
 app.controller('UserLicenseController', function($scope, $rootScope, $routeParams, Users, $location, $window, $sce, $log) {
     // only try to get user if logged in
+    $scope.view_title = 'Atlas Terms and Conditions'
     $scope.app = {};
     Users.currentUser().then(function(user) {
         $scope.app.user = user;

@@ -81,8 +81,12 @@ app.config(['$routeProvider', function($routeProvider) {
 app.config(['$httpProvider', function($httpProvider) {
     $httpProvider.defaults.useXDomain = true;
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
+
+    // these are used for intercepting the request and running checks 
+    // for authentication and profile complete-ness
     $httpProvider.responseInterceptors.push('AuthenticationInterceptor');
-    //$httpProvider.responseInterceptors.push('ProfileCompleteInterceptor');
+    $httpProvider.responseInterceptors.push('ProfileCompleteInterceptor');
+
     // loading notifications
     var $http,
     interceptor = ['$q', '$injector', function ($q, $injector) {
