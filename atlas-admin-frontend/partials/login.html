@@ -1,7 +1,4 @@
 <div class="auth-container">
-    <div class="app-header">
-        <h1 class="page-title align-mid">{{title}}</h1>
-    </div>
 	<div ng-repeat="provider in providers | orderBy:'name'" class="auth-option {{provider.icon}}">
 		<a ng-click="startAuth(provider)">
 			<i class="fa fa-{{provider.icon}}"></i> {{provider.prompt}}
