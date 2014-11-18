@@ -3,6 +3,7 @@
 // Declare app level module which depends on filters, and services
 var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.filters', 
+                                'atlasAdmin.preloader', 
                                 'atlasAdmin.services.auth',
                                 'atlasAdmin.services.atlas',
                                 'atlasAdmin.services.applications',
@@ -87,56 +88,49 @@ app.config(['$httpProvider', function($httpProvider) {
     $httpProvider.responseInterceptors.push('AuthenticationInterceptor');
     $httpProvider.responseInterceptors.push('ProfileCompleteInterceptor');
 
-    // loading notifications
-    var $http,
-    interceptor = ['$q', '$injector', function ($q, $injector) {
-        var rootScope;
+    // the loading bar will show when there are requests still pending, but will
+    // be delayed slighty so we dont see the loader flashing up for pages that
+    // load quickly. This also gives the illusion of faster page loads
+    $httpProvider.interceptors.push(['$q', '$rootScope', '$injector', '$timeout', 
+        function($q, $rootScope, $injector, $timeout) {
+        var requests = 0;
+        var loadTimer;
 
-        function success(response) {
-            // get $http via $injector because of circular dependency problem
-            $http = $http || $injector.get('$http');
-            // don't send notification until all requests are complete
-            if ($http.pendingRequests.length < 1) {
-                // get $rootScope via $injector because of circular dependency problem
-                rootScope = rootScope || $injector.get('$rootScope');
-                if (!rootScope.show) {
-                    rootScope.show = {};
-                }
-                rootScope.show.load = false;
-            }
-            return response;
+        if (!$rootScope.show) {
+            $rootScope.show = {};
         }
 
-        function error(response) {
-            // get $http via $injector because of circular dependency problem
-            $http = $http || $injector.get('$http');
-            // don't send notification until all requests are complete
-            if ($http.pendingRequests.length < 1) {
-                // get $rootScope via $injector because of circular dependency problem
-                rootScope = rootScope || $injector.get('$rootScope');
-                if (!rootScope.show) {
-                    rootScope.show = {};
-                }
-                rootScope.show.load = false;
-            }
-            return $q.reject(response);
+        var startLoading = function() {
+            $timeout.cancel(loadTimer);
+            loadTimer = $timeout(function() {
+                $rootScope.$broadcast('loading-started');
+            }, 500);
+            $rootScope.show.load = true;
         }
 
-        return function(promise) {
-            // get $rootScope via $injector because of circular dependency problem
-            rootScope = rootScope || $injector.get('$rootScope');
-            if (!rootScope.show) {
-              rootScope.show = {};
-            }
-            rootScope.show.load = true;
-            return promise.then(success, error);
+        var endLoading = function() {
+            $timeout.cancel(loadTimer);
+            $rootScope.$broadcast('loading-complete');
+            $rootScope.show.load = false;
         }
-    }];
 
-    $httpProvider.responseInterceptors.push(interceptor);
+        return {
+            'request': function(config) {
+                requests++;
+                startLoading();
+                return config || $q.when(config);
+            },
+            'response': function(response) {
+                requests--;
+                if (!requests) endLoading();
+                return response || $q.when(response);
+            }
+        };
+    }]);
 }]);
 
-// This is used for telling angular to allow transposing of url's in $scope
+// This is used for telling angular to allow transposing of strings
+// to make url's in the $scope
 app.config(['$sceDelegateProvider', function($sceDelegateProvider) {
     $sceDelegateProvider.resourceUrlWhitelist([
         'self',
