@@ -110,6 +110,7 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
             user.id === "hmjc" ||
             user.id === "hmcz" ||
             user.id === "hmbb" ||
+            user.id === "jhbqd7k" ||
             user.id === "hk7v") {
             allMenu.push({path: '/epg/bt-tv', label: 'EPG'});
         }
