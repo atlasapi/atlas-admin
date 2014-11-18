@@ -55,3 +55,17 @@ h6 {
 .form-heading {
     margin-bottom: 1em;
 }
+
+.page-title {
+    &.align-mid {
+        color: #333;
+        font-size: 2rem;
+        text-align: center;
+    }
+}
+
+.subheading {
+    display: block;
+    margin: 1rem 0;
+    font-size: 1rem;
+}

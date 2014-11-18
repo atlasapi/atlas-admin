@@ -41,6 +41,8 @@ var app = angular.module('atlasAdmin', [
                                 'ngResource',
                                 'ngRoute',
                                 'atlasAdminConfig']);
+
+
 app.config(['$routeProvider', function($routeProvider) {
     // admin only routes
     $routeProvider.when('/manage/requests', {templateUrl: 'partials/admins/manageSourceRequests.html', controller: 'CtrlManageSourceRequests'});
@@ -74,11 +76,17 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/error', {templateUrl: 'partials/error.html', controller: 'ErrorController', reloadOnSearch: false});
     $routeProvider.otherwise({redirectTo: '/applications'});
   }])
+
+
 app.config(['$httpProvider', function($httpProvider) {
     $httpProvider.defaults.useXDomain = true;
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
+
+    // these are used for intercepting the request and running checks 
+    // for authentication and profile complete-ness
     $httpProvider.responseInterceptors.push('AuthenticationInterceptor');
     $httpProvider.responseInterceptors.push('ProfileCompleteInterceptor');
+
     // loading notifications
     var $http,
     interceptor = ['$q', '$injector', function ($q, $injector) {
@@ -128,6 +136,7 @@ app.config(['$httpProvider', function($httpProvider) {
     $httpProvider.responseInterceptors.push(interceptor);
 }]);
 
+// This is used for telling angular to allow transposing of url's in $scope
 app.config(['$sceDelegateProvider', function($sceDelegateProvider) {
     $sceDelegateProvider.resourceUrlWhitelist([
         'self',
@@ -140,8 +149,6 @@ app.config(['$locationProvider', function($locationProvider) {
 }]);
 
 'use strict';
-
-/* Services */
 var app = angular.module('atlasAdmin.services.auth', []);
 
 app.factory('Authentication', function ($rootScope, ProfileStatus) {
@@ -178,12 +185,9 @@ app.factory('Authentication', function ($rootScope, ProfileStatus) {
 
             $rootScope.status.loggedIn = true;
 
-            if (url.indexOf('?') !== -1) {
-                return url + '&' + oauthParams;
-            }
-            else {
-                return url + '?' + oauthParams;
-            }
+            return (url.indexOf('?') === -1) ?
+                        url + '?' + oauthParams :
+                        url + '&' + oauthParams;
         }
     };
 });
@@ -192,7 +196,7 @@ app.factory('AuthenticationInterceptor', function ($q, $location, $window, atlas
     return function (promise) {
         return promise.then(
             function (response) {
-                 // Set up auto logout after 20 mins. Cancel any existing instance.
+                 // Set up auto logout after one year. Cancel any existing instance.
                  if ($rootScope.autologout) {
                      $timeout.cancel($rootScope.autologout);
                  }
@@ -222,17 +226,14 @@ app.factory('ProfileCompleteInterceptor', function (ProfileStatus, $location, $q
         return promise.then(
             function (response) {
                 var url = response.config.url;
-
                 if (url.indexOf('partials/error') !== -1) {
                     return response;
                 }
-
                 if (ProfileStatus.isProfileComplete() ||
                     response.status === 400 ||
                     response.config.url.indexOf('/auth/') !== -1) {
                     return response;
                 }
-
                 if (url.indexOf('partials/request') !== -1 ||
                     url.indexOf('partials/source') !== -1 ||
                     url.indexOf('partials/application') !== -1) {
@@ -242,7 +243,6 @@ app.factory('ProfileCompleteInterceptor', function (ProfileStatus, $location, $q
                         return $q.reject(response);
                     }
                 }
-
                 return response;
             },
             function (response) {
@@ -361,6 +361,7 @@ app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'Profile
         }
     };
 }]);
+
 app.factory('ProfileStatus', function() {
     return {
         setComplete: function(status) {
@@ -1286,14 +1287,59 @@ app.controller('ErrorController', function($scope, $rootScope, $routeParams) {
 'use strict';
 var app = angular.module('atlasAdmin.controllers.auth', []);
 
-app.controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routeParams, Atlas, atlasVersion, $location, Authentication, $log) {
-    // add 'align-mid' class to the title element
-    var h2_el = angular.element($rootElement).find('h2');
-    var app_title = _.find(h2_el, function(el) {
-        return angular.element(el).hasClass('app-title');
+app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location, Authentication, Atlas, $log, Users) {
+    if (window.location.search.indexOf("code") == -1 &&  window.location.search.indexOf("oauth") == -1) {
+        // search part will be empty if we have been here and cleared the oauth replies
+        // In this case redirect.
+        $location.path("/applications");
+        return;
+    }
+
+    $rootScope.title = "Signing in...";
+    Authentication.setProvider($routeParams.providerNamespace);
+    
+    var oauth_token = "";
+    var oauth_verifier = "";
+    var code = "";
+    var searchParts = window.location.search.replace("?","").split("&");
+
+    for (var i in searchParts) {
+        var parts = searchParts[i].split("=");
+        if (parts[0] == "oauth_token") {
+           oauth_token = parts[1];
+        } else if (parts[0] == "oauth_verifier") {
+           oauth_verifier = parts[1];
+        } else if (parts[0] == "code") {
+           code = parts[1];
+        }
+    }
+    
+    Atlas.getAccessToken(oauth_token, oauth_verifier, code)
+        .then(function(results) {
+        if (!results.data.oauth_result) {
+            return;
+        }
+        Authentication.setToken(results.data.oauth_result.access_token);
+        var redirectToSources = function() {
+            window.location.search = "";
+        };
+        Users.currentUser().then(redirectToSources, function(error) {
+            $log.error("Error setting user.");
+            $log.error(error);
+        });
+    },
+
+    function(error) {
+        $log.error("Error getting access token.");
+        $log.error(error);
+        $location.hash("/login");
     });
-    angular.element(app_title).addClass('align-mid')
-    $rootScope.title = "Hi there, please sign in to continue";
+});
+'use strict';
+var app = angular.module('atlasAdmin.controllers.auth');
+
+app.controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routeParams, Atlas, atlasVersion, $location, Authentication, $log) {
+    $scope.title = "Hi there, please sign in to continue";
 
     // Ask atlas for access here 
     Authentication.reset();
@@ -1335,51 +1381,8 @@ app.controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routePar
         });
     };
 });
-
-app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location, Authentication, Atlas, $log, Users) {
-    if (window.location.search.indexOf("code") == -1 &&  window.location.search.indexOf("oauth") == -1) {
-        // search part will be empty if we have been here and cleared the oauth replies
-        // In this case redirect.
-        $location.path("/applications");
-        return;
-    }
-    $rootScope.title = "Authenticating.....";
-    Authentication.setProvider($routeParams.providerNamespace);
-    var oauth_token = "";
-    var oauth_verifier = "";
-    var code = "";
-    var searchParts = window.location.search.replace("?","").split("&");
-    for (var i in searchParts) {
-        var parts = searchParts[i].split("=");
-        if (parts[0] == "oauth_token") {
-           oauth_token = parts[1];
-        } else if (parts[0] == "oauth_verifier") {
-           oauth_verifier = parts[1];
-        } else if (parts[0] == "code") {
-           code = parts[1];
-        }
-    }
-    
-    Atlas.getAccessToken(oauth_token, oauth_verifier, code).then(function(results) {
-        if (!results.data.oauth_result) {
-            return;
-        }
-        Authentication.setToken(results.data.oauth_result.access_token);
-        var redirectToSources = function() {
-            window.location.search = "";
-        };
-        Users.currentUser().then(redirectToSources, function(error) {
-            $log.error("Error setting user.");
-            $log.error(error);
-        });
-    },
-    function(error) {
-        $log.error("Error getting access token.");
-        $log.error(error);
-        $location.hash("/login");
-    });
-});
-
+'use strict';
+var app = angular.module('atlasAdmin.controllers.auth');
 
 app.controller('CtrlLogout', function($scope, $rootScope, $routeParams, $location, Authentication) {
     // Ask atlas for access here 
@@ -1668,7 +1671,7 @@ app.controller('UserProfileController', function($scope, $rootScope, $routeParam
             } else {
                 title += 'user id ' + user.id;
             }
-            $rootScope.title = title;
+            $rootScope.view_title = title;
             Users.currentUser().then(function(editingUser) {
                 $scope.app.isAdmin = editingUser.role === 'admin';
                 $scope.app.editingUser = editingUser.id;
@@ -1681,7 +1684,8 @@ app.controller('UserProfileController', function($scope, $rootScope, $routeParam
     } else {
         Users.currentUser().then(function(user) {
             $scope.app.user = user;
-            $rootScope.title = 'Your profile';
+            $rootScope.view_title = 'Your profile';
+            console.log($scope)
         });
     }
 
@@ -1778,10 +1782,10 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
 
 app.controller('UserLicenseController', function($scope, $rootScope, $routeParams, Users, $location, $window, $sce, $log) {
     // only try to get user if logged in
+    $scope.view_title = 'Atlas Terms and Conditions'
     $scope.app = {};
     Users.currentUser().then(function(user) {
         $scope.app.user = user;
-        $rootScope.title = 'Atlas usage guidelines, terms and conditions';
     });
 
     var error = function(error) {

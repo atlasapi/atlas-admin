@@ -47,6 +47,9 @@ function Atlas() {
                 if (_.isFunction(callback)) callback(status, data);
             });
         });
+        request.on('error', function() {
+            if (_.isFunction(callback)) callback(500, common.errors.request_error);
+        })
         request.end();
     }
 

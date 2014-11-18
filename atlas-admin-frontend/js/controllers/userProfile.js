@@ -31,7 +31,7 @@ app.controller('UserProfileController', function($scope, $rootScope, $routeParam
             } else {
                 title += 'user id ' + user.id;
             }
-            $rootScope.title = title;
+            $rootScope.view_title = title;
             Users.currentUser().then(function(editingUser) {
                 $scope.app.isAdmin = editingUser.role === 'admin';
                 $scope.app.editingUser = editingUser.id;
@@ -44,7 +44,8 @@ app.controller('UserProfileController', function($scope, $rootScope, $routeParam
     } else {
         Users.currentUser().then(function(user) {
             $scope.app.user = user;
-            $rootScope.title = 'Your profile';
+            $rootScope.view_title = 'Your profile';
+            console.log($scope)
         });
     }
 
@@ -141,10 +142,10 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
 
 app.controller('UserLicenseController', function($scope, $rootScope, $routeParams, Users, $location, $window, $sce, $log) {
     // only try to get user if logged in
+    $scope.view_title = 'Atlas Terms and Conditions'
     $scope.app = {};
     Users.currentUser().then(function(user) {
         $scope.app.user = user;
-        $rootScope.title = 'Atlas usage guidelines, terms and conditions';
     });
 
     var error = function(error) {

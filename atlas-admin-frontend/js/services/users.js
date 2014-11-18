@@ -62,6 +62,7 @@ app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'Profile
         }
     };
 }]);
+
 app.factory('ProfileStatus', function() {
     return {
         setComplete: function(status) {

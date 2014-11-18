@@ -6,8 +6,8 @@ var common = require('../../common'),
 
 
 function User() {
-    var db            = common.db || null,
-        collections   = {
+    var db            = common.db || null;
+    var collections   = {
             groups: db.collection('groups')
         };
 
