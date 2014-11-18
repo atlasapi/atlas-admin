@@ -4,7 +4,7 @@
         <div class="breadcrumb">
             <a class="crumb" href="#/">Atlas</a>
             <a class="crumb" href="#/feeds/">Feeds</a>
-            <span class="crumb">YouView</span>
+            <span class="crumb">BBC to YouView</span>
         </div>
         <div class="overall-stats">
             <h2 class="">Overall stats</h2>
@@ -15,10 +15,6 @@
             <div class="stats-field">
                 <span class="stats-label">Latency</span>
                 <span class="stats-data">{{statistics.update_latency.i_millis}}ms</span>
-            </div>
-            <div class="stats-field">
-                <span class="stats-label">Uptime</span>
-                <span class="stats-data">{{statistics.uptime}}days</span>
             </div>
         </div>
         <div ng-show="error.show">
@@ -44,12 +40,14 @@
                                 <option ng-repeat="status in statusFilter" value="{{status}}">{{status}}</option>
                             </select>
                         </th>
+                        <th></th>
                     </tr>
                     <tr>
                         <th class="sortable" ng-click="table.order='content[0]'; table.reverse=!table.reverse">Content URI</th>
+                        <th class="sortable" ng-click="table.order='content[0]'; table.reverse=!table.reverse">Content URI</th>
                         <th class="sortable" ng-click="table.order='id'; table.reverse=!table.reverse">YouView transaction ID</th>
                         <th class="sortable" ng-click="table.order='upload_time'; table.reverse=!table.reverse">Upload time</th>
-                        <th class="sortable" ng-click="table.order='status'; table.reverse=!table.reverse">Status</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -58,6 +56,7 @@
                         <td><a ng-href="#/feeds/youview/{{transaction.id}}">{{transaction.id}}</a></td>
                         <td><a ng-href="#/feeds/youview/{{transaction.id}}">{{transaction.upload_time}}</a></td>
                         <td><a ng-href="#/feeds/youview/{{transaction.id}}">{{transaction.status}}</a></td>
+                        <td><input type="checkbox" value="{{transaction.id}}"></td>
                     </tr>
                 </tbody>
             </table>
