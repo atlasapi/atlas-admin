@@ -17,6 +17,13 @@
                 <span class="stats-data">{{statistics.update_latency.i_millis}}ms</span>
             </div>
         </div>
+        <div class="feed-actions">
+            <span class="feed-actions-label">Actions:</span>
+            <button ng-click="actions.acceptModal('republish')" ng-disabled="disableActions">Republish</button>
+            <button ng-click="actions.acceptModal('revoke')" ng-disabled="disableActions">Revoke</button>
+            <button ng-click="actions.acceptModal('unrevoke')" ng-disabled="disableActions">Unrevoke</button>
+            <button ng-click="actions.acceptModal('delete')" ng-disabled="disableActions" class="negative">Delete</button>
+        </div>
         <div ng-show="error.show">
             {{error.obj.message}}
         </div>
@@ -66,7 +73,9 @@
                         <td><a ng-href="#/feeds/youview/{{transaction.id}}">{{transaction.id}}</a></td>
                         <td><a ng-href="#/feeds/youview/{{transaction.id}}">{{transaction.upload_time}}</a></td>
                         <td><a ng-href="#/feeds/youview/{{transaction.id}}">{{transaction.status}}</a></td>
-                        <td class="select-row"><input type="checkbox" value="{{transaction.id}}"></td>
+                        <td class="select-row">
+                            <input type="checkbox" ng-checked="selectedTransactions.indexOf(transaction.id) > -1" ng-click="updateSelection(transaction.id)">
+                        </td>
                     </tr>
                 </tbody>
             </table>

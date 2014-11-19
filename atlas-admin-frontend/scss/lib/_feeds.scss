@@ -17,7 +17,7 @@
     @extend %cf;
     box-sizing: border-box;
     float: left;
-    width: 50%;
+    width: 40%;
     padding: 1.5rem;
     margin-top: 2.25rem;
     background: $color-grey;
@@ -45,6 +45,19 @@
 
     .stats-data {
         display: inline-block;
+    }
+}
+
+.feed-actions {
+    float: right;
+    width: 50%;
+    margin-top: 2.25rem;
+    
+    > button + button { margin-left: 1rem; }
+
+    &-label {
+        display: block;
+        margin-bottom: .5rem;
     }
 }
 
@@ -174,6 +187,21 @@
     header > .button { float: right; }
 }
 
+// Feeds accept action modal window
+.feedsAcceptModal h1 {
+    margin-bottom: 2rem;
+    color: $color-purple;
+    font-size: 1.25rem;
+    text-align: center;
+}
+
+.feed-modal-options {
+    text-align: center;
+}
+
+.feedsAcceptModal button {
+    margin: 0 .5rem;
+}
 
 // For the transaction detail modal window
 .transaction-fragments {

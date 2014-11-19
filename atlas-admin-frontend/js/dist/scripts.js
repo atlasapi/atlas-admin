@@ -2033,8 +2033,8 @@ app.controller('CtrlFeeds', ['$scope', '$rootScope', '$routeParams', 'FeedsServi
 'use strict';
 var app = angular.module('atlasAdmin.controllers.feeds');
 
-app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q',
-    function($scope, $rootScope, $routeParams, Feeds, $q) {
+app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modal',
+    function($scope, $rootScope, $routeParams, Feeds, $q, $modal) {
     $scope.transactions = [];
     $scope.error = {};
     $scope.error.show = false;
@@ -2048,8 +2048,13 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     $scope.activeFilter = '';
     $scope.search = {};
 
+
     // this controls the loading state of the feeds console
     $scope.isloading = false;
+
+    // this will tell the view whether or not the action buttons are disabled
+    $scope.disableActions = true;
+
 
     // Used for initiating filtering on a field. changes the activeFilter
     // param and then reloads the transactions list.
@@ -2065,6 +2070,7 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
             getTransactions()
         }
     }
+
 
     // Used for controlling pagination functionality. The idea is that
     // page.current is watched for changes, then the transactions list
@@ -2092,12 +2098,55 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
             ++$scope.page.current;
         }
     }
+
     $scope.page.previous = function() {
         if ($scope.page.current > 0 && !$scope.isloading) {
             $scope.isloading = true;
             --$scope.page.current;
         }
     }
+
+
+    // The following is used for selecting individual transactions 
+    // and running actions on them
+    $scope.selectedTransactions = [];
+    $scope.updateSelection = function(transaction_id) {
+        if (!_.isString(transaction_id)) return;
+        if ($scope.selectedTransactions.indexOf(transaction_id) > -1) {
+            var _index = $scope.selectedTransactions.indexOf(transaction_id);
+            $scope.selectedTransactions.splice(_index, 1);
+        }else{
+            $scope.selectedTransactions.push(transaction_id);
+        }
+        if ($scope.selectedTransactions.length) {
+            $scope.disableActions = false;
+        }else{
+            $scope.disableActions = true;
+        }
+    }
+
+
+    // Here we see all the trans... actions... see what I did there?
+    $scope.actions = {};
+
+    $scope.actions.acceptModal = function(action) {
+        var _transactionsLength = $scope.selectedTransactions.length;
+        if (!_.isString(action) || !_transactionsLength) return;
+
+        var _content = {
+            title: 'Are you sure you want to <strong>'+action+' '+_transactionsLength+'</strong> transactions?',
+            action: action.charAt(0).toUpperCase() + action.slice(1)
+        }
+
+        var _modalInstance = $modal.open({
+            template: '<h1>'+_content.title+'</h1></div><div class="feed-modal-options"><button>'+_content.action+'</button><button ng-click="dismiss()">Cancel</button>',
+            controller: 'CtrlFeedsAcceptModal',
+            windowClass: 'feedsAcceptModal'
+        });
+
+        // TODO: decide on action to run
+    }
+
 
     // For loading sets of transactions from atlas. Filters and offsets
     // are inserted automatically based on $scope variables
@@ -2126,6 +2175,7 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     }
     getStats();
 
+
     // Used for loading data into the transactions scope
     // @param data {object} the transactions object
     var pushTransactionsTable = function(data) {
@@ -2137,6 +2187,7 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
         $scope.transactions = data.transactions;
     }
 
+
     // Used for calculating uptime since last outage
     // @param last_outage {date}
     var calculateUptime = function(last_outage) {
@@ -2144,6 +2195,31 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
             _then = last_outage,
             _delta = Math.round(Math.abs((_now.getTime() - _then.getTime()))/(24*60*60*1000));
         return _delta.toString();
+    }
+}])
+
+
+app.controller('CtrlFeedsAcceptModal', ['$scope', '$modalInstance',
+    function($scope, $modalInstance) {
+
+    $scope.dismiss = function() {
+        $modalInstance.close();
+    }
+
+    $scope.republish = function() {
+
+    }
+
+    $scope.revoke = function() {
+        
+    }
+
+    $scope.unrevoke = function() {
+        
+    }
+
+    $scope.delete = function() {
+        
     }
 }])
 var app = angular.module('atlasAdmin.controllers.feeds');
