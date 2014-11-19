@@ -1331,6 +1331,7 @@ app.directive('loadContent', ['$document', 'FeedsService', '$q', '$sce',
 
     var controller = function($scope, element, attr) {
         var _content = attr.content;
+        $scope.hrefContent = $scope.content.replace('http://nitro', 'http://www');
         var $el = $(element);
         $scope.showData = false;
 
@@ -1355,7 +1356,7 @@ app.directive('loadContent', ['$document', 'FeedsService', '$q', '$sce',
     }
 
     return {
-        template: '<header><h2>{{content}}</h2><span class="button small loadData">Show data</span></header><div ng-show="showData" class="xml-data"><code ng-bind-html="trustedXML"></code></div>',
+        template: '<header><h2><a href="{{hrefContent}}" target="_blank">{{hrefContent}}</a></h2><span class="button small loadData">Show data</span></header><div ng-show="showData" class="xml-data"><code ng-bind-html="trustedXML"></code></div>',
         link: controller
     } 
 }]);
@@ -2227,6 +2228,24 @@ var app = angular.module('atlasAdmin.controllers.feeds');
 app.controller('CtrlFeedsBreakdown', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modal',
     function($scope, $rootScope, $routeParams, Feeds, $q, $modal) {
     $scope.transactionID = $routeParams.transactionId;
+
+    $scope.actions = {};
+    $scope.actions.acceptModal = function(action) {
+        if (!_.isString(action)) return;
+
+        var _content = {
+            title: 'Are you sure you want to <strong>'+action+'</strong> transaction '+$scope.transactionID+'?',
+            action: action.charAt(0).toUpperCase() + action.slice(1)
+        }
+
+        var _modalInstance = $modal.open({
+            template: '<h1>'+_content.title+'</h1></div><div class="feed-modal-options"><button>'+_content.action+'</button><button ng-click="dismiss()">Cancel</button>',
+            controller: 'CtrlFeedsAcceptModal',
+            windowClass: 'feedsAcceptModal'
+        });
+
+        // TODO: decide on action to run
+    }
 
     $scope.showDetails = function() {
         var modalInstance = $modal.open({

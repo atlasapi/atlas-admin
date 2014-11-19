@@ -7,7 +7,9 @@
 
 }
 
-.feedsConsole .app-header {
+.feedsConsole .app-header,
+.feedsBreakdown .app-header {
+    position: relative;
     width: 100%;
     max-width: 100%;
     margin-top: 2.25rem;
@@ -201,6 +203,34 @@
 
 .feedsAcceptModal button {
     margin: 0 .5rem;
+}
+
+.feedsBreakdown .feed-actions { margin-top: 6rem; }
+
+.bigred {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: block;
+    width: 5rem;
+    height: 5rem;
+    background: $color-red;
+    color: white;
+    text-align: center;
+    line-height: 5rem;
+    cursor: pointer;
+    border-radius: 50%;
+    box-shadow: 0 5px 0 darken($color-red, 10%);
+
+    &:active { 
+        box-shadow: 0 1px 0 darken($color-red, 10%); 
+        transform: translateY(4px);
+    }
+}
+
+.breakdown-header {
+    float: left;
+    width: 40%;
 }
 
 // For the transaction detail modal window

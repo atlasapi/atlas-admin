@@ -1,11 +1,23 @@
 <div class="app-surface feedsBreakdown">
     <header class="app-header">
-        <h1 class="page-title">{{view_title}}</h1>
-        <div class="breadcrumb">
-            <a class="crumb" href="#/">Atlas</a>
-            <a class="crumb" href="#/feeds/">Feeds</a>
-            <a class="crumb" href="#/feeds/youview">BBC to YouView</a>
-            <span class="crumb">Transaction</span>
+        <div class="breakdown-header">
+            <h1 class="page-title">{{view_title}}</h1>
+            <div class="breadcrumb">
+                <a class="crumb" href="#/">Atlas</a>
+                <a class="crumb" href="#/feeds/">Feeds</a>
+                <a class="crumb" href="#/feeds/youview">BBC to YouView</a>
+                <span class="crumb">Transaction</span>
+            </div>
+        </div>
+
+        <div ng-click="actions.acceptModal('republish')" class="bigred">Republish</div>
+
+        <div class="feed-actions">
+            <span class="feed-actions-label">Actions:</span>
+            <button ng-click="actions.acceptModal('republish')" ng-disabled="disableActions">Republish</button>
+            <button ng-click="actions.acceptModal('revoke')" ng-disabled="disableActions">Revoke</button>
+            <button ng-click="actions.acceptModal('unrevoke')" ng-disabled="disableActions">Unrevoke</button>
+            <button ng-click="actions.acceptModal('delete')" ng-disabled="disableActions" class="negative">Delete</button>
         </div>
     </header>
 

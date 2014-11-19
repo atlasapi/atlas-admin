@@ -58,6 +58,7 @@ app.directive('loadContent', ['$document', 'FeedsService', '$q', '$sce',
 
     var controller = function($scope, element, attr) {
         var _content = attr.content;
+        $scope.hrefContent = $scope.content.replace('http://nitro', 'http://www');
         var $el = $(element);
         $scope.showData = false;
 
@@ -82,7 +83,7 @@ app.directive('loadContent', ['$document', 'FeedsService', '$q', '$sce',
     }
 
     return {
-        template: '<header><h2>{{content}}</h2><span class="button small loadData">Show data</span></header><div ng-show="showData" class="xml-data"><code ng-bind-html="trustedXML"></code></div>',
+        template: '<header><h2><a href="{{hrefContent}}" target="_blank">{{hrefContent}}</a></h2><span class="button small loadData">Show data</span></header><div ng-show="showData" class="xml-data"><code ng-bind-html="trustedXML"></code></div>',
         link: controller
     } 
 }]);
