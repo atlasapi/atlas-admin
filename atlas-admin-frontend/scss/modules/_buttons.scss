@@ -38,6 +38,11 @@
         &:hover { border: 1px solid darken($color-silver, 30%); }
     }
 
+    &.active {
+        border-color: #333;
+        box-shadow: 0 1px 1px rgba(0,0,0,0.5);
+    }
+
     &.flat {
         background: $color-purple;
         color: white;

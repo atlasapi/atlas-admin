@@ -19,7 +19,7 @@
                 </thead>
                 <tbody>
                     <tr ng-repeat="source in app.sources | filter:query | orderBy:app.predicate:app.reverse | startFrom:(app.currentPage-1)*app.pageSize  | limitTo:app.pageSize">
-                        <td><a href="#/sources/{{source.id}}/readers">{{source.name}}</a></td>
+                        <td><a href="#/manage/sources/{{source.id}}/readers">{{source.name}}</a></td>
                         <td>{{source.key}}</td>
                         <td>{{source.country.name}}</td>
                     </tr>
