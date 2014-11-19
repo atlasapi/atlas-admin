@@ -102,12 +102,14 @@ app.config(['$httpProvider', function($httpProvider) {
 
         var startLoading = function() {
             var _loggedin = $rootScope.status.loggedIn || false;
-            $timeout.cancel(loadTimer);
-            if (_loggedin) {
-                loadTimer = $timeout(function() {
-                    $rootScope.$broadcast('loading-started');
-                }, 500);
-                $rootScope.show.load = true;
+            if (requests > 1) {
+                $timeout.cancel(loadTimer);
+                if (_loggedin) {
+                    loadTimer = $timeout(function() {
+                        $rootScope.$broadcast('loading-started');
+                    }, 500);
+                    $rootScope.show.load = true;
+                }
             }
         }
 
