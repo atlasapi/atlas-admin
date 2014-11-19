@@ -79,9 +79,9 @@ app.controller('AllUsersController', function($scope, $rootScope, $routeParams, 
     $scope.app.pageSize = 10;
     $scope.app.currentPage = 1;
 });
-app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authentication', '$location', 'FeedsService',
-    function($scope, Users, $rootScope, Authentication, $location, Feeds) {
-    // only try to get user if logged in
+app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authentication', '$location', 'GroupsService', '$q',
+    function($scope, Users, $rootScope, Authentication, $location, Groups, $q) {
+    var privateItems;
     $scope.app = {};
     $scope.app.dropdown = false;
 
@@ -89,7 +89,20 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
         $scope.app.dropdown = !$scope.app.dropdown;
     }
 
-    var buildMenu = function(user) {
+    var getPrivateMenuItems = function() {
+        var defer = $q.defer();
+        if (privateItems) {
+            defer.resolve(privateItems)
+            return defer.promise;
+        }
+        Groups.get().then(function(result) {
+             privateItems = result;
+             defer.resolve(privateItems);
+        })
+        return defer.promise;
+    }
+
+    var buildMenu = function(user, groups) {
         // if profile not complete the do not show menu
         var allMenu = [
             {path:'/applications', label:'Applications'},
@@ -101,21 +114,14 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
             {path:'/manage/usage', label:'API Usage', role:'admin'},
             {path:'/manage/wishlist', label:'Wishlist', role:'admin'}];
 
-        // Add blackout widget page to navigation 
-        if (user.id === "hk98" ||
-            user.id === "hmbc" ||
-            user.id === "hmjh" ||
-            user.id === "hmjg" ||
-            user.id === "hmjc" ||
-            user.id === "hmcz" ||
-            user.id === "hmbb" ||
-            user.id === "jhbqd7k" ||
-            user.id === "hk7v" ||
-            user.role === 'admin') {
-            allMenu.push({path: '/epg/bt-tv', label: 'EPG'});
+        if (_.isArray(groups)) {
+            groups.forEach(function(item) {
+                if (item.name === 'BTBlackout') { allMenu.push({path: '/epg/bt-tv', label: 'EPG'}); }
+                if (item.name === 'BBC-YV-Feed') { allMenu.push({path: '/feeds', label: 'Feeds'}); }
+            })
         }
-        if (user.role === 'admin') { allMenu.push({path: '/feeds', label: 'Feeds'}); }
 
+        // build the menu
         var menu = [];
         var admin_menu = [];
         for (var i = 0; i < allMenu.length; i++) {
@@ -135,7 +141,14 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
     if (Authentication.getToken()) {
         Users.currentUser().then(function(user) {
             $scope.app.user = user;
-            $scope.app.menu = buildMenu($scope.app.user);
+            // find any custom menu items for this user
+            getPrivateMenuItems().then(function(groups) {
+                $scope.app.userGroups = groups;
+                $scope.app.menu = buildMenu(user, groups);
+            }, 
+            function() {
+                $scope.app.menu = buildMenu(user);
+            });
         });
     }
 }]);

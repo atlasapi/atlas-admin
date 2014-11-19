@@ -42,7 +42,7 @@ function User() {
             if (!_.isEmpty(groups)) {
                 defer.resolve(groups)
             }else{
-                defer.reject(common.errors.not_permitted)
+                defer.resolve({});
             }
         });
         return defer.promise;
