@@ -7,11 +7,17 @@
 
 }
 
+.feedsConsole .app-header {
+    width: 100%;
+    max-width: 100%;
+    margin-top: 2.25rem;
+}
+
 .overall-stats {
     @extend %cf;
     box-sizing: border-box;
     float: left;
-    width: 100%;
+    width: 50%;
     padding: 1.5rem;
     margin-top: 2.25rem;
     background: $color-grey;
@@ -63,6 +69,10 @@
 
         &:hover { background: black; }
     }
+}
+
+.number-of-results {
+    float: right;
 }
 
 // the loading "shield" overlays the transactions table
@@ -135,6 +145,7 @@
         margin-top: 1.5rem;
         padding: 1.5rem;
         overflow: scroll;
+        white-space: pre;
         color: #fff;
         background: #222;
         border-radius: 5px;
