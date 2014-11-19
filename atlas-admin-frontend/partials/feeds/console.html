@@ -20,18 +20,19 @@
         <div ng-show="error.show">
             {{error.obj.message}}
         </div>
-        <div class="number-of-results">
-            <select name="" id="">
-                <option value="" selected>Results per page</option>
-                <option value="">15</option>
-                <option value="">30</option>
-                <option value="">50</option>
-                <option value="">100</option>
-            </select>
-        </div>
     </header>
 
     <section class="panel-full console">
+        <div class="number-of-results">
+            <label for="">Results per page:&nbsp;</label>
+            <select ng-model="page.limit" name="" id="">
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="30">30</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+        </div>
         <div class="transactions-table">
             <table class="table">
                 <thead>
@@ -81,7 +82,7 @@
             </div>
 
             <div class="pagination">
-                <div class="pagination-buttons" ng-hide="(page.current < 1) && (transactions.length < page.limit)">
+                <div class="pagination-buttons" ng-show="page.showPager">
                     <span ng-hide="(page.current < 1)" ng-class="{inactive: isloading}" class="prev-page button primary" ng-click="page.previous()">Previous</span>
                     <span ng-hide="(transactions.length < page.limit)" ng-class="{inactive: isloading}" class="next-page button primary" ng-click="page.next()">Next</span>
                 </div>

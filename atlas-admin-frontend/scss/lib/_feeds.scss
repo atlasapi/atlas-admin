@@ -48,6 +48,10 @@
     }
 }
 
+.console {
+    margin-top: -54px;
+}
+
 .search-cell {
     display: block;
     width: 100%;
@@ -72,7 +76,15 @@
 }
 
 .number-of-results {
+    box-sizing: border-box;
+    position: relative;
+    z-index: 400;
     float: right;
+    padding: 1rem;
+    background: lighten($color-purple, 80%);
+    border-radius: 5px 5px 0 0;
+    border: 1px solid $color-purple;
+    border-bottom: none;
 }
 
 // the loading "shield" overlays the transactions table

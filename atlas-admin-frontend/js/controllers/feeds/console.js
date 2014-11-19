@@ -16,9 +16,8 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     $scope.activeFilter = '';
     $scope.search = {};
 
-    // this controlls the loading state of the feeds console
+    // this controls the loading state of the feeds console
     $scope.isloading = false;
-
 
     // Used for initiating filtering on a field. changes the activeFilter
     // param and then reloads the transactions list.
@@ -35,22 +34,28 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
         }
     }
 
-
     // Used for controlling pagination functionality. The idea is that
     // page.current is watched for changes, then the transactions list
     // is reloaded from the server with new offset params 
     $scope.page = {};
     $scope.page.current = 0;
-    $scope.page.limit = 10;
+    $scope.page.limit = 15;
     $scope.page.offset = 0;
+    $scope.page.showPager = false;
 
-    $scope.$watch('page.current', function(new_val, old_val) {
+    $scope.$watch('page.limit', function(new_val, old_val) {
+        $scope.isloading = true;
+        $scope.page.current = 0;
+        $scope.page.showPager = ($scope.transactions.length < $scope.page.limit) ? false : true;
+    });
+
+    $scope.$watch('page.current + page.limit', function(new_val, old_val) {
         $scope.page.offset = $scope.page.current * $scope.page.limit;
         getTransactions()
     });
     
     $scope.page.next = function() {
-        if ($scope.transactions.length === $scope.page.limit && !$scope.isloading) {
+        if ($scope.transactions.length >= $scope.page.limit && !$scope.isloading) {
             $scope.isloading = true;
             ++$scope.page.current;
         }
@@ -61,7 +66,6 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
             --$scope.page.current;
         }
     }
-
 
     // For loading sets of transactions from atlas. Filters and offsets
     // are inserted automatically based on $scope variables
