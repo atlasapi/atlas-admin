@@ -1697,9 +1697,7 @@ app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$sce', '$routePara
 
 var app = angular.module('atlasAdmin.controllers.user', []);
 app.controller('UserProfileController', function($scope, $rootScope, $routeParams, Users, Applications, $location) {
-
     $scope.app = {};
-
     $scope.app.isAdmin = false;
     $scope.app.predicate = 'created';
     $scope.app.reverse = true;
@@ -1809,6 +1807,7 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
             user.role === 'admin') {
             allMenu.push({path: '/epg/bt-tv', label: 'EPG'});
         }
+        if (user.role === 'admin') { allMenu.push({path: '/feeds', label: 'Feeds'}); }
 
         var menu = [];
         var admin_menu = [];
