@@ -28,6 +28,7 @@ app.use( require('./lib/middleware/crossOrigin') );
 app.use( require('./lib/middleware/auth') );
 
 app.use( function(req, res, next) {
+    console.log('\n~\n');
     console.log(req.method+' : '+req.url);
     next();
 })
