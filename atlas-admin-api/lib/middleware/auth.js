@@ -20,7 +20,7 @@ function auth(request, response, next) {
         response: null,
         not_authenticated: function() {
             this.response.statusCode = 400;
-            this.response.send({
+            this.response.end({
                 "error": "Not authenticated"
             });
         },
@@ -67,6 +67,7 @@ function auth(request, response, next) {
                     res.setEncoding('utf8');   
                     redirect_res.on('data', function(chunk) {
                         responder.writeBody(chunk);
+                        console.log('---auth response');
                     })
                    .on('end', function() {
                         console.log('auth complete');
