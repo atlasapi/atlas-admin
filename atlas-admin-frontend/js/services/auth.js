@@ -1,7 +1,8 @@
 'use strict';
 var app = angular.module('atlasAdmin.services.auth', []);
 
-app.factory('Authentication', function ($rootScope, ProfileStatus) {
+app.factory('Authentication', ['$rootScope', 'ProfileStatus',
+    function ($rootScope, ProfileStatus) {
     if (!$rootScope.status) {
         $rootScope.status = {};
     }
@@ -28,19 +29,16 @@ app.factory('Authentication', function ($rootScope, ProfileStatus) {
             var provider = localStorage.getItem('auth.provider');
             var token = localStorage.getItem('auth.token');
             var oauthParams = 'oauth_provider=' + provider + '&oauth_token=' + token;
-
             if (!token) {
                 return url;
             }
-
             $rootScope.status.loggedIn = true;
-
             return (url.indexOf('?') === -1) ?
                         url + '?' + oauthParams :
                         url + '&' + oauthParams;
         }
     };
-});
+}]);
 
 app.factory('AuthenticationInterceptor', function ($q, $location, $window, atlasHost, $log, $timeout, $rootScope) {
     return function (promise) {

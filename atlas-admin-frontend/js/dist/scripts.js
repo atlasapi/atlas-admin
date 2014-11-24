@@ -68,7 +68,7 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/oauth/:providerNamespace', {templateUrl: 'partials/oauth.html', controller: 'CtrlOAuth', reloadOnSearch: false});
     $routeProvider.when('/feeds', {templateUrl: 'partials/feeds/feeds.html', controller: 'CtrlFeeds'});
     $routeProvider.when('/feeds/:feedId', {templateUrl: 'partials/feeds/console.html', controller: 'CtrlFeedsConsole'});
-    $routeProvider.when('/feeds/:feedId/:transactionId', {templateUrl: 'partials/feeds/breakdown.html', controller: 'CtrlFeedsBreakdown'});
+    $routeProvider.when('/feeds/:feedId/:taskId', {templateUrl: 'partials/feeds/breakdown.html', controller: 'CtrlFeedsBreakdown'});
     $routeProvider.when('/terms', {templateUrl: 'partials/terms.html', controller: 'UserLicenseController'});
     $routeProvider.when('/profile', {templateUrl: 'partials/profile.html', controller: 'UserProfileController'});
     $routeProvider.when('/videosource/providers', {templateUrl: 'partials/videoSourceProviders.html', controller: 'CtrlVideoSourceProviders'});
@@ -148,7 +148,8 @@ app.config(['$locationProvider', function($locationProvider) {
 'use strict';
 var app = angular.module('atlasAdmin.services.auth', []);
 
-app.factory('Authentication', function ($rootScope, ProfileStatus) {
+app.factory('Authentication', ['$rootScope', 'ProfileStatus',
+    function ($rootScope, ProfileStatus) {
     if (!$rootScope.status) {
         $rootScope.status = {};
     }
@@ -175,19 +176,16 @@ app.factory('Authentication', function ($rootScope, ProfileStatus) {
             var provider = localStorage.getItem('auth.provider');
             var token = localStorage.getItem('auth.token');
             var oauthParams = 'oauth_provider=' + provider + '&oauth_token=' + token;
-
             if (!token) {
                 return url;
             }
-
             $rootScope.status.loggedIn = true;
-
             return (url.indexOf('?') === -1) ?
                         url + '?' + oauthParams :
                         url + '&' + oauthParams;
         }
     };
-});
+}]);
 
 app.factory('AuthenticationInterceptor', function ($q, $location, $window, atlasHost, $log, $timeout, $rootScope) {
     return function (promise) {
@@ -959,18 +957,31 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
     //  Used for making a request
     //
     //  @param feed_uri {string}
+    //  @param method {string}
+    //  @param params {object}
     //  @returns promise
     //
-    var request = function(feed_uri) {
+    var request = function(feed_uri, method, params) {
+        var request;
         var defer = $q.defer();
+        var method = method || 'get';
+        var params = params || null;
+
         if (!_.isString(feed_uri)) {
             defer.reject('Feed uri must be included as first argument')
             return defer.promise;
         }
-        $http({
-            method: 'get',
+
+        request = {
+            method: method,
             url: Authentication.appendTokenToUrl(atlasApiHost+'/feeds/'+feed_uri)
-        })
+        }
+
+        if (_.isObject(params)) {
+            request.data = params;
+        }
+
+        $http(request)
         .success(function(data, status) {
             defer.resolve(data);
         });
@@ -1330,11 +1341,13 @@ app.directive('loadContent', ['$document', 'FeedsService', '$q', '$sce',
     }
 
     var controller = function($scope, element, attr) {
-        var _content = attr.content;
-        $scope.hrefContent = $scope.content.replace('http://nitro', 'http://www');
+        var _content;
         var $el = $(element);
         $scope.showData = false;
-
+        attr.$observe('loadContent', function(val) {
+            _content = $scope.content = attr.loadContent;
+            $scope.hrefContent = $scope.content.replace('http://nitro', 'http://www');
+        })
         $('.loadData', $el).on('click', function() {
             var _this = $(this);
             _this.text('Loading data...');
@@ -2036,7 +2049,7 @@ var app = angular.module('atlasAdmin.controllers.feeds');
 
 app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modal',
     function($scope, $rootScope, $routeParams, Feeds, $q, $modal) {
-    $scope.transactions = [];
+    $scope.tasks = [];
     $scope.error = {};
     $scope.error.show = false;
     $scope.view_title = 'Feeds Console';
@@ -2058,7 +2071,7 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
 
 
     // Used for initiating filtering on a field. changes the activeFilter
-    // param and then reloads the transactions list.
+    // param and then reloads the tasks list.
     //
     // @param filter_on {string} value to set for activeFilter
     //
@@ -2068,13 +2081,13 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
             $scope.isloading = true;
             $scope.activeFilter = filter_on;
             $scope.page.current = 0;
-            getTransactions()
+            getTasks()
         }
     }
 
 
     // Used for controlling pagination functionality. The idea is that
-    // page.current is watched for changes, then the transactions list
+    // page.current is watched for changes, then the tasks list
     // is reloaded from the server with new offset params 
     $scope.page = {};
     $scope.page.current = 0;
@@ -2085,16 +2098,16 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     $scope.$watch('page.limit', function(new_val, old_val) {
         $scope.isloading = true;
         $scope.page.current = 0;
-        $scope.page.showPager = ($scope.transactions.length < $scope.page.limit) ? false : true;
+        $scope.page.showPager = ($scope.tasks.length < $scope.page.limit) ? false : true;
     });
 
     $scope.$watch('page.current + page.limit', function(new_val, old_val) {
         $scope.page.offset = $scope.page.current * $scope.page.limit;
-        getTransactions()
+        getTasks()
     });
     
     $scope.page.next = function() {
-        if ($scope.transactions.length >= $scope.page.limit && !$scope.isloading) {
+        if ($scope.tasks.length >= $scope.page.limit && !$scope.isloading) {
             $scope.isloading = true;
             ++$scope.page.current;
         }
@@ -2108,18 +2121,17 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     }
 
 
-    // The following is used for selecting individual transactions 
-    // and running actions on them
-    $scope.selectedTransactions = [];
-    $scope.updateSelection = function(transaction_id) {
-        if (!_.isString(transaction_id)) return;
-        if ($scope.selectedTransactions.indexOf(transaction_id) > -1) {
-            var _index = $scope.selectedTransactions.indexOf(transaction_id);
-            $scope.selectedTransactions.splice(_index, 1);
+    // The following is used for selecting individual tasks 
+    $scope.selectedTasks = [];
+    $scope.updateSelection = function(task_id) {
+        if (!_.isString(task_id)) return;
+        if ($scope.selectedTasks.indexOf(task_id) > -1) {
+            var _index = $scope.selectedTasks.indexOf(task_id);
+            $scope.selectedTasks.splice(_index, 1);
         }else{
-            $scope.selectedTransactions.push(transaction_id);
+            $scope.selectedTasks.push(task_id);
         }
-        if ($scope.selectedTransactions.length) {
+        if ($scope.selectedTasks.length) {
             $scope.disableActions = false;
         }else{
             $scope.disableActions = true;
@@ -2127,42 +2139,71 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     }
 
 
-    // Here we see all the trans... actions... see what I did there?
+    // Here we see all the actions
     $scope.actions = {};
 
+    $scope.actions.republish = function(post_uri) {
+        if (!_.isString(post_uri)) {
+            return false;
+        }
+
+        var _postdata = {
+            uri: post_uri
+        }
+
+        Feeds.request('youview/bbc_nitro/upload', 'post', _postdata)
+        .then(function() {
+
+        })
+    }
+
+    $scope.actions.revoke = function() {
+        
+    }
+
+    $scope.actions.unrevoke = function() {
+        
+    }
+
+    $scope.actions.delete = function() {
+        
+    }
+
     $scope.actions.acceptModal = function(action) {
-        var _transactionsLength = $scope.selectedTransactions.length;
-        if (!_.isString(action) || !_transactionsLength) return;
+        var defer = $q.defer();
+        var _tasksLength = $scope.selectedTasks.length;
+        if (!_.isString(action) || !_tasksLength) return;
 
         var _content = {
-            title: 'Are you sure you want to <strong>'+action+' '+_transactionsLength+'</strong> transactions?',
+            title: 'Are you sure you want to <strong>'+action+' '+_tasksLength+'</strong> tasks?',
             action: action.charAt(0).toUpperCase() + action.slice(1)
         }
 
         var _modalInstance = $modal.open({
             template: '<h1>'+_content.title+'</h1></div><div class="feed-modal-options"><button>'+_content.action+'</button><button ng-click="dismiss()">Cancel</button>',
             controller: 'CtrlFeedsAcceptModal',
-            windowClass: 'feedsAcceptModal'
+            windowClass: 'feedsAcceptModal',
+            scope: $scope.actions
         });
 
-        // TODO: decide on action to run
+        _modalInstance.result.then(defer.resolve, defer.reject);
     }
 
 
-    // For loading sets of transactions from atlas. Filters and offsets
+    // For loading sets of tasks from atlas. Filters and offsets
     // are inserted automatically based on $scope variables
-    var getTransactions = function() {
+    var getTasks = function() {
         var _filter = '';
         if ($scope.activeFilter === 'uri' && !_.isEmpty($scope.search.uri)) {
             _filter = '&uri='+$scope.search.uri;
         }else if ($scope.activeFilter === 'status' && !_.isEmpty($scope.search.status)) {
             _filter = '&status='+$scope.search.status;
-        }else if ($scope.activeFilter === 'transaction_id' && !_.isEmpty($scope.search.transaction_id)){
-            _filter = '&transaction_id='+$scope.search.transaction_id;
+        }else if ($scope.activeFilter === 'task_id' && !_.isEmpty($scope.search.task_id)){
+            _filter = '&task_id='+$scope.search.task_id;
         }
-        var request_url = 'youview/bbc_nitro/transactions.json?limit='+$scope.page.limit+'&offset='+$scope.page.offset+_filter;
+        var request_url = 'youview/bbc_nitro/tasks.json?limit='+$scope.page.limit+'&offset='+$scope.page.offset+_filter;
         Feeds.request(request_url).then(function(data) {
-            pushTransactionsTable(data);
+            pushTasksTable(data);
         });
     }
 
@@ -2177,15 +2218,15 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     getStats();
 
 
-    // Used for loading data into the transactions scope
-    // @param data {object} the transactions object
-    var pushTransactionsTable = function(data) {
+    // Used for loading data into the tasks scope
+    // @param data {object} the tasks object
+    var pushTasksTable = function(data) {
         if (_.isObject(data.error)) {
             $scope.error.show = true;
             $scope.error.obj = data.error;
         }
         $scope.isloading = false;
-        $scope.transactions = data.transactions;
+        $scope.tasks = data.tasks;
     }
 
 
@@ -2206,35 +2247,19 @@ app.controller('CtrlFeedsAcceptModal', ['$scope', '$modalInstance',
     $scope.dismiss = function() {
         $modalInstance.close();
     }
-
-    $scope.republish = function() {
-
-    }
-
-    $scope.revoke = function() {
-        
-    }
-
-    $scope.unrevoke = function() {
-        
-    }
-
-    $scope.delete = function() {
-        
-    }
 }])
 var app = angular.module('atlasAdmin.controllers.feeds');
 
 app.controller('CtrlFeedsBreakdown', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modal',
     function($scope, $rootScope, $routeParams, Feeds, $q, $modal) {
-    $scope.transactionID = $routeParams.transactionId;
+    $scope.taskID = $routeParams.taskId;
 
     $scope.actions = {};
     $scope.actions.acceptModal = function(action) {
         if (!_.isString(action)) return;
 
         var _content = {
-            title: 'Are you sure you want to <strong>'+action+'</strong> transaction '+$scope.transactionID+'?',
+            title: 'Are you sure you want to <strong>'+action+'</strong> task '+$scope.taskID+'?',
             action: action.charAt(0).toUpperCase() + action.slice(1)
         }
 
@@ -2258,15 +2283,15 @@ app.controller('CtrlFeedsBreakdown', ['$scope', '$rootScope', '$routeParams', 'F
         });
     }
 
-    var loadTransaction = function() {
-        Feeds.request('youview/bbc_nitro/transactions/'+$routeParams.transactionId+'.json?annotations=status_detail')
-            .then(function(transaction) {
-                var _transaction = transaction.transactions[0];
-                $scope.transaction = _transaction;
-                $scope.view_title = "Breakdown for transaction: "+_transaction.id;
+    var loadTask = function() {
+        Feeds.request('youview/bbc_nitro/tasks/'+$routeParams.taskId+'.json?annotations=remote_responses')
+            .then(function(task) {
+                var _task = task.tasks[0];
+                $scope.task = _task;
+                $scope.view_title = "Breakdown for transaction: "+_task.remote_id;
             });
     }
-    loadTransaction();
+    loadTask();
 
 }])
 
