@@ -12,7 +12,10 @@ var _mongo_port = config.port.mongo;
 
 
 app.use( function(req, res, next) {
-    console.log(common.user.id);
+    if (typeof common === 'object') { 
+        if (typeof common.user === 'object')
+            console.log(common.user.id); 
+    }
     console.log('\n~\n');
     console.log('REQUEST:');
     console.log(req.method+' : '+req.url);
