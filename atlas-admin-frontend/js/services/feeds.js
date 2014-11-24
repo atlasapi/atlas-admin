@@ -30,18 +30,31 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
     //  Used for making a request
     //
     //  @param feed_uri {string}
+    //  @param method {string}
+    //  @param params {object}
     //  @returns promise
     //
-    var request = function(feed_uri) {
+    var request = function(feed_uri, method, params) {
+        var request;
         var defer = $q.defer();
+        var method = method || 'get';
+        var params = params || null;
+
         if (!_.isString(feed_uri)) {
             defer.reject('Feed uri must be included as first argument')
             return defer.promise;
         }
-        $http({
-            method: 'get',
+
+        request = {
+            method: method,
             url: Authentication.appendTokenToUrl(atlasApiHost+'/feeds/'+feed_uri)
-        })
+        }
+
+        if (_.isObject(params)) {
+            request.data = params;
+        }
+
+        $http(request)
         .success(function(data, status) {
             defer.resolve(data);
         });

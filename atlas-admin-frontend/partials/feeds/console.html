@@ -68,13 +68,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="transaction in transactions | orderBy:table.order:table.reverse">
-                        <td><a ng-href="#/feeds/youview/{{transaction.id}}">{{transaction.content[0]}}</a></td>
-                        <td><a ng-href="#/feeds/youview/{{transaction.id}}">{{transaction.id}}</a></td>
-                        <td><a ng-href="#/feeds/youview/{{transaction.id}}">{{transaction.upload_time}}</a></td>
-                        <td><a ng-href="#/feeds/youview/{{transaction.id}}">{{transaction.status}}</a></td>
+                    <tr ng-repeat="task in tasks | orderBy:table.order:table.reverse">
+                        <td><a ng-href="#/feeds/youview/{{task.id}}">{{task.content}}</a></td>
+                        <td><a ng-href="#/feeds/youview/{{task.id}}">{{task.remote_id}}</a></td>
+                        <td><a ng-href="#/feeds/youview/{{task.id}}">{{task.upload_time}}</a></td>
+                        <td><a ng-href="#/feeds/youview/{{task.id}}">{{task.status}}</a></td>
                         <td class="select-row">
-                            <input type="checkbox" ng-checked="selectedTransactions.indexOf(transaction.id) > -1" ng-click="updateSelection(transaction.id)">
+                            <input type="checkbox" ng-checked="selectedTasks.indexOf(task.id) > -1" ng-click="updateSelection(task.id)">
                         </td>
                     </tr>
                 </tbody>

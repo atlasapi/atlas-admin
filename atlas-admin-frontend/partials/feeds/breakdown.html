@@ -28,13 +28,13 @@
             </header>
             <div class="matrix-body">
                 <div class="matrix-row">
-                    <span class="matrix-label">Transaction status</span><span class="matrix-content">{{transaction.status}} <span class="see-details" ng-click="showDetails()">See details</span></span>
+                    <span class="matrix-label">Transaction status</span><span class="matrix-content">{{task.status}} <span class="see-details" ng-click="showDetails()">See details</span></span>
                 </div>
                 <div class="matrix-row">
-                    <span class="matrix-label">Publisher</span><span class="matrix-content">{{transaction.publisher}}</span>
+                    <span class="matrix-label">Publisher</span><span class="matrix-content">{{task.publisher}}</span>
                 </div>
                 <div class="matrix-row">
-                    <span class="matrix-label">Upload time</span><span class="matrix-content">{{transaction.upload_time}}</span>
+                    <span class="matrix-label">Upload time</span><span class="matrix-content">{{task.upload_time}}</span>
                 </div>
             </div>
         </div>
@@ -45,7 +45,7 @@
             <h1>Content</h1>
         </header>
         <div class="panel-content">
-            <div class="load-xml" data-load-content ng-repeat="content in transaction.content" content="{{content}}"></div>
+            <div class="load-xml" data-load-content="{{task.content}}"></div>
         </div>
     </section>
 </div>

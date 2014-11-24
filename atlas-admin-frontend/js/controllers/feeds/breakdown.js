@@ -2,14 +2,14 @@ var app = angular.module('atlasAdmin.controllers.feeds');
 
 app.controller('CtrlFeedsBreakdown', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modal',
     function($scope, $rootScope, $routeParams, Feeds, $q, $modal) {
-    $scope.transactionID = $routeParams.transactionId;
+    $scope.taskID = $routeParams.taskId;
 
     $scope.actions = {};
     $scope.actions.acceptModal = function(action) {
         if (!_.isString(action)) return;
 
         var _content = {
-            title: 'Are you sure you want to <strong>'+action+'</strong> transaction '+$scope.transactionID+'?',
+            title: 'Are you sure you want to <strong>'+action+'</strong> task '+$scope.taskID+'?',
             action: action.charAt(0).toUpperCase() + action.slice(1)
         }
 
@@ -33,15 +33,15 @@ app.controller('CtrlFeedsBreakdown', ['$scope', '$rootScope', '$routeParams', 'F
         });
     }
 
-    var loadTransaction = function() {
-        Feeds.request('youview/bbc_nitro/transactions/'+$routeParams.transactionId+'.json?annotations=status_detail')
-            .then(function(transaction) {
-                var _transaction = transaction.transactions[0];
-                $scope.transaction = _transaction;
-                $scope.view_title = "Breakdown for transaction: "+_transaction.id;
+    var loadTask = function() {
+        Feeds.request('youview/bbc_nitro/tasks/'+$routeParams.taskId+'.json?annotations=remote_responses')
+            .then(function(task) {
+                var _task = task.tasks[0];
+                $scope.task = _task;
+                $scope.view_title = "Breakdown for transaction: "+_task.remote_id;
             });
     }
-    loadTransaction();
+    loadTask();
 
 }])
 

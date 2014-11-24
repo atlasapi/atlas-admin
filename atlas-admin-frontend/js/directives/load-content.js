@@ -57,11 +57,13 @@ app.directive('loadContent', ['$document', 'FeedsService', '$q', '$sce',
     }
 
     var controller = function($scope, element, attr) {
-        var _content = attr.content;
-        $scope.hrefContent = $scope.content.replace('http://nitro', 'http://www');
+        var _content;
         var $el = $(element);
         $scope.showData = false;
-
+        attr.$observe('loadContent', function(val) {
+            _content = $scope.content = attr.loadContent;
+            $scope.hrefContent = $scope.content.replace('http://nitro', 'http://www');
+        })
         $('.loadData', $el).on('click', function() {
             var _this = $(this);
             _this.text('Loading data...');
