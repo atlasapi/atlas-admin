@@ -20,7 +20,7 @@ function auth(request, response, next) {
         response: null,
         not_authenticated: function() {
             this.response.statusCode = 400;
-            this.response.end({
+            this.response.send({
                 "error": "Not authenticated"
             });
         },
