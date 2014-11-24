@@ -20,7 +20,7 @@ app.use( require('./lib/middleware/prepResponse') );
 app.use( require('./lib/middleware/crossOrigin') );
 
 app.use( function(req, res, next) {
-    console.log(res.method+' : '+req.hostname);
+    console.log(req.method+' : '+req.url);
     next();
 } )
 
