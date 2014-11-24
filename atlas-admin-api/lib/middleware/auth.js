@@ -55,7 +55,7 @@ function auth(request, response, next) {
                 var redirectUrl = url.parse(res.headers.location);
                 if (!redirectUrl.host) redirectUrl.host = config.atlasHost;
 
-                console.log(res.statusCode+' -> redirect to: '+redirectUrl);
+                console.log(res.statusCode+' -> redirect to: '+redirectUrl.host+redirectUrl.path);
 
                 var redirectOpts = {
                     host: redirectUrl.host,
