@@ -17,10 +17,13 @@ var userInterface = function(db) {
     router.route('/groups')
 
     .get(function(req, res) {
+        console.log('About to make mongo request');
         User.groups().then(function(groups) {
+            console.log('mongo response: :) SUCCESS');
             res.statusCode = 200;
             res.end(JSON.stringify(groups)); 
         }, function(reason) {
+            console.log('mongo response: :( ERROR');
             res.statusCode = 400;
             res.end(JSON.stringify(reason));
         });

@@ -19,6 +19,11 @@ app.use( require('./lib/middleware/prepResponse') );
 // middleware: check calls against whitelisted domains
 app.use( require('./lib/middleware/crossOrigin') );
 
+app.use( function(req, res, next) {
+    console.log(res.method+' : '+req.host);
+    next();
+} )
+
 // middleware: proxy atlas requests
 app.use( require('./lib/middleware/auth') );
 
@@ -28,6 +33,7 @@ var mongoclient = new MongoClient(
 
 mongoclient.open(function(err, mongo) {
     if (err) console.error(err); 
+    console.log('Connected to mongodb')
 
     // create mongo connection and drop into common
     var db = mongo.db(config.database.name);
