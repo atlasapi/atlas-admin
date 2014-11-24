@@ -1,11 +1,13 @@
 'use strict';
-var config                       = require('./config'),
+var monitor                      = require('node-monitor'),
+    config                       = require('./config'),
     common                       = require('./common'),
     express                      = require('express'),
     bodyParser                   = require('body-parser'),
     MongoClient                  = require('mongodb').MongoClient,
     MongoServer                  = require('mongodb').Server,
     app                          = express();
+
 
 var _http_port = config.port.http;
 var _mongo_port = config.port.mongo;

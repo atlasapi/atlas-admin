@@ -1862,7 +1862,7 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
         }
 
         // build the menu
-        var menu = []; 
+        var menu = [];
         var admin_menu = [];
         for (var i = 0; i < allMenu.length; i++) {
             var item = allMenu[i];
