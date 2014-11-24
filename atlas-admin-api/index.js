@@ -10,7 +10,9 @@ var config                       = require('./config'),
 var _http_port = config.port.http;
 var _mongo_port = config.port.mongo;
 
+
 app.use( function(req, res, next) {
+    console.log(common.user.id);
     console.log('\n~\n');
     console.log('REQUEST:');
     console.log(req.method+' : '+req.url);
