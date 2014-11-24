@@ -59,7 +59,8 @@ var auth = function(request, response, next) {
                     host: redirectUrl.host,
                     port: 80,
                     path: redirectUrl.path,
-                    method: 'GET'
+                    method: 'GET',
+                    agent: false
                 }
 
                 http.request(redirectOpts, function(redirect_res) {
@@ -84,7 +85,8 @@ var auth = function(request, response, next) {
             host: config.atlasHost,
             port: 80,
             path: auth_endpoint,
-            method: 'GET'
+            method: 'GET',
+            agent: false
         }
         var auth = http.request(authOpts, handleAuth).end();
     }else{
