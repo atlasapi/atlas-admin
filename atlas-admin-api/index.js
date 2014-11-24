@@ -11,6 +11,7 @@ var _http_port = config.port.http;
 var _mongo_port = config.port.mongo;
 
 app.use( function(req, res, next) {
+    console.log('\n~\n');
     console.log('Before middleware');
     next();
 })
@@ -28,7 +29,6 @@ app.use( require('./lib/middleware/crossOrigin') );
 app.use( require('./lib/middleware/auth') );
 
 app.use( function(req, res, next) {
-    console.log('\n~\n');
     console.log(req.method+' : '+req.url);
     next();
 })
