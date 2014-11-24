@@ -9,6 +9,8 @@ var config = require('../../config'),
 function auth(request, response, next) {
     var qs = url.parse(request.url, true).query;
 
+    if (common.user) console.log(common.user.id);
+
     //  respond to different auth outcomes
     //
     //  response                – the http response object that the responder will interact with
