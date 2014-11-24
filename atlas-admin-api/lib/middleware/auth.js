@@ -6,7 +6,7 @@ var config = require('../../config'),
     url = require('url');
 
 // proxy auth request to atlas auth server
-var auth = function(request, response, next) {
+function auth(request, response, next) {
     var qs = url.parse(request.url, true).query;
 
     //  respond to different auth outcomes
@@ -62,12 +62,14 @@ var auth = function(request, response, next) {
                     method: 'GET'
                 }
 
+                console.log('handle auth');
                 http.request(redirectOpts, function(redirect_res) {
                     res.setEncoding('utf8');   
                     redirect_res.on('data', function(chunk) {
                         responder.writeBody(chunk);
                     })
                    .on('end', function() {
+                        console.log('auth complete');
                         responder.authenticated();
                     });
                 }).end();
