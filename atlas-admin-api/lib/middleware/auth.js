@@ -9,8 +9,6 @@ var config = require('../../config'),
 function auth(request, response, next) {
     var qs = url.parse(request.url, true).query;
 
-    if (common.user) console.log(common.user.id);
-
     //  respond to different auth outcomes
     //
     //  response                – the http response object that the responder will interact with
@@ -48,8 +46,6 @@ function auth(request, response, next) {
 
         var auth_endpoint = '/4/auth/user.json?oauth_provider='+qs.oauth_provider+'&oauth_token='+qs.oauth_token;
 
-        console.log(auth_endpoint)
-        
         //  check if the auth server wants to redirect the request, and follow it,
         //  otherwise, handle the request as normal
         //
