@@ -12,7 +12,8 @@ var _mongo_port = config.port.mongo;
 
 app.use( function(req, res, next) {
     console.log('\n~\n');
-    console.log('Before middleware');
+    console.log('REQUEST:');
+    console.log(req.method+' : '+req.url);
     next();
 })
 
@@ -27,11 +28,6 @@ app.use( require('./lib/middleware/crossOrigin') );
 
 // middleware: proxy atlas requests
 app.use( require('./lib/middleware/auth') );
-
-app.use( function(req, res, next) {
-    console.log(req.method+' : '+req.url);
-    next();
-})
 
 // open up a connection to mongodb, then register endpoints and boot the server
 var mongoclient = new MongoClient(
