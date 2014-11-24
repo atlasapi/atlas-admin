@@ -19,7 +19,7 @@ app.use( require('./lib/middleware/prepResponse') );
 // middleware: check calls against whitelisted domains
 app.use( require('./lib/middleware/crossOrigin') );
 
-// middleware: proxy atlas requests
+// middleware: ask atlas to authorise of this request
 app.use( require('./lib/middleware/auth') );
 
 // open up a connection to mongodb, then register endpoints and boot the server

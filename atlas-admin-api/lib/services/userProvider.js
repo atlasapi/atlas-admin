@@ -28,8 +28,12 @@ function User() {
 
         collections.groups.find({}, {}).toArray(function(err, data) {
             groups = _.compact( _.map(data, function(n) {
+                
+                // spit out all groups for admins
                 if (_currentuser.role === 'admin') {
                     return { name: n.groupName, data: n.data };
+
+                // figure out which croups the signed in user has access to
                 }else if (_.isArray(n.users)) {
                     for (var user in n.users) {
                         if (n.users[user] === _currentuser.id) {
@@ -48,20 +52,8 @@ function User() {
         return defer.promise;
     }
 
-
-    //  Used for finding out if the loggied in user is part of a certain group
-    //
-    //  @param groupname {string}
-    //  @returns promise
-    //
-    var isUserinGroup = function(groupname) {
-        var defer = Q.defer();
-        return defer.promise;
-    }
-
     return {
-        groups: listGroups,
-        inGroup: isUserinGroup
+        groups: listGroups
     }
 }
 

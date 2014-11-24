@@ -95,10 +95,14 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
             defer.resolve(privateItems)
             return defer.promise;
         }
-        Groups.get().then(function(result) {
-             privateItems = result;
-             defer.resolve(privateItems);
-        })
+        Groups.get().then(
+            function(result) {
+                privateItems = result;
+                defer.resolve(privateItems);
+            },
+            function(reason) {
+                defer.reject(reason);
+            })  
         return defer.promise;
     }
 
@@ -146,8 +150,9 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
                 $scope.app.userGroups = groups;
                 $scope.app.menu = buildMenu(user, groups);
             }, 
-            function() {
+            function(reason) {
                 $scope.app.menu = buildMenu(user);
+                console.error(reason);
             });
         });
     }
