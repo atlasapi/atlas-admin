@@ -4,6 +4,20 @@ var app = angular.module('atlasAdmin.directives.loadContent', []);
 app.directive('loadContent', ['$document', 'FeedsService', '$q', '$sce',
     function($document, Feeds, $q, $sce) {
 
+    var _loaded = false;
+    var loadContent = function(content) {
+        var defer = $q.defer();
+        if (!_loaded) {
+            Feeds.request('youview/bbc_nitro.xml?uri='+content).then(function(xmlData){
+                defer.resolve(xmlData);
+                _loaded = true;
+            });
+        }else{
+            defer.reject(null);
+        }
+        return defer.promise;
+    }
+
     var escapeHtml = function(unsafe) {
         return unsafe
              .replace(/&/g, "&amp;")
@@ -11,7 +25,7 @@ app.directive('loadContent', ['$document', 'FeedsService', '$q', '$sce',
              .replace(/>/g, "&gt;")
              .replace(/"/g, "&quot;")
              .replace(/'/g, "&#039;");
-     }
+    }
 
     var formatXml = function(xml) {
         var formatted = '';
@@ -38,38 +52,32 @@ app.directive('loadContent', ['$document', 'FeedsService', '$q', '$sce',
             formatted += '<div>' + padding + escapeHtml(node) + '</div>';
             pad += indent;
         });
-
         return formatted;
-    }
-
-    var _loaded = false;
-    var loadContent = function(content) {
-        var defer = $q.defer();
-        if (!_loaded) {
-            Feeds.request('youview/bbc_nitro.xml?uri='+content).then(function(xmlData){
-                defer.resolve(xmlData);
-                _loaded = true;
-            });
-        }else{
-            defer.reject(null);
-        }
-        return defer.promise;
     }
 
     var controller = function($scope, element, attr) {
         var _content;
         var $el = $(element);
         $scope.showData = false;
+
+        // convert nitro links to bbc web links
         attr.$observe('loadContent', function(val) {
             _content = $scope.content = attr.loadContent;
             $scope.hrefContent = $scope.content.replace('http://nitro', 'http://www');
         })
+
+        // show the result of the xml query when 'load data' button is pressed
         $('.loadData', $el).on('click', function() {
             var _this = $(this);
             _this.text('Loading data...');
             loadContent(_content).then(function(xml) {
                 var formattedXML = formatXml(xml);
                 $scope.trustedXML = $sce.trustAsHtml(formattedXML);
+                var codeNode = jQuery('.xml-data pre');
+                setTimeout(function() {
+                    hljs.highlightBlock(codeNode[0]);
+                }, 100);
+
                 $scope.showData = true;
                 _this.text('Hide data');
                 _this.on('click', function() {
@@ -81,11 +89,12 @@ app.directive('loadContent', ['$document', 'FeedsService', '$q', '$sce',
                     $scope.showData = !$scope.showData;
                 })
             });
+
         })
     }
 
     return {
-        template: '<header><h2><a href="{{hrefContent}}" target="_blank">{{hrefContent}}</a></h2><span class="button small loadData">Show data</span></header><div ng-show="showData" class="xml-data"><code ng-bind-html="trustedXML"></code></div>',
+        template: '<header><h2><a href="{{hrefContent}}" target="_blank">{{hrefContent}}</a></h2><span class="button small loadData">Show data</span></header><div ng-show="showData" class="xml-data"><pre ng-bind-html="trustedXML">{{trustedXML}}</pre></div>',
         link: controller
     } 
 }]);

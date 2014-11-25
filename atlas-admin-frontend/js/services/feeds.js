@@ -54,10 +54,7 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
             request.data = params;
         }
 
-        $http(request)
-        .success(function(data, status) {
-            defer.resolve(data);
-        });
+        $http(request).success(defer.resolve);
         return defer.promise;
     }
     

@@ -46,7 +46,7 @@ function proxyRequest(endpoint, request) {
     for (var query in request.query) {
         if ('status' === query 
             || 'uri' === query 
-            || 'task_id' === query
+            || 'remote_id' === query
             || 'limit' === query
             || 'offset' === query
             || 'annotations' === query) {
@@ -109,12 +109,41 @@ var feedsInterface = function() {
             }
         });
 
+
+
     //  actions endpoint. actions must be sent to a processing url   
     router.route('/youview/bbc_nitro/action/:action')
         .post(function(req, res) {
+            if (!_.isString(req.body.uri)) {
+                res.end();
+                return false
+            }
+
+            var data;
+            var uri = req.body.uri;
             var action = req.params.action || '';
-            var action_url = 'http://processing.stage.atlas.mbst.tv/feeds/youview/bbc_nitro/'+action;
+            var request_opts = {
+                hostname: 'processing.stage.atlas.mbst.tv',
+                path: '/feeds/youview/bbc_nitro/'+action,
+                method: 'post'
+            }
+
+            //var action_request = http.request(request_opts, function(res) {
+            //    res.setEncoding('utf8');
+            //    res.on('data', function(chunk) {
+            //        data += chunk;
+            //    })
+            //    res.on('end', function() {
+            //        console.log(data);
+            //    })
+            //});
+
+            // action_request.send('uri=');
+            // action_request.end();
+            res.end();
         })
+
+
 
     //  hardwired for now, catch the request to atlas so we can run 
     //  auth checks before returning any data

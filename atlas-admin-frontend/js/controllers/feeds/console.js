@@ -1,8 +1,8 @@
 'use strict';
 var app = angular.module('atlasAdmin.controllers.feeds');
 
-app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modal',
-    function($scope, $rootScope, $routeParams, Feeds, $q, $modal) {
+app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modal', '$timeout',
+    function($scope, $rootScope, $routeParams, Feeds, $q, $modal, $timeout) {
     $scope.tasks = [];
     $scope.error = {};
     $scope.error.show = false;
@@ -29,13 +29,18 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     //
     // @param filter_on {string} value to set for activeFilter
     //
+    var input_timer;
     $scope.filter = function(filter_on) {
         if (!_.isString(filter_on)) return;
         if ($scope.search[filter_on].length > 3 || $scope.search[filter_on].length == 0) {
-            $scope.isloading = true;
-            $scope.activeFilter = filter_on;
-            $scope.page.current = 0;
-            getTasks()
+            $timeout.cancel(input_timer);
+            input_timer = $timeout(function() {
+                console.log('request')
+                $scope.isloading = true;
+                $scope.activeFilter = filter_on;
+                $scope.page.current = 0;
+                getTasks()
+            }, 700);
         }
     }
 
@@ -93,37 +98,42 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     }
 
 
-    // Here we see all the actions
+    // actions
     $scope.actions = {};
 
-    $scope.actions.republish = function(post_uri) {
-        if (!_.isString(post_uri)) {
-            return false;
-        }
-
-        var _postdata = {
-            uri: post_uri
-        }
-
-        Feeds.request('youview/bbc_nitro/upload', 'post', _postdata)
-        .then(function() {
-
-        })
+    $scope.actions.republish = function() {
+        actionModel('republish').then(function(res) {
+            $scope.selectedTasks = [];
+            $scope.disableActions = true;
+            getTasks();
+        });
     }
 
     $scope.actions.revoke = function() {
-        
+        actionModel('revoke').then(function(res) {
+            $scope.selectedTasks = [];
+            $scope.disableActions = true;
+            getTasks();
+        });
     }
 
     $scope.actions.unrevoke = function() {
-        
+        actionModel('unrevoke').then(function(res) {
+            $scope.selectedTasks = [];
+            $scope.disableActions = true;
+            getTasks();
+        });
     }
 
     $scope.actions.delete = function() {
-        
+        actionModel('delete').then(function(res) {
+            $scope.selectedTasks = [];
+            $scope.disableActions = true;
+            getTasks();
+        });
     }
 
-    $scope.actions.acceptModal = function(action) {
+    var actionModel = function(action) {
         var defer = $q.defer();
         var _tasksLength = $scope.selectedTasks.length;
         if (!_.isString(action) || !_tasksLength) return;
@@ -134,13 +144,15 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
         }
 
         var _modalInstance = $modal.open({
-            template: '<h1>'+_content.title+'</h1></div><div class="feed-modal-options"><button>'+_content.action+'</button><button ng-click="dismiss()">Cancel</button>',
+            template: '<h1>'+_content.title+'</h1></div><div class="feed-modal-options"><button ng-click="ok()">'+_content.action+'</button><button ng-click="dismiss()">Cancel</button>',
             controller: 'CtrlFeedsAcceptModal',
             windowClass: 'feedsAcceptModal',
-            scope: $scope.actions
+            scope: $scope,
+            resolve: { modalAction: function() { return action } }
         });
 
         _modalInstance.result.then(defer.resolve, defer.reject);
+        return defer.promise;
     }
 
 
@@ -152,8 +164,8 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
             _filter = '&uri='+$scope.search.uri;
         }else if ($scope.activeFilter === 'status' && !_.isEmpty($scope.search.status)) {
             _filter = '&status='+$scope.search.status;
-        }else if ($scope.activeFilter === 'task_id' && !_.isEmpty($scope.search.task_id)){
-            _filter = '&task_id='+$scope.search.task_id;
+        }else if ($scope.activeFilter === 'remote_id' && !_.isEmpty($scope.search.remote_id)){
+            _filter = '&remote_id='+$scope.search.remote_id;
         }
         var request_url = 'youview/bbc_nitro/tasks.json?limit='+$scope.page.limit+'&offset='+$scope.page.offset+_filter;
         Feeds.request(request_url).then(function(data) {
@@ -195,10 +207,41 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
 }])
 
 
-app.controller('CtrlFeedsAcceptModal', ['$scope', '$modalInstance',
-    function($scope, $modalInstance) {
+app.controller('CtrlFeedsAcceptModal', ['$scope', '$modalInstance', '$q', 'FeedsService', 'modalAction',
+    function($scope, $modalInstance, $q, Feeds, modalAction) {
+    $scope.action = modalAction;
+
+    var runActionOnSelected = function() {
+        var defer = $q.defer();
+        var action = $scope.action;
+        var _selection = $scope.$parent.selectedTasks;
+        var _postdata = {};
+        var counter = _selection.length;
+        if (!_.isArray(_selection)) {
+            return false;
+        }
+        _selection.forEach(function(item) {
+            var _selected = _.find($scope.$parent.tasks, function(task) {
+                return task.id === item;
+            });
+            _postdata.uri = _selected.content;
+
+            Feeds.request('youview/bbc_nitro/action/'+action, 'post', _postdata).then(function() {
+                counter--;
+                if (!counter) defer.resolve();
+            });
+        })
+        return defer.promise;
+    }
+
+    $scope.ok = function() {
+        runActionOnSelected().then($modalInstance.close, 
+        function() {
+            console.error('Problem with action request')
+        });
+    }
 
     $scope.dismiss = function() {
-        $modalInstance.close();
+        $modalInstance.dismiss();
     }
 }])
