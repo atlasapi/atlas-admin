@@ -981,10 +981,7 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
             request.data = params;
         }
 
-        $http(request)
-        .success(function(data, status) {
-            defer.resolve(data);
-        });
+        $http(request).success(defer.resolve);
         return defer.promise;
     }
     
@@ -2139,37 +2136,42 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     }
 
 
-    // Here we see all the actions
+    // actions
     $scope.actions = {};
 
-    $scope.actions.republish = function(post_uri) {
-        if (!_.isString(post_uri)) {
-            return false;
-        }
-
-        var _postdata = {
-            uri: post_uri
-        }
-
-        Feeds.request('youview/bbc_nitro/upload', 'post', _postdata)
-        .then(function() {
-
-        })
+    $scope.actions.republish = function() {
+        actionModel('republish').then(function(res) {
+            $scope.selectedTasks = [];
+            $scope.disableActions = true;
+            getTasks();
+        });
     }
 
     $scope.actions.revoke = function() {
-        
+        actionModel('revoke').then(function(res) {
+            $scope.selectedTasks = [];
+            $scope.disableActions = true;
+            getTasks();
+        });
     }
 
     $scope.actions.unrevoke = function() {
-        
+        actionModel('unrevoke').then(function(res) {
+            $scope.selectedTasks = [];
+            $scope.disableActions = true;
+            getTasks();
+        });
     }
 
     $scope.actions.delete = function() {
-        
+        actionModel('delete').then(function(res) {
+            $scope.selectedTasks = [];
+            $scope.disableActions = true;
+            getTasks();
+        });
     }
 
-    $scope.actions.acceptModal = function(action) {
+    var actionModel = function(action) {
         var defer = $q.defer();
         var _tasksLength = $scope.selectedTasks.length;
         if (!_.isString(action) || !_tasksLength) return;
@@ -2180,13 +2182,15 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
         }
 
         var _modalInstance = $modal.open({
-            template: '<h1>'+_content.title+'</h1></div><div class="feed-modal-options"><button>'+_content.action+'</button><button ng-click="dismiss()">Cancel</button>',
+            template: '<h1>'+_content.title+'</h1></div><div class="feed-modal-options"><button ng-click="ok()">'+_content.action+'</button><button ng-click="dismiss()">Cancel</button>',
             controller: 'CtrlFeedsAcceptModal',
             windowClass: 'feedsAcceptModal',
-            scope: $scope.actions
+            scope: $scope,
+            resolve: { modalAction: function() { return action } }
         });
 
         _modalInstance.result.then(defer.resolve, defer.reject);
+        return defer.promise;
     }
 
 
@@ -2241,11 +2245,42 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
 }])
 
 
-app.controller('CtrlFeedsAcceptModal', ['$scope', '$modalInstance',
-    function($scope, $modalInstance) {
+app.controller('CtrlFeedsAcceptModal', ['$scope', '$modalInstance', '$q', 'FeedsService', 'modalAction',
+    function($scope, $modalInstance, $q, Feeds, modalAction) {
+    $scope.action = modalAction;
+
+    var runActionOnSelected = function() {
+        var defer = $q.defer();
+        var action = $scope.action;
+        var _selection = $scope.$parent.selectedTasks;
+        var _postdata = {};
+        var counter = _selection.length;
+        if (!_.isArray(_selection)) {
+            return false;
+        }
+        _selection.forEach(function(item) {
+            var _selected = _.find($scope.$parent.tasks, function(task) {
+                return task.id === item;
+            });
+            _postdata.uri = _selected.content;
+
+            Feeds.request('youview/bbc_nitro/action/'+action, 'post', _postdata).then(function() {
+                counter--;
+                if (!counter) defer.resolve();
+            });
+        })
+        return defer.promise;
+    }
+
+    $scope.ok = function() {
+        runActionOnSelected().then($modalInstance.close, 
+        function() {
+            console.error('Problem with action request')
+        });
+    }
 
     $scope.dismiss = function() {
-        $modalInstance.close();
+        $modalInstance.dismiss();
     }
 }])
 var app = angular.module('atlasAdmin.controllers.feeds');

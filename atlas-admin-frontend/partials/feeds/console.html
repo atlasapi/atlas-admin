@@ -19,10 +19,10 @@
         </div>
         <div class="feed-actions">
             <span class="feed-actions-label">Actions:</span>
-            <button ng-click="actions.acceptModal('republish')" ng-disabled="disableActions">Republish</button>
-            <button ng-click="actions.acceptModal('revoke')" ng-disabled="disableActions">Revoke</button>
-            <button ng-click="actions.acceptModal('unrevoke')" ng-disabled="disableActions">Unrevoke</button>
-            <button ng-click="actions.acceptModal('delete')" ng-disabled="disableActions" class="negative">Delete</button>
+            <button ng-click="actions.republish()" ng-disabled="disableActions">Republish</button>
+            <button ng-click="actions.revoke()" ng-disabled="disableActions">Revoke</button>
+            <button ng-click="actions.unrevoke()" ng-disabled="disableActions">Unrevoke</button>
+            <button ng-click="actions.delete()" ng-disabled="disableActions" class="negative">Delete</button>
         </div>
         <div ng-show="error.show">
             {{error.obj.message}}
