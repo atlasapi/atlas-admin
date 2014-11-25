@@ -1,8 +1,8 @@
 'use strict';
 var app = angular.module('atlasAdmin.controllers.feeds');
 
-app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modal',
-    function($scope, $rootScope, $routeParams, Feeds, $q, $modal) {
+app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modal', '$timeout',
+    function($scope, $rootScope, $routeParams, Feeds, $q, $modal, $timeout) {
     $scope.tasks = [];
     $scope.error = {};
     $scope.error.show = false;
@@ -29,13 +29,18 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     //
     // @param filter_on {string} value to set for activeFilter
     //
+    var input_timer;
     $scope.filter = function(filter_on) {
         if (!_.isString(filter_on)) return;
         if ($scope.search[filter_on].length > 3 || $scope.search[filter_on].length == 0) {
-            $scope.isloading = true;
-            $scope.activeFilter = filter_on;
-            $scope.page.current = 0;
-            getTasks()
+            $timeout.cancel(input_timer);
+            input_timer = $timeout(function() {
+                console.log('request')
+                $scope.isloading = true;
+                $scope.activeFilter = filter_on;
+                $scope.page.current = 0;
+                getTasks()
+            }, 700);
         }
     }
 
@@ -159,8 +164,8 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
             _filter = '&uri='+$scope.search.uri;
         }else if ($scope.activeFilter === 'status' && !_.isEmpty($scope.search.status)) {
             _filter = '&status='+$scope.search.status;
-        }else if ($scope.activeFilter === 'task_id' && !_.isEmpty($scope.search.task_id)){
-            _filter = '&task_id='+$scope.search.task_id;
+        }else if ($scope.activeFilter === 'remote_id' && !_.isEmpty($scope.search.remote_id)){
+            _filter = '&remote_id='+$scope.search.remote_id;
         }
         var request_url = 'youview/bbc_nitro/tasks.json?limit='+$scope.page.limit+'&offset='+$scope.page.offset+_filter;
         Feeds.request(request_url).then(function(data) {

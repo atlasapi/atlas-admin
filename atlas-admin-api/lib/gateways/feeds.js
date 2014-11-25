@@ -46,7 +46,7 @@ function proxyRequest(endpoint, request) {
     for (var query in request.query) {
         if ('status' === query 
             || 'uri' === query 
-            || 'task_id' === query
+            || 'remote_id' === query
             || 'limit' === query
             || 'offset' === query
             || 'annotations' === query) {
@@ -140,8 +140,7 @@ var feedsInterface = function() {
 
             // action_request.send('uri=');
             // action_request.end();
-            var i = i ? ++i : 1;
-            res.end(i+'yay: '+uri);
+            res.end();
         })
 
 
