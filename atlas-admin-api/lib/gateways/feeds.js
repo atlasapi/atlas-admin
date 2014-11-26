@@ -128,7 +128,7 @@ var feedsInterface = function() {
                 method: 'post'
             }
 
-            console.log('Trigger action: processing.stage.atlas.mbst.tv/feeds/youview/bbc_nitro/'+action);
+            console.log('Trigger action: processing.stage.atlas.mbst.tv/feeds/youview/bbc_nitro/'+action+'?uri='+uri);
 
             var action_request = http.request(request_opts, function(action_res) {
                 action_res.setEncoding('utf8');
