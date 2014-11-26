@@ -19,10 +19,10 @@
         </div>
         <div class="feed-actions">
             <span class="feed-actions-label">Actions:</span>
-            <button ng-click="actions.republish()" ng-disabled="disableActions">Republish</button>
-            <button ng-click="actions.revoke()" ng-disabled="disableActions">Revoke</button>
-            <button ng-click="actions.unrevoke()" ng-disabled="disableActions">Unrevoke</button>
-            <button ng-click="actions.delete()" ng-disabled="disableActions" class="negative">Delete</button>
+            <button action-modal="republish" ng-disabled="disableActions">Republish</button>
+            <button action-modal="revoke" ng-disabled="disableActions">Revoke</button>
+            <button action-modal="unrevoke" ng-disabled="disableActions">Unrevoke</button>
+            <button action-modal="delete" ng-disabled="disableActions" class="negative">Delete</button>
         </div>
         <div ng-show="error.show">
             {{error.obj.message}}
@@ -93,9 +93,9 @@
             <div class="pagination">
                 <div class="pagination-buttons" ng-show="page.showPager">
                     <span ng-hide="(page.current < 1)" ng-class="{inactive: isloading}" class="prev-page button primary" ng-click="page.previous()">Previous</span>
-                    <span ng-hide="(transactions.length < page.limit)" ng-class="{inactive: isloading}" class="next-page button primary" ng-click="page.next()">Next</span>
+                    <span ng-hide="(tasks.length < page.limit)" ng-class="{inactive: isloading}" class="next-page button primary" ng-click="page.next()">Next</span>
                 </div>
-                <span class="pagination-status" ng-hide="isloading">Showing results: {{page.offset+1}} to {{(page.offset+1) + (transactions.length-1)}}</span>
+                <span class="pagination-status" ng-hide="isloading">Showing results: {{page.offset+1}} to {{(page.offset+1) + (tasks.length-1)}}</span>
             </div>
         </div>
     </section>
