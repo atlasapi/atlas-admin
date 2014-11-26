@@ -10,6 +10,14 @@ var config                       = require('./config'),
 var _http_port = config.port.http;
 var _mongo_port = config.port.mongo;
 
+
+app.use( function(req, res, next) {
+    console.log('\n~\n');
+    console.log('REQUEST:');
+    console.log(req.method+' : '+req.url);
+    next();
+})
+
 // middleware: parse incoming request data as json
 app.use( bodyParser.json() );
 
@@ -28,6 +36,7 @@ var mongoclient = new MongoClient(
 
 mongoclient.open(function(err, mongo) {
     if (err) console.error(err); 
+    console.log('Connected to mongodb')
 
     // create mongo connection and drop into common
     var db = mongo.db(config.database.name);
