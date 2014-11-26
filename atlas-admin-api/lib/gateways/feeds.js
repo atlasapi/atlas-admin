@@ -128,19 +128,19 @@ var feedsInterface = function() {
                 method: 'post'
             }
 
-            //var action_request = http.request(request_opts, function(res) {
-            //    res.setEncoding('utf8');
-            //    res.on('data', function(chunk) {
-            //        data += chunk;
-            //    })
-            //    res.on('end', function() {
-            //        console.log(data);
-            //    })
-            //});
+            console.log('Trigger action: processing.stage.atlas.mbst.tv/feeds/youview/bbc_nitro/'+action);
 
-            // action_request.send('uri=');
-            // action_request.end();
-            res.end();
+            var action_request = http.request(request_opts, function(action_res) {
+                action_res.setEncoding('utf8');
+                action_res.on('data', function(chunk) {
+                    data += chunk;
+                })
+                action_res.on('end', function() {
+                    res.end();
+                })
+            });
+            action_request.write('uri='+uri);
+            action_request.end();
         })
 
 

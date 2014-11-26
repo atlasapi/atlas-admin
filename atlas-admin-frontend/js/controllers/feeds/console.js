@@ -1,8 +1,8 @@
 'use strict';
 var app = angular.module('atlasAdmin.controllers.feeds');
 
-app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modal', '$timeout',
-    function($scope, $rootScope, $routeParams, Feeds, $q, $modal, $timeout) {
+app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$timeout',
+    function($scope, $rootScope, $routeParams, Feeds, $q, $timeout) {
     $scope.tasks = [];
     $scope.error = {};
     $scope.error.show = false;
@@ -35,7 +35,6 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
         if ($scope.search[filter_on].length > 3 || $scope.search[filter_on].length == 0) {
             $timeout.cancel(input_timer);
             input_timer = $timeout(function() {
-                console.log('request')
                 $scope.isloading = true;
                 $scope.activeFilter = filter_on;
                 $scope.page.current = 0;
@@ -57,7 +56,7 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     $scope.$watch('page.limit', function(new_val, old_val) {
         $scope.isloading = true;
         $scope.page.current = 0;
-        $scope.page.showPager = ($scope.tasks.length < $scope.page.limit) ? false : true;
+        $scope.page.showPager = ($scope.tasks.length >= $scope.page.limit) ? false : true;
     });
 
     $scope.$watch('page.current + page.limit', function(new_val, old_val) {
@@ -69,6 +68,8 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
         if ($scope.tasks.length >= $scope.page.limit && !$scope.isloading) {
             $scope.isloading = true;
             ++$scope.page.current;
+            $scope.selectedTasks = [];
+            $scope.disableActions = true;
         }
     }
 
@@ -76,6 +77,8 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
         if ($scope.page.current > 0 && !$scope.isloading) {
             $scope.isloading = true;
             --$scope.page.current;
+            $scope.selectedTasks = [];
+            $scope.disableActions = true;
         }
     }
 
@@ -96,65 +99,6 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
             $scope.disableActions = true;
         }
     }
-
-
-    // actions
-    $scope.actions = {};
-
-    $scope.actions.republish = function() {
-        actionModel('republish').then(function(res) {
-            $scope.selectedTasks = [];
-            $scope.disableActions = true;
-            getTasks();
-        });
-    }
-
-    $scope.actions.revoke = function() {
-        actionModel('revoke').then(function(res) {
-            $scope.selectedTasks = [];
-            $scope.disableActions = true;
-            getTasks();
-        });
-    }
-
-    $scope.actions.unrevoke = function() {
-        actionModel('unrevoke').then(function(res) {
-            $scope.selectedTasks = [];
-            $scope.disableActions = true;
-            getTasks();
-        });
-    }
-
-    $scope.actions.delete = function() {
-        actionModel('delete').then(function(res) {
-            $scope.selectedTasks = [];
-            $scope.disableActions = true;
-            getTasks();
-        });
-    }
-
-    var actionModel = function(action) {
-        var defer = $q.defer();
-        var _tasksLength = $scope.selectedTasks.length;
-        if (!_.isString(action) || !_tasksLength) return;
-
-        var _content = {
-            title: 'Are you sure you want to <strong>'+action+' '+_tasksLength+'</strong> tasks?',
-            action: action.charAt(0).toUpperCase() + action.slice(1)
-        }
-
-        var _modalInstance = $modal.open({
-            template: '<h1>'+_content.title+'</h1></div><div class="feed-modal-options"><button ng-click="ok()">'+_content.action+'</button><button ng-click="dismiss()">Cancel</button>',
-            controller: 'CtrlFeedsAcceptModal',
-            windowClass: 'feedsAcceptModal',
-            scope: $scope,
-            resolve: { modalAction: function() { return action } }
-        });
-
-        _modalInstance.result.then(defer.resolve, defer.reject);
-        return defer.promise;
-    }
-
 
     // For loading sets of tasks from atlas. Filters and offsets
     // are inserted automatically based on $scope variables
@@ -207,35 +151,62 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
 }])
 
 
-app.controller('CtrlFeedsAcceptModal', ['$scope', '$modalInstance', '$q', 'FeedsService', 'modalAction',
-    function($scope, $modalInstance, $q, Feeds, modalAction) {
-    $scope.action = modalAction;
+app.directive('actionModal', ['$document', '$q', '$modal',
+    function($document, $q, $modal) {
+    var controller = function($scope, el, attr) {
+        var modal = function(action) {
+            var defer = $q.defer();
+            if (_.isArray($scope.selectedTasks)) {
+                var _tasksLength = $scope.selectedTasks.length;
+            }else{
+                $scope.selectedTasks = []
+                var _tasksLength = 1;
+            }
+            if (!_.isString(action)) {
+                defer.reject();
+                return;
+            }
 
-    var runActionOnSelected = function() {
-        var defer = $q.defer();
-        var action = $scope.action;
-        var _selection = $scope.$parent.selectedTasks;
-        var _postdata = {};
-        var counter = _selection.length;
-        if (!_.isArray(_selection)) {
-            return false;
+            var _content = {
+                title: 'Are you sure you want to <strong>'+action+' '+_tasksLength+'</strong> tasks?',
+                action: action.charAt(0).toUpperCase() + action.slice(1)
+            }
+
+            var _modalInstance = $modal.open({
+                template: '<h1>'+_content.title+'</h1></div><div class="feed-modal-options"><button ng-click="ok()">'+_content.action+'</button><button ng-click="dismiss()">Cancel</button>',
+                controller: 'CtrlFeedsAcceptModal',
+                windowClass: 'feedsAcceptModal',
+                scope: $scope,
+                resolve: { modalAction: function() { return action } }
+            });
+
+            _modalInstance.result.then(defer.resolve, defer.reject);
+            return defer.promise;
         }
-        _selection.forEach(function(item) {
-            var _selected = _.find($scope.$parent.tasks, function(task) {
-                return task.id === item;
-            });
-            _postdata.uri = _selected.content;
 
-            Feeds.request('youview/bbc_nitro/action/'+action, 'post', _postdata).then(function() {
-                counter--;
-                if (!counter) defer.resolve();
-            });
-        })
-        return defer.promise;
+        $(el).on('click', function() {
+            if ($scope.task || $scope.tasks) {
+                var action = attr.actionModal;
+                modal(action).then(function() {
+                    $scope.selectedTasks = [];
+                    $scope.disableActions = true;
+                })
+            }
+        });
     }
 
+    return {
+        link: controller
+    }
+}])
+
+app.controller('CtrlFeedsAcceptModal', ['$scope', '$modalInstance', '$q', 'FeedsService', 'modalAction',
+    function($scope, $modalInstance, $q, Feeds, modalAction) {
+    var action = modalAction;
+
     $scope.ok = function() {
-        runActionOnSelected().then($modalInstance.close, 
+        var _task = $scope.tasks || $scope.task;
+        Feeds.action(action, _task, $scope.selectedTasks).then($modalInstance.close,
         function() {
             console.error('Problem with action request')
         });

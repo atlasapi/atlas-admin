@@ -59,7 +59,45 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
     }
     
 
+    //  Used for running actions on tasks
+    //  
+    //  @param action {string}
+    //  @param tasks {object}
+    //  @param selection {array}
+    //
+    var doAction = function(action, tasks, selection) {
+        var defer = $q.defer();
+        var action = action || null;
+        var _tasks = tasks || null;
+        var _selection = selection || []; 
+        var _postdata = {};
+
+
+
+        if (selection.length) {
+            var counter = _selection.length;
+            _selection.forEach(function(item) {
+                var _selected = _.find(tasks, function(task) {
+                    return task.id === item;
+                });
+                _postdata.uri = _selected.content || '';
+                request('youview/bbc_nitro/action/'+action, 'post', _postdata).then(function() {
+                    counter--;
+                    if (!counter) defer.resolve();
+                });
+            })
+        }else{
+            _postdata.uri = _tasks.content || '';
+            request('youview/bbc_nitro/action/'+action, 'post', _postdata).then(function() {
+                defer.resolve();
+            });
+        }
+        
+        return defer.promise;
+    }
+
     return {
+        action: doAction,
         get: getFeeds,
         request: request
     }

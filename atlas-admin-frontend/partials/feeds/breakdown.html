@@ -10,14 +10,14 @@
             </div>
         </div>
 
-        <div ng-click="actions.acceptModal('republish')" class="bigred">Republish</div>
+        <div action-modal="republish" class="bigred">Republish</div>
 
         <div class="feed-actions">
             <span class="feed-actions-label">Actions:</span>
-            <button ng-click="actions.acceptModal('republish')" ng-disabled="disableActions">Republish</button>
-            <button ng-click="actions.acceptModal('revoke')" ng-disabled="disableActions">Revoke</button>
-            <button ng-click="actions.acceptModal('unrevoke')" ng-disabled="disableActions">Unrevoke</button>
-            <button ng-click="actions.acceptModal('delete')" ng-disabled="disableActions" class="negative">Delete</button>
+            <button action-modal="republish" ng-disabled="disableActions">Republish</button>
+            <button action-modal="revoke" ng-disabled="disableActions">Revoke</button>
+            <button action-modal="unrevoke" ng-disabled="disableActions">Unrevoke</button>
+            <button action-modal="delete" ng-disabled="disableActions" class="negative">Delete</button>
         </div>
     </header>
 
