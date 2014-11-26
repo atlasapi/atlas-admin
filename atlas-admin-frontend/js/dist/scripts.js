@@ -7791,27 +7791,26 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
         var _selection = selection || []; 
         var _postdata = {};
 
-
-
-        if (selection.length) {
-            var counter = _selection.length;
-            _selection.forEach(function(item) { 
-                var _selected = _.find(tasks, function(task) {
-                    return task.id === item;
-                });
-                _postdata.uri = _selected.content || '';
-                request('youview/bbc_nitro/action/'+action, 'post', _postdata).then(function() {
-                    counter--;
-                    if (!counter) defer.resolve();
-                });
-            })
-        }else{
+        if (_.isArray(_tasks)) {
+            if (selection.length) {
+                var counter = _selection.length;
+                _selection.forEach(function(item) { 
+                    var _selected = _.find(tasks, function(task) {
+                        return task.id === item;
+                    });
+                    _postdata.uri = _selected.content || '';
+                    request('youview/bbc_nitro/action/'+action, 'post', _postdata).then(function() {
+                        counter--;
+                        if (!counter) defer.resolve();
+                    });
+                })
+            }     
+        }else if (_.isObject(_tasks)) {
             _postdata.uri = _tasks.content || '';
             request('youview/bbc_nitro/action/'+action, 'post', _postdata).then(function() {
                 defer.resolve();
             });
-        }
-        
+        }   
         return defer.promise;
     }
 
@@ -8968,12 +8967,13 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     // The following is used for selecting individual tasks 
     $scope.selectedTasks = [];
     $scope.updateSelection = function(task_id) {
-        if (!_.isString(task_id)) return;
-        if ($scope.selectedTasks.indexOf(task_id) > -1) {
-            var _index = $scope.selectedTasks.indexOf(task_id);
-            $scope.selectedTasks.splice(_index, 1);
-        }else{
-            $scope.selectedTasks.push(task_id);
+        if (_.isString(task_id)) {
+            if ($scope.selectedTasks.indexOf(task_id) > -1) {
+                var _index = $scope.selectedTasks.indexOf(task_id);
+                $scope.selectedTasks.splice(_index, 1);
+            }else{
+                $scope.selectedTasks.push(task_id);
+            }
         }
         if ($scope.selectedTasks.length) {
             $scope.disableActions = false;
@@ -9038,12 +9038,9 @@ app.directive('actionModal', ['$document', '$q', '$modal',
     var controller = function($scope, el, attr) {
         var modal = function(action) {
             var defer = $q.defer();
-            if (_.isArray($scope.selectedTasks)) {
-                var _tasksLength = $scope.selectedTasks.length;
-            }else{
-                $scope.selectedTasks = []
-                var _tasksLength = 1;
-            }
+            $scope.selectedTasks = $scope.selectedTasks || [];
+            var _tasksLength = $scope.selectedTasks.length || 1;
+
             if (!_.isString(action)) {
                 defer.reject();
                 return;
@@ -9071,7 +9068,7 @@ app.directive('actionModal', ['$document', '$q', '$modal',
                 var action = attr.actionModal;
                 modal(action).then(function() {
                     $scope.selectedTasks = [];
-                    $scope.disableActions = true;
+                    //updateSelection();
                 })
             }
         });

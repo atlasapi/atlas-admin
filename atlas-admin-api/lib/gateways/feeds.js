@@ -77,23 +77,19 @@ function getXML(uri) {
     return defer.promise;
 }
 
-function loadFeeds(req, res, next) {
+function loadFeeds(req, res) {
     Feeds.getAll().then(function(feeds) {
         _feeds = feeds;
-        next();
-    }, next);
+        res.end(JSON.stringify(_feeds));
+    });
 }
 
 //  REST interface for feeds 
 //
 var feedsInterface = function() {
     var router  = express.Router();
-    router.all('*', loadFeeds);
 
-    router.route('/')
-        .get(function(req, res) {
-            res.end(JSON.stringify(_feeds));
-        });
+    router.route('/').get(loadFeeds);
 
     //  return xml data
     router.route('/youview/bbc_nitro.xml')

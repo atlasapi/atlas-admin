@@ -86,12 +86,13 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     // The following is used for selecting individual tasks 
     $scope.selectedTasks = [];
     $scope.updateSelection = function(task_id) {
-        if (!_.isString(task_id)) return;
-        if ($scope.selectedTasks.indexOf(task_id) > -1) {
-            var _index = $scope.selectedTasks.indexOf(task_id);
-            $scope.selectedTasks.splice(_index, 1);
-        }else{
-            $scope.selectedTasks.push(task_id);
+        if (_.isString(task_id)) {
+            if ($scope.selectedTasks.indexOf(task_id) > -1) {
+                var _index = $scope.selectedTasks.indexOf(task_id);
+                $scope.selectedTasks.splice(_index, 1);
+            }else{
+                $scope.selectedTasks.push(task_id);
+            }
         }
         if ($scope.selectedTasks.length) {
             $scope.disableActions = false;
@@ -156,12 +157,9 @@ app.directive('actionModal', ['$document', '$q', '$modal',
     var controller = function($scope, el, attr) {
         var modal = function(action) {
             var defer = $q.defer();
-            if (_.isArray($scope.selectedTasks)) {
-                var _tasksLength = $scope.selectedTasks.length;
-            }else{
-                $scope.selectedTasks = []
-                var _tasksLength = 1;
-            }
+            $scope.selectedTasks = $scope.selectedTasks || [];
+            var _tasksLength = $scope.selectedTasks.length || 1;
+
             if (!_.isString(action)) {
                 defer.reject();
                 return;
@@ -189,7 +187,7 @@ app.directive('actionModal', ['$document', '$q', '$modal',
                 var action = attr.actionModal;
                 modal(action).then(function() {
                     $scope.selectedTasks = [];
-                    $scope.disableActions = true;
+                    //updateSelection();
                 })
             }
         });
