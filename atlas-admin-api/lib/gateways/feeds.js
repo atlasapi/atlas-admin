@@ -124,7 +124,7 @@ var feedsInterface = function() {
             var action = req.params.action || '';
             var request_opts = {
                 hostname: 'processing.stage.atlas.mbst.tv',
-                path: '/feeds/youview/bbc_nitro/'+action,
+                path: '/feeds/youview/bbc_nitro/'+action+'?uri='+uri,
                 method: 'post'
             }
 
@@ -139,7 +139,6 @@ var feedsInterface = function() {
                     res.end();
                 })
             });
-            action_request.write('uri='+uri);
             action_request.end();
         })
 

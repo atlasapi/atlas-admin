@@ -76,7 +76,7 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
 
         if (selection.length) {
             var counter = _selection.length;
-            _selection.forEach(function(item) {
+            _selection.forEach(function(item) { 
                 var _selected = _.find(tasks, function(task) {
                     return task.id === item;
                 });
