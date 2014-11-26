@@ -77,11 +77,11 @@ function getXML(uri) {
     return defer.promise;
 }
 
-function loadFeeds(req, res) {
+function loadFeeds(req, res, next) {
     Feeds.getAll().then(function(feeds) {
         _feeds = feeds;
-        res.end(JSON.stringify(_feeds));
-    });
+        next();
+    }, next);
 }
 
 //  REST interface for feeds 
@@ -89,9 +89,17 @@ function loadFeeds(req, res) {
 var feedsInterface = function() {
     var router  = express.Router();
 
-    router.route('/').get(loadFeeds);
+    // Grab the feed from groups so before every request so the app uses 
+    // the correct api key 
+    router.use(loadFeeds);
 
-    //  return xml data
+    // Return a list of feeds
+    router.route('/')
+        .get(function(req, res) {
+            res.end(JSON.stringify(_feeds));
+        });
+
+    // Return xml data
     router.route('/youview/bbc_nitro.xml')
         .get(function(req, res) {
             var _uri = req.query.uri || null;
@@ -107,7 +115,7 @@ var feedsInterface = function() {
 
 
 
-    //  actions endpoint. actions must be sent to a processing url   
+    // Actions endpoint. actions must be sent to a processing url   
     router.route('/youview/bbc_nitro/action/:action')
         .post(function(req, res) {
             if (!_.isString(req.body.uri)) {
