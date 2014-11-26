@@ -125,7 +125,8 @@ var feedsInterface = function() {
             var request_opts = {
                 hostname: 'processing.stage.atlas.mbst.tv',
                 path: '/feeds/youview/bbc_nitro/'+action+'?uri='+uri,
-                method: 'post'
+                method: 'post',
+                agent: false
             }
 
             console.log('Trigger action: processing.stage.atlas.mbst.tv/feeds/youview/bbc_nitro/'+action+'?uri='+uri);
