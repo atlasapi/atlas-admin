@@ -6,7 +6,7 @@ var config = require('../../config'),
     url = require('url');
 
 // proxy auth request to atlas auth server
-function auth(request, response, next) {
+var auth = function(request, response, next) {
     var qs = url.parse(request.url, true).query;
 
     //  respond to different auth outcomes
@@ -43,6 +43,7 @@ function auth(request, response, next) {
     //  and request the current signed-in user's details from Atlas, and
     //  store in the common module for use by other parts of the app
     if ( 'oauth_provider' in qs && 'oauth_token' in qs ) {
+
         var auth_endpoint = '/4/auth/user.json?oauth_provider='+qs.oauth_provider+'&oauth_token='+qs.oauth_token;
 
         //  check if the auth server wants to redirect the request, and follow it,
@@ -50,12 +51,9 @@ function auth(request, response, next) {
         //
         //  @param res {object} http response object
         var handleAuth = function(res) {
-            console.log('AUTH');
             if (res.statusCode >= 300 && res.statusCode < 400) {
                 var redirectUrl = url.parse(res.headers.location);
                 if (!redirectUrl.host) redirectUrl.host = config.atlasHost;
-
-                console.log(res.statusCode+' -> redirect to: '+redirectUrl.host+redirectUrl.path);
 
                 var redirectOpts = {
                     host: redirectUrl.host,
@@ -65,24 +63,20 @@ function auth(request, response, next) {
                     agent: false
                 }
 
-                http.request(redirectOpts, function(redirectRes) {
+                http.request(redirectOpts, function(redirect_res) {
                     res.setEncoding('utf8');   
-                    redirectRes.on('data', function(chunk) {
+                    redirect_res.on('data', function(chunk) {
                         responder.writeBody(chunk);
-                        console.log('---redirect response');
-                    });
-                    redirectRes.on('end', function() {
-                        console.log('-redirect complete');
+                    })
+                   .on('end', function() {
                         responder.authenticated();
                     });
                 }).end();
             }else{
-                if (res.statusCode === 200) {
-                    console.log('COMPLETE :)');
+                if (res.statusCode === 200)
                     responder.authenticated();       
-                }else{
+                else
                     responder.not_authenticated();
-                }
             }
         }
 
