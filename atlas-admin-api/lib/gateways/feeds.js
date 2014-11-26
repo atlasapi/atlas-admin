@@ -140,6 +140,12 @@ var feedsInterface = function() {
                     res.end();
                 })
             });
+
+            action_request.on('error', function() {
+                console.error('Failed to get a response from processing server');
+                res.end();
+            });
+
             action_request.end();
         })
 
