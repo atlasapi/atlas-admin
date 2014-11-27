@@ -15,12 +15,7 @@ module.exports = function() {
         },
 
 
-        database: instanceConfig.database || {
-            host: 'localhost',
-            user: 'admin',
-            name: 'atlasadmin',
-            password: null
-        },
+        database: instanceConfig.database || 'mongodb://localhost:27017/atlasadmin',
 
         paths: {
             apiRoot: instanceConfig.apiRootPath || '/api'
