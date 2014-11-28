@@ -10,12 +10,10 @@ module.exports = function() {
         atlasHost: instanceConfig.atlasHost || 'stage.atlas.metabroadcast.com',
 
         port: {
-            http: instanceConfig.listenPort || 9000,
-            mongo: 27017
+            http: instanceConfig.listenPort || 9000
         },
 
-
-        database: instanceConfig.database || 'mongodb://localhost:27017/atlasadmin',
+        database: instanceConfig.database || 'mongodb://localhost:27017/atlasadmin?readPreference=primary',
 
         paths: {
             apiRoot: instanceConfig.apiRootPath || '/api'

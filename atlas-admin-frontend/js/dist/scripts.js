@@ -6923,22 +6923,6 @@ app.config(['$httpProvider', function($httpProvider) {
             }
         };
     }]);
-
-    $httpProvider.interceptors.push(['$q', '$location', function($q, $location) {
-        return {
-            request: function(config) {
-                return config || $q.when(config);
-            },
-            response: function(response) {
-                var qs = $location.search();
-                if (qs.debug) {
-                    var token = localStorage.getItem('auth.token');
-                    console.log(token);
-                }
-                return response || $q.when(response);
-            }
-        }
-    }]);
 }]);
 
 
