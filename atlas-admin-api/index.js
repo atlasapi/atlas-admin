@@ -23,14 +23,8 @@ app.use( require('./lib/middleware/crossOrigin') );
 app.use( require('./lib/middleware/auth') );
 
 // open up a connection to mongodb, then register endpoints and boot the server
-var mongoclient = new MongoClient(
-    new MongoServer(config.database.host, _mongo_port), {native_parser: true});
-
-mongoclient.open(function(err, mongo) {
+MongoClient.connect(config.database, function(err, db) {
     if (err) console.error(err); 
-
-    // create mongo connection and drop into common
-    var db = mongo.db(config.database.name);
     common.db = db;
 
     // register REST endpoints
