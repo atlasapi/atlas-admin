@@ -33,6 +33,7 @@ var app = angular.module('atlasAdmin', [
                                 'atlasAdmin.controllers.user',
                                 'atlasAdmin.controllers.epgWidget',
                                 'atlasAdmin.controllers.feeds',
+                                'atlasAdmin.controllers.scrubbables',
                                 'atlasAdmin.controllers.uservideosources',
                                 'atlasAdmin.controllers.uservideosources.youtube',
                                 'atlasAdmin.controllers.admins.usage',
@@ -55,8 +56,8 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/manage/wishlist', {templateUrl: 'partials/admins/wishlist/manageWishlist.html', controller: 'CtrlManageWishlist'});
     $routeProvider.when('/manage/usage', {templateUrl: 'partials/admins/usage/requests.html', controller: 'CtrlUsage'});
 
-    // Add blackout widget page
     $routeProvider.when('/epg/bt-tv', {templateUrl: 'partials/epg-widget.html', controller: 'CtrlEPGWidget'});
+    $routeProvider.when('/scrubbables', {templateUrl: 'partials/scrubbables/create.html', controller: 'CtrlScrubbables'});
 
     // application user routes
     $routeProvider.when('/applications', {templateUrl: 'partials/applications.html', controller: 'CtrlApplications'});
