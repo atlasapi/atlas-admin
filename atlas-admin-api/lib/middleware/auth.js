@@ -29,7 +29,6 @@ var auth = function(request, response, next) {
             common.oauth.provider = qs.oauth_provider;
             common.oauth.token = qs.oauth_token;
             common.user = JSON.parse(this.body).user;
-            next();
         },
         writeBody: function(chunk) {
             this.body += chunk;
@@ -70,13 +69,16 @@ var auth = function(request, response, next) {
                     })
                    .on('end', function() {
                         responder.authenticated();
+                        next();
                     });
                 }).end();
             }else{
-                if (res.statusCode === 200)
-                    responder.authenticated();       
-                else
+                if (res.statusCode === 200) {
+                    responder.authenticated();
+                    next();       
+                }else{
                     responder.not_authenticated();
+                }
             }
         }
 

@@ -22,6 +22,9 @@ app.use( require('./lib/middleware/crossOrigin') );
 // middleware: proxy atlas requests
 app.use( require('./lib/middleware/auth') );
 
+// middleware: debug option
+app.use( require('./lib/middleware/debug') );
+
 // open up a connection to mongodb, then register endpoints and boot the server
 var mongoclient = new MongoClient(
     new MongoServer(config.database.host, _mongo_port), {native_parser: true});
