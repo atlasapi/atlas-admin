@@ -9672,6 +9672,7 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
 }]);
 
 
+
 app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http',
     function($document, $q, $timeout, atlasHost, $http) {
 
@@ -9787,6 +9788,21 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
         template: '<div class="search-input"><input type="text" placeholder="Search..." ng-model="atlasSearch.searchquery" ng-change="atlasSearch.lookupAtlasItem()"></div><div ng-show="atlasSearch.showMessage" class="message-output">{{atlasSearch.message}}</div><div ng-show="atlasSearch.showAutocomplete" class="search-completions"><span ng-repeat="result in atlasSearch.search_results" class="search-item" ng-click="atlasSearch.selectAtlasItem(result.title, result.uri)"><strong>{{result.title}}</strong><i>{{result.broadcasts[0].transmission_time}}</i></span></div>'
     }
 }])
+
+app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$http',
+    function($document, $q, $timeout, atlasHost, $http) {
+
+    var controller = function($scope, $el, $attr) {
+        $scope.showSegments.segments = [];
+    }
+
+    return {
+        restrict: 'E',
+        scope: false,
+        link: controller,
+        template: '<div class="full-level-segments"><div class="full-segments-container"><span class="full-segment" ng-repeat="segment in showSegments.segments">{{segment.title}}</span><span class="full-segment-new"><input type="text" placeholder="Label"><input type="url" placeholder="http://"><button data-action="cancel">Cancel</button><button data-action="create">Create</button></span><span class="full-segment-create"></span></div></div>'
+    }
+}]);
 'use strict';
 var app = angular.module('atlasAdmin.controllers.admins.manageWishlist', []);
 
