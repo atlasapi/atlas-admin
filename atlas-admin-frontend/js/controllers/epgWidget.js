@@ -1,4 +1,4 @@
-var app = angular.module('atlasAdmin.controllers.epgWidget', []);
+var app = angular.module('atlasAdmin.controllers.epgwidget', []);
 
 app.controller('CtrlEPGWidget', ['$scope', '$rootScope', 'Users', '$routeParams', '$q', '$http', 'Authentication', 'atlasApiHost',
     function($scope, $rootScope, Users, $routeParams, $q, $http, Authentication, atlasApiHost) {

@@ -6794,47 +6794,48 @@ var t=x.length;if(t){x.sort(c);for(var e,r=1,u=x[0],i=[u];t>r;++r)e=x[r],l(e[0],
 
 // Declare app level module which depends on filters, and services
 var app = angular.module('atlasAdmin', [
-                                'atlasAdmin.filters', 
-                                'atlasAdmin.preloader', 
-                                'atlasAdmin.services.auth',
-                                'atlasAdmin.services.atlas',
-                                'atlasAdmin.services.applications',
-                                'atlasAdmin.services.sources',
-                                'atlasAdmin.services.sourceRequests',
-                                'atlasAdmin.services.sourceLicenses',
-                                'atlasAdmin.services.users', 
-                                'atlasAdmin.services.uservideosources',
-                                'atlasAdmin.services.uservideosources.youtube',
-                                'atlasAdmin.services.propositions',
-                                'atlasAdmin.services.usage',
-                                'atlasAdmin.services.feeds',
-                                'atlasAdmin.directives.orderable', 
-                                'atlasAdmin.directives.focus',
-                                'atlasAdmin.directives.activePath',
-                                'atlasAdmin.directives.validUsage',
-                                'atlasAdmin.directives.inputmorph',
-                                'atlasAdmin.directives.loadContent',
-                                'atlasAdmin.controllers.auth',
-                                'atlasAdmin.controllers.atlas',
-                                'atlasAdmin.controllers.errors',
-                                'atlasAdmin.controllers.applications',
-                                'atlasAdmin.controllers.wishlist',
-                                'atlasAdmin.controllers.sources',
-                                'atlasAdmin.controllers.requestSource',
-                                'atlasAdmin.controllers.sourceRequests',
-                                'atlasAdmin.controllers.user',
-                                'atlasAdmin.controllers.epgWidget',
-                                'atlasAdmin.controllers.feeds',
-                                'atlasAdmin.controllers.scrubbables',
-                                'atlasAdmin.controllers.uservideosources',
-                                'atlasAdmin.controllers.uservideosources.youtube',
-                                'atlasAdmin.controllers.admins.usage',
-                                'atlasAdmin.controllers.admins.manageSourceRequests',
-                                'atlasAdmin.controllers.admins.manageWishlist',
-                                'ui.bootstrap',
-                                'ngResource',
-                                'ngRoute',
-                                'atlasAdminConfig']);
+                        'atlasAdmin.filters', 
+                        'atlasAdmin.preloader', 
+                        'atlasAdmin.services.auth',
+                        'atlasAdmin.services.atlas',
+                        'atlasAdmin.services.applications',
+                        'atlasAdmin.services.sources',
+                        'atlasAdmin.services.sourceRequests',
+                        'atlasAdmin.services.sourceLicenses',
+                        'atlasAdmin.services.users', 
+                        'atlasAdmin.services.uservideosources',
+                        'atlasAdmin.services.uservideosources.youtube',
+                        'atlasAdmin.services.propositions',
+                        'atlasAdmin.services.usage',
+                        'atlasAdmin.services.feeds',
+                        'atlasAdmin.services.bbcscrubbables',
+                        'atlasAdmin.directives.orderable', 
+                        'atlasAdmin.directives.focus',
+                        'atlasAdmin.directives.activePath',
+                        'atlasAdmin.directives.validUsage',
+                        'atlasAdmin.directives.inputmorph',
+                        'atlasAdmin.directives.loadContent',
+                        'atlasAdmin.controllers.auth',
+                        'atlasAdmin.controllers.atlas',
+                        'atlasAdmin.controllers.errors',
+                        'atlasAdmin.controllers.applications',
+                        'atlasAdmin.controllers.wishlist',
+                        'atlasAdmin.controllers.sources',
+                        'atlasAdmin.controllers.epgwidget',
+                        'atlasAdmin.controllers.requestSource',
+                        'atlasAdmin.controllers.sourceRequests',
+                        'atlasAdmin.controllers.user',
+                        'atlasAdmin.controllers.feeds',
+                        'atlasAdmin.controllers.uservideosources',
+                        'atlasAdmin.controllers.uservideosources.youtube',
+                        'atlasAdmin.controllers.bbcscrubbables',
+                        'atlasAdmin.controllers.admins.usage',
+                        'atlasAdmin.controllers.admins.manageSourceRequests',
+                        'atlasAdmin.controllers.admins.manageWishlist',
+                        'ui.bootstrap',
+                        'ngResource',
+                        'ngRoute',
+                        'atlasAdminConfig']);
 
 
 app.config(['$routeProvider', function($routeProvider) {
@@ -6848,8 +6849,8 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/manage/wishlist', {templateUrl: 'partials/admins/wishlist/manageWishlist.html', controller: 'CtrlManageWishlist'});
     $routeProvider.when('/manage/usage', {templateUrl: 'partials/admins/usage/requests.html', controller: 'CtrlUsage'});
 
-    $routeProvider.when('/epg/bt-tv', {templateUrl: 'partials/epg-widget.html', controller: 'CtrlEPGWidget'});
-    $routeProvider.when('/scrubbables', {templateUrl: 'partials/scrubbables/create.html', controller: 'CtrlScrubbables'});
+    $routeProvider.when('/epg/bt-tv', {templateUrl: 'partials/epgWidget.html', controller: 'CtrlEPGWidget'});
+    $routeProvider.when('/scrubbables', {templateUrl: 'partials/bbcScrubbables/create.html', controller: 'CtrlBBCScrubbables'});
 
     // application user routes
     $routeProvider.when('/applications', {templateUrl: 'partials/applications.html', controller: 'CtrlApplications'});
@@ -6898,9 +6899,9 @@ app.config(['$httpProvider', function($httpProvider) {
             if (requests > 1 && _loggedin) {
                 $timeout.cancel(loadTimer);
                 loadTimer = $timeout(function() {
+                    $rootScope.show.load = true;
                     $rootScope.$broadcast('loading-started');
                 }, 400);
-                $rootScope.show.load = true;
             }
         }
 
@@ -7823,6 +7824,11 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
         request: request
     }
 }]);
+var app = angular.module('atlasAdmin.services.bbcscrubbables', []);
+
+// app.factory('BBCScrubbablesService', [function() {
+
+// }]);
 'use strict';
 
 /* Filters */
@@ -8463,6 +8469,32 @@ function AddWriterTypeaheadCtrl($scope, $modalInstance, Applications) {
     }
 }
 
+var app = angular.module('atlasAdmin.controllers.epgwidget', []);
+
+app.controller('CtrlEPGWidget', ['$scope', '$rootScope', 'Users', '$routeParams', '$q', '$http', 'Authentication', 'atlasApiHost',
+    function($scope, $rootScope, Users, $routeParams, $q, $http, Authentication, atlasApiHost) {
+    var subdomain = window.location.hostname.split('.')[0],
+        _env = (subdomain === 'stage' || subdomain === 'dev')? '-stage' : '';
+    $scope.view_title = "";
+    $scope.widget = false;
+    $scope.widgetURL = '';
+
+    $http.get( Authentication.appendTokenToUrl(atlasApiHost +'/user/groups') )
+    .success(function(groups, status) {
+        var groupname, key;
+        for ( var g in groups ) {
+            groupname = groups[g].name;
+            if (groupname === 'BTBlackout') {
+                key = groups[g].data.apiKey || null;
+                if (key) {
+                    $scope.view_title = "BT Blackout";
+                    $scope.widget = true;
+                    $scope.widgetURL = '//widgets'+_env+'.metabroadcast.com/loader/1/btblackout.html?apiKey='+key;
+                }
+            }
+        }
+    })
+}]);
 var app = angular.module('atlasAdmin.controllers.sourceRequests', []);
 app.controller('CtrlRequests', function($scope, $rootScope, $routeParams, sourceRequests, Applications, $q) {
     $rootScope.title = 'Requests';
@@ -8844,32 +8876,6 @@ app.controller('CtrlVideoSourceYouTubeConfig', function($scope, $rootScope, User
         });
     };
 });
-var app = angular.module('atlasAdmin.controllers.epgWidget', []);
-
-app.controller('CtrlEPGWidget', ['$scope', '$rootScope', 'Users', '$routeParams', '$q', '$http', 'Authentication', 'atlasApiHost',
-    function($scope, $rootScope, Users, $routeParams, $q, $http, Authentication, atlasApiHost) {
-    var subdomain = window.location.hostname.split('.')[0],
-        _env = (subdomain === 'stage' || subdomain === 'dev')? '-stage' : '';
-    $scope.view_title = "";
-    $scope.widget = false;
-    $scope.widgetURL = '';
-
-    $http.get( Authentication.appendTokenToUrl(atlasApiHost +'/user/groups') )
-    .success(function(groups, status) {
-        var groupname, key;
-        for ( var g in groups ) {
-            groupname = groups[g].name;
-            if (groupname === 'BTBlackout') {
-                key = groups[g].data.apiKey || null;
-                if (key) {
-                    $scope.view_title = "BT Blackout";
-                    $scope.widget = true;
-                    $scope.widgetURL = '//widgets'+_env+'.metabroadcast.com/loader/1/btblackout.html?apiKey='+key;
-                }
-            }
-        }
-    })
-}]);
 'use strict';
 var app = angular.module('atlasAdmin.controllers.feeds', []);
 
@@ -9132,14 +9138,6 @@ app.controller('CtrlStatusDetail', ['$scope', '$rootScope', '$routeParams', 'Fee
     function($scope, $rootScope, $routeParams, $q, $modalInstance) {
         
 }])
-var app = angular.module('atlasAdmin.controllers.scrubbables', []);
-
-app.controller('CtrlScrubbables', ['$scope', '$rootScope', '$routeParams', '$q',
-    function($scope, $rootScope, $routeParams, $q) {
-
-    $scope.view_title = 'Scrubbable creator'
-
-}]);
 'use strict';
 
 // define 'applications' module to be used for application controllers
@@ -9615,6 +9613,83 @@ app.directive('featureRow', ['$document', function($document) {
 app.controller('customFeatureRequestModal', ['$scope', '$rootScope', '$routeParams', '$q',
     function($scope, $rootScope, $routeParams, $q) {
         
+}])
+var app = angular.module('atlasAdmin.controllers.bbcscrubbables', []);
+
+app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$q',
+    function($scope, $rootScope, $routeParams, $q) {
+
+    $scope.view_title = 'Scrubbable creator';
+
+}]);
+
+
+app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http',
+    function($document, $q, $timeout, atlasHost, $http) {
+
+    var atlasSearchRequest = function(query) {
+        var defer = $q.defer();
+        $http.get(atlasHost.replace('stage.', '')+'/3.0/search.json?publisher=bbc.co.uk&q='+query+'&limit=20')
+             .success(function(data, status) {
+                console.log(data.contents);
+                defer.resolve(data);
+             })
+             .error(defer.reject);
+
+        return defer.promise;
+    }
+
+    var lookupAtlasItem = function(id) {
+        if (!_.isString(id)) return;
+        var defer = $q.defer();
+        $http.get(atlasHost.replace('stage.', '')+'/3.0/search.json?channel_id=cbbh&publisher=bbc.co.uk&q='+query+'&limit=5')
+             .success(function(data, status) {
+                console.log(data.contents);
+                defer.resolve(data);
+             })
+             .error(defer.reject);
+
+        return defer.promise;
+    }
+
+    var controller = function($scope, $el, $attr) {
+        var input_timer;
+        $scope.showAutocomplete = false;
+
+        $scope.selectAtlasItem = function(title, id) {
+            $scope.searchquery = title;
+            $scope.showAutocomplete = false;
+        }
+
+        $scope.lookupAtlasItem = function() {
+            var _query = $scope.searchquery;
+            if (!_.isString(_query)) return;
+
+            if (!_query.length) {
+                $scope.search_results = null;
+                $scope.showAutocomplete = false;
+                return;
+            }
+
+            if (_query.length > 2 || _query.length == 0) {
+                $timeout.cancel(input_timer);
+                input_timer = $timeout(function() {
+                    atlasSearchRequest(_query).then(function(res) {
+                        $scope.showAutocomplete = true;
+                        $scope.search_results = res.contents;
+                    }, function(reason) {
+                        $scope.showAutocomplete = false;
+                        console.error(reason)
+                    })
+                }, 1000);
+            }
+        }
+    }
+
+    return {
+        link: controller,
+        template: '<div class="search-input"><input type="text" placeholder="Search..." ng-model="searchquery" ng-change="lookupAtlasItem()"></div><div ng-show="showAutocomplete" class="search-completions"><span ng-repeat="result in search_results" class="search-item" ng-click="selectAtlasItem(result.title, result.id)">{{result.title}}</span></div>'
+    }
 }])
 'use strict';
 var app = angular.module('atlasAdmin.controllers.admins.manageWishlist', []);
