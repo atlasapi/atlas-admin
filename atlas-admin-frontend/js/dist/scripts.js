@@ -9717,6 +9717,7 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
     }
 
     var controller = function($scope, $el, $attr) {
+        var $el = $($el);
         var input_timer;
         $scope.atlasSearch = {};
         $scope.atlasSearch.showAutocomplete = false;
@@ -9731,8 +9732,22 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
             $scope.atlasSearch.showAutocomplete = false;
         }
 
+        $scope.atlasSearch.messageOutput = function(message) {
+            $scope.atlasSearch.showMessage = (typeof message === 'string')? true : false;
+            var _messagetpl;
+            if ($scope.atlasSearch.showMessage) {
+                $scope.atlasSearch.message = message;
+                $scope.atlasSearch.showMessage = true;
+                $scope.atlasSearch.showAutocomplete = false;
+            }else{
+                $scope.atlasSearch.message = '';
+                $scope.atlasSearch.showMessage = false;
+            }
+        }
+
         $scope.atlasSearch.lookupAtlasItem = function() {
             var _query = $scope.atlasSearch.searchquery;
+            $scope.atlasSearch.message = null;
             if (!_.isString(_query)) return;
 
             if (!_query.length) {
@@ -9743,11 +9758,18 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
             }
 
             if (_query.length > 2 || _query.length == 0) {
+                $scope.atlasSearch.messageOutput('Searching...');
                 $timeout.cancel(input_timer);
                 input_timer = $timeout(function() {
                     atlasSearchRequest(_query).then(function(res) {
+                        var _results = channelFilter(res.contents, 'cbbh');
+                        if (_results.length) {
+                            $scope.atlasSearch.messageOutput(null);
+                            $scope.atlasSearch.search_results = _results;
+                        }else{
+                            $scope.atlasSearch.messageOutput('No results found');
+                        }
                         $scope.atlasSearch.showAutocomplete = true;
-                        $scope.atlasSearch.search_results = channelFilter(res.contents, 'cbbh');
                     }, function(reason) {
                         $scope.atlasSearch.showAutocomplete = false;
                         console.error(reason)
@@ -9762,7 +9784,7 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
         restrict: 'E',
         scope: false,
         link: controller,
-        template: '<div class="search-input"><input type="text" placeholder="Search..." ng-model="atlasSearch.searchquery" ng-change="atlasSearch.lookupAtlasItem()"></div><div ng-show="atlasSearch.showAutocomplete" class="search-completions"><span ng-repeat="result in atlasSearch.search_results" class="search-item" ng-click="atlasSearch.selectAtlasItem(result.title, result.uri)"><strong>{{result.title}}</strong><i>{{result.broadcasts[0].transmission_time}}</i></span></div>'
+        template: '<div class="search-input"><input type="text" placeholder="Search..." ng-model="atlasSearch.searchquery" ng-change="atlasSearch.lookupAtlasItem()"></div><div ng-show="atlasSearch.showMessage" class="message-output">{{atlasSearch.message}}</div><div ng-show="atlasSearch.showAutocomplete" class="search-completions"><span ng-repeat="result in atlasSearch.search_results" class="search-item" ng-click="atlasSearch.selectAtlasItem(result.title, result.uri)"><strong>{{result.title}}</strong><i>{{result.broadcasts[0].transmission_time}}</i></span></div>'
     }
 }])
 'use strict';
