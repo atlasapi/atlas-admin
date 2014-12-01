@@ -2,8 +2,56 @@
 
 }
 
-.atlas-search {
+.scrubbables-result-wrapper {
+    box-sizing: border-box;
+    margin-top: 3.375rem;
+    width: 100%;
+    max-height: 500px;
+    padding: 1.25rem;
+    overflow: scroll;
+    background: $color-purple-light;
+    border-radius: 5px;
+    
+    .result-container {
+        width: 100%;
+        height: 100%;
+    }
 
+    .broadcast-channel-image {
+        float: left;
+        width: 100px;
+        margin-right: 1.5rem;
+
+        > img { width: 100%; }
+    }
+
+    .broadcast-header { 
+        float: left;
+        width: 50%; 
+    }
+
+    .broadcast-meta {
+        float: left;
+    }
+
+    .broadcast-detail {
+        width: 100%;
+    }
+
+    .broadcast-description {
+        float: left;
+        width: 40%;
+    }
+
+    .broadcast-image {
+        float: right;
+        width: 50%;
+
+        img { width: 100%; }
+    }
+}
+
+.atlas-search {
     .search-input {
         width: 100%;
 
@@ -28,15 +76,26 @@
         box-sizing: border-box;
         display: block;
         width: 100%;
-        height: 50px;
-        padding: 0 1rem;
+        padding: .5rem 1rem;
         cursor: pointer;
-        line-height: 50px;
+        line-height: 1.5;
         border-bottom: 1px solid $color-grey;
+
+        strong {
+            display: block;
+        }
+
+        i {
+            display: block;
+            font-size: .75rem;
+            font-style: normal;
+            color: lighten($primary-text-color, 20%);
+        }
 
         &:hover {
             background: $color-pink;
             color: white;
+            i { color: white; }
         }
     }
 }

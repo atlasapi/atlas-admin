@@ -9620,6 +9620,54 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
     function($scope, $rootScope, $routeParams, $q) {
 
     $scope.view_title = 'Scrubbable creator';
+    $scope.showUI = false;
+    $scope.item = {};
+
+    // Seconds -> HHMMSS
+    //
+    // Converts boring old seconds to object containing 
+    // HH MM SS as strings
+    //
+    // @returns {Object} keys: hh, mm, ss
+    function secondsToHHMMSS (secs) {
+        if (typeof secs !== 'number' && 
+            typeof secs !== 'string') {
+            return null;
+        }
+        var _seconds = parseInt(secs, 10);
+        var hours = Math.floor(_seconds/3600);
+        var minutes = Math.floor((_seconds - (hours*3600)) / 60);;
+        var seconds = _seconds - (hours * 3600) - (minutes * 60);
+        return {
+            hh: (hours < 10) ? '0'+hours : hours.toString(),
+            mm: (minutes < 10) ? '0'+minutes : minutes.toString(),
+            ss: (seconds < 10) ? '0'+seconds : seconds.toString()
+        }
+    }
+
+    $scope.$watch('atlasSearch.selectedItem', function(old_val, new_val) {
+        if (!_.isEmpty($scope.atlasSearch.selectedItem)) {
+            $scope.episode = $scope.atlasSearch.selectedItem;
+            $scope.broadcast = $scope.episode.broadcasts[0];
+
+            if ($scope.episode.type === 'episode' && _.isObject($scope.episode.container)) {
+                $scope.item.title = $scope.episode.container.title;
+                $scope.item.subtitle = $scope.episode.title;
+                $scope.item.episode_number = $scope.episode.episode_number;
+            }else{
+                $scope.item.title = $scope.broadcast.title;
+                $scope.item.subtitle = false;
+                $scope.item.episode_number = false;
+            }
+
+            $scope.item.duration = secondsToHHMMSS($scope.broadcast.duration);
+
+            console.log($scope.broadcast, $scope.item);
+
+            $scope.showUI = true;
+        }
+        console.log($scope.episode);
+    })
 
 }]);
 
@@ -9629,9 +9677,8 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
 
     var atlasSearchRequest = function(query) {
         var defer = $q.defer();
-        $http.get(atlasHost.replace('stage.', '')+'/3.0/search.json?publisher=bbc.co.uk&q='+query+'&limit=20')
+        $http.get(atlasHost.replace('stage.', '')+'/3.0/search.json?apiKey=d28dbc8965194fc5acc51aab3e4c3cb7&q='+query+'&limit=10&type=item&annotations=people,description,broadcasts,brand_summary,channel_summary,series_summary,upcoming,related_links&topLevelOnly=false&specialization=tv,film&currentBroadcastsOnly=true&broadcastWeighting=20')
              .success(function(data, status) {
-                console.log(data.contents);
                 defer.resolve(data);
              })
              .error(defer.reject);
@@ -9639,12 +9686,29 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
         return defer.promise;
     }
 
-    var lookupAtlasItem = function(id) {
-        if (!_.isString(id)) return;
+    var channelFilter = function(items, channel_id) {
+        if (!_.isObject(items) || !_.isString(channel_id)) {
+            console.error('channelFilter() -> wrong type')
+            return null;
+        }
+        for (var i=0; items.length > i; i++) {
+            _result = _.filter(items[i].broadcasts, function(itm) {
+                return (itm.channel.id === channel_id) ? true : false;
+            });
+            if (_result.length) {
+                items[i].broadcasts = _result;
+            }else{
+                items[i] = null;
+            }
+        }
+        return _.compact(items);
+    }
+
+    var requestAtlasContent = function(uri) {
+        if (!_.isString(uri)) return;
         var defer = $q.defer();
-        $http.get(atlasHost.replace('stage.', '')+'/3.0/search.json?channel_id=cbbh&publisher=bbc.co.uk&q='+query+'&limit=5')
+        $http.get(atlasHost.replace('stage.', '')+'/3.0/content.json?uri='+uri+'&annotations=channel,channel_summary,extended_description,brand_summary,broadcasts,series_summary,available_locations,related_links')
              .success(function(data, status) {
-                console.log(data.contents);
                 defer.resolve(data);
              })
              .error(defer.reject);
@@ -9654,20 +9718,27 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
 
     var controller = function($scope, $el, $attr) {
         var input_timer;
-        $scope.showAutocomplete = false;
+        $scope.atlasSearch = {};
+        $scope.atlasSearch.showAutocomplete = false;
 
-        $scope.selectAtlasItem = function(title, id) {
-            $scope.searchquery = title;
-            $scope.showAutocomplete = false;
+        $scope.atlasSearch.selectAtlasItem = function(title, uri) {
+            var _result;
+            requestAtlasContent(uri).then(function(item) {
+                _result = channelFilter(item.contents, 'cbbh');
+                $scope.atlasSearch.selectedItem = _result[0]
+            });
+            $scope.atlasSearch.searchquery = title;
+            $scope.atlasSearch.showAutocomplete = false;
         }
 
-        $scope.lookupAtlasItem = function() {
-            var _query = $scope.searchquery;
+        $scope.atlasSearch.lookupAtlasItem = function() {
+            var _query = $scope.atlasSearch.searchquery;
             if (!_.isString(_query)) return;
 
             if (!_query.length) {
-                $scope.search_results = null;
-                $scope.showAutocomplete = false;
+                $timeout.cancel(input_timer);
+                $scope.atlasSearch.search_results = null;
+                $scope.atlasSearch.showAutocomplete = false;
                 return;
             }
 
@@ -9675,20 +9746,23 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
                 $timeout.cancel(input_timer);
                 input_timer = $timeout(function() {
                     atlasSearchRequest(_query).then(function(res) {
-                        $scope.showAutocomplete = true;
-                        $scope.search_results = res.contents;
+                        $scope.atlasSearch.showAutocomplete = true;
+                        $scope.atlasSearch.search_results = channelFilter(res.contents, 'cbbh');
                     }, function(reason) {
-                        $scope.showAutocomplete = false;
+                        $scope.atlasSearch.showAutocomplete = false;
                         console.error(reason)
                     })
                 }, 1000);
             }
         }
+
     }
 
     return {
+        restrict: 'E',
+        scope: false,
         link: controller,
-        template: '<div class="search-input"><input type="text" placeholder="Search..." ng-model="searchquery" ng-change="lookupAtlasItem()"></div><div ng-show="showAutocomplete" class="search-completions"><span ng-repeat="result in search_results" class="search-item" ng-click="selectAtlasItem(result.title, result.id)">{{result.title}}</span></div>'
+        template: '<div class="search-input"><input type="text" placeholder="Search..." ng-model="atlasSearch.searchquery" ng-change="atlasSearch.lookupAtlasItem()"></div><div ng-show="atlasSearch.showAutocomplete" class="search-completions"><span ng-repeat="result in atlasSearch.search_results" class="search-item" ng-click="atlasSearch.selectAtlasItem(result.title, result.uri)"><strong>{{result.title}}</strong><i>{{result.broadcasts[0].transmission_time}}</i></span></div>'
     }
 }])
 'use strict';
