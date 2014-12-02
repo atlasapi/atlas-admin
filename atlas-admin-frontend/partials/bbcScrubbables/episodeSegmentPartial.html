@@ -1,0 +1,17 @@
+<div class="full-level-segments">
+    <div class="full-segments-container">
+        <div class="full-segment" ng-repeat="segment in showSegments.segments">
+            <div class="segment-label">{{segment.label}}</div>
+            <div class="segment-label">{{segment.url}}</div>
+        </div>
+        <div class="full-segment-new" ng-show="showSegments.showCreateUI">
+            <input ng-model="showSegments.newItem.label" type="text" placeholder="Label">
+            <input ng-model="showSegments.newItem.url" type="url" placeholder="http://">
+            <span class="button-container">
+                <button class="cancel" ng-click="showSegments.cancel()">Cancel</button>
+                <button class="create" ng-click="showSegments.new()">Create</button>
+            </span>
+        </div>
+        <span ng-hide="showSegments.showCreateUI" class="full-segment-create" ng-click="showSegments.createUI()"></span>
+    </div>
+</div>

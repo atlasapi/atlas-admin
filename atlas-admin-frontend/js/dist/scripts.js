@@ -9767,10 +9767,11 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
                         if (_results.length) {
                             $scope.atlasSearch.messageOutput(null);
                             $scope.atlasSearch.search_results = _results;
+                            $scope.atlasSearch.showAutocomplete = true;
                         }else{
+                            $scope.atlasSearch.showAutocomplete = false;
                             $scope.atlasSearch.messageOutput('No results found');
                         }
-                        $scope.atlasSearch.showAutocomplete = true;
                     }, function(reason) {
                         $scope.atlasSearch.showAutocomplete = false;
                         console.error(reason)
@@ -9793,14 +9794,44 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
     function($document, $q, $timeout, atlasHost, $http) {
 
     var controller = function($scope, $el, $attr) {
+        var $el = $($el);
+        $scope.showSegments = {};
+        $scope.showSegments.newItem = {};
         $scope.showSegments.segments = [];
+        $scope.showSegments.showCreateUI = false;
+
+        $scope.showSegments.createUI = function() {
+            $scope.showSegments.showCreateUI = true;
+            $scope.showSegments.newItem = {};
+        }
+
+        $scope.showSegments.cancel = function() {
+            $scope.showSegments.showCreateUI = false;
+            $scope.showSegments.newItem = {};
+        }
+
+        $scope.showSegments.new = function() {
+            if (!_.isString($scope.showSegments.newItem.label) || !_.isString($scope.showSegments.newItem.url)) return;
+            if ($scope.showSegments.newItem.label === '' || $scope.showSegments.newItem.url === '') return;
+            var _segment = {
+                label: $scope.showSegments.newItem.label,
+                url: $scope.showSegments.newItem.url,
+                start_time: 0,
+                end_time: $scope.broadcast.duration
+            }
+            $scope.showSegments.segments.push(_segment)
+            console.log($scope.showSegments.segments);
+            $scope.showSegments.newItem.label = $scope.showSegments.newItem.url = '';
+            $scope.showSegments.showCreateUI = false;
+        }
+
     }
 
     return {
         restrict: 'E',
         scope: false,
         link: controller,
-        template: '<div class="full-level-segments"><div class="full-segments-container"><span class="full-segment" ng-repeat="segment in showSegments.segments">{{segment.title}}</span><span class="full-segment-new"><input type="text" placeholder="Label"><input type="url" placeholder="http://"><button data-action="cancel">Cancel</button><button data-action="create">Create</button></span><span class="full-segment-create"></span></div></div>'
+        templateUrl: 'partials/bbcScrubbables/episodeSegmentPartial.html'
     }
 }]);
 'use strict';
