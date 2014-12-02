@@ -318,5 +318,5 @@
 }
 
 .scrubber-button-group button.half { width: 50%; }
-.scrubber-button-group button.cancel { background: #EA462A; }
-.scrubber-button-group button.create { background: #2BEA2A; }
+.scrubber-button-group button.cancel { background: $color-red; }
+.scrubber-button-group button.create { background: $color-green; }

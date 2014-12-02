@@ -13,7 +13,7 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
     // HH MM SS as strings
     //
     // @returns {Object} keys: hh, mm, ss
-    function secondsToHHMMSS (secs) {
+    function secondsToHHMMSS(secs) {
         if (typeof secs !== 'number' && 
             typeof secs !== 'string') {
             return null;
@@ -29,15 +29,23 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
         }
     }
 
+    $scope.parseContent = function(contentObject) {
+
+    }
+
     $scope.$watch('atlasSearch.selectedItem', function(old_val, new_val) {
         if (!_.isEmpty($scope.atlasSearch.selectedItem)) {
             $scope.episode = $scope.atlasSearch.selectedItem;
             $scope.broadcast = $scope.episode.broadcasts[0];
 
-            if ($scope.episode.type === 'episode' && _.isObject($scope.episode.container)) {
-                $scope.item.title = $scope.episode.container.title;
-                $scope.item.subtitle = $scope.episode.title;
-                $scope.item.episode_number = $scope.episode.episode_number;
+            if (_.isObject($scope.episode.container)) {
+                if ($scope.episode.container.type === 'brand') {
+                    $scope.item.title = $scope.episode.container.title;
+                    $scope.item.subtitle = $scope.episode.title;
+                    $scope.item.episode_number = $scope.episode.episode_number;
+                }else{
+                    $scope.item.title = $scope.broadcast.title;   
+                }
             }else{
                 $scope.item.title = $scope.broadcast.title;
                 $scope.item.subtitle = false;
@@ -45,12 +53,14 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
             }
 
             $scope.item.duration = secondsToHHMMSS($scope.broadcast.duration);
-
-            console.log($scope.broadcast, $scope.item);
-
             $scope.showUI = true;
         }
+        console.log('-episode-');
         console.log($scope.episode);
+        console.log('-broadcast-');
+        console.log($scope.broadcast);
+        console.log('-item-');
+        console.log($scope.item);
     })
 
 }]);

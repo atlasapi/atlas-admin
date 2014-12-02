@@ -8259,7 +8259,7 @@ app.directive('scrubber', ['$document',
         // screen should be done in the draw method
         var _new_el;
         var _cursor_pos = {};
-        function draw () {
+        function draw() {
             // Determine the difference between a 'drag' or a 'click'
             // by figuring out how much the mouse has moved since the 
             // last draw cycle
@@ -8301,7 +8301,7 @@ app.directive('scrubber', ['$document',
             }
 
             // Render segments to the timeline
-            TIMELINE_SEGMENTS.forEach(function () {
+            TIMELINE_SEGMENTS.forEach(function() {
 
             });
 
@@ -8320,7 +8320,7 @@ app.directive('scrubber', ['$document',
         //
         // Clear the timeline of everything except items 
         // represented in TIMELINE_SEGMENTS 
-        function clearImpermanentItems () {
+        function clearImpermanentItems() {
             $('.scrubber-timeline-item.new', TIMELINE).remove();
             $('.scrubber-edit-dialog', TIMELINE).remove();
         }
@@ -8330,7 +8330,7 @@ app.directive('scrubber', ['$document',
         //
         // For pushing a new timeline item into the LIVE_ITEM array
         // starting at the current cursor position
-        function newTimelineItem () {
+        function newTimelineItem() {
             var item = {
                 start: CURSOR_POS.x
             };
@@ -8354,7 +8354,7 @@ app.directive('scrubber', ['$document',
         //
         // For getting the current cursor position relative to the 
         // TIMELINE dom element, and writing it to CURSOR_POS variable
-        function getCursorPosition () {
+        function getCursorPosition() {
             CURSOR_POS = CURSOR_POS || {x:0, y:0};
             var _el_offset = TIMELINE.offset();
             TIMELINE.on('mousemove', function (e) {
@@ -8368,7 +8368,7 @@ app.directive('scrubber', ['$document',
         // Update cursor time
         //
         // For calculating time and updating the CURSOR_TIME variable
-        function updateCursorTime () {
+        function updateCursorTime() {
             var _length = CONTEXT_LENGTH;
             var _cursor = CURSOR_POS;
             var _timeline_width = TIMELINE.outerWidth();
@@ -8386,7 +8386,7 @@ app.directive('scrubber', ['$document',
         //
         // Used for getting the context length in seconds from the 
         // data-scrubber-length attribute
-        function getContextLength () {
+        function getContextLength() {
             $attr.$observe('scrubberLength', function(val) {
                 CONTEXT_LENGTH = val;
             })
@@ -8444,13 +8444,13 @@ app.directive('scrubber', ['$document',
         // Set time markers
         //
         // Populate the times markers based on the CONTEXT_LENGTH variable
-        function setTimeMarkers () {
+        function setTimeMarkers() {
             var _running_time = secondsToHHMMSS(CONTEXT_LENGTH);
             if (_running_time) {
                 var el_start = $('.scrubber-time-start');
                 var el_end = $('.scrubber-time-end');
-                $('.scrubber-time-label', el_start).text('00:00:00');
-                $('.scrubber-time-label', el_end).text(_running_time.hh+':'+_running_time.mm+':'+_running_time.ss);
+                $scope.scrubber.startTime = '00:00:00';
+                $scope.scrubber.endTime = _running_time.hh+':'+_running_time.mm+':'+_running_time.ss;
             }
         }
 
@@ -8461,12 +8461,12 @@ app.directive('scrubber', ['$document',
         // See return value for available templates 
         //
         // @returns {Object}
-        function templates () {
-            var timeline_item = function () {
+        function templates() {
+            var timeline_item = function() {
                 return $('<div class="scrubber-timeline-item"></div>');
             }
 
-            var edit_bubble = function () {
+            var edit_bubble = function() {
                 var lines = [];
                 lines.push('<div class="scrubber-edit-dialog">');
                 lines.push('<h2>New segment</h2>');
@@ -8477,12 +8477,12 @@ app.directive('scrubber', ['$document',
                 return $(lines.join(''));
             }
 
-            var time_markers = function () {
+            var time_markers = function() {
                 var lines = [];
                 lines.push('<div class="scrubber-times-container">');
-                lines.push('<div class="scrubber-time-start"><span class="scrubber-time-label"></span></div>');
+                lines.push('<div class="scrubber-time-start"><span class="scrubber-time-label">{{scrubber.startTime}}</span></div>');
                 lines.push('<div class="scrubber-time-cursor hide"><span class="scrubber-time-label"></span></div>');
-                lines.push('<div class="scrubber-time-end"><span class="scrubber-time-label"></span></div>');
+                lines.push('<div class="scrubber-time-end"><span class="scrubber-time-label">{{scrubber.endTime}}</span></div>');
                 lines.push('</div>');
                 return $(lines.join(''));
             }
@@ -8499,7 +8499,7 @@ app.directive('scrubber', ['$document',
         //
         // Initialise all the things, and attach global events, and start
         // the draw process
-        function bootstrap () {
+        function bootstrap() {
             getContextLength();
             getCursorPosition()
             setTimeMarkers();
@@ -8508,7 +8508,7 @@ app.directive('scrubber', ['$document',
                 IS_FOCUSED = true;
             });
 
-            TIMELINE.on('mouseleave', function () {
+            TIMELINE.on('mouseleave', function() {
                 IS_FOCUSED = false;
             });
 
@@ -9951,7 +9951,7 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
     // HH MM SS as strings
     //
     // @returns {Object} keys: hh, mm, ss
-    function secondsToHHMMSS (secs) {
+    function secondsToHHMMSS(secs) {
         if (typeof secs !== 'number' && 
             typeof secs !== 'string') {
             return null;
@@ -9967,15 +9967,23 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
         }
     }
 
+    $scope.parseContent = function(contentObject) {
+
+    }
+
     $scope.$watch('atlasSearch.selectedItem', function(old_val, new_val) {
         if (!_.isEmpty($scope.atlasSearch.selectedItem)) {
             $scope.episode = $scope.atlasSearch.selectedItem;
             $scope.broadcast = $scope.episode.broadcasts[0];
 
-            if ($scope.episode.type === 'episode' && _.isObject($scope.episode.container)) {
-                $scope.item.title = $scope.episode.container.title;
-                $scope.item.subtitle = $scope.episode.title;
-                $scope.item.episode_number = $scope.episode.episode_number;
+            if (_.isObject($scope.episode.container)) {
+                if ($scope.episode.container.type === 'brand') {
+                    $scope.item.title = $scope.episode.container.title;
+                    $scope.item.subtitle = $scope.episode.title;
+                    $scope.item.episode_number = $scope.episode.episode_number;
+                }else{
+                    $scope.item.title = $scope.broadcast.title;   
+                }
             }else{
                 $scope.item.title = $scope.broadcast.title;
                 $scope.item.subtitle = false;
@@ -9983,12 +9991,14 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
             }
 
             $scope.item.duration = secondsToHHMMSS($scope.broadcast.duration);
-
-            console.log($scope.broadcast, $scope.item);
-
             $scope.showUI = true;
         }
+        console.log('-episode-');
         console.log($scope.episode);
+        console.log('-broadcast-');
+        console.log($scope.broadcast);
+        console.log('-item-');
+        console.log($scope.item);
     })
 
 }]);
