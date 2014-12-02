@@ -23,6 +23,7 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.directives.validUsage',
                         'atlasAdmin.directives.inputmorph',
                         'atlasAdmin.directives.loadContent',
+                        'atlasAdmin.directives.bbcscrubbables',
                         'atlasAdmin.controllers.auth',
                         'atlasAdmin.controllers.atlas',
                         'atlasAdmin.controllers.errors',
