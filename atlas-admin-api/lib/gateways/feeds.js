@@ -120,15 +120,27 @@ var feedsInterface = function() {
             }
 
             var data;
-            var uri = req.body.uri;
+            var uri = req.body.uri || '';
+            var type = req.body.type || '';
+            var element_id = req.body.element_id || '';
             var action = req.params.action || '';
+            var querystring = {};
+
+            querystring.uri = uri;
+
+            if (action !== 'revoke' && action !== 'unrevoke') {
+                querystring.type = type;
+                querystring.element_id = element_id;
+            }
+
             var request_opts = {
                 hostname: 'processing.stage.atlas.mbst.tv',
-                path: '/feeds/youview/bbc_nitro/'+action,
+                path: '/feeds/youview/bbc_nitro/'+action+'?'+qs.stringify(querystring),
                 method: 'post'
             }
 
             console.log('Trigger action: processing.stage.atlas.mbst.tv/feeds/youview/bbc_nitro/'+action);
+            console.log(request_opts);
 
             var action_request = http.request(request_opts, function(action_res) {
                 action_res.setEncoding('utf8');
@@ -139,7 +151,6 @@ var feedsInterface = function() {
                     res.end();
                 })
             });
-            action_request.write('uri='+uri);
             action_request.end();
         })
 

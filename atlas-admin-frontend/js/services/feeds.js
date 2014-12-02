@@ -69,10 +69,8 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
         var defer = $q.defer();
         var action = action || null;
         var _tasks = tasks || null;
-        var _selection = selection || []; 
+        var _selection = selection || null; 
         var _postdata = {};
-
-
 
         if (selection.length) {
             var counter = _selection.length;
@@ -80,14 +78,23 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
                 var _selected = _.find(tasks, function(task) {
                     return task.id === item;
                 });
-                _postdata.uri = _selected.content || '';
+                _postdata = {
+                    uri: _selected.content,
+                    type: _selected.element_type,
+                    element_id: _selected.element_id
+                }
+                console.log(_postdata)
                 request('youview/bbc_nitro/action/'+action, 'post', _postdata).then(function() {
                     counter--;
                     if (!counter) defer.resolve();
                 });
             })
         }else{
-            _postdata.uri = _tasks.content || '';
+            _postdata = {
+                uri: _selected.content || '',
+                type: _selected.element_type,
+                element_id: element_id
+            }
             request('youview/bbc_nitro/action/'+action, 'post', _postdata).then(function() {
                 defer.resolve();
             });

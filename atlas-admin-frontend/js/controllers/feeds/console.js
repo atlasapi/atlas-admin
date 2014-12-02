@@ -112,9 +112,7 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
             _filter = '&remote_id='+$scope.search.remote_id;
         }
         var request_url = 'youview/bbc_nitro/tasks.json?limit='+$scope.page.limit+'&offset='+$scope.page.offset+_filter;
-        Feeds.request(request_url).then(function(data) {
-            pushTasksTable(data);
-        });
+        Feeds.request(request_url).then(pushTasksTable);
     }
 
 
@@ -134,6 +132,7 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
         if (_.isObject(data.error)) {
             $scope.error.show = true;
             $scope.error.obj = data.error;
+            return;
         }
         $scope.isloading = false;
         $scope.tasks = data.tasks;
