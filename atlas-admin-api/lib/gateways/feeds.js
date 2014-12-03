@@ -122,12 +122,10 @@ var feedsInterface = function() {
                 res.end();
                 return false
             }
-
             var data;
             var uri = req.body.uri || '';
             var action = req.params.action || '';
             var querystring = {};
-
             querystring.uri = uri;
 
             if (action !== 'revoke' && action !== 'unrevoke') {
@@ -142,9 +140,6 @@ var feedsInterface = function() {
                 path: '/feeds/youview/bbc_nitro/'+action+'?'+qs.stringify(querystring),
                 method: 'post'
             }
-
-            console.log('Trigger action: processing.stage.atlas.mbst.tv/feeds/youview/bbc_nitro/'+action);
-            console.log(request_opts);
 
             var action_request = http.request(request_opts, function(action_res) {
                 action_res.setEncoding('utf8');

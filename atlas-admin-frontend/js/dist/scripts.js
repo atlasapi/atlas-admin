@@ -7810,14 +7810,18 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
                 });
             })
         }else{
-            _postdata = {
-                uri: _selected.content,
-                type: _selected.element_type,
-                element_id: _selected.element_id
+            if (tasks.content && tasks.element_type && tasks.element_id) {
+                _postdata = {
+                    uri: tasks.content,
+                    type: tasks.element_type,
+                    element_id: tasks.element_id
+                }
+                request('youview/bbc_nitro/action/'+action, 'post', _postdata).then(function() {
+                    defer.resolve();
+                });
+            }else{
+                defer.reject();
             }
-            request('youview/bbc_nitro/action/'+action, 'post', _postdata).then(function() {
-                defer.resolve();
-            });
         }   
         return defer.promise;
     }
@@ -9050,7 +9054,7 @@ app.directive('actionModal', ['$document', '$q', '$modal',
 
             if (!_.isString(action)) {
                 defer.reject();
-                return;
+                return defer.promise;
             }
 
             var _content = {
@@ -9059,7 +9063,7 @@ app.directive('actionModal', ['$document', '$q', '$modal',
             }
 
             var _modalInstance = $modal.open({
-                template: '<h1>'+_content.title+'</h1></div><div class="feed-modal-options"><button ng-click="ok()">'+_content.action+'</button><button ng-click="dismiss()">Cancel</button>',
+                template: '<h1>'+_content.title+'</h1></div><div class="feed-modal-options"><button ng-disabled="isSendingAction" ng-click="ok()">'+_content.action+'</button><button ng-click="dismiss()">Cancel</button>',
                 controller: 'CtrlFeedsAcceptModal',
                 windowClass: 'feedsAcceptModal',
                 scope: $scope,
@@ -9072,16 +9076,17 @@ app.directive('actionModal', ['$document', '$q', '$modal',
 
         $(el).on('click', function() {
             if ($scope.task || $scope.tasks) {
-                var action = attr.actionModal;
+                var action = attr.actionModal || null;
                 modal(action).then(function() {
                     $scope.selectedTasks = [];
-                    //updateSelection();
+                    updateSelection();
                 })
             }
         });
     }
 
     return {
+        scope: false,
         link: controller
     }
 }])
@@ -9089,9 +9094,11 @@ app.directive('actionModal', ['$document', '$q', '$modal',
 app.controller('CtrlFeedsAcceptModal', ['$scope', '$modalInstance', '$q', 'FeedsService', 'modalAction',
     function($scope, $modalInstance, $q, Feeds, modalAction) {
     var action = modalAction;
+    $scope.isSendingAction = false;
 
     $scope.ok = function() {
         var _task = $scope.tasks || $scope.task;
+        $scope.isSendingAction = true;
         Feeds.action(action, _task, $scope.selectedTasks).then($modalInstance.close,
         function() {
             console.error('Problem with action request')
