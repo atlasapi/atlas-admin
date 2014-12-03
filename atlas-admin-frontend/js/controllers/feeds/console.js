@@ -186,7 +186,7 @@ app.directive('actionModal', ['$document', '$q', '$modal',
                 var action = attr.actionModal || null;
                 modal(action).then(function() {
                     $scope.selectedTasks = [];
-                    updateSelection();
+                    $scope.updateSelection();
                 })
             }
         });
