@@ -7802,7 +7802,6 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
                     type: _selected.element_type,
                     element_id: _selected.element_id
                 }
-                console.log(_postdata)
                 request('youview/bbc_nitro/action/'+action, 'post', _postdata).then(function() {
                     counter--;
                     if (!counter) defer.resolve();
@@ -7810,9 +7809,9 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
             })
         }else{
             _postdata = {
-                uri: _selected.content || '',
+                uri: _selected.content,
                 type: _selected.element_type,
-                element_id: element_id
+                element_id: _selected.element_id
             }
             request('youview/bbc_nitro/action/'+action, 'post', _postdata).then(function() {
                 defer.resolve();
