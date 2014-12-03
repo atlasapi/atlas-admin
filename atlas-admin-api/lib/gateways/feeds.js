@@ -124,16 +124,27 @@ var feedsInterface = function() {
             }
 
             var data;
-            var uri = req.body.uri;
+            var uri = req.body.uri || '';
             var action = req.params.action || '';
-            var request_opts = {
-                hostname: 'processing.stage.atlas.mbst.tv',
-                path: '/feeds/youview/bbc_nitro/'+action+'?uri='+uri,
-                method: 'post',
-                agent: false
+            var querystring = {};
+
+            querystring.uri = uri;
+
+            if (action !== 'revoke' && action !== 'unrevoke') {
+                var type = req.body.type || '';
+                var element_id = req.body.element_id || '';
+                querystring.type = type;
+                querystring.element_id = element_id;
             }
 
-            console.log('Trigger action: processing.stage.atlas.mbst.tv/feeds/youview/bbc_nitro/'+action+'?uri='+uri);
+            var request_opts = {
+                hostname: 'processing.stage.atlas.mbst.tv',
+                path: '/feeds/youview/bbc_nitro/'+action+'?'+qs.stringify(querystring),
+                method: 'post'
+            }
+
+            console.log('Trigger action: processing.stage.atlas.mbst.tv/feeds/youview/bbc_nitro/'+action);
+            console.log(request_opts);
 
             var action_request = http.request(request_opts, function(action_res) {
                 action_res.setEncoding('utf8');
@@ -149,7 +160,6 @@ var feedsInterface = function() {
                 console.error('Failed to get a response from processing server');
                 res.end();
             });
-
             action_request.end();
         })
 

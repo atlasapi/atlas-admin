@@ -7790,25 +7790,31 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
         var defer = $q.defer();
         var action = action || null;
         var _tasks = tasks || null;
-        var _selection = selection || []; 
+        var _selection = selection || null; 
         var _postdata = {};
 
-        if (_.isArray(_tasks)) {
-            if (selection.length) {
-                var counter = _selection.length;
-                _selection.forEach(function(item) { 
-                    var _selected = _.find(tasks, function(task) {
-                        return task.id === item;
-                    });
-                    _postdata.uri = _selected.content || '';
-                    request('youview/bbc_nitro/action/'+action, 'post', _postdata).then(function() {
-                        counter--;
-                        if (!counter) defer.resolve();
-                    });
-                })
-            }     
-        }else if (_.isObject(_tasks)) {
-            _postdata.uri = _tasks.content || '';
+        if (selection.length) {
+            var counter = _selection.length;
+            _selection.forEach(function(item) {
+                var _selected = _.find(tasks, function(task) {
+                    return task.id === item;
+                });
+                _postdata = {
+                    uri: _selected.content,
+                    type: _selected.element_type,
+                    element_id: _selected.element_id
+                }
+                request('youview/bbc_nitro/action/'+action, 'post', _postdata).then(function() {
+                    counter--;
+                    if (!counter) defer.resolve();
+                });
+            })
+        }else{
+            _postdata = {
+                uri: _selected.content,
+                type: _selected.element_type,
+                element_id: _selected.element_id
+            }
             request('youview/bbc_nitro/action/'+action, 'post', _postdata).then(function() {
                 defer.resolve();
             });
@@ -8996,9 +9002,7 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
             _filter = '&remote_id='+$scope.search.remote_id;
         }
         var request_url = 'youview/bbc_nitro/tasks.json?limit='+$scope.page.limit+'&offset='+$scope.page.offset+_filter;
-        Feeds.request(request_url).then(function(data) {
-            pushTasksTable(data);
-        });
+        Feeds.request(request_url).then(pushTasksTable);
     }
 
 
@@ -9018,6 +9022,7 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
         if (_.isObject(data.error)) {
             $scope.error.show = true;
             $scope.error.obj = data.error;
+            return;
         }
         $scope.isloading = false;
         $scope.tasks = data.tasks;

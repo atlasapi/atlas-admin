@@ -69,25 +69,31 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
         var defer = $q.defer();
         var action = action || null;
         var _tasks = tasks || null;
-        var _selection = selection || []; 
+        var _selection = selection || null; 
         var _postdata = {};
 
-        if (_.isArray(_tasks)) {
-            if (selection.length) {
-                var counter = _selection.length;
-                _selection.forEach(function(item) { 
-                    var _selected = _.find(tasks, function(task) {
-                        return task.id === item;
-                    });
-                    _postdata.uri = _selected.content || '';
-                    request('youview/bbc_nitro/action/'+action, 'post', _postdata).then(function() {
-                        counter--;
-                        if (!counter) defer.resolve();
-                    });
-                })
-            }     
-        }else if (_.isObject(_tasks)) {
-            _postdata.uri = _tasks.content || '';
+        if (selection.length) {
+            var counter = _selection.length;
+            _selection.forEach(function(item) {
+                var _selected = _.find(tasks, function(task) {
+                    return task.id === item;
+                });
+                _postdata = {
+                    uri: _selected.content,
+                    type: _selected.element_type,
+                    element_id: _selected.element_id
+                }
+                request('youview/bbc_nitro/action/'+action, 'post', _postdata).then(function() {
+                    counter--;
+                    if (!counter) defer.resolve();
+                });
+            })
+        }else{
+            _postdata = {
+                uri: _selected.content,
+                type: _selected.element_type,
+                element_id: _selected.element_id
+            }
             request('youview/bbc_nitro/action/'+action, 'post', _postdata).then(function() {
                 defer.resolve();
             });
