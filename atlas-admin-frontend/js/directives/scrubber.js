@@ -1,7 +1,7 @@
 var app = angular.module('atlasAdmin.directives.bbcscrubbables', []);
 
-app.directive('scrubber', ['$document', 
-    function($document) {
+app.directive('scrubber', ['$document', '$compile', 
+    function($document, $compile) {
 
     var controller = function($scope, $el, $attr) {
         // Scrubber and timeline elements
@@ -85,7 +85,6 @@ app.directive('scrubber', ['$document',
 
             });
 
-            // Update the time markers
             updateCursorTime();
             if (CURSOR_TIME) {
                 $('.scrubber-time-cursor .scrubber-time-label', TIME_MARKERS).text(CURSOR_TIME.hh+':'+CURSOR_TIME.mm+':'+CURSOR_TIME.ss);
@@ -167,9 +166,7 @@ app.directive('scrubber', ['$document',
         // Used for getting the context length in seconds from the 
         // data-scrubber-length attribute
         function getContextLength() {
-            $attr.$observe('scrubberLength', function(val) {
-                CONTEXT_LENGTH = val;
-            })
+            CONTEXT_LENGTH = parseInt($attr.scrubberLength, 10);
         }
 
 
@@ -183,12 +180,10 @@ app.directive('scrubber', ['$document',
                 var edit_ui = templates().edit_bubble;
                 $('*[data-scrubber-action]', edit_ui).on('click', function (e) {
                     var _action = $(this).data('scrubber-action');
-
                     if (_action === 'cancel') {
                         LIVE_ITEM = [];
                         return;
                     }
-
                     if (_action === 'create') {
 
                     }
@@ -226,11 +221,12 @@ app.directive('scrubber', ['$document',
         // Populate the times markers based on the CONTEXT_LENGTH variable
         function setTimeMarkers() {
             var _running_time = secondsToHHMMSS(CONTEXT_LENGTH);
+            console.log(CONTEXT_LENGTH);
             if (_running_time) {
-                var el_start = $('.scrubber-time-start');
-                var el_end = $('.scrubber-time-end');
-                $scope.scrubber.startTime = '00:00:00';
-                $scope.scrubber.endTime = _running_time.hh+':'+_running_time.mm+':'+_running_time.ss;
+                var el_start = $('.scrubber-time-start .scrubber-time-label', TIME_MARKERS);
+                var el_end = $('.scrubber-time-end .scrubber-time-label', TIME_MARKERS);
+                el_start.text('00:00:00');
+                el_end.text(_running_time.hh+':'+_running_time.mm+':'+_running_time.ss);
             }
         }
 
@@ -260,9 +256,9 @@ app.directive('scrubber', ['$document',
             var time_markers = function() {
                 var lines = [];
                 lines.push('<div class="scrubber-times-container">');
-                lines.push('<div class="scrubber-time-start"><span class="scrubber-time-label">{{scrubber.startTime}}</span></div>');
+                lines.push('<div class="scrubber-time-start"><span class="scrubber-time-label"></span></div>');
                 lines.push('<div class="scrubber-time-cursor hide"><span class="scrubber-time-label"></span></div>');
-                lines.push('<div class="scrubber-time-end"><span class="scrubber-time-label">{{scrubber.endTime}}</span></div>');
+                lines.push('<div class="scrubber-time-end"><span class="scrubber-time-label"></span></div>');
                 lines.push('</div>');
                 return $(lines.join(''));
             }
@@ -280,9 +276,11 @@ app.directive('scrubber', ['$document',
         // Initialise all the things, and attach global events, and start
         // the draw process
         function bootstrap() {
-            getContextLength();
+            $attr.$observe('scrubberLength', function() {
+                getContextLength();
+                setTimeMarkers();
+            })
             getCursorPosition()
-            setTimeMarkers();
 
             TIMELINE.on('mouseenter', function (e) {
                 IS_FOCUSED = true;
