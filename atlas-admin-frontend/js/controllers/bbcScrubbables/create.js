@@ -1,11 +1,14 @@
 var app = angular.module('atlasAdmin.controllers.bbcscrubbables', []);
 
-app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$q',
-    function($scope, $rootScope, $routeParams, $q) {
+app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$q', 'BBCScrubbablesService',
+    function($scope, $rootScope, $routeParams, $q, Scrubbables) {
 
     $scope.view_title = 'Scrubbable creator';
     $scope.showUI = false;
     $scope.item = {};
+
+    $scope.showSegments = {};
+    $scope.scrubber = {};
 
     // Seconds -> HHMMSS
     //
@@ -29,8 +32,8 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
         }
     }
 
-    $scope.parseContent = function(contentObject) {
-        
+    $scope.generateID = function() {
+        return Math.random().toString(36).substr(2, 9);
     }
 
     $scope.$watch('atlasSearch.selectedItem', function(old_val, new_val) {
@@ -51,17 +54,25 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
                 $scope.item.subtitle = false;
                 $scope.item.episode_number = false;
             }
-
+            console.log($scope.episode)
+            console.log($scope.broadcast)
             $scope.item.duration = secondsToHHMMSS($scope.broadcast.duration);
             $scope.showUI = true;
         }
-        console.log('-episode-');
-        console.log($scope.episode);
-        console.log('-broadcast-');
-        console.log($scope.broadcast);
-        console.log('-item-');
-        console.log($scope.item);
     })
+
+    $scope.createNew = function() {
+        var _showLinks = $scope.showSegments.segments;
+        var _timeLinks = $scope.scrubber.segments;
+        var _outputLinks = [];
+        for (var i in _showLinks) {
+            _outputLinks.push(_showLinks[i]);
+        }
+        for (var i in _timeLinks) {
+            _outputLinks.push(_timeLinks[i]);
+        }
+        console.log(_outputLinks);
+    }
 
 }]);
 
@@ -109,6 +120,10 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
              .error(defer.reject);
 
         return defer.promise;
+    }
+
+    function parseContent(contentObject) {
+
     }
 
     var controller = function($scope, $el, $attr) {
@@ -210,11 +225,11 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
             var _segment = {
                 label: $scope.showSegments.newItem.label,
                 url: $scope.showSegments.newItem.url,
-                start_time: 0,
-                end_time: $scope.broadcast.duration
+                startTime: 0,
+                endTime: $scope.broadcast.duration,
+                _id: $scope.generateID()
             }
             $scope.showSegments.segments.push(_segment)
-            console.log($scope.showSegments.segments);
             $scope.showSegments.newItem.label = $scope.showSegments.newItem.url = '';
             $scope.showSegments.showCreateUI = false;
         }

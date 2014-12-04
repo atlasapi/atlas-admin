@@ -223,6 +223,7 @@ app.directive('scrubber', ['$document', '$compile',
             }else{
                 console.error('Couldnt make new segment with data', _segment);
             }
+            $scope.scrubber.segments = TIMELINE_SEGMENTS;
         }
 
         // Get cursor position
@@ -362,6 +363,7 @@ app.directive('scrubber', ['$document', '$compile',
             getCursorPosition();
             $scope.scrubber = {};
             $scope.scrubber.create = {};
+            $scope.scrubber.segments = [];
 
             $scope.scrubber.createLink = addSegment;
             $scope.scrubber.clearTempSegment = function() {
