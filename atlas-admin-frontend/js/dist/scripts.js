@@ -6794,46 +6794,49 @@ var t=x.length;if(t){x.sort(c);for(var e,r=1,u=x[0],i=[u];t>r;++r)e=x[r],l(e[0],
 
 // Declare app level module which depends on filters, and services
 var app = angular.module('atlasAdmin', [
-                                'atlasAdmin.filters', 
-                                'atlasAdmin.preloader', 
-                                'atlasAdmin.services.auth',
-                                'atlasAdmin.services.atlas',
-                                'atlasAdmin.services.applications',
-                                'atlasAdmin.services.sources',
-                                'atlasAdmin.services.sourceRequests',
-                                'atlasAdmin.services.sourceLicenses',
-                                'atlasAdmin.services.users', 
-                                'atlasAdmin.services.uservideosources',
-                                'atlasAdmin.services.uservideosources.youtube',
-                                'atlasAdmin.services.propositions',
-                                'atlasAdmin.services.usage',
-                                'atlasAdmin.services.feeds',
-                                'atlasAdmin.directives.orderable', 
-                                'atlasAdmin.directives.focus',
-                                'atlasAdmin.directives.activePath',
-                                'atlasAdmin.directives.validUsage',
-                                'atlasAdmin.directives.inputmorph',
-                                'atlasAdmin.directives.loadContent',
-                                'atlasAdmin.controllers.auth',
-                                'atlasAdmin.controllers.atlas',
-                                'atlasAdmin.controllers.errors',
-                                'atlasAdmin.controllers.applications',
-                                'atlasAdmin.controllers.wishlist',
-                                'atlasAdmin.controllers.sources',
-                                'atlasAdmin.controllers.requestSource',
-                                'atlasAdmin.controllers.sourceRequests',
-                                'atlasAdmin.controllers.user',
-                                'atlasAdmin.controllers.epgWidget',
-                                'atlasAdmin.controllers.feeds',
-                                'atlasAdmin.controllers.uservideosources',
-                                'atlasAdmin.controllers.uservideosources.youtube',
-                                'atlasAdmin.controllers.admins.usage',
-                                'atlasAdmin.controllers.admins.manageSourceRequests',
-                                'atlasAdmin.controllers.admins.manageWishlist',
-                                'ui.bootstrap',
-                                'ngResource',
-                                'ngRoute',
-                                'atlasAdminConfig']);
+                        'atlasAdmin.filters', 
+                        'atlasAdmin.preloader', 
+                        'atlasAdmin.services.auth',
+                        'atlasAdmin.services.atlas',
+                        'atlasAdmin.services.applications',
+                        'atlasAdmin.services.sources',
+                        'atlasAdmin.services.sourceRequests',
+                        'atlasAdmin.services.sourceLicenses',
+                        'atlasAdmin.services.users', 
+                        'atlasAdmin.services.uservideosources',
+                        'atlasAdmin.services.uservideosources.youtube',
+                        'atlasAdmin.services.propositions',
+                        'atlasAdmin.services.usage',
+                        'atlasAdmin.services.feeds',
+                        'atlasAdmin.services.bbcscrubbables',
+                        'atlasAdmin.directives.orderable', 
+                        'atlasAdmin.directives.focus',
+                        'atlasAdmin.directives.activePath',
+                        'atlasAdmin.directives.validUsage',
+                        'atlasAdmin.directives.inputmorph',
+                        'atlasAdmin.directives.loadContent',
+                        'atlasAdmin.directives.bbcscrubbables',
+                        'atlasAdmin.controllers.auth',
+                        'atlasAdmin.controllers.atlas',
+                        'atlasAdmin.controllers.errors',
+                        'atlasAdmin.controllers.applications',
+                        'atlasAdmin.controllers.wishlist',
+                        'atlasAdmin.controllers.sources',
+                        'atlasAdmin.controllers.epgwidget',
+                        'atlasAdmin.controllers.requestSource',
+                        'atlasAdmin.controllers.sourceRequests',
+                        'atlasAdmin.controllers.user',
+                        'atlasAdmin.controllers.feeds',
+                        'atlasAdmin.controllers.uservideosources',
+                        'atlasAdmin.controllers.uservideosources.youtube',
+                        'atlasAdmin.controllers.bbcscrubbables',
+                        'atlasAdmin.controllers.admins.usage',
+                        'atlasAdmin.controllers.admins.manageSourceRequests',
+                        'atlasAdmin.controllers.admins.manageWishlist',
+                        'ui.bootstrap',
+                        'ngResource',
+                        'ngRoute',
+                        'atlasAdminConfig']);
 
 
 app.config(['$routeProvider', function($routeProvider) {
@@ -6847,8 +6850,8 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/manage/wishlist', {templateUrl: 'partials/admins/wishlist/manageWishlist.html', controller: 'CtrlManageWishlist'});
     $routeProvider.when('/manage/usage', {templateUrl: 'partials/admins/usage/requests.html', controller: 'CtrlUsage'});
 
-    // Add blackout widget page
-    $routeProvider.when('/epg/bt-tv', {templateUrl: 'partials/epg-widget.html', controller: 'CtrlEPGWidget'});
+    $routeProvider.when('/epg/bt-tv', {templateUrl: 'partials/epgWidget.html', controller: 'CtrlEPGWidget'});
+    $routeProvider.when('/scrubbables', {templateUrl: 'partials/bbcScrubbables/create.html', controller: 'CtrlBBCScrubbables'});
 
     // application user routes
     $routeProvider.when('/applications', {templateUrl: 'partials/applications.html', controller: 'CtrlApplications'});
@@ -6897,9 +6900,9 @@ app.config(['$httpProvider', function($httpProvider) {
             if (requests > 1 && _loggedin) {
                 $timeout.cancel(loadTimer);
                 loadTimer = $timeout(function() {
+                    $rootScope.show.load = true;
                     $rootScope.$broadcast('loading-started');
                 }, 400);
-                $rootScope.show.load = true;
             }
         }
 
@@ -7832,6 +7835,86 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
         request: request
     }
 }]);
+var app = angular.module('atlasAdmin.services.bbcscrubbables', []);
+
+app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q',
+    function(atlasHost, $http, $q) {
+
+    // Create content block
+    //
+    // @param segments {array}
+    // @param equiv {array}
+    // @param same_as {array}
+    // @param uri {string}
+    var createContentBlock = function(segments, equiv, same_as, uri) {
+        var _template = {  
+            "segment_events":[],
+            "same_as":same_as,
+            "equivalents":equiv,
+            "publisher":{  
+                "country":"GB",
+                "key":"scrubbables-producer.bbc.co.uk",
+                "name":"BBC Scrubbables Producer"
+            },
+            "uri": uri,
+            "type": "item"
+        };
+
+        if (typeof segments === 'object') {
+            for (var i in segments) {
+                var _segment = segments[i]; 
+                var _event = {  
+                    "position": 0,
+                    "offset": _segment.offset,
+                    "segment": {  
+                        "duration": _segment.duration,
+                        "segment_type": "VIDEO",
+                        "related_links": [  
+                            {  
+                                "type": "ARTICLE",
+                                "url": _segment.url,
+                                "title": _segment.title
+                            }
+                        ]
+                    }
+                }
+                _template.segment_events.push(_event);
+            }
+        }
+        return _template;
+    }
+
+
+    // Post to owl
+    //
+    // @param data {object}
+    var postToOwl = function(data) {
+        var defer = $q.defer();
+        var _data = data || {};
+        if (typeof _data.segments !== 'object' ||
+            typeof _data.atlas !== 'object') {
+            defer.reject('nope');
+            return defer.promise;
+        }
+        var _postdata = createContentBlock( _data.segments, 
+                                            _data.atlas.equivalents, 
+                                            _data.atlas.same_as, 
+                                            _data.atlas.uri);
+        $http.post(atlasHost.replace('stage.', '')+'/3.0/content.json?apiKey=8c47545e6d5c4c3c81ba9a818260b7cd', _postdata)
+        .success(function(res, status) {
+            if (status === 200) {
+                defer.resolve(res);
+            }else{
+                defer.reject('nope', status);
+            }
+        })
+        return defer.promise;
+    }
+
+    return {
+        create: postToOwl
+    }
+}]);
 'use strict';
 
 /* Filters */
@@ -8220,6 +8303,416 @@ app.directive('loadContent', ['$document', 'FeedsService', '$q', '$sce',
         link: controller
     } 
 }]);
+var app = angular.module('atlasAdmin.directives.bbcscrubbables', []);
+
+app.directive('scrubber', ['$document', '$compile', 
+    function($document, $compile) {
+
+    var controller = function($scope, $el, $attr) {
+        // Scrubber and timeline elements
+        var EL = $($el);
+        var TIMELINE = $('.scrubber-timeline', EL);
+
+        // State variables
+        var MOUSEDOWN = false;
+        var IS_DRAGGING = false;
+        var IS_FOCUSED = false;
+        var CONTEXT_LENGTH;
+        var CURSOR_POS;
+        var CURSOR_TIME;
+
+        // Any data that the below timeline objects contain will be
+        // rendered in the draw function
+        //
+        // Shape of a TIMELINE_SEGMENT object:
+        // {
+        //  startTime: number
+        //  endTime: number
+        //  
+        // }
+        var TIMELINE_SEGMENTS = [];
+        var LIVE_ITEM = [];
+
+        // Create the time marker component
+        var TIME_MARKERS = templates().time_markers;
+        EL.append( TIME_MARKERS );
+
+
+        // Draw
+        //
+        // Used for drawing a 'frame'. All rendering stuff to the 
+        // screen should be done in the draw method
+        var _new_el;
+        var _last_cursor_pos = {};
+        function draw() {
+            // Determine the difference between a 'drag' or a 'click'
+            // by figuring out how much the mouse has moved since the 
+            // last draw cycle
+            if (MOUSEDOWN && !IS_DRAGGING) {
+                if ((_last_cursor_pos.x-1 > CURSOR_POS.x) ||
+                    (_last_cursor_pos.x+1 < CURSOR_POS.x)) {
+                    IS_DRAGGING = true;
+                }else{
+                    IS_DRAGGING = false;
+                }
+                _last_cursor_pos = CURSOR_POS;
+            }
+
+            // When the cursor is dragging
+            if (!LIVE_ITEM.length && 
+                IS_DRAGGING && 
+                MOUSEDOWN) {
+                newTimelineItem();
+            }
+
+            // Render the new timeline item - this is the item that is 
+            // currently being created or edited
+            if (LIVE_ITEM.length) {
+                if (!$('.scrubber-timeline-item', TIMELINE).length) {
+                    _new_el = templates().timeline_item;
+                    TIMELINE.append(_new_el);
+                    _new_el.addClass('new');
+                }
+                if (IS_DRAGGING) {
+                    LIVE_ITEM[0].end = ((CURSOR_POS.x - LIVE_ITEM[0].start) > 0) ? (CURSOR_POS.x - LIVE_ITEM[0].start) : 1;
+                }
+                if (!MOUSEDOWN) {
+                    showEditUI(_new_el);
+                }
+                _new_el.css('margin-left', LIVE_ITEM[0].start+'px');
+                _new_el.css('width', LIVE_ITEM[0].end+'px');
+            }else{
+                clearImpermanentItems()
+            }
+
+            // Render segments to the timeline
+            var _segment;
+            for (var i in TIMELINE_SEGMENTS) {
+                _segment = TIMELINE_SEGMENTS[i];
+                updateTimelineSegment(_segment._id);
+            }
+
+
+            updateCursorTime();
+            if (CURSOR_TIME) {
+                $('.scrubber-time-cursor .scrubber-time-label', TIME_MARKERS).text(CURSOR_TIME.hh+':'+CURSOR_TIME.mm+':'+CURSOR_TIME.ss);
+                $('.scrubber-time-cursor', TIME_MARKERS).css('left', (CURSOR_TIME.width_ratio*100)+'%');
+            }
+
+            requestAnimationFrame(draw)
+        }
+
+
+        // Update timeline segment
+        //
+        // 
+        function updateTimelineSegment(segment_id) {
+            if (typeof segment_id !== 'string') {
+                return null;
+            }
+            var i, _item, _el;
+            // Grab the item from the segments array
+            for (i in TIMELINE_SEGMENTS) {
+                if (TIMELINE_SEGMENTS[i]._id === segment_id) {
+                    _item = TIMELINE_SEGMENTS[i];
+                    break;
+                }
+            }
+            if (_item) {
+                _el = $('[data-segment-id='+segment_id+']', TIMELINE);
+                // If the element isn't in the dom, inject it
+                if (!_el.length) {
+                    _el = templates().timeline_item;
+                    _el.attr('data-segment-id', segment_id);
+                    _el.css('margin-left', secondsToPixels(_item.startTime)+'px');
+                    _el.css('width', secondsToPixels(_item.endTime)+'px');
+                    _el.append('<h3>'+_item.label+'</h3><p>'+_item.url+'</p>');
+                    TIMELINE.append(_el);
+                }
+            }
+        }
+
+
+        // Pixels -> seconds 
+        //
+        // Turns a pixel x value into seconds relative to the timeline
+        //
+        // @param pixels {number | string} 
+        // @returns seconds {number}
+        function pixelsToSeconds(pixels) {
+            if (typeof pixels !== 'number' && 
+                typeof pixels !== 'string') {
+                return null;
+            }
+            var _pixels = parseInt(pixels, 10) || 0;
+            var _length = CONTEXT_LENGTH;
+            var _timeline_width = TIMELINE.outerWidth();
+            var _width_ratio = ((_pixels / _timeline_width) > 1) ? 1 : (_pixels / _timeline_width);
+            return Math.round(_length * _width_ratio);
+        }
+
+
+        // Seconds -> pixels 
+        //
+        // Turns a seconds value pixels relative to the 
+        // x-axis of the timeline
+        //
+        // @param seconds {number | string} 
+        // @returns pixels {number}
+        function secondsToPixels(seconds) {
+            if (typeof seconds !== 'number' && 
+                typeof seconds !== 'string') {
+                return null;
+            }
+            var _seconds = parseInt(seconds, 10) || 0;
+            var _length = CONTEXT_LENGTH;
+            var _timeline_width = TIMELINE.outerWidth();
+            var _position = (_seconds / _length) * _timeline_width;
+            return Math.round(_position);
+        }
+
+
+        // For generating a unique id 
+        //
+        // @returns id {string}
+        function generateID() {
+            return Math.random().toString(36).substr(2, 9);
+        }
+
+
+        //  Clear impermanent items
+        //
+        // Clear the timeline of everything except items 
+        // represented in TIMELINE_SEGMENTS 
+        function clearImpermanentItems() {
+            $('.scrubber-timeline-item.new', TIMELINE).remove();
+            $('.scrubber-edit-dialog', TIMELINE).remove();
+        }
+
+
+        // New timeline item
+        //
+        // For pushing a new timeline item into the LIVE_ITEM array
+        // starting at the current cursor position
+        function newTimelineItem() {
+            var _item = {
+                start: CURSOR_POS.x
+            };
+            LIVE_ITEM.push(_item);
+        }
+
+
+        // Add segment
+        //
+        // Pushes a new segment into the global TIMELINE_SEGMENTS array
+        // based on passed properties
+        //
+        // @param new_segment {Object} the options for the new segment
+        function addSegment() {
+            var _segment = $scope.scrubber.create;
+            if (typeof _segment.url !== 'string' || 
+                typeof _segment.label !== 'string' ||
+                !LIVE_ITEM.length) {
+                return false;
+            }
+            _segment._id = generateID();
+            _segment.startTime = pixelsToSeconds(LIVE_ITEM[0].start) || null;
+            _segment.endTime = pixelsToSeconds(LIVE_ITEM[0].end) || null;
+            _segment.label = $scope.scrubber.create.label || null;
+            _segment.url = $scope.scrubber.create.url || null;
+            if (_segment.startTime && 
+                _segment.endTime &&
+                _segment.label) {
+                $scope.scrubber.clearTempSegment();
+                TIMELINE_SEGMENTS.push(_segment);
+            }else{
+                console.error('Couldnt make new segment with data', _segment);
+            }
+            $scope.scrubber.segments = TIMELINE_SEGMENTS;
+        }
+
+        // Get cursor position
+        //
+        // For getting the current cursor position relative to the 
+        // TIMELINE dom element, and writing it to CURSOR_POS variable
+        function getCursorPosition() {
+            CURSOR_POS = CURSOR_POS || {x:0, y:0};
+            var _el_offset = TIMELINE.offset();
+            TIMELINE.on('mousemove', function (e) {
+                var x = (e.pageX - _el_offset.left);
+                var y = (e.pageY - _el_offset.top);
+                CURSOR_POS = { x: x, y: y };
+            });
+        }
+
+
+        // Update cursor time
+        //
+        // For calculating time and updating the CURSOR_TIME variable
+        function updateCursorTime() {
+            var _seconds = pixelsToSeconds(CURSOR_POS.x);
+            var _time = secondsToHHMMSS(_seconds);
+            var _timeline_width = TIMELINE.outerWidth();
+            if (_time) {
+                CURSOR_TIME = _time;
+                CURSOR_TIME.width_ratio = CURSOR_POS.x / _timeline_width;
+            }
+        }
+
+
+        // Get context length
+        //
+        // Used for getting the context length in seconds from the 
+        // data-scrubber-length attribute
+        function getContextLength() {
+            CONTEXT_LENGTH = parseInt($attr.scrubberLength, 10);
+        }
+
+
+        // Show edit UI
+        //
+        // Bring up the edit dialog box
+        //
+        // @param element {DOMObject} the timeline element to append to
+        function showEditUI (element) {
+            if (!$('.scrubber-edit-dialog', TIMELINE).length) {
+                var edit_ui = templates().edit_bubble;
+                $(element).append(edit_ui);
+                $compile($(element))($scope);
+            }
+        }
+
+
+        // Seconds -> HHMMSS
+        //
+        // Converts boring old seconds to object containing 
+        // HH MM SS as strings
+        //
+        // @returns {Object} keys: hh, mm, ss
+        function secondsToHHMMSS (secs) {
+            if (typeof secs !== 'number' && 
+                typeof secs !== 'string') {
+                return null;
+            }
+            var _seconds = parseInt(secs, 10);
+            var hours = Math.floor(_seconds/3600);
+            var minutes = Math.floor((_seconds - (hours*3600)) / 60);;
+            var seconds = _seconds - (hours * 3600) - (minutes * 60);
+            return {
+                hh: (hours < 10) ? '0'+hours : hours.toString(),
+                mm: (minutes < 10) ? '0'+minutes : minutes.toString(),
+                ss: (seconds < 10) ? '0'+seconds : seconds.toString()
+            }
+        }
+
+
+        // Set time markers
+        //
+        // Populate the times markers based on the CONTEXT_LENGTH variable
+        function setTimeMarkers() {
+            var _running_time = secondsToHHMMSS(CONTEXT_LENGTH);
+            if (_running_time) {
+                var el_start = $('.scrubber-time-start .scrubber-time-label', TIME_MARKERS);
+                var el_end = $('.scrubber-time-end .scrubber-time-label', TIME_MARKERS);
+                el_start.text('00:00:00');
+                el_end.text(_running_time.hh+':'+_running_time.mm+':'+_running_time.ss);
+            }
+        }
+
+
+        // Templates povider
+        //
+        // A provider that returns jQuery elements for use as templates.
+        // See return value for available templates 
+        //
+        // @returns {Object}
+        function templates() {
+            var timeline_item = function() {
+                return $('<div class="scrubber-timeline-item"></div>');
+            }
+
+            var edit_bubble = function() {
+                var lines = [];
+                lines.push('<div class="scrubber-edit-dialog">');
+                lines.push('<h2>New segment</h2>');
+                lines.push('<div class="scrubber-form-row"><input type="text" ng-model="scrubber.create.label" placeholder="label"></div>');
+                lines.push('<div class="scrubber-form-row"><input type="url" ng-model="scrubber.create.url" placeholder="http://"></div>');
+                lines.push('<div class="scrubber-button-group"><button class="cancel" ng-click="scrubber.clearTempSegment()">Cancel</button><button class="create" ng-click="scrubber.createLink()">Create link</button></div>');
+                lines.push('</div>');
+                return $(lines.join(''));
+            }
+
+            var time_markers = function() {
+                var lines = [];
+                lines.push('<div class="scrubber-times-container">');
+                lines.push('<div class="scrubber-time-start"><span class="scrubber-time-label"></span></div>');
+                lines.push('<div class="scrubber-time-cursor hide"><span class="scrubber-time-label"></span></div>');
+                lines.push('<div class="scrubber-time-end"><span class="scrubber-time-label"></span></div>');
+                lines.push('</div>');
+                return $(lines.join(''));
+            }
+
+            return {
+                timeline_item: timeline_item(),
+                edit_bubble: edit_bubble(),
+                time_markers: time_markers()
+            }
+        }
+
+
+        // Bootstrap
+        //
+        // Initialise all the things, and attach global events, and start
+        // the draw process
+        function bootstrap() {
+            getCursorPosition();
+            $scope.scrubber = {};
+            $scope.scrubber.create = {};
+            $scope.scrubber.segments = [];
+
+            $scope.scrubber.createLink = addSegment;
+            $scope.scrubber.clearTempSegment = function() {
+                LIVE_ITEM = [];
+                $scope.scrubber.create = {};
+                return;
+            }
+
+            $attr.$observe('scrubberLength', function() {
+                getContextLength();
+                setTimeMarkers();
+            })
+
+            TIMELINE
+            .on('mouseenter', function (e) {
+                IS_FOCUSED = true;
+            })
+            .on('mouseleave', function() {
+                IS_FOCUSED = false;
+            })
+            .on('mousedown', function (e) {
+                if ($(e.target).is('.scrubber-timeline, .scrubber-timeline-item')) {
+                    MOUSEDOWN = true;
+                }else{
+                    MOUSEDOWN = false;
+                }
+            })
+            .on('mouseup', function (e) {
+                if (IS_DRAGGING) {
+                    IS_DRAGGING = false;
+                }
+                MOUSEDOWN = false;
+            });
+            requestAnimationFrame(draw)
+        }
+        bootstrap();
+    }
+
+
+    return {
+        template: '<div class="scrubber-timeline"></div>',
+        link: controller
+    }
+}])
 'use strict';
 var app = angular.module('atlasAdmin.controllers.errors', []);
 app.controller('ErrorController', function($scope, $rootScope, $routeParams) {
@@ -8472,6 +8965,32 @@ function AddWriterTypeaheadCtrl($scope, $modalInstance, Applications) {
     }
 }
 
+var app = angular.module('atlasAdmin.controllers.epgwidget', []);
+
+app.controller('CtrlEPGWidget', ['$scope', '$rootScope', 'Users', '$routeParams', '$q', '$http', 'Authentication', 'atlasApiHost',
+    function($scope, $rootScope, Users, $routeParams, $q, $http, Authentication, atlasApiHost) {
+    var subdomain = window.location.hostname.split('.')[0],
+        _env = (subdomain === 'stage' || subdomain === 'dev')? '-stage' : '';
+    $scope.view_title = "";
+    $scope.widget = false;
+    $scope.widgetURL = '';
+
+    $http.get( Authentication.appendTokenToUrl(atlasApiHost +'/user/groups') )
+    .success(function(groups, status) {
+        var groupname, key;
+        for ( var g in groups ) {
+            groupname = groups[g].name;
+            if (groupname === 'BTBlackout') {
+                key = groups[g].data.apiKey || null;
+                if (key) {
+                    $scope.view_title = "BT Blackout";
+                    $scope.widget = true;
+                    $scope.widgetURL = '//widgets'+_env+'.metabroadcast.com/loader/1/btblackout.html?apiKey='+key;
+                }
+            }
+        }
+    })
+}]);
 var app = angular.module('atlasAdmin.controllers.sourceRequests', []);
 app.controller('CtrlRequests', function($scope, $rootScope, $routeParams, sourceRequests, Applications, $q) {
     $rootScope.title = 'Requests';
@@ -8705,6 +9224,7 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
             groups.forEach(function(item) {
                 if (item.name === 'BTBlackout') { allMenu.push({path: '/epg/bt-tv', label: 'EPG'}); }
                 if (item.name === 'BBC-YV-Feed') { allMenu.push({path: '/feeds', label: 'Feeds'}); }
+                if (item.name === 'BBC-Scrubbables') { allMenu.push({path: '/scrubbables', label: 'Scrubbables'}); }
             })
         }
 
@@ -8852,32 +9372,6 @@ app.controller('CtrlVideoSourceYouTubeConfig', function($scope, $rootScope, User
         });
     };
 });
-var app = angular.module('atlasAdmin.controllers.epgWidget', []);
-
-app.controller('CtrlEPGWidget', ['$scope', '$rootScope', 'Users', '$routeParams', '$q', '$http', 'Authentication', 'atlasApiHost',
-    function($scope, $rootScope, Users, $routeParams, $q, $http, Authentication, atlasApiHost) {
-    var subdomain = window.location.hostname.split('.')[0],
-        _env = (subdomain === 'stage' || subdomain === 'dev')? '-stage' : '';
-    $scope.view_title = "";
-    $scope.widget = false;
-    $scope.widgetURL = '';
-
-    $http.get( Authentication.appendTokenToUrl(atlasApiHost +'/user/groups') )
-    .success(function(groups, status) {
-        var groupname, key;
-        for ( var g in groups ) {
-            groupname = groups[g].name;
-            if (groupname === 'BTBlackout') {
-                key = groups[g].data.apiKey || null;
-                if (key) {
-                    $scope.view_title = "BT Blackout";
-                    $scope.widget = true;
-                    $scope.widgetURL = '//widgets'+_env+'.metabroadcast.com/loader/1/btblackout.html?apiKey='+key;
-                }
-            }
-        }
-    })
-}]);
 'use strict';
 var app = angular.module('atlasAdmin.controllers.feeds', []);
 
@@ -9618,6 +10112,276 @@ app.controller('customFeatureRequestModal', ['$scope', '$rootScope', '$routePara
     function($scope, $rootScope, $routeParams, $q) {
         
 }])
+var app = angular.module('atlasAdmin.controllers.bbcscrubbables', []);
+
+app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$q', 'BBCScrubbablesService',
+    function($scope, $rootScope, $routeParams, $q, Scrubbables) {
+
+    $scope.view_title = 'Scrubbable creator';
+    $scope.showUI = false;
+    $scope.item = {};
+
+    $scope.showSegments = {};
+    $scope.scrubber = {};
+
+    // Seconds -> HHMMSS
+    //
+    // Converts boring old seconds to object containing 
+    // HH MM SS as strings
+    //
+    // @returns {Object} keys: hh, mm, ss
+    function secondsToHHMMSS(secs) {
+        if (typeof secs !== 'number' && 
+            typeof secs !== 'string') {
+            return null;
+        }
+        var _seconds = parseInt(secs, 10);
+        var hours = Math.floor(_seconds/3600);
+        var minutes = Math.floor((_seconds - (hours*3600)) / 60);;
+        var seconds = _seconds - (hours * 3600) - (minutes * 60);
+        return {
+            hh: (hours < 10) ? '0'+hours : hours.toString(),
+            mm: (minutes < 10) ? '0'+minutes : minutes.toString(),
+            ss: (seconds < 10) ? '0'+seconds : seconds.toString()
+        }
+    }
+
+    $scope.generateID = function() {
+        return Math.random().toString(36).substr(2, 9);
+    }
+
+    $scope.$watch('atlasSearch.selectedItem', function(old_val, new_val) {
+        if (!_.isEmpty($scope.atlasSearch.selectedItem)) {
+            $scope.episode = $scope.atlasSearch.selectedItem;
+            $scope.broadcast = $scope.episode.broadcasts[0];
+
+            if (_.isObject($scope.episode.container)) {
+                if ($scope.episode.container.type === 'brand') {
+                    $scope.item.title = $scope.episode.container.title;
+                    $scope.item.subtitle = $scope.episode.title;
+                    $scope.item.episode_number = $scope.episode.episode_number;
+                }else{
+                    $scope.item.title = $scope.broadcast.title;   
+                }
+            }else{
+                $scope.item.title = $scope.broadcast.title;
+                $scope.item.subtitle = false;
+                $scope.item.episode_number = false;
+            }
+            console.log($scope.episode)
+            console.log($scope.broadcasts)
+            $scope.item.duration = secondsToHHMMSS($scope.broadcast.duration);
+            $scope.showUI = true;
+        }
+    })
+
+    $scope.createNew = function() {
+        var _out = {};
+        var _showLinks = $scope.showSegments.segments;
+        var _timeLinks = $scope.scrubber.segments;
+        var _segments = [];
+        var _atlas = { 
+            id: $scope.episode.id,
+            uri: $scope.episode.uri,
+            equivalents: $scope.episode.equivalents,
+            same_as: $scope.episode.same_as
+        }
+        for (var i in _showLinks) {
+            _segments.push({
+                label: _showLinks[i].label,
+                url: _showLinks[i].url,
+                offset: _showLinks[i].startTime,
+                duration: _showLinks[i].endTime - _showLinks[i].startTime
+            });
+        }
+        for (var i in _timeLinks) {
+            _segments.push({
+                label: _timeLinks[i].label,
+                url: _timeLinks[i].url,
+                offset: _timeLinks[i].startTime,
+                duration: _timeLinks[i].endTime - _timeLinks[i].startTime
+            });
+        }
+        _out.atlas = _atlas;
+        _out.segments = _segments;
+
+        Scrubbables.create(_out)
+        .then(function(res) {
+            console.log(res);
+        }, function(res) {
+            console.log(res);
+        });
+    }
+
+}]);
+
+
+
+app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http',
+    function($document, $q, $timeout, atlasHost, $http) {
+
+    var atlasSearchRequest = function(query) {
+        var defer = $q.defer();
+        $http.get(atlasHost.replace('stage.', '')+'/3.0/search.json?apiKey=d28dbc8965194fc5acc51aab3e4c3cb7&q='+query+'&limit=10&type=item&annotations=people,description,broadcasts,brand_summary,channel_summary,series_summary,upcoming,related_links&topLevelOnly=false&specialization=tv,film&currentBroadcastsOnly=true&broadcastWeighting=20')
+             .success(function(data, status) {
+                defer.resolve(data);
+             })
+             .error(defer.reject);
+
+        return defer.promise;
+    }
+
+    var channelFilter = function(items, channel_id) {
+        if (!_.isObject(items) || !_.isString(channel_id)) {
+            console.error('channelFilter() -> wrong type')
+            return null;
+        }
+        for (var i=0; items.length > i; i++) {
+            _result = _.filter(items[i].broadcasts, function(itm) {
+                return (itm.channel.id === channel_id) ? true : false;
+            });
+            if (_result.length) {
+                items[i].broadcasts = _result;
+            }else{
+                items[i] = null;
+            }
+        }
+        return _.compact(items);
+    }
+
+    var requestAtlasContent = function(uri) {
+        if (!_.isString(uri)) return;
+        var defer = $q.defer();
+        $http.get(atlasHost.replace('stage.', '')+'/3.0/content.json?uri='+uri+'&annotations=channel,channel_summary,extended_description,brand_summary,broadcasts,series_summary,available_locations,related_links')
+             .success(function(data, status) {
+                defer.resolve(data);
+             })
+             .error(defer.reject);
+
+        return defer.promise;
+    }
+
+    function parseContent(contentObject) {
+
+    }
+
+    var controller = function($scope, $el, $attr) {
+        var $el = $($el);
+        var input_timer;
+        $scope.atlasSearch = {};
+        $scope.atlasSearch.showAutocomplete = false;
+
+        $scope.atlasSearch.selectAtlasItem = function(title, uri) {
+            var _result;
+            requestAtlasContent(uri).then(function(item) {
+                _result = channelFilter(item.contents, 'cbbh');
+                $scope.atlasSearch.selectedItem = _result[0]
+            });
+            $scope.atlasSearch.searchquery = title;
+            $scope.atlasSearch.showAutocomplete = false;
+        }
+
+        $scope.atlasSearch.messageOutput = function(message) {
+            $scope.atlasSearch.showMessage = (typeof message === 'string')? true : false;
+            var _messagetpl;
+            if ($scope.atlasSearch.showMessage) {
+                $scope.atlasSearch.message = message;
+                $scope.atlasSearch.showMessage = true;
+                $scope.atlasSearch.showAutocomplete = false;
+            }else{
+                $scope.atlasSearch.message = '';
+                $scope.atlasSearch.showMessage = false;
+            }
+        }
+
+        $scope.atlasSearch.lookupAtlasItem = function() {
+            var _query = $scope.atlasSearch.searchquery;
+            $scope.atlasSearch.message = null;
+            if (!_.isString(_query)) return;
+
+            if (!_query.length) {
+                $timeout.cancel(input_timer);
+                $scope.atlasSearch.search_results = null;
+                $scope.atlasSearch.showAutocomplete = false;
+                return;
+            }
+
+            if (_query.length > 2 || _query.length == 0) {
+                $scope.atlasSearch.messageOutput('Searching...');
+                $timeout.cancel(input_timer);
+                input_timer = $timeout(function() {
+                    atlasSearchRequest(_query).then(function(res) {
+                        var _results = channelFilter(res.contents, 'cbbh');
+                        if (_results.length) {
+                            $scope.atlasSearch.messageOutput(null);
+                            $scope.atlasSearch.search_results = _results;
+                            $scope.atlasSearch.showAutocomplete = true;
+                        }else{
+                            $scope.atlasSearch.showAutocomplete = false;
+                            $scope.atlasSearch.messageOutput('No results found');
+                        }
+                    }, function(reason) {
+                        $scope.atlasSearch.showAutocomplete = false;
+                        console.error(reason)
+                    })
+                }, 1000);
+            }
+        }
+
+    }
+
+    return {
+        restrict: 'E',
+        scope: false,
+        link: controller,
+        template: '<div class="search-input"><input type="text" placeholder="Search..." ng-model="atlasSearch.searchquery" ng-change="atlasSearch.lookupAtlasItem()"></div><div ng-show="atlasSearch.showMessage" class="message-output">{{atlasSearch.message}}</div><div ng-show="atlasSearch.showAutocomplete" class="search-completions"><span ng-repeat="result in atlasSearch.search_results" class="search-item" ng-click="atlasSearch.selectAtlasItem(result.title, result.uri)"><strong>{{result.title}}</strong><i>{{result.broadcasts[0].transmission_time}}</i></span></div>'
+    }
+}])
+
+app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$http',
+    function($document, $q, $timeout, atlasHost, $http) {
+
+    var controller = function($scope, $el, $attr) {
+        var $el = $($el);
+        $scope.showSegments = {};
+        $scope.showSegments.newItem = {};
+        $scope.showSegments.segments = [];
+        $scope.showSegments.showCreateUI = false;
+
+        $scope.showSegments.createUI = function() {
+            $scope.showSegments.showCreateUI = true;
+            $scope.showSegments.newItem = {};
+        }
+
+        $scope.showSegments.cancel = function() {
+            $scope.showSegments.showCreateUI = false;
+            $scope.showSegments.newItem = {};
+        }
+
+        $scope.showSegments.new = function() {
+            if (!_.isString($scope.showSegments.newItem.label) || !_.isString($scope.showSegments.newItem.url)) return;
+            if ($scope.showSegments.newItem.label === '' || $scope.showSegments.newItem.url === '') return;
+            var _segment = {
+                label: $scope.showSegments.newItem.label,
+                url: $scope.showSegments.newItem.url,
+                startTime: 0,
+                endTime: $scope.broadcast.duration,
+                _id: $scope.generateID()
+            }
+            $scope.showSegments.segments.push(_segment)
+            $scope.showSegments.newItem.label = $scope.showSegments.newItem.url = '';
+            $scope.showSegments.showCreateUI = false;
+        }
+
+    }
+
+    return {
+        restrict: 'E',
+        scope: false,
+        link: controller,
+        templateUrl: 'partials/bbcScrubbables/episodeSegmentPartial.html'
+    }
+}]);
 'use strict';
 var app = angular.module('atlasAdmin.controllers.admins.manageWishlist', []);
 

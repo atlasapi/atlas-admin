@@ -2,46 +2,49 @@
 
 // Declare app level module which depends on filters, and services
 var app = angular.module('atlasAdmin', [
-                                'atlasAdmin.filters', 
-                                'atlasAdmin.preloader', 
-                                'atlasAdmin.services.auth',
-                                'atlasAdmin.services.atlas',
-                                'atlasAdmin.services.applications',
-                                'atlasAdmin.services.sources',
-                                'atlasAdmin.services.sourceRequests',
-                                'atlasAdmin.services.sourceLicenses',
-                                'atlasAdmin.services.users', 
-                                'atlasAdmin.services.uservideosources',
-                                'atlasAdmin.services.uservideosources.youtube',
-                                'atlasAdmin.services.propositions',
-                                'atlasAdmin.services.usage',
-                                'atlasAdmin.services.feeds',
-                                'atlasAdmin.directives.orderable', 
-                                'atlasAdmin.directives.focus',
-                                'atlasAdmin.directives.activePath',
-                                'atlasAdmin.directives.validUsage',
-                                'atlasAdmin.directives.inputmorph',
-                                'atlasAdmin.directives.loadContent',
-                                'atlasAdmin.controllers.auth',
-                                'atlasAdmin.controllers.atlas',
-                                'atlasAdmin.controllers.errors',
-                                'atlasAdmin.controllers.applications',
-                                'atlasAdmin.controllers.wishlist',
-                                'atlasAdmin.controllers.sources',
-                                'atlasAdmin.controllers.requestSource',
-                                'atlasAdmin.controllers.sourceRequests',
-                                'atlasAdmin.controllers.user',
-                                'atlasAdmin.controllers.epgWidget',
-                                'atlasAdmin.controllers.feeds',
-                                'atlasAdmin.controllers.uservideosources',
-                                'atlasAdmin.controllers.uservideosources.youtube',
-                                'atlasAdmin.controllers.admins.usage',
-                                'atlasAdmin.controllers.admins.manageSourceRequests',
-                                'atlasAdmin.controllers.admins.manageWishlist',
-                                'ui.bootstrap',
-                                'ngResource',
-                                'ngRoute',
-                                'atlasAdminConfig']);
+                        'atlasAdmin.filters', 
+                        'atlasAdmin.preloader', 
+                        'atlasAdmin.services.auth',
+                        'atlasAdmin.services.atlas',
+                        'atlasAdmin.services.applications',
+                        'atlasAdmin.services.sources',
+                        'atlasAdmin.services.sourceRequests',
+                        'atlasAdmin.services.sourceLicenses',
+                        'atlasAdmin.services.users', 
+                        'atlasAdmin.services.uservideosources',
+                        'atlasAdmin.services.uservideosources.youtube',
+                        'atlasAdmin.services.propositions',
+                        'atlasAdmin.services.usage',
+                        'atlasAdmin.services.feeds',
+                        'atlasAdmin.services.bbcscrubbables',
+                        'atlasAdmin.directives.orderable', 
+                        'atlasAdmin.directives.focus',
+                        'atlasAdmin.directives.activePath',
+                        'atlasAdmin.directives.validUsage',
+                        'atlasAdmin.directives.inputmorph',
+                        'atlasAdmin.directives.loadContent',
+                        'atlasAdmin.directives.bbcscrubbables',
+                        'atlasAdmin.controllers.auth',
+                        'atlasAdmin.controllers.atlas',
+                        'atlasAdmin.controllers.errors',
+                        'atlasAdmin.controllers.applications',
+                        'atlasAdmin.controllers.wishlist',
+                        'atlasAdmin.controllers.sources',
+                        'atlasAdmin.controllers.epgwidget',
+                        'atlasAdmin.controllers.requestSource',
+                        'atlasAdmin.controllers.sourceRequests',
+                        'atlasAdmin.controllers.user',
+                        'atlasAdmin.controllers.feeds',
+                        'atlasAdmin.controllers.uservideosources',
+                        'atlasAdmin.controllers.uservideosources.youtube',
+                        'atlasAdmin.controllers.bbcscrubbables',
+                        'atlasAdmin.controllers.admins.usage',
+                        'atlasAdmin.controllers.admins.manageSourceRequests',
+                        'atlasAdmin.controllers.admins.manageWishlist',
+                        'ui.bootstrap',
+                        'ngResource',
+                        'ngRoute',
+                        'atlasAdminConfig']);
 
 
 app.config(['$routeProvider', function($routeProvider) {
@@ -55,8 +58,8 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/manage/wishlist', {templateUrl: 'partials/admins/wishlist/manageWishlist.html', controller: 'CtrlManageWishlist'});
     $routeProvider.when('/manage/usage', {templateUrl: 'partials/admins/usage/requests.html', controller: 'CtrlUsage'});
 
-    // Add blackout widget page
-    $routeProvider.when('/epg/bt-tv', {templateUrl: 'partials/epg-widget.html', controller: 'CtrlEPGWidget'});
+    $routeProvider.when('/epg/bt-tv', {templateUrl: 'partials/epgWidget.html', controller: 'CtrlEPGWidget'});
+    $routeProvider.when('/scrubbables', {templateUrl: 'partials/bbcScrubbables/create.html', controller: 'CtrlBBCScrubbables'});
 
     // application user routes
     $routeProvider.when('/applications', {templateUrl: 'partials/applications.html', controller: 'CtrlApplications'});
@@ -105,9 +108,9 @@ app.config(['$httpProvider', function($httpProvider) {
             if (requests > 1 && _loggedin) {
                 $timeout.cancel(loadTimer);
                 loadTimer = $timeout(function() {
+                    $rootScope.show.load = true;
                     $rootScope.$broadcast('loading-started');
                 }, 400);
-                $rootScope.show.load = true;
             }
         }
 

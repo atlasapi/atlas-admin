@@ -1,0 +1,52 @@
+<div class="app-surface scrubbables">
+    <header class="app-header">
+        <h1 class="page-title">{{view_title}}</h1>
+    </header>
+
+    <div class="app-content">
+        <section class="panel-full scrubbables-search">
+            <div class="search-wrapper">
+                <atlas-search class="atlas-search">
+            </div>
+            <div class="scrubbables-result-wrapper" ng-show="showUI">
+                <article class="result-content">
+                    <header class="panel-header broadcast-header">
+                        <div class="broadcast-channel-image"><img src="{{broadcast.channel.image}}" alt="{{broadcast.title}}"></div>
+                        <div class="broadcast-meta">
+                            <h1 class="broadcast-title">{{item.title}}</h1>
+                            <div class="broadcast-subtitle" ng-show="item.subtitle">{{item.subtitle}}</div>
+                            <div class="episode-number" ng-show="item.episode_number">Episode: {{item.episode_number}}</div>
+                            <div class="broadcast-duration">Duration: {{item.duration.hh}}:{{item.duration.mm}}</div>
+                        </div>
+                    </header>
+                    <div class="broadcast-detail">
+                        <div class="broadcast-image" ng-show="episode.image"><img src="{{episode.image}}" alt="{{episode.title}}"></div>
+                        <div class="broadcast-description"><p>{{episode.description}}</p></div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="panel-full scrubbables-link-editor" ng-show="showUI">
+            <h2>Related links</h2>
+            <div class="show-level-links panel-full">
+                <h3>Show level links</h3>
+                <div class="panel-content">
+                    <show-segments>
+                </div>
+            </div>
+            <div class="timeline-links panel-full">
+                <h3>Timeline links</h3>
+                <div class="panel-content">
+                    <div scrubber scrubber-length="{{broadcast.duration}}" class="scrubber"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel-full" ng-show="showUI">
+            <button class="">Cancel</button>
+            <button class="positive" ng-click="createNew()">Create</button>
+        </section>
+    </div>
+</div>
+

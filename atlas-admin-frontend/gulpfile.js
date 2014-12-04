@@ -1,12 +1,11 @@
 'use-strict';
 
-var gulp        = require('gulp'),
-	scss        = require('gulp-sass'),
-	autoprefix  = require('gulp-autoprefixer'),
-    concat      = require('gulp-concat'),
-    uglify      = require('gulp-uglify');
-
-var assets = {};
+var gulp        = require('gulp');
+var scss        = require('gulp-sass');
+var autoprefix  = require('gulp-autoprefixer');
+var concat      = require('gulp-concat');
+var uglify      = require('gulp-uglify');
+var assets      = {};
 
 // Javascripts must be loaded in order, so hence the large array
 assets.js = ['js/vendor/highlight.js',
@@ -29,6 +28,7 @@ assets.js = ['js/vendor/highlight.js',
             'js/services/wishes.js',
             'js/services/groups.js',
             'js/services/feeds.js',
+            'js/services/bbcScrubbables.js',
             'js/filters.js',
             'js/directives/preloader.js',
             'js/directives/orderable.js',
@@ -37,17 +37,18 @@ assets.js = ['js/vendor/highlight.js',
             'js/directives/validUsage.js',
             'js/directives/inputMorph.js',
             'js/directives/loadContent.js',
+            'js/directives/scrubber.js',
             'js/controllers/errors.js',
             'js/controllers/auth/auth.js',
             'js/controllers/auth/login.js',
             'js/controllers/auth/logout.js',
             'js/controllers/sources.js',
+            'js/controllers/epgWidget.js',
             'js/controllers/sourceRequests.js',
             'js/controllers/requestSource.js',
             'js/controllers/userProfile.js',
             'js/controllers/userVideoSources.js',
             'js/controllers/userVideoSourcesYouTube.js',
-            'js/controllers/epg-widget.js',
             'js/controllers/feeds/feeds.js',
             'js/controllers/feeds/console.js',
             'js/controllers/feeds/breakdown.js',
@@ -57,6 +58,7 @@ assets.js = ['js/vendor/highlight.js',
             'js/controllers/wishlist/wishlist.js',
             'js/controllers/wishlist/wishlistSources.js',
             'js/controllers/wishlist/wishlistFeatures.js',
+            'js/controllers/bbcScrubbables/create.js',
             'js/controllers/admins/manageWishlist.js',
             'js/controllers/admins/manageSourceRequests.js',
             'js/controllers/admins/usage/requests.js',

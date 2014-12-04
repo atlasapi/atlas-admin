@@ -118,6 +118,7 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
             groups.forEach(function(item) {
                 if (item.name === 'BTBlackout') { allMenu.push({path: '/epg/bt-tv', label: 'EPG'}); }
                 if (item.name === 'BBC-YV-Feed') { allMenu.push({path: '/feeds', label: 'Feeds'}); }
+                if (item.name === 'BBC-Scrubbables') { allMenu.push({path: '/scrubbables', label: 'Scrubbables'}); }
             })
         }
 
