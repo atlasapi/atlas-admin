@@ -1,12 +1,11 @@
 'use-strict';
 
-var gulp        = require('gulp'),
-	scss        = require('gulp-sass'),
-	autoprefix  = require('gulp-autoprefixer'),
-    concat      = require('gulp-concat'),
-    uglify      = require('gulp-uglify');
-
-var assets = {};
+var gulp        = require('gulp');
+var scss        = require('gulp-sass');
+var autoprefix  = require('gulp-autoprefixer');
+var concat      = require('gulp-concat');
+var uglify      = require('gulp-uglify');
+var assets      = {};
 
 // Javascripts must be loaded in order, so hence the large array
 assets.js = ['js/vendor/highlight.js',

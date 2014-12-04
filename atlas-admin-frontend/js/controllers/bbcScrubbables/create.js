@@ -30,7 +30,7 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
     }
 
     $scope.parseContent = function(contentObject) {
-
+        
     }
 
     $scope.$watch('atlasSearch.selectedItem', function(old_val, new_val) {

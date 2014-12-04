@@ -192,29 +192,34 @@
     position: relative;
     width: 100%;
     padding: 1rem;
-    background: #D9D9D9;
+    background: $color-purple-light;
     border-radius: 5px;
 }
 
 .scrubber-timeline {
     box-sizing: border-box;
     width: 100%;
-    height: 130px;
+    min-height: 30px;
     cursor: crosshair;
     transition: all 300ms;
 }
 
 .scrubber-timeline:hover {
-    background: #E8E8E8;
+    background: lighten($color-purple-light, 10%);
 }
 
 .scrubber-timeline-item {
     box-sizing: border-box;
     position: relative;
-    height: 130px;
+    min-height: 30px;
     overflow: visible;
-    background: #15B8C0;
+    background: #2cb900; 
     border-radius: 3px;
+
+    &.new { 
+        border: 2px dashed #02979E;
+        background: #15B8C0;
+    }
 }
 
 .scrubber-times-container {
@@ -275,11 +280,6 @@
     opacity: 1;
 }
 
-.scrubber-timeline-item.new {
-    border: 2px dashed #02979E;
-    background: #15B8C0;
-}
-
 .scrubber-edit-dialog {
     box-sizing: border-box;
     position: absolute;
@@ -312,11 +312,12 @@
 .scrubber-button-group > button {
     display: block;
     float: left;
-    height: 30px;
+    width: 50%;
+    color: white;
     border-radius: 0;
     border: none;
-}
+    box-shadow: none;
 
-.scrubber-button-group button.half { width: 50%; }
-.scrubber-button-group button.cancel { background: $color-red; }
-.scrubber-button-group button.create { background: $color-green; }
+    &.cancel { background: $color-red; }
+    &.create { background: $color-green; }
+}
