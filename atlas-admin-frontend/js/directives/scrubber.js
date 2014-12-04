@@ -7,6 +7,7 @@ app.directive('scrubber', ['$document', '$compile',
         // Scrubber and timeline elements
         var EL = $($el);
         var TIMELINE = $('.scrubber-timeline', EL);
+        var CREATED = $('.scrubber-created-segments', EL);
 
         // State variables
         var MOUSEDOWN = false;
@@ -114,7 +115,7 @@ app.directive('scrubber', ['$document', '$compile',
                 }
             }
             if (_item) {
-                _el = $('[data-segment-id='+segment_id+']', TIMELINE);
+                _el = $('[data-segment-id='+segment_id+']', CREATED);
                 // If the element isn't in the dom, inject it
                 if (!_el.length) {
                     _el = templates().timeline_item;
@@ -122,7 +123,7 @@ app.directive('scrubber', ['$document', '$compile',
                     _el.css('margin-left', secondsToPixels(_item.startTime)+'px');
                     _el.css('width', secondsToPixels(_item.endTime)+'px');
                     _el.append('<h3>'+_item.label+'</h3><p>'+_item.url+'</p>');
-                    TIMELINE.append(_el);
+                    CREATED.append(_el);
                 }
             }
         }
@@ -404,7 +405,7 @@ app.directive('scrubber', ['$document', '$compile',
 
 
     return {
-        template: '<div class="scrubber-timeline"></div>',
+        template: '<div class="scrubber-timeline"></div><div class="scrubber-created-segments"></div>',
         link: controller
     }
 }])

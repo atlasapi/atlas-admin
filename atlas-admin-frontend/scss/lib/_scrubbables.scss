@@ -204,6 +204,13 @@
     transition: all 300ms;
 }
 
+.scrubber-created-segments {
+    display: block;
+    width: 100%;
+    min-height: 30px;
+    transition: all 300ms;
+}
+
 .scrubber-timeline:hover {
     background: lighten($color-purple-light, 10%);
 }
