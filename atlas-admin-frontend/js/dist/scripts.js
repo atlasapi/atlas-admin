@@ -7827,21 +7827,20 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
 }]);
 var app = angular.module('atlasAdmin.services.bbcscrubbables', []);
 
-app.factory('BBCScrubbablesService', ['$http', 
-    function($http) {
+app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q',
+    function(atlasHost, $http, $q) {
 
-    var createContentBlock = function(segments, equivUri, equivId, uri) {
+    // Create content block
+    //
+    // @param segments {array}
+    // @param equiv {array}
+    // @param same_as {array}
+    // @param uri {string}
+    var createContentBlock = function(segments, equiv, same_as, uri) {
         var _template = {  
             "segment_events":[],
-            "same_as":[  
-                equivUri
-            ],
-            "equivalents":[  
-                {  
-                    "uri":equivUri,
-                    "id":equivId
-                }
-            ],
+            "same_as":same_as,
+            "equivalents":equiv,
             "publisher":{  
                 "country":"GB",
                 "key":"scrubbables-producer.bbc.co.uk",
@@ -7872,31 +7871,39 @@ app.factory('BBCScrubbablesService', ['$http',
                 _template.segment_events.push(_event);
             }
         }
-
-        console.log(_template);
         return _template;
     }
 
+
+    // Post to owl
+    //
+    // @param data {object}
     var postToOwl = function(data) {
+        var defer = $q.defer();
         var _data = data || {};
         if (typeof _data.segments !== 'object' ||
             typeof _data.atlas !== 'object') {
-            return false;
+            defer.reject('nope');
+            return defer.promise;
         }
         var _postdata = createContentBlock( _data.segments, 
-                                            _data.atlas.equivUri, 
-                                            _data.atlas.equivId, 
+                                            _data.atlas.equivalents, 
+                                            _data.atlas.same_as, 
                                             _data.atlas.uri);
-        $http.post('http://atlas.metabroadcast.com/3.0/content.json?apiKey=8c47545e6d5c4c3c81ba9a818260b7cd', _postdata)
-        .success(function(res) {
-            console.log(res);
+        $http.post(atlasHost.replace('stage.', '')+'/3.0/content.json?apiKey=8c47545e6d5c4c3c81ba9a818260b7cd', _postdata)
+        .success(function(res, status) {
+            if (status === 200) {
+                defer.resolve(res);
+            }else{
+                defer.reject('nope', status);
+            }
         })
+        return defer.promise;
     }
 
     return {
         create: postToOwl
     }
-
 }]);
 'use strict';
 
@@ -10150,23 +10157,48 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
                 $scope.item.episode_number = false;
             }
             console.log($scope.episode)
-            console.log($scope.broadcast)
+            console.log($scope.broadcasts)
             $scope.item.duration = secondsToHHMMSS($scope.broadcast.duration);
             $scope.showUI = true;
         }
     })
 
     $scope.createNew = function() {
+        var _out = {};
         var _showLinks = $scope.showSegments.segments;
         var _timeLinks = $scope.scrubber.segments;
-        var _outputLinks = [];
+        var _segments = [];
+        var _atlas = { 
+            id: $scope.episode.id,
+            uri: $scope.episode.uri,
+            equivalents: $scope.episode.equivalents,
+            same_as: $scope.episode.same_as
+        }
         for (var i in _showLinks) {
-            _outputLinks.push(_showLinks[i]);
+            _segments.push({
+                label: _showLinks[i].label,
+                url: _showLinks[i].url,
+                offset: _showLinks[i].startTime,
+                duration: _showLinks[i].endTime - _showLinks[i].startTime
+            });
         }
         for (var i in _timeLinks) {
-            _outputLinks.push(_timeLinks[i]);
+            _segments.push({
+                label: _timeLinks[i].label,
+                url: _timeLinks[i].url,
+                offset: _timeLinks[i].startTime,
+                duration: _timeLinks[i].endTime - _timeLinks[i].startTime
+            });
         }
-        console.log(_outputLinks);
+        _out.atlas = _atlas;
+        _out.segments = _segments;
+
+        Scrubbables.create(_out)
+        .then(function(res) {
+            console.log(res);
+        }, function(res) {
+            console.log(res);
+        });
     }
 
 }]);
