@@ -9,11 +9,10 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q',
     // @param uri {string}
     // @param id {string}
     var createContentBlock = function(segments, uri, id) {
-        var equiv = [{"uri": uri, "id": id}];
         var _template = {  
             "segment_events":[],
-            "same_as": equiv,
-            "equivalents": equiv,
+            "same_as": [uri],
+            "equivalents": [{"uri": uri, "id": id}],
             "publisher": {  
                 "country":"GB",
                 "key":"scrubbables-producer.bbc.co.uk",
