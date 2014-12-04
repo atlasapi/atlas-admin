@@ -6,20 +6,19 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q',
     // Create content block
     //
     // @param segments {array}
-    // @param equiv {array}
-    // @param same_as {array}
     // @param uri {string}
-    var createContentBlock = function(segments, equiv, same_as, uri) {
+    // @param id {string}
+    var createContentBlock = function(segments, uri, id) {
         var _template = {  
             "segment_events":[],
-            "same_as":same_as,
-            "equivalents":equiv,
-            "publisher":{  
+            "same_as": [uri],
+            "equivalents": [{"uri": uri, "id": id}],
+            "publisher": {  
                 "country":"GB",
                 "key":"scrubbables-producer.bbc.co.uk",
                 "name":"BBC Scrubbables Producer"
             },
-            "uri": uri,
+            "uri": 'scrubbables-frontend.metabroadcast.com',
             "type": "item"
         };
 
@@ -44,6 +43,7 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q',
                 _template.segment_events.push(_event);
             }
         }
+        console.log(_template)
         return _template;
     }
 
@@ -59,10 +59,9 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q',
             defer.reject('nope');
             return defer.promise;
         }
-        var _postdata = createContentBlock( _data.segments, 
-                                            _data.atlas.equivalents, 
-                                            _data.atlas.same_as, 
-                                            _data.atlas.uri);
+        var _postdata = createContentBlock( _data.segments,  
+                                            _data.atlas.uri,
+                                            _data.atlas.id);
         $http.post(atlasHost.replace('stage.', '')+'/3.0/content.json?apiKey=8c47545e6d5c4c3c81ba9a818260b7cd', _postdata)
         .success(function(res, status) {
             if (status === 200) {
