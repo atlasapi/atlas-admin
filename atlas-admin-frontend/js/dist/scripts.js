@@ -7833,20 +7833,20 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q',
     // Create content block
     //
     // @param segments {array}
-    // @param equiv {array}
-    // @param same_as {array}
     // @param uri {string}
-    var createContentBlock = function(segments, equiv, same_as, uri) {
+    // @param id {string}
+    var createContentBlock = function(segments, uri, id) {
+        var equiv = [{"uri": uri, "id": id}];
         var _template = {  
             "segment_events":[],
-            "same_as":same_as,
-            "equivalents":equiv,
-            "publisher":{  
+            "same_as": equiv,
+            "equivalents": equiv,
+            "publisher": {  
                 "country":"GB",
                 "key":"scrubbables-producer.bbc.co.uk",
                 "name":"BBC Scrubbables Producer"
             },
-            "uri": uri,
+            "uri": 'scrubbables-frontend.metabroadcast.com',
             "type": "item"
         };
 
@@ -7871,6 +7871,7 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q',
                 _template.segment_events.push(_event);
             }
         }
+        console.log(_template)
         return _template;
     }
 
@@ -7886,10 +7887,9 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q',
             defer.reject('nope');
             return defer.promise;
         }
-        var _postdata = createContentBlock( _data.segments, 
-                                            _data.atlas.equivalents, 
-                                            _data.atlas.same_as, 
-                                            _data.atlas.uri);
+        var _postdata = createContentBlock( _data.segments,  
+                                            _data.atlas.uri,
+                                            _data.atlas.id);
         $http.post(atlasHost.replace('stage.', '')+'/3.0/content.json?apiKey=8c47545e6d5c4c3c81ba9a818260b7cd', _postdata)
         .success(function(res, status) {
             if (status === 200) {
@@ -10165,29 +10165,19 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
 
     $scope.createNew = function() {
         var _out = {};
-        var _showLinks = $scope.showSegments.segments;
-        var _timeLinks = $scope.scrubber.segments;
-        var _segments = [];
+        var _showLinks = _.union($scope.showSegments.segments, $scope.scrubber.segments);
+        console.log(_showLinks);
         var _atlas = { 
             id: $scope.episode.id,
-            uri: $scope.episode.uri,
-            equivalents: $scope.episode.equivalents,
-            same_as: $scope.episode.same_as
+            uri: $scope.episode.uri
         }
+        var _segments = [];
         for (var i in _showLinks) {
             _segments.push({
-                label: _showLinks[i].label,
+                title: _showLinks[i].label,
                 url: _showLinks[i].url,
                 offset: _showLinks[i].startTime,
                 duration: _showLinks[i].endTime - _showLinks[i].startTime
-            });
-        }
-        for (var i in _timeLinks) {
-            _segments.push({
-                label: _timeLinks[i].label,
-                url: _timeLinks[i].url,
-                offset: _timeLinks[i].startTime,
-                duration: _timeLinks[i].endTime - _timeLinks[i].startTime
             });
         }
         _out.atlas = _atlas;
