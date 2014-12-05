@@ -15,22 +15,23 @@ app.directive('reduxVideo', ['$document', 'GroupsService', '$q', '$http',
                     break;
                 }
             }
-            defer.resolve(_user, _pass);
+            defer.resolve([_user, _pass]);
         })
         return defer.promise;
     }
 
     var getToken = function() {
-        getAuthDetails().then(function(user, pass) {
-            var _postdata = {username: user, password: pass};
-            $http.post('https://i.bbcredux.com/user/login').success(function() {
-
-            })
+        getAuthDetails().then(function(auth) {
+            var _postdata = {username: auth[0], password: auth[1]};
+            $http.post('https://i.bbcredux.com/user/login?', _postdata)
+            .success(function(data, status) {
+                console.log(data, status)
+            });
         })
     }
 
     var controller = function($scope, $el, $attr) {
-        getAuthDetails()
+        getToken();
     }
 
     return {
