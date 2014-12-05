@@ -1,7 +1,7 @@
 var app = angular.module('atlasAdmin.controllers.bbcscrubbables', []);
 
-app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$q', 'BBCScrubbablesService',
-    function($scope, $rootScope, $routeParams, $q, Scrubbables) {
+app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$q', 'BBCScrubbablesService', '$timeout',
+    function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout) {
 
     $scope.view_title = 'Scrubbable creator';
     $scope.showUI = false;
@@ -10,6 +10,17 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
     $scope.showSegments = {};
     $scope.atlasSearch = {};
     $scope.scrubber = {};
+
+    var showMessage = function(message, type) {
+        var _timer;
+        var _type = type || 'normal';
+        $scope.message = message;
+        $scope.showMessage = true;
+        _timer = $timeout(function() {
+            $scope.message = '';
+            $scope.showMessage = false;
+        }, 5000)
+    }
 
     // Seconds -> HHMMSS
     //
@@ -63,6 +74,14 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
         }
     })
 
+    $scope.killCurrent = function() {
+        $scope.showUI = false;
+        $scope.item = {};
+        $scope.showSegments = {};
+        $scope.atlasSearch = {};
+        $scope.scrubber = {};
+    }
+
     $scope.createNew = function() {
         var _out = {};
         var _showLinks = _.union($scope.showSegments.segments, $scope.scrubber.segments);
@@ -88,10 +107,17 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
         console.log(_segments)
 
         Scrubbables.create(_out)
-        .then(function(res) {
-            console.log(res);
+        .then(function(res) {   
+            // when the item has been sent to atlas
+            $scope.showUI = false;
+            $scope.item = {};
+            $scope.showSegments = {};
+            $scope.atlasSearch = {};
+            $scope.scrubber = {};
+            showMessage('The item has been created');
         }, function(res) {
-            console.log(res);
+            console.error(res);
+            showMessage('There was a peoblem sending the item to Atlas', 'error');
         });
     }
 

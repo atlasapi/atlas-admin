@@ -8,6 +8,7 @@
             <div class="search-wrapper">
                 <atlas-search class="atlas-search">
             </div>
+            <div class="status-message" ng-show="showMessage">{{message}}</div>
             <div class="scrubbables-result-wrapper" ng-show="showUI">
                 <article class="result-content">
                     <header class="panel-header broadcast-header">
@@ -44,7 +45,7 @@
         </section>
 
         <section class="panel-full" ng-show="showUI">
-            <button class="">Cancel</button>
+            <button ng-click="killCurrent()" class="">Cancel</button>
             <button class="positive" ng-click="createNew()">Create</button>
         </section>
     </div>
