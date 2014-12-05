@@ -8,6 +8,7 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
     $scope.item = {};
 
     $scope.showSegments = {};
+    $scope.atlasSearch = {};
     $scope.scrubber = {};
 
     // Seconds -> HHMMSS
@@ -42,20 +43,20 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
             $scope.broadcast = $scope.episode.broadcasts[0];
 
             if (_.isObject($scope.episode.container)) {
-                if ($scope.episode.container.type === 'brand') {
+                if (($scope.episode.container.type === 'brand' || $scope.episode.container.type === 'series') && !$scope.episode.special) {
                     $scope.item.title = $scope.episode.container.title;
                     $scope.item.subtitle = $scope.episode.title;
                     $scope.item.episode_number = $scope.episode.episode_number;
                 }else{
-                    $scope.item.title = $scope.broadcast.title;   
+                    $scope.item.title = $scope.episode.title;   
                 }
             }else{
                 $scope.item.title = $scope.broadcast.title;
                 $scope.item.subtitle = false;
                 $scope.item.episode_number = false;
             }
-            console.log($scope.episode)
-            console.log($scope.broadcasts)
+            console.log($scope.episode);
+            console.log($scope.broadcasts);
             $scope.item.duration = secondsToHHMMSS($scope.broadcast.duration);
             $scope.showUI = true;
         }
@@ -97,12 +98,12 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
 
 
 
-app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http',
-    function($document, $q, $timeout, atlasHost, $http) {
+app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http', 'GroupsService',
+    function($document, $q, $timeout, atlasHost, $http, Groups) {
 
-    var atlasSearchRequest = function(query) {
+    var atlasSearchRequest = function(apiKey, query) {
         var defer = $q.defer();
-        $http.get(atlasHost.replace('stage.', '')+'/3.0/search.json?apiKey=d28dbc8965194fc5acc51aab3e4c3cb7&q='+query+'&limit=10&type=item&annotations=people,description,broadcasts,brand_summary,channel_summary,series_summary,upcoming,related_links&topLevelOnly=false&specialization=tv,film&currentBroadcastsOnly=true&broadcastWeighting=20')
+        $http.get(atlasHost.replace('stage.', '')+'/3.0/search.json?apiKey='+apiKey+'&q='+query+'&limit=10&type=item&annotations=people,description,broadcasts,brand_summary,channel_summary,series_summary,upcoming,related_links&topLevelOnly=false&specialization=tv,film&currentBroadcastsOnly=true&broadcastWeighting=20')
              .success(function(data, status) {
                 defer.resolve(data);
              })
@@ -149,7 +150,16 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
         var $el = $($el);
         var input_timer;
         $scope.atlasSearch = {};
+        $scope.atlasSearch.selectedItem = {};
         $scope.atlasSearch.showAutocomplete = false;
+
+        Groups.get().then(function(res) {
+            for (var i=0; i<res.length; i++) {
+                if (res[i].name === 'BBC-Scrubbables') {
+                    $scope.searchKey = res[i].data.searchApiKey;
+                }
+            }
+        })
 
         $scope.atlasSearch.selectAtlasItem = function(title, uri) {
             var _result;
@@ -176,7 +186,9 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
 
         $scope.atlasSearch.lookupAtlasItem = function() {
             var _query = $scope.atlasSearch.searchquery;
+            var _months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
             $scope.atlasSearch.message = null;
+            $scope.atlasSearch.searchResults = [];
             if (!_.isString(_query)) return;
 
             if (!_query.length) {
@@ -190,11 +202,27 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
                 $scope.atlasSearch.messageOutput('Searching...');
                 $timeout.cancel(input_timer);
                 input_timer = $timeout(function() {
-                    atlasSearchRequest(_query).then(function(res) {
+                    atlasSearchRequest($scope.searchKey, _query).then(function(res) {
                         var _results = channelFilter(res.contents, 'cbbh');
                         if (_results.length) {
+                            var item, resultObj;
+                            for (var i in _results) {
+                                item = _results[i];
+                                resultObj = {}
+                                resultObj.uri = item.uri;
+                                resultObj.title = (item.container.type === 'series' || item.container.type === 'brand')? item.container.title : item.title;
+
+                                if (item.container.brand && new Date(item.title) != 'Invalid Date') {
+                                    var _date = new Date(item.title.split('/')[2]+'/'+item.title.split('/')[1]+'/'+item.title.split('/')[0]);
+                                    console.log(item.title, _date)
+                                    resultObj.subtitle = _date.getDate()+' '+_months[_date.getMonth()]+' '+_date.getFullYear();
+                                }else{
+                                    resultObj.subtitle = item.title;
+                                }
+
+                                $scope.atlasSearch.searchResults.push(resultObj);
+                            }
                             $scope.atlasSearch.messageOutput(null);
-                            $scope.atlasSearch.search_results = _results;
                             $scope.atlasSearch.showAutocomplete = true;
                         }else{
                             $scope.atlasSearch.showAutocomplete = false;
@@ -214,7 +242,7 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
         restrict: 'E',
         scope: false,
         link: controller,
-        template: '<div class="search-input"><input type="text" placeholder="Search..." ng-model="atlasSearch.searchquery" ng-change="atlasSearch.lookupAtlasItem()"></div><div ng-show="atlasSearch.showMessage" class="message-output">{{atlasSearch.message}}</div><div ng-show="atlasSearch.showAutocomplete" class="search-completions"><span ng-repeat="result in atlasSearch.search_results" class="search-item" ng-click="atlasSearch.selectAtlasItem(result.title, result.uri)"><strong>{{result.title}}</strong><i>{{result.broadcasts[0].transmission_time}}</i></span></div>'
+        templateUrl: 'partials/bbcScrubbables/atlasSearch.html'
     }
 }])
 

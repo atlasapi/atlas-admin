@@ -213,13 +213,11 @@ app.directive('scrubber', ['$document', '$compile',
                 return false;
             }
             _segment._id = generateID();
-            _segment.startTime = pixelsToSeconds(LIVE_ITEM[0].start) || null;
-            _segment.endTime = pixelsToSeconds(LIVE_ITEM[0].end) || null;
-            _segment.label = $scope.scrubber.create.label || null;
-            _segment.url = $scope.scrubber.create.url || null;
-            if (_segment.startTime && 
-                _segment.endTime &&
-                _segment.label) {
+            _segment.startTime = (pixelsToSeconds(LIVE_ITEM[0].start) < 0) ? 0 : pixelsToSeconds(LIVE_ITEM[0].start);
+            _segment.endTime = pixelsToSeconds(LIVE_ITEM[0].end);
+            _segment.label = $scope.scrubber.create.label;
+            _segment.url = $scope.scrubber.create.url;
+            if (_segment.label && _segment.url) {
                 $scope.scrubber.clearTempSegment();
                 TIMELINE_SEGMENTS.push(_segment);
             }else{
