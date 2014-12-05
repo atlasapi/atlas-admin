@@ -414,3 +414,12 @@
     &.cancel { background: $color-red; }
     &.create { background: $color-green; }
 }
+
+
+// The video
+.scrubbables-video {
+    width: 80%;
+    height: 20%;
+    margin: 0 auto;
+    background: black;
+}

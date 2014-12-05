@@ -17,7 +17,7 @@
                             <h1 class="broadcast-title">{{item.title}}</h1>
                             <div class="broadcast-subtitle" ng-show="item.subtitle">{{item.subtitle}}</div>
                             <div class="broadcast-duration">Duration: {{item.duration.hh}}:{{item.duration.mm}}</div>
-                            <div class="broadcast-date">Next broadcast date: {{item.nextBroadcast}}</div>
+                            <!-- <div class="broadcast-date">Next broadcast date: {{item.nextbroadcast}}</div> -->
                         </div>
                     </header>
                     <div class="broadcast-detail">
@@ -40,6 +40,9 @@
                 <h3>Timeline links</h3>
                 <div class="panel-content">
                     <div scrubber scrubber-length="{{broadcast.duration}}" class="scrubber"></div>
+                </div>
+                <div class="panel-content">
+                    <div redux-video></div>
                 </div>
             </div>
         </section>

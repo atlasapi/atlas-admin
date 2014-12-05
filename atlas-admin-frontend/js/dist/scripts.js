@@ -10168,6 +10168,7 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
             $scope.broadcast = $scope.episode.broadcasts[0];
 
             if (_.isObject($scope.episode.container)) {
+                //$scope.item.nextbroadcast = new Date($scope.broadcast.transmission_time);
                 if (($scope.episode.container.type === 'brand' || $scope.episode.container.type === 'series') && !$scope.episode.special) {
                     $scope.item.title = $scope.episode.container.title;
                     $scope.item.subtitle = $scope.episode.title;
@@ -10180,9 +10181,8 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
                 $scope.item.subtitle = false;
                 $scope.item.episode_number = false;
             }
-            //$scope.item.nextBroadcast = 
             console.log($scope.episode);
-            console.log($scope.broadcasts);
+            console.log($scope.broadcast);
             $scope.item.duration = secondsToHHMMSS($scope.broadcast.duration);
             $scope.showUI = true;
         }
@@ -10216,9 +10216,6 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
         }
         _out.atlas = _atlas;
         _out.segments = _segments;
-
-        console.log(_showLinks)
-        console.log(_segments)
 
         Scrubbables.create(_out)
         .then(function(res) {   
