@@ -10117,7 +10117,7 @@ var app = angular.module('atlasAdmin.controllers.bbcscrubbables', []);
 app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$q', 'BBCScrubbablesService', '$timeout',
     function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout) {
 
-    $scope.view_title = 'Scrubbable creator';
+    $scope.view_title = 'TV linker';
     $scope.showUI = false;
     $scope.item = {};
 
@@ -10133,7 +10133,7 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
         _timer = $timeout(function() {
             $scope.message = '';
             $scope.showMessage = false;
-        }, 5000)
+        }, 7000);
     }
 
     // Seconds -> HHMMSS
@@ -10225,7 +10225,7 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
             $scope.showSegments = {};
             $scope.atlasSearch = {};
             $scope.scrubber = {};
-            showMessage('The item has been created');
+            showMessage('The item has been saved');
         }, function(res) {
             console.error(res);
             showMessage('There was a peoblem sending the item to Atlas', 'error');
