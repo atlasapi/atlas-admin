@@ -55,6 +55,7 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
                 $scope.item.subtitle = false;
                 $scope.item.episode_number = false;
             }
+            //$scope.item.nextBroadcast = 
             console.log($scope.episode);
             console.log($scope.broadcasts);
             $scope.item.duration = secondsToHHMMSS($scope.broadcast.duration);
@@ -103,7 +104,7 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
 
     var atlasSearchRequest = function(apiKey, query) {
         var defer = $q.defer();
-        $http.get(atlasHost.replace('stage.', '')+'/3.0/search.json?apiKey='+apiKey+'&q='+query+'&limit=10&type=item&annotations=people,description,broadcasts,brand_summary,channel_summary,series_summary,upcoming,related_links&topLevelOnly=false&specialization=tv,film&currentBroadcastsOnly=true&broadcastWeighting=20')
+        $http.get(atlasHost.replace('stage.', '')+'/3.0/search.json?apiKey='+encodeURIComponent(apiKey)+'&q='+encodeURIComponent(query)+'&limit=10&type=item&annotations=people,description,broadcasts,brand_summary,channel_summary,series_summary,upcoming,related_links&topLevelOnly=false&specialization=tv,film&currentBroadcastsOnly=true&broadcastWeighting=20')
              .success(function(data, status) {
                 defer.resolve(data);
              })
@@ -133,7 +134,7 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
     var requestAtlasContent = function(uri) {
         if (!_.isString(uri)) return;
         var defer = $q.defer();
-        $http.get(atlasHost.replace('stage.', '')+'/3.0/content.json?uri='+uri+'&annotations=channel,channel_summary,extended_description,brand_summary,broadcasts,series_summary,available_locations,related_links')
+        $http.get(atlasHost.replace('stage.', '')+'/3.0/content.json?uri='+encodeURIComponent(uri)+'&annotations=channel,channel_summary,extended_description,brand_summary,broadcasts,series_summary,available_locations,related_links')
              .success(function(data, status) {
                 defer.resolve(data);
              })

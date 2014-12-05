@@ -64,7 +64,6 @@ app.directive('scrubber', ['$document', '$compile',
             // Render the new timeline item - this is the item that is 
             // currently being created or edited
             if (LIVE_ITEM.length) {
-                console.log(LIVE_ITEM[0]);
                 if (!$('.scrubber-timeline-item', TIMELINE).length) {
                     _new_el = templates().timeline_item;
                     TIMELINE.append(_new_el);
