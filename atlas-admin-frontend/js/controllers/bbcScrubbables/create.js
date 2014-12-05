@@ -64,22 +64,26 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
     $scope.createNew = function() {
         var _out = {};
         var _showLinks = _.union($scope.showSegments.segments, $scope.scrubber.segments);
-        console.log(_showLinks);
         var _atlas = { 
             id: $scope.episode.id,
             uri: $scope.episode.uri
         }
-        var _segments = [];
+        var _segments = [], _duration;
         for (var i in _showLinks) {
+            // calculate the duration
+            _duration = ($scope.broadcast.duration - _showLinks[i].startTime) - ($scope.broadcast.duration - _showLinks[i].endTime);
             _segments.push({
                 title: _showLinks[i].label,
                 url: _showLinks[i].url,
                 offset: _showLinks[i].startTime,
-                duration: _showLinks[i].endTime - _showLinks[i].startTime
+                duration: _duration
             });
         }
         _out.atlas = _atlas;
         _out.segments = _segments;
+
+        console.log(_showLinks)
+        console.log(_segments)
 
         Scrubbables.create(_out)
         .then(function(res) {
@@ -248,7 +252,6 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
             $scope.showSegments.newItem.label = $scope.showSegments.newItem.url = '';
             $scope.showSegments.showCreateUI = false;
         }
-
     }
 
     return {

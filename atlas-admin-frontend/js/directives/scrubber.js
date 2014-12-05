@@ -64,19 +64,20 @@ app.directive('scrubber', ['$document', '$compile',
             // Render the new timeline item - this is the item that is 
             // currently being created or edited
             if (LIVE_ITEM.length) {
+                console.log(LIVE_ITEM[0]);
                 if (!$('.scrubber-timeline-item', TIMELINE).length) {
                     _new_el = templates().timeline_item;
                     TIMELINE.append(_new_el);
                     _new_el.addClass('new');
                 }
                 if (IS_DRAGGING) {
-                    LIVE_ITEM[0].end = ((CURSOR_POS.x - LIVE_ITEM[0].start) > 0) ? (CURSOR_POS.x - LIVE_ITEM[0].start) : 1;
+                    LIVE_ITEM[0].end = (CURSOR_POS.x > LIVE_ITEM[0].start) ? CURSOR_POS.x : 1;
                 }
                 if (!MOUSEDOWN) {
                     showEditUI(_new_el);
                 }
                 _new_el.css('margin-left', LIVE_ITEM[0].start+'px');
-                _new_el.css('width', LIVE_ITEM[0].end+'px');
+                _new_el.css('width', LIVE_ITEM[0].end - LIVE_ITEM[0].start+'px');
             }else{
                 clearImpermanentItems()
             }
@@ -121,7 +122,7 @@ app.directive('scrubber', ['$document', '$compile',
                     _el = templates().timeline_item;
                     _el.attr('data-segment-id', segment_id);
                     _el.css('margin-left', secondsToPixels(_item.startTime)+'px');
-                    _el.css('width', secondsToPixels(_item.endTime)+'px');
+                    _el.css('width', secondsToPixels(_item.endTime) - secondsToPixels(_item.startTime)+'px');
                     _el.append('<h3>'+_item.label+'</h3><p>'+_item.url+'</p>');
                     CREATED.append(_el);
                 }
@@ -234,7 +235,7 @@ app.directive('scrubber', ['$document', '$compile',
         function getCursorPosition() {
             CURSOR_POS = CURSOR_POS || {x:0, y:0};
             var _el_offset = TIMELINE.offset();
-            TIMELINE.on('mousemove', function (e) {
+            EL.on('mousemove', function (e) {
                 var x = (e.pageX - _el_offset.left);
                 var y = (e.pageY - _el_offset.top);
                 CURSOR_POS = { x: x, y: y };
@@ -291,7 +292,7 @@ app.directive('scrubber', ['$document', '$compile',
                 return null;
             }
             var _seconds = parseInt(secs, 10);
-            var hours = Math.floor(_seconds/3600);
+            var hours = (Math.floor(_seconds/3600) < 0) ? 0 : Math.floor(_seconds/3600);
             var minutes = Math.floor((_seconds - (hours*3600)) / 60);;
             var seconds = _seconds - (hours * 3600) - (minutes * 60);
             return {
@@ -378,13 +379,15 @@ app.directive('scrubber', ['$document', '$compile',
                 setTimeMarkers();
             })
 
-            TIMELINE
+            EL
             .on('mouseenter', function (e) {
                 IS_FOCUSED = true;
             })
             .on('mouseleave', function() {
                 IS_FOCUSED = false;
             })
+
+            TIMELINE
             .on('mousedown', function (e) {
                 if ($(e.target).is('.scrubber-timeline, .scrubber-timeline-item')) {
                     MOUSEDOWN = true;
