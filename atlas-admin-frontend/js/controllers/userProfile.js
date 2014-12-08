@@ -127,7 +127,7 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
         var admin_menu = [];
         for (var i = 0; i < allMenu.length; i++) {
             var item = allMenu[i];
-            if (!item.role || item.role !== 'admin') {
+            if (!item.hasOwnProperty('role') || item.role === 'regular') {
                 menu.push(item);
             }else if (user.role === 'admin') {
                 admin_menu.push(item);

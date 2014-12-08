@@ -8738,10 +8738,17 @@ app.directive('reduxVideo', ['$document', 'GroupsService', '$q', '$http',
     var getToken = function() {
         getAuthDetails().then(function(auth) {
             var _postdata = {username: auth[0], password: auth[1]};
-            $http.post('https://i.bbcredux.com/user/login?', _postdata)
-            .success(function(data, status) {
-                console.log(data, status)
+            console.log(_postdata)
+            $http.post('https://i.bbcredux.com/user/login', 'username=tfm&password=vvhfpxhc')
+            .success(function(res) {
+                console.log(res)
             });
+            // $http.post('https://i.bbcredux.com/user/login', _postdata)
+            // .success(function(data, status) {
+            //     console.log(data, status)
+            // });
+
+            //$http.post('https://i.bbcredux.com/asset/search', {crid:})
         })
     }
 
@@ -9275,7 +9282,7 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
         var admin_menu = [];
         for (var i = 0; i < allMenu.length; i++) {
             var item = allMenu[i];
-            if (!item.role || item.role !== 'admin') {
+            if (!item.hasOwnProperty('role') || item.role === 'regular') {
                 menu.push(item);
             }else if (user.role === 'admin') {
                 admin_menu.push(item);
