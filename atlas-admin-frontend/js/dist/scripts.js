@@ -6966,7 +6966,8 @@ app.factory('Authentication', ['$rootScope', 'ProfileStatus',
         reset: function () {
             localStorage.removeItem('auth.provider');
             localStorage.removeItem('auth.token');
-            ProfileStatus.setComplete(false);
+            localStorage.removeItem('profile.complete');
+            //ProfileStatus.setComplete(false);
             $rootScope.status.loggedIn = false;
         },
         appendTokenToUrl: function (url) {
@@ -7046,8 +7047,6 @@ app.factory('ProfileCompleteInterceptor', function (ProfileStatus, $location, $q
 
 
 'use strict';
-
-/* Services */
 var app = angular.module('atlasAdmin.services.atlas', []);
 
 app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $log) {
@@ -7880,7 +7879,6 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q',
                 _template.segment_events.push(_event);
             }
         }
-        console.log(_template)
         return _template;
     }
 
@@ -7888,18 +7886,21 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q',
     // Post to owl
     //
     // @param data {object}
-    var postToOwl = function(data) {
+    var postToOwl = function(apiKey, data) {
         var defer = $q.defer();
         var _data = data || {};
-        if (typeof _data.segments !== 'object' ||
-            typeof _data.atlas !== 'object') {
-            defer.reject('nope');
+        if (!_.isString(apiKey) || 
+            !_.isObject(_data.segments) ||
+            !_.isObject(_data.atlas)) {
+            defer.reject();
+            console.error('postToOwl() -> incorrect param');
             return defer.promise;
         }
         var _postdata = createContentBlock( _data.segments,  
                                             _data.atlas.uri,
                                             _data.atlas.id);
-        $http.post(atlasHost.replace('stage.', '')+'/3.0/content.json?apiKey=8c47545e6d5c4c3c81ba9a818260b7cd', _postdata)
+        
+        $http.post(atlasHost.replace('stage.', '')+'/3.0/content.json?apiKey='+apiKey, _postdata)
         .success(function(res, status) {
             if (status === 200) {
                 defer.resolve(res);
@@ -7913,6 +7914,42 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q',
     return {
         create: postToOwl
     }
+}]);
+var app = angular.module('atlasAdmin.services.bbcscrubbables');
+
+app.service('bbcRedux', ['atlasHost', '$http', 'GroupsService', '$q',
+    function(atlasHost, $http, Groups, $q) {
+
+    var getAuthDetails = function() {
+        var defer = $q.defer();
+        var _user = null;
+        var _pass = null;
+        Groups.get().then(function(res) {
+            for (var i in res) {
+                if (res[i].name === 'BBC-Scrubbables') {
+                    _user = res[i].data.redux_user;
+                    _pass = res[i].data.redux_pass;
+                    break;
+                }
+            }
+            defer.resolve([_user, _pass]);
+        })
+        return defer.promise;
+    }
+
+    var getToken = function() {
+        var defer = $q.defer();
+        getAuthDetails().then(function(auth) {
+            var _postdata = {username: auth[0], password: auth[1]};
+            $http.post('https://i.bbcredux.com/user/login', _postdata)
+            .success(defer.resolve);
+        })
+        return defer.promise;
+    }
+
+    return {
+        getToken: getToken
+    }    
 }]);
 'use strict';
 
@@ -8326,9 +8363,9 @@ app.directive('scrubber', ['$document', '$compile',
         //
         // Shape of a TIMELINE_SEGMENT object:
         // {
+        //  _id: string
         //  startTime: number
         //  endTime: number
-        //  
         // }
         var TIMELINE_SEGMENTS = [];
         var LIVE_ITEM = [];
@@ -8386,13 +8423,9 @@ app.directive('scrubber', ['$document', '$compile',
             }
 
             // Render segments to the timeline
-            var _segment;
-            for (var i in TIMELINE_SEGMENTS) {
-                _segment = TIMELINE_SEGMENTS[i];
-                updateTimelineSegment(_segment._id);
-            }
+            updateTimelineSegments();
 
-
+            // Update the scrub time and position of marker elements when the cursor moves over the timeline
             updateCursorTime();
             if (CURSOR_TIME) {
                 $('.scrubber-time-cursor .scrubber-time-label', TIME_MARKERS).text(CURSOR_TIME.hh+':'+CURSOR_TIME.mm+':'+CURSOR_TIME.ss);
@@ -8403,31 +8436,27 @@ app.directive('scrubber', ['$document', '$compile',
         }
 
 
-        // Update timeline segment
+        // Update timeline segments
         //
         // 
-        function updateTimelineSegment(segment_id) {
-            if (typeof segment_id !== 'string') {
-                return null;
-            }
-            var i, _item, _el;
-            // Grab the item from the segments array
+        function updateTimelineSegments() {
+            var i, _item, _el, _segment_id;
             for (i in TIMELINE_SEGMENTS) {
-                if (TIMELINE_SEGMENTS[i]._id === segment_id) {
-                    _item = TIMELINE_SEGMENTS[i];
-                    break;
-                }
-            }
-            if (_item) {
-                _el = $('[data-segment-id='+segment_id+']', CREATED);
-                // If the element isn't in the dom, inject it
-                if (!_el.length) {
-                    _el = templates().timeline_item;
-                    _el.attr('data-segment-id', segment_id);
-                    _el.css('margin-left', secondsToPixels(_item.startTime)+'px');
-                    _el.css('width', secondsToPixels(_item.endTime) - secondsToPixels(_item.startTime)+'px');
-                    _el.append('<h3>'+_item.label+'</h3><p>'+_item.url+'</p>');
-                    CREATED.append(_el);
+                _item = TIMELINE_SEGMENTS[i];
+                _segment_id = _item._id;
+                if (_item) {
+                    _el = $('[data-segment-id='+_segment_id+']', CREATED);
+                    // If the element isn't in the dom, inject it
+                    if (!_el.length) {
+                        _el = templates().timeline_item;
+                        _el.attr('data-segment-id', _segment_id);
+                        _el.css('margin-left', secondsToPixels(_item.startTime) +'px');
+                        _el.css('width', secondsToPixels(_item.endTime) - secondsToPixels(_item.startTime) +'px');
+                        _el.append('<h3>'+ _item.label +'</h3><p>'+ _item.url +'</p>');
+                        _el.append('<span class="delete-segment" ng-click="scrubber.removeItem(\''+ _segment_id +'\')">x</span>')
+                        CREATED.append(_el);
+                        $compile($(_el))($scope);
+                    }
                 }
             }
         }
@@ -8499,6 +8528,28 @@ app.directive('scrubber', ['$document', '$compile',
                 start: CURSOR_POS.x
             };
             LIVE_ITEM.push(_item);
+        }
+
+
+        // Remove timeline segment
+        //
+        // Clear an item from the timeline segments array 
+        //
+        // @param id {string} the _id of the item
+        function removeSegment(id) {
+            if (!TIMELINE_SEGMENTS.length || !_.isString(id)) {
+                return false;
+            }
+            // Splice from the TIMELINE_SEGMENTS array
+            for (var i in TIMELINE_SEGMENTS) {
+                if (TIMELINE_SEGMENTS[i]._id === id) {
+                    TIMELINE_SEGMENTS.splice(i, 1);
+                    break;
+                }
+            }
+            // Remove from the DOM
+            var _el = $('[data-segment-id='+ id +']', CREATED);
+            if (_el.length) $(_el).remove();
         }
 
 
@@ -8669,6 +8720,8 @@ app.directive('scrubber', ['$document', '$compile',
             $scope.scrubber.segments = [];
 
             $scope.scrubber.createLink = addSegment;
+            $scope.scrubber.removeItem = removeSegment;
+
             $scope.scrubber.clearTempSegment = function() {
                 LIVE_ITEM = [];
                 $scope.scrubber.create = {};
@@ -8715,45 +8768,17 @@ app.directive('scrubber', ['$document', '$compile',
 }])
 var app = angular.module('atlasAdmin.directives.bbcscrubbables');
 
-app.directive('reduxVideo', ['$document', 'GroupsService', '$q', '$http',
-    function($document, Groups, $q, $http) {
+app.directive('reduxVideo', ['$document', 'GroupsService', '$q', '$http', 'bbcRedux',
+    function($document, Groups, $q, $http, bbcRedux) {
 
-    var getAuthDetails = function() {
-        var defer = $q.defer();
-        var _user = null;
-        var _pass = null;
-        Groups.get().then(function(res) {
-            for (var i in res) {
-                if (res[i].name === 'BBC-Scrubbables') {
-                    _user = res[i].data.redux_user;
-                    _pass = res[i].data.redux_pass;
-                    break;
-                }
-            }
-            defer.resolve([_user, _pass]);
-        })
-        return defer.promise;
-    }
-
-    var getToken = function() {
-        getAuthDetails().then(function(auth) {
-            var _postdata = {username: auth[0], password: auth[1]};
-            console.log(_postdata)
-            $http.post('https://i.bbcredux.com/user/login', 'username=tfm&password=vvhfpxhc')
-            .success(function(res) {
-                console.log(res)
-            });
-            // $http.post('https://i.bbcredux.com/user/login', _postdata)
-            // .success(function(data, status) {
-            //     console.log(data, status)
-            // });
-
-            //$http.post('https://i.bbcredux.com/asset/search', {crid:})
-        })
+    var getEpisode = function(crid) {
+        
     }
 
     var controller = function($scope, $el, $attr) {
-        getToken();
+        bbcRedux.getToken().then(function(res) {
+            console.log(res);
+        });
     }
 
     return {
@@ -10190,7 +10215,7 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
     // Converts boring old seconds to object containing 
     // HH MM SS as strings
     //
-    // @returns {Object} keys: hh, mm, ss
+    // @return {Object} keys: hh, mm, ss
     function secondsToHHMMSS(secs) {
         if (typeof secs !== 'number' && 
             typeof secs !== 'string') {
@@ -10211,6 +10236,8 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
         return Math.random().toString(36).substr(2, 9);
     }
 
+    // When the selectedItem object changes inside the search directive, then
+    // update the UI with the new broadcast data
     $scope.$watch('atlasSearch.selectedItem', function(old_val, new_val) {
         if (!_.isEmpty($scope.atlasSearch.selectedItem)) {
             $scope.episode = $scope.atlasSearch.selectedItem;
@@ -10266,7 +10293,7 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
         _out.atlas = _atlas;
         _out.segments = _segments;
 
-        Scrubbables.create(_out)
+        Scrubbables.create('APIKEY', _out)
         .then(function(res) {   
             // when the item has been sent to atlas
             $scope.showUI = false;
@@ -10299,6 +10326,14 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
         return defer.promise;
     }
 
+    // Channel filter
+    //
+    // Used for filtering atlas search results to only have items broadcast
+    // on certain channels
+    //
+    // @param items {array} atlas search result array
+    // @param channel_id {string}
+    // @return {array}
     var channelFilter = function(items, channel_id) {
         if (!_.isObject(items) || !_.isString(channel_id)) {
             console.error('channelFilter() -> wrong type')
@@ -10318,7 +10353,7 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
     }
 
     var requestAtlasContent = function(uri) {
-        if (!_.isString(uri)) return;
+        if (!_.isString(uri)) return null;
         var defer = $q.defer();
         $http.get(atlasHost.replace('stage.', '')+'/3.0/content.json?uri='+encodeURIComponent(uri)+'&annotations=channel,channel_summary,extended_description,brand_summary,broadcasts,series_summary,available_locations,related_links')
              .success(function(data, status) {

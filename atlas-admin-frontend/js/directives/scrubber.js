@@ -22,9 +22,9 @@ app.directive('scrubber', ['$document', '$compile',
         //
         // Shape of a TIMELINE_SEGMENT object:
         // {
+        //  _id: string
         //  startTime: number
         //  endTime: number
-        //  
         // }
         var TIMELINE_SEGMENTS = [];
         var LIVE_ITEM = [];
@@ -82,13 +82,9 @@ app.directive('scrubber', ['$document', '$compile',
             }
 
             // Render segments to the timeline
-            var _segment;
-            for (var i in TIMELINE_SEGMENTS) {
-                _segment = TIMELINE_SEGMENTS[i];
-                updateTimelineSegment(_segment._id);
-            }
+            updateTimelineSegments();
 
-
+            // Update the scrub time and position of marker elements when the cursor moves over the timeline
             updateCursorTime();
             if (CURSOR_TIME) {
                 $('.scrubber-time-cursor .scrubber-time-label', TIME_MARKERS).text(CURSOR_TIME.hh+':'+CURSOR_TIME.mm+':'+CURSOR_TIME.ss);
@@ -99,31 +95,27 @@ app.directive('scrubber', ['$document', '$compile',
         }
 
 
-        // Update timeline segment
+        // Update timeline segments
         //
         // 
-        function updateTimelineSegment(segment_id) {
-            if (typeof segment_id !== 'string') {
-                return null;
-            }
-            var i, _item, _el;
-            // Grab the item from the segments array
+        function updateTimelineSegments() {
+            var i, _item, _el, _segment_id;
             for (i in TIMELINE_SEGMENTS) {
-                if (TIMELINE_SEGMENTS[i]._id === segment_id) {
-                    _item = TIMELINE_SEGMENTS[i];
-                    break;
-                }
-            }
-            if (_item) {
-                _el = $('[data-segment-id='+segment_id+']', CREATED);
-                // If the element isn't in the dom, inject it
-                if (!_el.length) {
-                    _el = templates().timeline_item;
-                    _el.attr('data-segment-id', segment_id);
-                    _el.css('margin-left', secondsToPixels(_item.startTime)+'px');
-                    _el.css('width', secondsToPixels(_item.endTime) - secondsToPixels(_item.startTime)+'px');
-                    _el.append('<h3>'+_item.label+'</h3><p>'+_item.url+'</p>');
-                    CREATED.append(_el);
+                _item = TIMELINE_SEGMENTS[i];
+                _segment_id = _item._id;
+                if (_item) {
+                    _el = $('[data-segment-id='+_segment_id+']', CREATED);
+                    // If the element isn't in the dom, inject it
+                    if (!_el.length) {
+                        _el = templates().timeline_item;
+                        _el.attr('data-segment-id', _segment_id);
+                        _el.css('margin-left', secondsToPixels(_item.startTime) +'px');
+                        _el.css('width', secondsToPixels(_item.endTime) - secondsToPixels(_item.startTime) +'px');
+                        _el.append('<h3>'+ _item.label +'</h3><p>'+ _item.url +'</p>');
+                        _el.append('<span class="delete-segment" ng-click="scrubber.removeItem(\''+ _segment_id +'\')">x</span>')
+                        CREATED.append(_el);
+                        $compile($(_el))($scope);
+                    }
                 }
             }
         }
@@ -195,6 +187,28 @@ app.directive('scrubber', ['$document', '$compile',
                 start: CURSOR_POS.x
             };
             LIVE_ITEM.push(_item);
+        }
+
+
+        // Remove timeline segment
+        //
+        // Clear an item from the timeline segments array 
+        //
+        // @param id {string} the _id of the item
+        function removeSegment(id) {
+            if (!TIMELINE_SEGMENTS.length || !_.isString(id)) {
+                return false;
+            }
+            // Splice from the TIMELINE_SEGMENTS array
+            for (var i in TIMELINE_SEGMENTS) {
+                if (TIMELINE_SEGMENTS[i]._id === id) {
+                    TIMELINE_SEGMENTS.splice(i, 1);
+                    break;
+                }
+            }
+            // Remove from the DOM
+            var _el = $('[data-segment-id='+ id +']', CREATED);
+            if (_el.length) $(_el).remove();
         }
 
 
@@ -365,6 +379,8 @@ app.directive('scrubber', ['$document', '$compile',
             $scope.scrubber.segments = [];
 
             $scope.scrubber.createLink = addSegment;
+            $scope.scrubber.removeItem = removeSegment;
+
             $scope.scrubber.clearTempSegment = function() {
                 LIVE_ITEM = [];
                 $scope.scrubber.create = {};

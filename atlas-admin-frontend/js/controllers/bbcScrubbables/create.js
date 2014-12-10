@@ -27,7 +27,7 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
     // Converts boring old seconds to object containing 
     // HH MM SS as strings
     //
-    // @returns {Object} keys: hh, mm, ss
+    // @return {Object} keys: hh, mm, ss
     function secondsToHHMMSS(secs) {
         if (typeof secs !== 'number' && 
             typeof secs !== 'string') {
@@ -48,6 +48,8 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
         return Math.random().toString(36).substr(2, 9);
     }
 
+    // When the selectedItem object changes inside the search directive, then
+    // update the UI with the new broadcast data
     $scope.$watch('atlasSearch.selectedItem', function(old_val, new_val) {
         if (!_.isEmpty($scope.atlasSearch.selectedItem)) {
             $scope.episode = $scope.atlasSearch.selectedItem;
@@ -103,7 +105,7 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
         _out.atlas = _atlas;
         _out.segments = _segments;
 
-        Scrubbables.create(_out)
+        Scrubbables.create('APIKEY', _out)
         .then(function(res) {   
             // when the item has been sent to atlas
             $scope.showUI = false;
@@ -136,6 +138,14 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
         return defer.promise;
     }
 
+    // Channel filter
+    //
+    // Used for filtering atlas search results to only have items broadcast
+    // on certain channels
+    //
+    // @param items {array} atlas search result array
+    // @param channel_id {string}
+    // @return {array}
     var channelFilter = function(items, channel_id) {
         if (!_.isObject(items) || !_.isString(channel_id)) {
             console.error('channelFilter() -> wrong type')
@@ -155,7 +165,7 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
     }
 
     var requestAtlasContent = function(uri) {
-        if (!_.isString(uri)) return;
+        if (!_.isString(uri)) return null;
         var defer = $q.defer();
         $http.get(atlasHost.replace('stage.', '')+'/3.0/content.json?uri='+encodeURIComponent(uri)+'&annotations=channel,channel_summary,extended_description,brand_summary,broadcasts,series_summary,available_locations,related_links')
              .success(function(data, status) {

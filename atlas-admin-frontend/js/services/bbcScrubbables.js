@@ -43,7 +43,6 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q',
                 _template.segment_events.push(_event);
             }
         }
-        console.log(_template)
         return _template;
     }
 
@@ -51,18 +50,21 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q',
     // Post to owl
     //
     // @param data {object}
-    var postToOwl = function(data) {
+    var postToOwl = function(apiKey, data) {
         var defer = $q.defer();
         var _data = data || {};
-        if (typeof _data.segments !== 'object' ||
-            typeof _data.atlas !== 'object') {
-            defer.reject('nope');
+        if (!_.isString(apiKey) || 
+            !_.isObject(_data.segments) ||
+            !_.isObject(_data.atlas)) {
+            defer.reject();
+            console.error('postToOwl() -> incorrect param');
             return defer.promise;
         }
         var _postdata = createContentBlock( _data.segments,  
                                             _data.atlas.uri,
                                             _data.atlas.id);
-        $http.post(atlasHost.replace('stage.', '')+'/3.0/content.json?apiKey=8c47545e6d5c4c3c81ba9a818260b7cd', _postdata)
+        
+        $http.post(atlasHost.replace('stage.', '')+'/3.0/content.json?apiKey='+apiKey, _postdata)
         .success(function(res, status) {
             if (status === 200) {
                 defer.resolve(res);
