@@ -37,9 +37,11 @@ app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location
         var redirectToSources = function() {
             window.location.search = "";
         };
-        Users.currentUser().then(redirectToSources, function(error) {
+        Users.currentUser().then(redirectToSources, 
+            function(error) {
             $log.error("Error setting user.");
             $log.error(error);
+            $location.hash("/login");
         });
     },
 
