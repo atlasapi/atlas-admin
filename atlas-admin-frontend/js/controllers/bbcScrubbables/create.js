@@ -290,6 +290,16 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
         $scope.showSegments.segments = [];
         $scope.showSegments.showCreateUI = false;
 
+        $scope.showSegments.removeItem = function(id) {
+            if (!_.isString(id)) return false;
+            for (var i in $scope.showSegments.segments) {
+                if ($scope.showSegments.segments[i]._id === id) {
+                    $scope.showSegments.segments.splice(i, 1);
+                    break;
+                }
+            }
+        }
+
         $scope.showSegments.createUI = function() {
             $scope.showSegments.showCreateUI = true;
             $scope.showSegments.newItem = {};
