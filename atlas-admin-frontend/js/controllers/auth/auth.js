@@ -42,6 +42,9 @@ app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location
             $log.error("Error setting user.");
             $log.error(error);
             $location.hash("/login");
+            localStorage.removeItem('auth.provider');
+            localStorage.removeItem('auth.token');
+            localStorage.removeItem('profile.complete');
         });
     },
 
