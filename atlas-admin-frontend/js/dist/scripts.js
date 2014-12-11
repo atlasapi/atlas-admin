@@ -7213,7 +7213,7 @@ app.factory('Applications', function (Atlas) {
         },
         unRevokeApplication: function(application) {
             application.revoked = false;
-            return Atlas.postRequest('applications.json', application).then(function (results) {
+            return Atlas.postRequest('/applications.json', application).then(function (results) {
                 return results.data.application;
             });
         }
@@ -10264,6 +10264,7 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
         }
     })
 
+    // Clear the stage of the current item
     $scope.killCurrent = function() {
         $scope.showUI = false;
         $scope.item = {};
@@ -10272,6 +10273,7 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
         $scope.scrubber = {};
     }
 
+    // Create a new item
     $scope.createNew = function() {
         var _out = {};
         var _showLinks = _.union($scope.showSegments.segments, $scope.scrubber.segments);
@@ -10293,9 +10295,9 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
         _out.atlas = _atlas;
         _out.segments = _segments;
 
-        Scrubbables.create('APIKEY', _out)
+        Scrubbables.create($scope.writeKey, _out)
         .then(function(res) {   
-            // when the item has been sent to atlas
+            // when the item has been sent to atlas, clear all the things  
             $scope.showUI = false;
             $scope.item = {};
             $scope.showSegments = {};
@@ -10379,6 +10381,7 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
             for (var i=0; i<res.length; i++) {
                 if (res[i].name === 'BBC-Scrubbables') {
                     $scope.searchKey = res[i].data.searchApiKey;
+                    $scope.writeKey = res[i].data.writeApiKey;
                 }
             }
         })
@@ -10466,7 +10469,7 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
         link: controller,
         templateUrl: 'partials/bbcScrubbables/atlasSearch.html'
     }
-}])
+}]);
 
 app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$http',
     function($document, $q, $timeout, atlasHost, $http) {
