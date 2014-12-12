@@ -1,5 +1,9 @@
 .scrubbables {
-
+    .loading {
+        width: 100%;
+        margin: 1.5rem 0;
+        text-align: center;
+    }
 }
 
 .scrubbables-result-wrapper {
@@ -199,16 +203,31 @@
     }
 
     .full-segment {
+        position: relative;
         box-sizing: border-box;
-        padding: 1rem;
+        padding: 1.25rem 1rem;
         border: 1px solid $color-pink;
+        border-radius: 3px;
+        box-shadow: 0 1px 3px darken($color-purple-light, 20%);
+
+        .delete-segment {
+            position: absolute;
+            top: .25rem;
+            right: .25rem;
+            cursor: pointer;
+            opacity: .5;
+            text-decoration: underline;
+            font-size: 15px;
+
+            &:hover { color: $color-red; opacity: 1; }
+        }
 
         .segment-label {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
+            margin-bottom: .5rem;
+            font-size: 1.25rem;
         }
         .segment-url {
-
+            font-size: .823rem;
         }
     }
 
@@ -249,7 +268,9 @@
     box-sizing: border-box;
     position: relative;
     width: 100%;
-    min-height: 60px;
+    height: 60px;
+    padding-top: .5rem;
+    padding-bottom: .5rem;
     background: $color-pink-light;
     cursor: crosshair;
     transition: all 300ms;
@@ -289,23 +310,45 @@
 .scrubber-timeline-item {
     box-sizing: border-box;
     position: relative;
-    min-height: 60px;
     margin: .25rem 0;
     padding: 1rem;
-    overflow: visible;
+    overflow: hidden;
     background: white; 
     border: 1px solid $color-pink;
     border-radius: 3px;
+    box-shadow: 0 1px 3px darken($color-purple-light, 20%);
 
-    h3 { margin-bottom: 1rem; }
-    p { margin: 0; }
+    h3 { margin-bottom: .5rem; color: $color-purple; font-size: 1.25rem; }
+    p { margin: 0; font-size: .823rem; }
+
+    .delete-segment {
+        position: absolute;
+        top: .25rem;
+        right: .25rem;
+        cursor: pointer;
+        opacity: .5;
+        text-decoration: underline;
+        font-size: 15px;
+
+        &:hover { color: $color-red; opacity: 1; }
+    }
 
     &.new { 
         box-sizing: border-box;
-        margin: 0;
+        height: 43px;
         padding: 0;
-        border: 2px dashed #02979E;
-        background: #15B8C0;
+        margin: 0; 
+        overflow: visible;
+        border: none;
+        border-left: 1px solid darken(#8C41FF, 10%);
+        border-right: 1px solid darken(#8C41FF, 10%);
+        background: #8C41FF;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .scrubber-on-timeline:hover {
+        width: auto !important;
     }
 }
 

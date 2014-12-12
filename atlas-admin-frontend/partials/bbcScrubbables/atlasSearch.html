@@ -3,7 +3,7 @@
 </div>
 <div ng-show="atlasSearch.showMessage" class="message-output">{{atlasSearch.message}}</div>
 <div ng-show="atlasSearch.showAutocomplete" class="search-completions">
-    <span ng-repeat="result in atlasSearch.searchResults" class="search-item" ng-click="atlasSearch.selectAtlasItem(result.title, result.uri)">
+    <span ng-repeat="result in atlasSearch.searchResults" class="search-item" ng-click="atlasSearch.selectAtlasItem(result.title, result.id)">
         <strong>{{result.title}}</strong>
         <i>{{result.subtitle}}</i>
     </span>

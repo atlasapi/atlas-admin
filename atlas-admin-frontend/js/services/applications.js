@@ -48,7 +48,7 @@ app.factory('Applications', function (Atlas) {
         },
         unRevokeApplication: function(application) {
             application.revoked = false;
-            return Atlas.postRequest('applications.json', application).then(function (results) {
+            return Atlas.postRequest('/applications.json', application).then(function (results) {
                 return results.data.application;
             });
         }
