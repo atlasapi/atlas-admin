@@ -3,7 +3,7 @@
         <div class="full-segment" ng-repeat="segment in showSegments.segments">
             <div class="segment-label">{{segment.label}}</div>
             <div class="segment-url"><a target="_blank" href="{{segment.url}}">{{segment.url}}</a></div>
-            <div class="segment-delete" ng-click="showSegments.removeItem(segment._id)">x</div>
+            <div class="delete-segment" ng-click="showSegments.removeItem(segment._id)">remove</div>
         </div>
         <div class="full-segment-new" ng-show="showSegments.showCreateUI">
             <input ng-model="showSegments.newItem.label" type="text" placeholder="Label">

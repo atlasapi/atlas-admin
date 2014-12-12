@@ -57,8 +57,14 @@ app.factory('ScrubbablesHelpers', ['$q',
     //
     // @param time {string}
     var transmissionTimeToDate = function(time) {
+        var _months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         var _date = time.split('T')[0];
-        return new Date(_date.split('-')[0] + '/' +_date.split('-')[1] + '/' + _date.split('-')[2]);
+        _date = new Date(_date.split('-')[0] + '/' +_date.split('-')[1] + '/' + _date.split('-')[2]);
+        return {
+            month: _months[_date.getMonth()],
+            day: _date.getDate(),
+            year: _date.getFullYear()
+        }
     }
 
 
@@ -74,6 +80,7 @@ app.factory('ScrubbablesHelpers', ['$q',
         var container = item.container || null;
         _out.broadcast = broadcast;
         _out.uri = item.uri;
+        _out.id = item.id;
         _out.title = item.title;
 
         if (_.isObject(container)) {
@@ -89,6 +96,7 @@ app.factory('ScrubbablesHelpers', ['$q',
         if (_.isObject(broadcast)) {
             _out.broadcast_date = transmissionTimeToDate(broadcast.transmission_time);
         }
+        console.log(_out);
 
         return _out;
     }
@@ -101,17 +109,51 @@ app.factory('ScrubbablesHelpers', ['$q',
 }])
 
 
+app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService',
+    function(atlasHost, $http, $q, Groups) {
 
-app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q',
-    function(atlasHost, $http, $q) {
+    var owlAnnotations = 'annotations=description,extended_description,brand_summary,series_summary,people,topics,products,related_links,key_phrases,broadcasts,locations,first_broadcasts,next_broadcasts,available_locations,upcoming,sub_items,channel,channel_summary';
+    var deerAnnotations = 'annotations=segment_events,description,extended_description,series_summary,description';
 
-    var contentAnnotations = 'annotations=channel,channel_summary,extended_description,brand_summary,broadcasts,series_summary,available_locations,related_links';
+    var getKeys = function() {
+        var defer = $q.defer();
+        Groups.get().then(function(res) {
+            for (var i=0; i<res.length; i++) {
+                if (res[i].name === 'BBC-Scrubbables') {
+                    defer.resolve({
+                        owlRead: res[i].data.searchApiKey, 
+                        owlWrite: res[i].data.writeApiKey, 
+                        deerRead: res[i].data.scrubbableApiKey
+                    });
+                }
+            }
+        }, defer.reject);
+        return defer.promise;
+    }
 
     var searchContent = function(apiKey, query) {
         var defer = $q.defer();
         $http.get(atlasHost + '/3.0/search.json?apiKey='+encodeURIComponent(apiKey)+'&q='+encodeURIComponent(query)+'&limit=10&type=item&annotations=people,description,broadcasts,brand_summary,channel_summary,series_summary,upcoming,related_links&topLevelOnly=false&specialization=tv,film&currentBroadcastsOnly=true&broadcastWeighting=20')
              .success(function(data, status) {
-                defer.resolve(data);
+                if (status !== 200) {
+                    defer.reject('Atlas search returned an error. Status:'+status);
+                }else{
+                    defer.resolve(data);
+                }
+             })
+             .error(defer.reject);
+        return defer.promise;
+    }
+
+    var getDeerContentURI = function(apiKey, id) {
+        var defer = $q.defer();
+        $http.get(atlasHost + '/4/content/' + id + '.json?key=' + encodeURIComponent(apiKey) + '&' + deerAnnotations)
+             .success(function(data, status) {
+                if (status !== 200) {
+                    defer.reject('Atlas deer content request returned an error. Status:'+status);
+                }else{
+                    defer.resolve(data);
+                }
              })
              .error(defer.reject);
 
@@ -121,18 +163,30 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q',
     var getContentURI = function(uri) {
         if (!_.isString(uri)) return null;
         var defer = $q.defer();
-        $http.get(atlasHost + '/3.0/content.json?uri=' + encodeURIComponent(uri) + '&' + contentAnnotations)
-             .success(defer.resolve)
-             .error(defer.reject);
+        $http.get(atlasHost + '/3.0/content.json?uri=' + encodeURIComponent(uri) + '&' + owlAnnotations)
+            .success(function(data, status) {
+                if (status !== 200) {
+                    defer.reject('Atlas content request returned an error. Status:'+status);
+                }else{
+                    defer.resolve(data);
+                }
+            })
+            .error(defer.reject);
         return defer.promise;
     }
 
     var getContentID = function(id) {
         if (!_.isString(id)) return null;
         var defer = $q.defer();
-        $http.get(atlasHost + '/3.0/content.json?id=' + encodeURIComponent(id) + '&'+contentAnnotations)
-             .success(defer.resolve)
-             .error(defer.reject);
+        $http.get(atlasHost + '/3.0/content.json?id=' + encodeURIComponent(id) + '&'+owlAnnotations)
+            .success(function(data, status) {
+                if (status !== 200) {
+                    defer.reject('Atlas content request returned an error. Status:'+status);
+                }else{
+                    defer.resolve(data);
+                }   
+            })
+            .error(defer.reject);
         return defer.promise;
     }
 
@@ -187,6 +241,7 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q',
 
     // Post to owl
     //
+    // @param apiKey {string}
     // @param data {object}
     var postToOwl = function(apiKey, data) {
         var defer = $q.defer();
@@ -214,11 +269,13 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q',
     }
 
     return {
+        keys: getKeys,
         create: postToOwl,
         search: searchContent,
         content: {
             uri: getContentURI,
-            id: getContentID
-        }
+            id: getContentID,
+        },
+        deerContent: getDeerContentURI
     }
 }]);

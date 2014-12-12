@@ -108,11 +108,12 @@ app.directive('scrubber', ['$document', '$compile',
                     // If the element isn't in the dom, inject it
                     if (!_el.length) {
                         _el = templates().timeline_item;
+                        _el.addClass('scrubber-on-timeline', _segment_id);
                         _el.attr('data-segment-id', _segment_id);
                         _el.css('margin-left', secondsToPixels(_item.startTime) +'px');
                         _el.css('width', secondsToPixels(_item.endTime) - secondsToPixels(_item.startTime) +'px');
                         _el.append('<h3>'+ _item.label +'</h3><p>'+ _item.url +'</p>');
-                        _el.append('<span class="delete-segment" ng-click="scrubber.removeItem(\''+ _segment_id +'\')">x</span>')
+                        _el.append('<span class="delete-segment" ng-click="scrubber.removeItem(\''+ _segment_id +'\')">remove</span>')
                         CREATED.append(_el);
                         $compile($(_el))($scope);
                     }
