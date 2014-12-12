@@ -44,6 +44,7 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
             function(item) {
             if (item.segment) {
                 $scope.showSegments.loadSegments(item.segment);
+                $scope.scrubber.loadSegments(item.segments);
             }
         }, function(err) { console.error(err) });
 

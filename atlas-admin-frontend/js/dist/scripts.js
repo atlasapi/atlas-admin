@@ -8939,6 +8939,23 @@ app.directive('scrubber', ['$document', '$compile',
                 return;
             }
 
+            $scope.scrubber.loadSegments = function(segment) {
+            return;
+            if (segment.related_links.length) {
+                var _segment, _item;
+                for (var i in segment.related_links) {
+                    _item = segment.related_links[i];
+                    _segment = createSegmentObj(_item.title, 
+                                                _item.url, 
+                                                0, 
+                                                segment.duration, 
+                                                $scope.generateID());
+                    $scope.showSegments.segments.push(_segment);
+                    $scope.showSegments.showCreateUI = false;
+                }
+            }
+        }
+
             $attr.$observe('scrubberLength', function() {
                 getContextLength();
                 setTimeMarkers();
@@ -10443,6 +10460,7 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
             function(item) {
             if (item.segment) {
                 $scope.showSegments.loadSegments(item.segment);
+                $scope.scrubber.loadSegments(item.segments);
             }
         }, function(err) { console.error(err) });
 
