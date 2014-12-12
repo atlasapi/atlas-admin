@@ -213,6 +213,17 @@ app.directive('scrubber', ['$document', '$compile',
         }
 
 
+        function createSegmentObj(label, url, startTime, endTime, id) {
+            return {
+                label: label,
+                url: url,
+                startTime: startTime,
+                endTime: endTime,
+                _id: id
+            }
+        }
+
+
         // Add segment
         //
         // Pushes a new segment into the global TIMELINE_SEGMENTS array
@@ -220,17 +231,17 @@ app.directive('scrubber', ['$document', '$compile',
         //
         // @param new_segment {Object} the options for the new segment
         function addSegment() {
-            var _segment = $scope.scrubber.create;
-            if (typeof _segment.url !== 'string' || 
-                typeof _segment.label !== 'string' ||
+            var _create = $scope.scrubber.create;
+            if (typeof _create.url !== 'string' || 
+                typeof _create.label !== 'string' ||
                 !LIVE_ITEM.length) {
                 return false;
             }
-            _segment._id = generateID();
-            _segment.startTime = (pixelsToSeconds(LIVE_ITEM[0].start) < 0) ? 0 : pixelsToSeconds(LIVE_ITEM[0].start);
-            _segment.endTime = pixelsToSeconds(LIVE_ITEM[0].end);
-            _segment.label = $scope.scrubber.create.label;
-            _segment.url = $scope.scrubber.create.url;
+            var _segment = createSegmentObj($scope.scrubber.create.label, 
+                            $scope.scrubber.create.url, 
+                            (pixelsToSeconds(LIVE_ITEM[0].start) < 0) ? 0 : pixelsToSeconds(LIVE_ITEM[0].start),
+                            pixelsToSeconds(LIVE_ITEM[0].end),
+                            generateID());
             if (_segment.label && _segment.url) {
                 $scope.scrubber.clearTempSegment();
                 TIMELINE_SEGMENTS.push(_segment);
