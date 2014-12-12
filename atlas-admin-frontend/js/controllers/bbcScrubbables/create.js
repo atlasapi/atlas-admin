@@ -228,7 +228,7 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
 app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$http',
     function($document, $q, $timeout, atlasHost, $http) {
 
-    var createSegmentObj = function(label, urL, startTime, endTime, id) {
+    var createSegmentObj = function(label, url, startTime, endTime, id) {
         return {
             label: label,
             url: url,
