@@ -9002,7 +9002,7 @@ app.directive('scrubber', ['$document', '$compile',
 
 
     return {
-        template: '<div class="scrubber-timeline"></div><div class="scrubber-created-segments"></div>',
+        template: '<div class="scrubber-created-segments"></div><div class="scrubber-timeline"></div>',
         link: controller
     }
 }])
