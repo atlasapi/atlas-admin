@@ -10683,13 +10683,15 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
                 var _segment, _item;
                 for (var i in segment.related_links) {
                     _item = segment.related_links[i];
-                    _segment = createSegmentObj(_item.title, 
-                                                _item.url, 
-                                                0, 
-                                                segment.duration, 
-                                                $scope.generateID());
-                    $scope.showSegments.segments.push(_segment);
-                    $scope.showSegments.showCreateUI = false;
+                    if (_item.duration === $scope.broadcast.duration) {
+                        console.log(_item);
+                        _segment = createSegmentObj(_item.title, 
+                                                    _item.url, 
+                                                    0, 
+                                                    segment.duration, 
+                                                    $scope.generateID());
+                        $scope.showSegments.segments.push(_segment);
+                    }
                 }
             }
         }
