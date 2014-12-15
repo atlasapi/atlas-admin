@@ -113,7 +113,7 @@ app.directive('scrubber', ['$document', '$compile',
                         _el.css('margin-left', secondsToPixels(_item.startTime) +'px');
                         _el.css('width', secondsToPixels(_item.endTime) - secondsToPixels(_item.startTime) +'px');
                         _el.append('<h3>'+ _item.label +'</h3><p>'+ _item.url +'</p>');
-                        _el.append('<span class="delete-segment" ng-click="scrubber.removeItem(\''+ _segment_id +'\')">remove</span>')
+                        _el.append('<span class="delete-segment" ng-click="scrubber.removeItem(\''+ _segment_id +'\')">x</span>')
                         CREATED.append(_el);
                         $compile($(_el))($scope);
                     }

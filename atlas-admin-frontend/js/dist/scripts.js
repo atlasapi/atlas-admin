@@ -8665,7 +8665,7 @@ app.directive('scrubber', ['$document', '$compile',
                         _el.css('margin-left', secondsToPixels(_item.startTime) +'px');
                         _el.css('width', secondsToPixels(_item.endTime) - secondsToPixels(_item.startTime) +'px');
                         _el.append('<h3>'+ _item.label +'</h3><p>'+ _item.url +'</p>');
-                        _el.append('<span class="delete-segment" ng-click="scrubber.removeItem(\''+ _segment_id +'\')">remove</span>')
+                        _el.append('<span class="delete-segment" ng-click="scrubber.removeItem(\''+ _segment_id +'\')">x</span>')
                         CREATED.append(_el);
                         $compile($(_el))($scope);
                     }
@@ -10539,7 +10539,6 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
         }
         _out.atlas = _atlas;
         _out.segments = _segments;
-        console.log(_segments);
 
         Scrubbables.create($scope.writeKey, _out)
         .then(function(res) {   
@@ -10684,7 +10683,6 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
                 for (var i in segment.related_links) {
                     _item = segment.related_links[i];
                     if (_item.duration === $scope.broadcast.duration) {
-                        console.log(_item);
                         _segment = createSegmentObj(_item.title, 
                                                     _item.url, 
                                                     0, 
@@ -10717,8 +10715,8 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
         }
 
         $scope.showSegments.new = function() {
-            if (!_.isString($scope.showSegments.newItem.label) || !_.isString($scope.showSegments.newItem.url)) return;
-            if ($scope.showSegments.newItem.label === '' || $scope.showSegments.newItem.url === '') return;
+            console.log(newSegmentForm.label.$valid)
+            console.log(newSegmentForm.url.$valid)
             var _segment = createSegmentObj($scope.showSegments.newItem.label, 
                                             $scope.showSegments.newItem.url, 
                                             0, 

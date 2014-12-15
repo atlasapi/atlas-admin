@@ -3,15 +3,17 @@
         <div class="full-segment" ng-repeat="segment in showSegments.segments">
             <div class="segment-label">{{segment.label}}</div>
             <div class="segment-url"><a target="_blank" href="{{segment.url}}">{{segment.url}}</a></div>
-            <div class="delete-segment" ng-click="showSegments.removeItem(segment._id)">remove</div>
+            <div class="delete-segment" ng-click="showSegments.removeItem(segment._id)">x</div>
         </div>
         <div class="full-segment-new" ng-show="showSegments.showCreateUI">
-            <input ng-model="showSegments.newItem.label" type="text" placeholder="Label">
-            <input ng-model="showSegments.newItem.url" type="url" placeholder="http://">
-            <span class="button-container">
-                <button class="cancel" ng-click="showSegments.cancel()">Cancel</button>
-                <button class="create" ng-click="showSegments.new()">Create</button>
-            </span>
+            <form name="newSegmentForm">
+                <input ng-model="showSegments.newItem.label" type="text" name="label" placeholder="Label" required>
+                <input ng-model="showSegments.newItem.url" type="url" name="url" placeholder="http://" required>
+                <span class="button-container">
+                    <button class="cancel" ng-click="showSegments.cancel()">Cancel</button>
+                    <button class="create" ng-click="showSegments.new()">Create link</button>
+                </span>
+            </form>
         </div>
         <span ng-hide="showSegments.showCreateUI" class="full-segment-create" ng-click="showSegments.createUI()"></span>
     </div>
