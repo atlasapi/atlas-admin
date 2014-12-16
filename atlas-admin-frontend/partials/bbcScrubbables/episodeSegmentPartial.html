@@ -3,15 +3,19 @@
         <div class="full-segment" ng-repeat="segment in showSegments.segments">
             <div class="segment-label">{{segment.label}}</div>
             <div class="segment-url"><a target="_blank" href="{{segment.url}}">{{segment.url}}</a></div>
-            <div class="delete-segment" ng-click="showSegments.removeItem(segment._id)">remove</div>
+            <div class="delete-segment" ng-click="showSegments.removeItem(segment._id)">x</div>
         </div>
         <div class="full-segment-new" ng-show="showSegments.showCreateUI">
-            <input ng-model="showSegments.newItem.label" type="text" placeholder="Label">
-            <input ng-model="showSegments.newItem.url" type="url" placeholder="http://">
-            <span class="button-container">
-                <button class="cancel" ng-click="showSegments.cancel()">Cancel</button>
-                <button class="create" ng-click="showSegments.new()">Create</button>
-            </span>
+            <form novalidate name="newSegmentForm">
+                <span class="segment-form-error" ng-show="showSegments.submitted && newSegmentForm.linkLabel.$invalid">This link needs a label</span>
+                <input ng-model="showSegments.newItem.label" type="text" name="linkLabel" placeholder="Label" required>
+                <span class="segment-form-error" ng-show="showSegments.submitted && newSegmentForm.linkUrl.$invalid">This link needs a valid url</span>
+                <input ng-model="showSegments.newItem.url" type="url" name="linkUrl" placeholder="http://" required>
+                <span class="button-container">
+                    <button class="cancel" ng-click="showSegments.cancel()">Cancel</button>
+                    <button class="create" ng-click="showSegments.new()">Create link</button>
+                </span>
+            </form>
         </div>
         <span ng-hide="showSegments.showCreateUI" class="full-segment-create" ng-click="showSegments.createUI()"></span>
     </div>

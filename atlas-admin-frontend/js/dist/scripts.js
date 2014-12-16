@@ -8684,8 +8684,8 @@ app.directive('scrubber', ['$document', '$compile',
                         _el.attr('data-segment-id', _segment_id);
                         _el.css('margin-left', secondsToPixels(_item.startTime) +'px');
                         _el.css('width', secondsToPixels(_item.endTime) - secondsToPixels(_item.startTime) +'px');
-                        _el.append('<h3>'+ _item.label +'</h3><p>'+ _item.url +'</p>');
-                        _el.append('<span class="delete-segment" ng-click="scrubber.removeItem(\''+ _segment_id +'\')">remove</span>')
+                        _el.append('<h3>'+ _item.label +'</h3><p><a href="'+ _item.url +'" target="_blank">'+ _item.url +'</a></p>');
+                        _el.append('<span class="delete-segment" ng-click="scrubber.removeItem(\''+ _segment_id +'\')">x</span>')
                         CREATED.append(_el);
                         $compile($(_el))($scope);
                     }
@@ -8803,6 +8803,7 @@ app.directive('scrubber', ['$document', '$compile',
         //
         // @param new_segment {Object} the options for the new segment
         function addSegment() {
+            $scope.scrubber.submitted = true;
             var _create = $scope.scrubber.create;
             if (typeof _create.url !== 'string' || 
                 typeof _create.label !== 'string' ||
@@ -8821,6 +8822,7 @@ app.directive('scrubber', ['$document', '$compile',
                 console.error('Couldnt make new segment with data', _segment);
             }
             $scope.scrubber.segments = TIMELINE_SEGMENTS;
+            $scope.scrubber.submitted = false;
         }
 
         // Get cursor position
@@ -8870,7 +8872,7 @@ app.directive('scrubber', ['$document', '$compile',
             if (!$('.scrubber-edit-dialog', TIMELINE).length) {
                 var edit_ui = templates().edit_bubble;
                 $(element).append(edit_ui);
-                $compile($(element))($scope);
+                $compile($(edit_ui))($scope);
             }
         }
 
@@ -8925,12 +8927,18 @@ app.directive('scrubber', ['$document', '$compile',
 
             var edit_bubble = function() {
                 var lines = [];
-                lines.push('<div class="scrubber-edit-dialog">');
+                lines.push('<div class="scrubber-edit-dialog"><form novalidate name="scrubberForm">');
                 lines.push('<h2>New segment</h2>');
-                lines.push('<div class="scrubber-form-row"><input type="text" ng-model="scrubber.create.label" placeholder="label"></div>');
-                lines.push('<div class="scrubber-form-row"><input type="url" ng-model="scrubber.create.url" placeholder="http://"></div>');
-                lines.push('<div class="scrubber-button-group"><button class="cancel" ng-click="scrubber.clearTempSegment()">Cancel</button><button class="create" ng-click="scrubber.createLink()">Create link</button></div>');
+                lines.push('<div class="scrubber-form-row">')
+                lines.push('<span class="segment-form-error" ng-show="scrubber.submitted && scrubberForm.linkLabel.$invalid">This link needs a label</span>');
+                lines.push('<input type="text" name="linkLabel" ng-model="scrubber.create.label" placeholder="label">');
                 lines.push('</div>');
+                lines.push('<div class="scrubber-form-row">');
+                lines.push('<span class="segment-form-error" ng-show="scrubber.submitted && scrubberForm.linkUrl.$invalid">This url needs a valid url</span>');
+                lines.push('<input type="url" name="linkUrl" ng-model="scrubber.create.url" placeholder="http://">');
+                lines.push('</div>');
+                lines.push('<div class="scrubber-button-group"><button class="cancel" ng-click="scrubber.clearTempSegment()">Cancel</button><button class="create" ng-click="scrubber.createLink()">Create link</button></div>');
+                lines.push('</form></div>');
                 return $(lines.join(''));
             }
 
@@ -8961,6 +8969,7 @@ app.directive('scrubber', ['$document', '$compile',
             $scope.scrubber = {};
             $scope.scrubber.create = {};
             $scope.scrubber.segments = [];
+            $scope.scrubber.submitted = false;
 
             $scope.scrubber.createLink = addSegment;
             $scope.scrubber.removeItem = removeSegment;
@@ -10559,7 +10568,6 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
         }
         _out.atlas = _atlas;
         _out.segments = _segments;
-        console.log(_segments);
 
         Scrubbables.create($scope.writeKey, _out)
         .then(function(res) {   
@@ -10592,12 +10600,11 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
         $scope.atlasSearch.showAutocomplete = false;
 
         $scope.atlasSearch.selectAtlasItem = function(title, id) {
+            if (!_.isString(title) && !_.isString(id)) { 
+                return false;
+            }
             var _result;
             $location.path('/scrubbables/'+id);
-            //Scrubbables.content.uri(uri).then(function(item) {
-            //    _result = Helpers.channelFilter(item.contents, 'cbbh');
-            //    $scope.atlasSearch.selectedItem = _result[0]
-            //});
             $scope.loading = true;
             $scope.atlasSearch.searchquery = title;
             $scope.atlasSearch.showAutocomplete = false;
@@ -10619,7 +10626,6 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
         var searchRequest = function() {
             var _query = $scope.atlasSearch.searchquery;
             if (!_query.length) return;
-
             Scrubbables.search($scope.searchKey, _query).then(function(res) {
                 if (res.contents.length) {
                     var upcoming, result;
@@ -10678,6 +10684,7 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
     }
 }]);
 
+
 app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$http',
     function($document, $q, $timeout, atlasHost, $http) {
 
@@ -10697,6 +10704,7 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
         $scope.showSegments.newItem = {};
         $scope.showSegments.segments = [];
         $scope.showSegments.showCreateUI = false;
+        $scope.showSegments.submitted = false;
 
         $scope.showSegments.loadSegments = function(segment) {
             if (segment.related_links.length) {
@@ -10704,7 +10712,6 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
                 for (var i in segment.related_links) {
                     _item = segment.related_links[i];
                     if (_item.duration === $scope.broadcast.duration) {
-                        console.log(_item);
                         _segment = createSegmentObj(_item.title, 
                                                     _item.url, 
                                                     0, 
@@ -10737,8 +10744,8 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
         }
 
         $scope.showSegments.new = function() {
-            if (!_.isString($scope.showSegments.newItem.label) || !_.isString($scope.showSegments.newItem.url)) return;
-            if ($scope.showSegments.newItem.label === '' || $scope.showSegments.newItem.url === '') return;
+            $scope.showSegments.submitted = true;
+            if (!newSegmentForm.$valid) return;
             var _segment = createSegmentObj($scope.showSegments.newItem.label, 
                                             $scope.showSegments.newItem.url, 
                                             0, 
@@ -10747,6 +10754,7 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
             $scope.showSegments.segments.push(_segment)
             $scope.showSegments.newItem.label = $scope.showSegments.newItem.url = '';
             $scope.showSegments.showCreateUI = false;
+            $scope.showSegments.submitted = false;
         }
     }
 

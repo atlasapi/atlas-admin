@@ -164,6 +164,7 @@
     width: 100%;
     padding: 1rem;
     background: $color-purple-light;
+    border-radius: 5px;
 
     .full-segment-new,
     .full-segment {
@@ -176,6 +177,7 @@
         overflow: hidden;
         background: white;
         border: 1px solid $color-pink;
+        border-radius: 3px;
 
         input {
             width: 100%;
@@ -196,7 +198,7 @@
             border: none;
             box-shadow: none;
 
-            &.cancel { background: $color-red; }
+            &.cancel { background: $color-grey-dark; }
             &.create { background: $color-green; }
         }
 
@@ -212,12 +214,15 @@
 
         .delete-segment {
             position: absolute;
-            top: .25rem;
-            right: .25rem;
+            top: 0;
+            right: 0;
+            width: 1.25rem;
+            height: 1.25rem;
             cursor: pointer;
             opacity: .5;
-            text-decoration: underline;
+            line-height: 1.25rem;
             font-size: 15px;
+            text-align: center;
 
             &:hover { color: $color-red; opacity: 1; }
         }
@@ -323,12 +328,15 @@
 
     .delete-segment {
         position: absolute;
-        top: .25rem;
-        right: .25rem;
+        top: 0;
+        right: 0;
+        width: 1.25rem;
+        height: 1.25rem;
         cursor: pointer;
         opacity: .5;
-        text-decoration: underline;
+        line-height: 1.25rem;
         font-size: 15px;
+        text-align: center;
 
         &:hover { color: $color-red; opacity: 1; }
     }
@@ -425,7 +433,7 @@
     border-radius: 4px;
 }
 
-.scrubber-edit-dialog > h2 {
+.scrubber-edit-dialog h2 {
     margin: .5rem;
     font-size: 1rem;
     font-weight: bold;
@@ -434,6 +442,15 @@
 /* Scrubber form elements */
 .scrubber-form-row {
     width: 100%;
+}
+
+.segment-form-error {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    padding: .25rem .5rem;
+    background: $color-red;
+    color: white;
 }
 
 .scrubber-form-row > input {
@@ -454,7 +471,7 @@
     border: none;
     box-shadow: none;
 
-    &.cancel { background: $color-red; }
+    &.cancel { background: $color-grey-dark; }
     &.create { background: $color-green; }
 }
 
