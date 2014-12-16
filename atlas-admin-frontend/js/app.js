@@ -82,21 +82,15 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/logout', {templateUrl: 'partials/logout.html', controller: 'CtrlLogout'});
     $routeProvider.when('/error', {templateUrl: 'partials/error.html', controller: 'ErrorController', reloadOnSearch: false});
     $routeProvider.otherwise({redirectTo: '/applications'});
-  }]);
-
-
+}]);
 
 app.config(['$httpProvider', function($httpProvider) {
     $httpProvider.defaults.useXDomain = true;
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
-
-
     $httpProvider.responseInterceptors.push('AuthenticationInterceptor');
-    $httpProvider.responseInterceptors.push('ProfileCompleteInterceptor');
     $httpProvider.interceptors.push('LoadingInterceptor');
+    $httpProvider.interceptors.push('ProfileCompleteInterceptor');
 }]);
-
-
 
 // This is used for telling angular to allow transposing of strings
 // to make url's in the $scope
@@ -105,8 +99,4 @@ app.config(['$sceDelegateProvider', function($sceDelegateProvider) {
         'self',
         'http://*.metabroadcast.com/**'
         ]);
-}]);
-
-app.config(['$locationProvider', function($locationProvider) {
-    //$locationProvider.html5Mode(false).hashPrefix('!');
 }]);

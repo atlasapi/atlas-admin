@@ -12,11 +12,12 @@ app.factory('LoadingInterceptor', ['$q', '$rootScope', '$injector', '$timeout', 
         if (!$rootScope.show) {
             $rootScope.show = {};
         }
+        $rootScope.show.cloak = true;
 
         var restricted = function() {
             var _path = $location.path();
             for (var i in restrictedLocations) {
-                if (_path.indexOf(restrictedLocations[i]) > -1) {
+                if (_path.indexOf(restrictedLocations[i]) !== -1) {
                     return true;
                 }
             }
@@ -29,16 +30,17 @@ app.factory('LoadingInterceptor', ['$q', '$rootScope', '$injector', '$timeout', 
                 $timeout.cancel(loadTimer);
                 loadTimer = $timeout(function() {
                     $rootScope.show.load = true;
+                    $rootScope.show.cloak = true;
                     $rootScope.$broadcast('loading-started');
                 }, 400);
             }
         }
 
         var endLoading = function() {
-            console.log('end load');
             $timeout.cancel(loadTimer);
             $rootScope.$broadcast('loading-complete');
             $rootScope.show.load = false;
+            $rootScope.show.cloak = false;
         }
 
         // precautionary incase the loading process is 
@@ -52,7 +54,7 @@ app.factory('LoadingInterceptor', ['$q', '$rootScope', '$injector', '$timeout', 
                 return config || $q.when(config);
             },
             'response': function(response) {
-                requests--;
+                requests = (requests > 0)? --requests : 0;
                 if (!requests) endLoading();
                 return response || $q.when(response);
             }

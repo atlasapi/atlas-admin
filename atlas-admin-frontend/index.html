@@ -20,7 +20,7 @@
                 <a class="navbar-logo" href="#"><img src="img/atlas_logo.png" alt="Atlas Admin logo" /></a>
             </div>
 
-            <div class="navbar-links" ng-cloak>
+            <div class="navbar-links">
                 <ul ng-show="status.loggedIn" class="navbar-links-user">
                     <li ng-repeat="item in app.menu.users">
                         <a ng-href="#{{item.path}}" active-path="active-menu-item"><span class="menu-button">{{item.label}}</span></a>
@@ -50,7 +50,7 @@
         <!-- loading container -->
         <div preloader></div>
         <!-- application container -->
-        <div class="application-container" ng-show="!show.load" ng-view></div>
+        <div class="application-container" ng-hide="show.cloak" ng-view></div>
         
         <script src="js/vendor/jquery.min.js"></script>
         <script src="js/vendor/angular/angular.min.js"></script>

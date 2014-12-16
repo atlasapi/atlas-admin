@@ -6874,21 +6874,15 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/logout', {templateUrl: 'partials/logout.html', controller: 'CtrlLogout'});
     $routeProvider.when('/error', {templateUrl: 'partials/error.html', controller: 'ErrorController', reloadOnSearch: false});
     $routeProvider.otherwise({redirectTo: '/applications'});
-  }]);
-
-
+}]);
 
 app.config(['$httpProvider', function($httpProvider) {
     $httpProvider.defaults.useXDomain = true;
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
-
-
     $httpProvider.responseInterceptors.push('AuthenticationInterceptor');
-    $httpProvider.responseInterceptors.push('ProfileCompleteInterceptor');
     $httpProvider.interceptors.push('LoadingInterceptor');
+    $httpProvider.interceptors.push('ProfileCompleteInterceptor');
 }]);
-
-
 
 // This is used for telling angular to allow transposing of strings
 // to make url's in the $scope
@@ -6897,10 +6891,6 @@ app.config(['$sceDelegateProvider', function($sceDelegateProvider) {
         'self',
         'http://*.metabroadcast.com/**'
         ]);
-}]);
-
-app.config(['$locationProvider', function($locationProvider) {
-    //$locationProvider.html5Mode(false).hashPrefix('!');
 }]);
 
 var app = angular.module('atlasAdmin.interceptors', []);
@@ -6947,11 +6937,12 @@ app.factory('LoadingInterceptor', ['$q', '$rootScope', '$injector', '$timeout', 
         if (!$rootScope.show) {
             $rootScope.show = {};
         }
+        $rootScope.show.cloak = true;
 
         var restricted = function() {
             var _path = $location.path();
             for (var i in restrictedLocations) {
-                if (_path.indexOf(restrictedLocations[i]) > -1) {
+                if (_path.indexOf(restrictedLocations[i]) !== -1) {
                     return true;
                 }
             }
@@ -6964,16 +6955,17 @@ app.factory('LoadingInterceptor', ['$q', '$rootScope', '$injector', '$timeout', 
                 $timeout.cancel(loadTimer);
                 loadTimer = $timeout(function() {
                     $rootScope.show.load = true;
+                    $rootScope.show.cloak = true;
                     $rootScope.$broadcast('loading-started');
                 }, 400);
             }
         }
 
         var endLoading = function() {
-            console.log('end load');
             $timeout.cancel(loadTimer);
             $rootScope.$broadcast('loading-complete');
             $rootScope.show.load = false;
+            $rootScope.show.cloak = false;
         }
 
         // precautionary incase the loading process is 
@@ -6987,7 +6979,7 @@ app.factory('LoadingInterceptor', ['$q', '$rootScope', '$injector', '$timeout', 
                 return config || $q.when(config);
             },
             'response': function(response) {
-                requests--;
+                requests = (requests > 0)? --requests : 0;
                 if (!requests) endLoading();
                 return response || $q.when(response);
             }
@@ -6996,36 +6988,51 @@ app.factory('LoadingInterceptor', ['$q', '$rootScope', '$injector', '$timeout', 
 var app = angular.module('atlasAdmin.interceptors');
 
 // Make sure profile is completed before allowing use of app
-app.factory('ProfileCompleteInterceptor', function (ProfileStatus, $location, $q, $rootScope) {
-    return function (promise) {
-        return promise.then(
-            function (response) {
-                var url = response.config.url;
-                if (url.indexOf('partials/error') !== -1) {
-                    return response;
-                }
-                if (ProfileStatus.isProfileComplete() ||
-                    response.status === 400 ||
-                    response.config.url.indexOf('/auth/') !== -1) {
-                    return response;
-                }
-                if (url.indexOf('partials/request') !== -1 ||
-                    url.indexOf('partials/source') !== -1 ||
-                    url.indexOf('partials/application') !== -1) {
-
-                    if (!ProfileStatus.isProfileComplete()) {
-                        $location.path('/terms');
-                        return $q.reject(response);
-                    }
-                }
-                return response;
-            },
-            function (response) {
-                return response;
+app.factory('ProfileCompleteInterceptor', ['ProfileStatus', '$location', '$q', '$rootScope',
+    function (ProfileStatus, $location, $q, $rootScope) {
+    return {
+        'request': function(config) {
+            if (ProfileStatus.isProfileComplete()) {
+                return config;
+            }else{
+                $location.path('/profile');
+                return config || $q.reject(config);
             }
-        );
-    };
-});
+        },
+        'response': function(response) {
+            return response || $q.reject(response);
+        }
+    }
+
+    // return function (promise) {
+    //     return promise.then(
+    //         function (response) {
+    //             var url = response.config.url;
+    //             if (url.indexOf('partials/error') !== -1) {
+    //                 return response;
+    //             }
+    //             if (ProfileStatus.isProfileComplete() ||
+    //                 response.status === 400 ||
+    //                 response.config.url.indexOf('/auth/') !== -1) {
+    //                 return response;
+    //             }
+    //             if (url.indexOf('partials/request') !== -1 ||
+    //                 url.indexOf('partials/source') !== -1 ||
+    //                 url.indexOf('partials/application') !== -1) {
+
+    //                 if (!ProfileStatus.isProfileComplete()) {
+    //                     $location.path('/terms');
+    //                     return $q.reject(response);
+    //                 }
+    //             }
+    //             return response;
+    //         },
+    //         function (response) {
+    //             return response;
+    //         }
+    //     );
+    // };
+}]);
 
 
 'use strict';
