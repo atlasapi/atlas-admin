@@ -283,7 +283,7 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
 
         $scope.showSegments.new = function() {
             $scope.showSegments.submitted = true;
-            if (!newSegmentForm.$valid) return;
+            if (newSegmentForm.linkLabel.value === '' || newSegmentForm.linkUrl.value === '' ) return;
             var _segment = createSegmentObj($scope.showSegments.newItem.label, 
                                             $scope.showSegments.newItem.url, 
                                             0, 

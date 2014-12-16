@@ -233,8 +233,8 @@ app.directive('scrubber', ['$document', '$compile',
         function addSegment() {
             $scope.scrubber.submitted = true;
             var _create = $scope.scrubber.create;
-            if (typeof _create.url !== 'string' || 
-                typeof _create.label !== 'string' ||
+            if (scrubberForm.linkLabel.value === '' ||
+                scrubberForm.linkUrl.value === '' ||
                 !LIVE_ITEM.length) {
                 return false;
             }
@@ -409,7 +409,7 @@ app.directive('scrubber', ['$document', '$compile',
             }
 
             $scope.scrubber.loadSegments = function(segment) {
-            return;
+            return; // for now...
             if (segment.related_links.length) {
                 var _segment, _item;
                 for (var i in segment.related_links) {
