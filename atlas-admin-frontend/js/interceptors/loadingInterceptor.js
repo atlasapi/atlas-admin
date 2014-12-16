@@ -1,0 +1,60 @@
+var app = angular.module('atlasAdmin.interceptors');
+
+// the loading bar will show when there are requests still pending, but will
+// be delayed slighty so we dont see the loader flashing up for pages that
+// load quickly. This also gives the illusion of faster page loads
+app.factory('LoadingInterceptor', ['$q', '$rootScope', '$injector', '$timeout', '$location',
+        function($q, $rootScope, $injector, $timeout, $location) {
+        var requests = 0;
+        var loadTimer;
+        var restrictedLocations = ['scrubbables'];
+
+        if (!$rootScope.show) {
+            $rootScope.show = {};
+        }
+
+        var restricted = function() {
+            var _path = $location.path();
+            for (var i in restrictedLocations) {
+                if (_path.indexOf(restrictedLocations[i]) > -1) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        var startLoading = function() {
+            var _loggedin = $rootScope.status.loggedIn || false;
+            if (requests > 1 && _loggedin && !restricted()) {
+                $timeout.cancel(loadTimer);
+                loadTimer = $timeout(function() {
+                    $rootScope.show.load = true;
+                    $rootScope.$broadcast('loading-started');
+                }, 400);
+            }
+        }
+
+        var endLoading = function() {
+            console.log('end load');
+            $timeout.cancel(loadTimer);
+            $rootScope.$broadcast('loading-complete');
+            $rootScope.show.load = false;
+        }
+
+        // precautionary incase the loading process is 
+        // still running from the last page
+        endLoading();
+
+        return {
+            'request': function(config) {
+                requests++;
+                startLoading();
+                return config || $q.when(config);
+            },
+            'response': function(response) {
+                requests--;
+                if (!requests) endLoading();
+                return response || $q.when(response);
+            }
+        };
+    }]);
