@@ -138,12 +138,11 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
         $scope.atlasSearch.showAutocomplete = false;
 
         $scope.atlasSearch.selectAtlasItem = function(title, id) {
+            if (!_.isString(title) && !_.isString(id)) { 
+                return false;
+            }
             var _result;
             $location.path('/scrubbables/'+id);
-            //Scrubbables.content.uri(uri).then(function(item) {
-            //    _result = Helpers.channelFilter(item.contents, 'cbbh');
-            //    $scope.atlasSearch.selectedItem = _result[0]
-            //});
             $scope.loading = true;
             $scope.atlasSearch.searchquery = title;
             $scope.atlasSearch.showAutocomplete = false;
@@ -165,7 +164,6 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
         var searchRequest = function() {
             var _query = $scope.atlasSearch.searchquery;
             if (!_query.length) return;
-
             Scrubbables.search($scope.searchKey, _query).then(function(res) {
                 if (res.contents.length) {
                     var upcoming, result;
@@ -224,6 +222,7 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
     }
 }]);
 
+
 app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$http',
     function($document, $q, $timeout, atlasHost, $http) {
 
@@ -243,6 +242,7 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
         $scope.showSegments.newItem = {};
         $scope.showSegments.segments = [];
         $scope.showSegments.showCreateUI = false;
+        $scope.showSegments.submitted = false;
 
         $scope.showSegments.loadSegments = function(segment) {
             if (segment.related_links.length) {
@@ -282,8 +282,8 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
         }
 
         $scope.showSegments.new = function() {
-            console.log(newSegmentForm.label.$valid)
-            console.log(newSegmentForm.url.$valid)
+            $scope.showSegments.submitted = true;
+            if (!newSegmentForm.$valid) return;
             var _segment = createSegmentObj($scope.showSegments.newItem.label, 
                                             $scope.showSegments.newItem.url, 
                                             0, 
@@ -292,6 +292,7 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
             $scope.showSegments.segments.push(_segment)
             $scope.showSegments.newItem.label = $scope.showSegments.newItem.url = '';
             $scope.showSegments.showCreateUI = false;
+            $scope.showSegments.submitted = false;
         }
     }
 

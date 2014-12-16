@@ -6,9 +6,11 @@
             <div class="delete-segment" ng-click="showSegments.removeItem(segment._id)">x</div>
         </div>
         <div class="full-segment-new" ng-show="showSegments.showCreateUI">
-            <form name="newSegmentForm">
-                <input ng-model="showSegments.newItem.label" type="text" name="label" placeholder="Label" required>
-                <input ng-model="showSegments.newItem.url" type="url" name="url" placeholder="http://" required>
+            <form novalidate name="newSegmentForm">
+                <span class="segment-form-error" ng-show="showSegments.submitted && newSegmentForm.linkLabel.$invalid">This link needs a label</span>
+                <input ng-model="showSegments.newItem.label" type="text" name="linkLabel" placeholder="Label" required>
+                <span class="segment-form-error" ng-show="showSegments.submitted && newSegmentForm.linkUrl.$invalid">This link needs a valid url</span>
+                <input ng-model="showSegments.newItem.url" type="url" name="linkUrl" placeholder="http://" required>
                 <span class="button-container">
                     <button class="cancel" ng-click="showSegments.cancel()">Cancel</button>
                     <button class="create" ng-click="showSegments.new()">Create link</button>

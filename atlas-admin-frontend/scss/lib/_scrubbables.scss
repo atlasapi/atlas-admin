@@ -433,7 +433,7 @@
     border-radius: 4px;
 }
 
-.scrubber-edit-dialog > h2 {
+.scrubber-edit-dialog h2 {
     margin: .5rem;
     font-size: 1rem;
     font-weight: bold;
@@ -442,6 +442,15 @@
 /* Scrubber form elements */
 .scrubber-form-row {
     width: 100%;
+}
+
+.segment-form-error {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    padding: .25rem .5rem;
+    background: $color-red;
+    color: white;
 }
 
 .scrubber-form-row > input {

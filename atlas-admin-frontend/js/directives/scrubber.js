@@ -112,7 +112,7 @@ app.directive('scrubber', ['$document', '$compile',
                         _el.attr('data-segment-id', _segment_id);
                         _el.css('margin-left', secondsToPixels(_item.startTime) +'px');
                         _el.css('width', secondsToPixels(_item.endTime) - secondsToPixels(_item.startTime) +'px');
-                        _el.append('<h3>'+ _item.label +'</h3><p>'+ _item.url +'</p>');
+                        _el.append('<h3>'+ _item.label +'</h3><p><a href="'+ _item.url +'" target="_blank">'+ _item.url +'</a></p>');
                         _el.append('<span class="delete-segment" ng-click="scrubber.removeItem(\''+ _segment_id +'\')">x</span>')
                         CREATED.append(_el);
                         $compile($(_el))($scope);
@@ -231,6 +231,7 @@ app.directive('scrubber', ['$document', '$compile',
         //
         // @param new_segment {Object} the options for the new segment
         function addSegment() {
+            $scope.scrubber.submitted = true;
             var _create = $scope.scrubber.create;
             if (typeof _create.url !== 'string' || 
                 typeof _create.label !== 'string' ||
@@ -249,6 +250,7 @@ app.directive('scrubber', ['$document', '$compile',
                 console.error('Couldnt make new segment with data', _segment);
             }
             $scope.scrubber.segments = TIMELINE_SEGMENTS;
+            $scope.scrubber.submitted = false;
         }
 
         // Get cursor position
@@ -298,7 +300,7 @@ app.directive('scrubber', ['$document', '$compile',
             if (!$('.scrubber-edit-dialog', TIMELINE).length) {
                 var edit_ui = templates().edit_bubble;
                 $(element).append(edit_ui);
-                $compile($(element))($scope);
+                $compile($(edit_ui))($scope);
             }
         }
 
@@ -353,12 +355,18 @@ app.directive('scrubber', ['$document', '$compile',
 
             var edit_bubble = function() {
                 var lines = [];
-                lines.push('<div class="scrubber-edit-dialog">');
+                lines.push('<div class="scrubber-edit-dialog"><form novalidate name="scrubberForm">');
                 lines.push('<h2>New segment</h2>');
-                lines.push('<div class="scrubber-form-row"><input type="text" ng-model="scrubber.create.label" placeholder="label"></div>');
-                lines.push('<div class="scrubber-form-row"><input type="url" ng-model="scrubber.create.url" placeholder="http://"></div>');
-                lines.push('<div class="scrubber-button-group"><button class="cancel" ng-click="scrubber.clearTempSegment()">Cancel</button><button class="create" ng-click="scrubber.createLink()">Create link</button></div>');
+                lines.push('<div class="scrubber-form-row">')
+                lines.push('<span class="segment-form-error" ng-show="scrubber.submitted && scrubberForm.linkLabel.$invalid">This link needs a label</span>');
+                lines.push('<input type="text" name="linkLabel" ng-model="scrubber.create.label" placeholder="label">');
                 lines.push('</div>');
+                lines.push('<div class="scrubber-form-row">');
+                lines.push('<span class="segment-form-error" ng-show="scrubber.submitted && scrubberForm.linkUrl.$invalid">This url needs a valid url</span>');
+                lines.push('<input type="url" name="linkUrl" ng-model="scrubber.create.url" placeholder="http://">');
+                lines.push('</div>');
+                lines.push('<div class="scrubber-button-group"><button class="cancel" ng-click="scrubber.clearTempSegment()">Cancel</button><button class="create" ng-click="scrubber.createLink()">Create link</button></div>');
+                lines.push('</form></div>');
                 return $(lines.join(''));
             }
 
@@ -389,6 +397,7 @@ app.directive('scrubber', ['$document', '$compile',
             $scope.scrubber = {};
             $scope.scrubber.create = {};
             $scope.scrubber.segments = [];
+            $scope.scrubber.submitted = false;
 
             $scope.scrubber.createLink = addSegment;
             $scope.scrubber.removeItem = removeSegment;
