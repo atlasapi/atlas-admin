@@ -16,7 +16,7 @@ app.factory('AuthenticationInterceptor', ['$q', '$location', 'atlasHost', 'atlas
             if (!_token || !_provider) {
                 console.log('Token and provider aren\'t present in localstorage');
                 $location.path('/login');
-            }  
+            }
             return config || $q.defer(config);
         },
 
