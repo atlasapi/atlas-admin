@@ -12,7 +12,6 @@ app.factory('LoadingInterceptor', ['$q', '$rootScope', '$injector', '$timeout', 
         if (!$rootScope.show) {
             $rootScope.show = {};
         }
-        $rootScope.show.cloak = true;
 
         var restricted = function() {
             var _path = $location.path();
@@ -28,9 +27,9 @@ app.factory('LoadingInterceptor', ['$q', '$rootScope', '$injector', '$timeout', 
             var _loggedin = $rootScope.status.loggedIn || false;
             if (requests > 1 && _loggedin && !restricted()) {
                 $timeout.cancel(loadTimer);
+                $rootScope.show.cloak = true;
                 loadTimer = $timeout(function() {
                     $rootScope.show.load = true;
-                    $rootScope.show.cloak = true;
                     $rootScope.$broadcast('loading-started');
                 }, 400);
             }
@@ -46,6 +45,7 @@ app.factory('LoadingInterceptor', ['$q', '$rootScope', '$injector', '$timeout', 
         // precautionary incase the loading process is 
         // still running from the last page
         endLoading();
+        $rootScope.show.cloak = true;
 
         return {
             'request': function(config) {

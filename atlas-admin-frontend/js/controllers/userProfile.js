@@ -1,7 +1,4 @@
 'use strict';
-
-/* User Profile Controller */
-
 var app = angular.module('atlasAdmin.controllers.user', []);
 app.controller('UserProfileController', function($scope, $rootScope, $routeParams, Users, Applications, $location) {
     $scope.app = {};
@@ -43,7 +40,6 @@ app.controller('UserProfileController', function($scope, $rootScope, $routeParam
         Users.currentUser().then(function(user) {
             $scope.app.user = user;
             $rootScope.view_title = 'Your profile';
-            console.log($scope)
         });
     }
 
