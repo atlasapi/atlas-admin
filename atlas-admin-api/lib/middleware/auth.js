@@ -1,5 +1,4 @@
 'use strict';
-
 var config = require('../../config'),
     common = require('../../common'),
     http = require('http'),

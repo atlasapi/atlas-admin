@@ -1,6 +1,3 @@
-'use strict';
-
-/* Services */
 var app = angular.module('atlasAdmin.services.users', []);
 
 app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'ProfileStatus', '$log', 'atlasApiHost', '$q',

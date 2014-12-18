@@ -6794,49 +6794,50 @@ var t=x.length;if(t){x.sort(c);for(var e,r=1,u=x[0],i=[u];t>r;++r)e=x[r],l(e[0],
 
 // Declare app level module which depends on filters, and services
 var app = angular.module('atlasAdmin', [
-                        'atlasAdmin.filters', 
-                        'atlasAdmin.preloader', 
-                        'atlasAdmin.services.auth',
-                        'atlasAdmin.services.atlas',
-                        'atlasAdmin.services.applications',
-                        'atlasAdmin.services.sources',
-                        'atlasAdmin.services.sourceRequests',
-                        'atlasAdmin.services.sourceLicenses',
-                        'atlasAdmin.services.users', 
-                        'atlasAdmin.services.uservideosources',
-                        'atlasAdmin.services.uservideosources.youtube',
-                        'atlasAdmin.services.propositions',
-                        'atlasAdmin.services.usage',
-                        'atlasAdmin.services.feeds',
-                        'atlasAdmin.services.bbcscrubbables',
-                        'atlasAdmin.directives.orderable', 
-                        'atlasAdmin.directives.focus',
-                        'atlasAdmin.directives.activePath',
-                        'atlasAdmin.directives.validUsage',
-                        'atlasAdmin.directives.inputmorph',
-                        'atlasAdmin.directives.loadContent',
-                        'atlasAdmin.directives.bbcscrubbables',
-                        'atlasAdmin.controllers.auth',
-                        'atlasAdmin.controllers.atlas',
-                        'atlasAdmin.controllers.errors',
-                        'atlasAdmin.controllers.applications',
-                        'atlasAdmin.controllers.wishlist',
-                        'atlasAdmin.controllers.sources',
-                        'atlasAdmin.controllers.epgwidget',
-                        'atlasAdmin.controllers.requestSource',
-                        'atlasAdmin.controllers.sourceRequests',
-                        'atlasAdmin.controllers.user',
-                        'atlasAdmin.controllers.feeds',
-                        'atlasAdmin.controllers.uservideosources',
-                        'atlasAdmin.controllers.uservideosources.youtube',
-                        'atlasAdmin.controllers.bbcscrubbables',
-                        'atlasAdmin.controllers.admins.usage',
-                        'atlasAdmin.controllers.admins.manageSourceRequests',
-                        'atlasAdmin.controllers.admins.manageWishlist',
-                        'ui.bootstrap',
-                        'ngResource',
-                        'ngRoute',
-                        'atlasAdminConfig']);
+                         'atlasAdmin.interceptors', 
+                         'atlasAdmin.filters', 
+                         'atlasAdmin.preloader', 
+                         'atlasAdmin.services.auth',
+                         'atlasAdmin.services.atlas',
+                         'atlasAdmin.services.applications',
+                         'atlasAdmin.services.sources',
+                         'atlasAdmin.services.sourceRequests',
+                         'atlasAdmin.services.sourceLicenses',
+                         'atlasAdmin.services.users', 
+                         'atlasAdmin.services.uservideosources',
+                         'atlasAdmin.services.uservideosources.youtube',
+                         'atlasAdmin.services.propositions',
+                         'atlasAdmin.services.usage',
+                         'atlasAdmin.services.feeds',
+                         'atlasAdmin.services.bbcscrubbables',
+                         'atlasAdmin.directives.orderable', 
+                         'atlasAdmin.directives.focus',
+                         'atlasAdmin.directives.activePath',
+                         'atlasAdmin.directives.validUsage',
+                         'atlasAdmin.directives.inputmorph',
+                         'atlasAdmin.directives.loadContent',
+                         'atlasAdmin.directives.bbcscrubbables',
+                         'atlasAdmin.controllers.auth',
+                         'atlasAdmin.controllers.atlas',
+                         'atlasAdmin.controllers.errors',
+                         'atlasAdmin.controllers.applications',
+                         'atlasAdmin.controllers.wishlist',
+                         'atlasAdmin.controllers.sources',
+                         'atlasAdmin.controllers.epgwidget',
+                         'atlasAdmin.controllers.requestSource',
+                         'atlasAdmin.controllers.sourceRequests',
+                         'atlasAdmin.controllers.user',
+                         'atlasAdmin.controllers.feeds',
+                         'atlasAdmin.controllers.uservideosources',
+                         'atlasAdmin.controllers.uservideosources.youtube',
+                         'atlasAdmin.controllers.bbcscrubbables',
+                         'atlasAdmin.controllers.admins.usage',
+                         'atlasAdmin.controllers.admins.manageSourceRequests',
+                         'atlasAdmin.controllers.admins.manageWishlist',
+                         'ui.bootstrap',
+                         'ngResource',
+                         'ngRoute',
+                         'atlasAdminConfig']);
 
 
 app.config(['$routeProvider', function($routeProvider) {
@@ -6873,22 +6874,69 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/logout', {templateUrl: 'partials/logout.html', controller: 'CtrlLogout'});
     $routeProvider.when('/error', {templateUrl: 'partials/error.html', controller: 'ErrorController', reloadOnSearch: false});
     $routeProvider.otherwise({redirectTo: '/applications'});
-  }])
-
+}]);
 
 app.config(['$httpProvider', function($httpProvider) {
     $httpProvider.defaults.useXDomain = true;
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
+    $httpProvider.interceptors.push('LoadingInterceptor');
+    $httpProvider.interceptors.push('AuthenticationInterceptor');
+    $httpProvider.interceptors.push('ProfileCompleteInterceptor');
+}]);
 
-    // these are used for intercepting the request and running checks 
-    // for authentication and profile complete-ness
-    $httpProvider.responseInterceptors.push('AuthenticationInterceptor');
-    $httpProvider.responseInterceptors.push('ProfileCompleteInterceptor');
+// This is used for telling angular to allow transposing of strings
+// to make url's in the $scope
+app.config(['$sceDelegateProvider', function($sceDelegateProvider) {
+    $sceDelegateProvider.resourceUrlWhitelist([
+        'self',
+        'http://*.metabroadcast.com/**'
+        ]);
+}]);
 
-    // the loading bar will show when there are requests still pending, but will
-    // be delayed slighty so we dont see the loader flashing up for pages that
-    // load quickly. This also gives the illusion of faster page loads
-    $httpProvider.interceptors.push(['$q', '$rootScope', '$injector', '$timeout', '$location',
+var app = angular.module('atlasAdmin.interceptors', []);
+
+app.factory('AuthenticationInterceptor', ['$q', '$location', 'atlasHost', 'atlasApiHost', '$window', 'Authentication',
+    function($q, $location, atlasHost, atlasApiHost, $window, Auth) {
+    return {
+        'request': function(config) {
+            var _url = config.url;
+            if (_url.indexOf('partials') !== -1 ||
+                _url.indexOf('/login') !== -1 ||
+                _url.indexOf('/logout') !== -1 ||
+                _url.indexOf('/auth/') !== -1) {
+                return config || $q.defer(config);
+            }
+            var _provider = Auth.getProvider() || null;
+            var _token = Auth.getToken() || null;
+            if (!_token || !_provider) {
+                console.log('Token and provider aren\'t present in localstorage');
+                $location.path('/login');
+            }  
+            return config || $q.defer(config);
+        },
+
+        'responseError': function(response) {
+            var _url = response.config.url;
+            // For redirecting to the login screen if api calls come back as bad
+            if (_url.indexOf(atlasHost) !== -1 || _url.indexOf(atlasApiHost) !== -1) {
+                if (response.status === 400) {
+                    console.error('Account not authenticated to make request to: '+_url);
+                    $location.path('/login');
+                }else if (response.status === 403) {
+                    $window.location.href = '#/error?type=forbidden';
+                }
+                return response || $q.defer(response);
+            }
+            return response || $q.defer(response);
+        } 
+    }
+}]);
+var app = angular.module('atlasAdmin.interceptors');
+
+// the loading bar will show when there are requests still pending, but will
+// be delayed slighty so we dont see the loader flashing up for pages that
+// load quickly. This also gives the illusion of faster page loads
+app.factory('LoadingInterceptor', ['$q', '$rootScope', '$injector', '$timeout', '$location',
         function($q, $rootScope, $injector, $timeout, $location) {
         var requests = 0;
         var loadTimer;
@@ -6901,7 +6949,9 @@ app.config(['$httpProvider', function($httpProvider) {
         var restricted = function() {
             var _path = $location.path();
             for (var i in restrictedLocations) {
-                if (_path.indexOf(restrictedLocations[i]) > -1) return true;
+                if (_path.indexOf(restrictedLocations[i]) !== -1) {
+                    return true;
+                }
             }
             return false;
         }
@@ -6910,6 +6960,7 @@ app.config(['$httpProvider', function($httpProvider) {
             var _loggedin = $rootScope.status.loggedIn || false;
             if (requests > 1 && _loggedin && !restricted()) {
                 $timeout.cancel(loadTimer);
+                $rootScope.show.cloak = true;
                 loadTimer = $timeout(function() {
                     $rootScope.show.load = true;
                     $rootScope.$broadcast('loading-started');
@@ -6921,7 +6972,13 @@ app.config(['$httpProvider', function($httpProvider) {
             $timeout.cancel(loadTimer);
             $rootScope.$broadcast('loading-complete');
             $rootScope.show.load = false;
+            $rootScope.show.cloak = false;
         }
+
+        // precautionary incase the loading process is 
+        // still running from the last page
+        endLoading();
+        $rootScope.show.cloak = true;
 
         return {
             'request': function(config) {
@@ -6930,28 +6987,40 @@ app.config(['$httpProvider', function($httpProvider) {
                 return config || $q.when(config);
             },
             'response': function(response) {
-                requests--;
+                requests = (requests > 0)? --requests : 0;
                 if (!requests) endLoading();
                 return response || $q.when(response);
             }
         };
     }]);
+var app = angular.module('atlasAdmin.interceptors');
+
+// For making sure the user's profile is complete. if it isn't, the request should
+// be forwarded to the /profile page so the user can fill out missing details
+app.factory('ProfileCompleteInterceptor', ['ProfileStatus', '$location', '$q', '$rootScope', 'Authentication',
+    function (ProfileStatus, $location, $q, $rootScope, Auth) {
+    return {
+        'request': function(config) { 
+            var _url = config.url;
+            var _provider = Auth.getProvider() || null;
+            var _token = Auth.getToken() || null;
+            if (_provider && _token) {
+                if (!ProfileStatus.isProfileComplete() &&
+                    _url.indexOf('/auth/') === -1 &&
+                    _url.indexOf('/logout') === -1 &&
+                    _url.indexOf('/login') === -1 &&
+                    _url.indexOf('/profile') === -1) {
+                        $location.path('/profile');       
+                }
+            }
+            return config || $q.reject(config);
+        },
+        'response': function(response) {
+            return response || $q.reject(response);
+        }
+    }
 }]);
 
-
-
-// This is used for telling angular to allow transposing of strings
-// to make url's in the $scope
-app.config(['$sceDelegateProvider', function($sceDelegateProvider) {
-    $sceDelegateProvider.resourceUrlWhitelist([
-        'self',
-        'http://*.metabroadcast.com/**'
-        ]);
-}]);
-
-app.config(['$locationProvider', function($locationProvider) {
-    //$locationProvider.html5Mode(false).hashPrefix('!');
-}]);
 
 'use strict';
 var app = angular.module('atlasAdmin.services.auth', []);
@@ -6978,7 +7047,6 @@ app.factory('Authentication', ['$rootScope', 'ProfileStatus',
             localStorage.removeItem('auth.provider');
             localStorage.removeItem('auth.token');
             localStorage.removeItem('profile.complete');
-            //ProfileStatus.setComplete(false);
             $rootScope.status.loggedIn = false;
         },
         appendTokenToUrl: function (url) {
@@ -6995,68 +7063,6 @@ app.factory('Authentication', ['$rootScope', 'ProfileStatus',
         }
     };
 }]);
-
-app.factory('AuthenticationInterceptor', function ($q, $location, $window, atlasHost, $log, $timeout, $rootScope) {
-    return function (promise) {
-        return promise.then(
-            function (response) {
-                 // Set up auto logout after one year. Cancel any existing instance.
-                 if ($rootScope.autologout) {
-                     $timeout.cancel($rootScope.autologout);
-                 }
-                 $rootScope.autologout = $timeout(function () {
-                     $location.path('/logout');
-                 }, 525000 * 60 * 1000);
-                 return response;
-            },
-            function (response) {
-                // if no auth token then need to make an access request to atlas
-                if (response.config.url.indexOf(atlasHost) !== -1 && response.status === 400) {
-                    $log.info('Not logged in');
-                    $location.path('/login');
-                }
-                if (response.config.url.indexOf(atlasHost) !== -1 && response.status === 403) {
-                    $window.location.href = '#/error?type=forbidden';
-                }
-                return $q.reject(response);
-            }
-        )
-    }
-})
-
-// Make sure profile is completed before allowing use of app
-app.factory('ProfileCompleteInterceptor', function (ProfileStatus, $location, $q, $rootScope) {
-    return function (promise) {
-        return promise.then(
-            function (response) {
-                var url = response.config.url;
-                if (url.indexOf('partials/error') !== -1) {
-                    return response;
-                }
-                if (ProfileStatus.isProfileComplete() ||
-                    response.status === 400 ||
-                    response.config.url.indexOf('/auth/') !== -1) {
-                    return response;
-                }
-                if (url.indexOf('partials/request') !== -1 ||
-                    url.indexOf('partials/source') !== -1 ||
-                    url.indexOf('partials/application') !== -1) {
-
-                    if (!ProfileStatus.isProfileComplete()) {
-                        $location.path('/terms');
-                        return $q.reject(response);
-                    }
-                }
-                return response;
-            },
-            function (response) {
-                return response;
-            }
-        );
-    };
-});
-
-
 'use strict';
 var app = angular.module('atlasAdmin.services.atlas', []);
 
@@ -7099,9 +7105,6 @@ app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $
         }
     };
 });
-'use strict';
-
-/* Services */
 var app = angular.module('atlasAdmin.services.users', []);
 
 app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'ProfileStatus', '$log', 'atlasApiHost', '$q',
@@ -9433,9 +9436,6 @@ app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$sce', '$routePara
         }
 }]);
 'use strict';
-
-/* User Profile Controller */
-
 var app = angular.module('atlasAdmin.controllers.user', []);
 app.controller('UserProfileController', function($scope, $rootScope, $routeParams, Users, Applications, $location) {
     $scope.app = {};
@@ -9477,7 +9477,6 @@ app.controller('UserProfileController', function($scope, $rootScope, $routeParam
         Users.currentUser().then(function(user) {
             $scope.app.user = user;
             $rootScope.view_title = 'Your profile';
-            console.log($scope)
         });
     }
 
