@@ -22,19 +22,19 @@
 
             <div class="navbar-links">
                 <ul ng-show="status.loggedIn" class="navbar-links-user">
-                    <li ng-repeat="item in app.menu.users">
+                    <li ng-repeat="item in app.menu.users" ng-cloak>
                         <a ng-href="#{{item.path}}" active-path="active-menu-item"><span class="menu-button">{{item.label}}</span></a>
                     </li>
                     <li ng-if="app.menu.admins.length" class="nav-manage">
                         <ul>
-                            <li ng-repeat="item in app.menu.admins">
+                            <li ng-repeat="item in app.menu.admins" ng-cloak>
                                 <a ng-href="#{{item.path}}" active-path="active-menu-item"><span class="menu-button">{{item.label}}</span></a>
                             </li>
                         </ul>
                     </li>
                 </ul>
             </div>
-            <div class="navbar-user" ng-show="status.loggedIn" ng-click="app.toggleDropdown()">
+            <div class="navbar-user" ng-show="status.loggedIn" ng-click="app.toggleDropdown()" ng-cloak>
                 <span href="#" class="user-avatar">
                     <img class="profile-picture" ng-src="{{app.user.profile_image}}" alt="profile picture"/>
                     <span class="user-name">{{app.user.full_name}}</span>
