@@ -8921,11 +8921,11 @@ app.directive('scrubber', ['$document', '$compile',
                 lines.push('<div class="scrubber-edit-dialog"><form novalidate name="scrubberForm">');
                 lines.push('<h2>New segment</h2>');
                 lines.push('<div class="scrubber-form-row">')
-                lines.push('<span class="segment-form-error" ng-show="scrubber.submitted && scrubberForm.linkLabel.$invalid">This link needs a label</span>');
+                //lines.push('<span class="segment-form-error" ng-show="scrubber.submitted && scrubberForm.linkLabel.$invalid">This link needs a label</span>');
                 lines.push('<input type="text" name="linkLabel" ng-model="scrubber.create.label" placeholder="label">');
                 lines.push('</div>');
                 lines.push('<div class="scrubber-form-row">');
-                lines.push('<span class="segment-form-error" ng-show="scrubber.submitted && scrubberForm.linkUrl.$invalid">This url needs a valid url</span>');
+                //lines.push('<span class="segment-form-error" ng-show="scrubber.submitted && scrubberForm.linkUrl.$invalid">This url needs a valid url</span>');
                 lines.push('<input type="url" name="linkUrl" ng-model="scrubber.create.url" placeholder="http://">');
                 lines.push('</div>');
                 lines.push('<div class="scrubber-button-group"><button class="cancel" ng-click="scrubber.clearTempSegment()">Cancel</button><button class="create" ng-click="scrubber.createLink()">Create link</button></div>');
@@ -10500,7 +10500,7 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
         // load broadcast content from owl
         Scrubbables.content.id(id).then(
             function(item) {
-                console.log(item);
+            console.log(item);
             $scope.atlasSearch.selectedItem = Helpers.channelFilter(item.contents, 'cbbh')[0];
         }, function(err) { console.error(err) });
     }
@@ -10733,7 +10733,7 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
 
         $scope.showSegments.new = function() {
             $scope.showSegments.submitted = true;
-            if (newSegmentForm.linkLabel.value === '' || newSegmentForm.linkUrl.value === '' ) return;
+            //if (newSegmentForm.linkLabel.value === '' || newSegmentForm.linkUrl.value === '' ) return;
             var _segment = createSegmentObj($scope.showSegments.newItem.label, 
                                             $scope.showSegments.newItem.url, 
                                             0, 

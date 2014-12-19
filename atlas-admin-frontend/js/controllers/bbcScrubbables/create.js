@@ -51,7 +51,7 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
         // load broadcast content from owl
         Scrubbables.content.id(id).then(
             function(item) {
-                console.log(item);
+            console.log(item);
             $scope.atlasSearch.selectedItem = Helpers.channelFilter(item.contents, 'cbbh')[0];
         }, function(err) { console.error(err) });
     }
@@ -284,7 +284,7 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
 
         $scope.showSegments.new = function() {
             $scope.showSegments.submitted = true;
-            if (newSegmentForm.linkLabel.value === '' || newSegmentForm.linkUrl.value === '' ) return;
+            //if (newSegmentForm.linkLabel.value === '' || newSegmentForm.linkUrl.value === '' ) return;
             var _segment = createSegmentObj($scope.showSegments.newItem.label, 
                                             $scope.showSegments.newItem.url, 
                                             0, 
