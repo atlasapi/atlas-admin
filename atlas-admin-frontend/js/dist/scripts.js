@@ -7997,7 +7997,7 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
 
     var getDeerContentURI = function(apiKey, id) {
         var defer = $q.defer();
-        $http.get(atlasHost + '/4/content/' + id + '.json?key=' + encodeURIComponent(apiKey) + '&' + deerAnnotations)
+        $http.get(atlasHost.replace('stage.', '') + '/4/content/' + id + '.json?key=' + encodeURIComponent(apiKey) + '&' + deerAnnotations)
              .success(function(data, status) {
                 if (status !== 200) {
                     defer.reject('Atlas deer content request returned an error. Status:'+status);
