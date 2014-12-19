@@ -8093,7 +8093,7 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
     //
     // @param apiKey {string}
     // @param data {object}
-    var postToOwl = function(apiKey, data) {
+    var postToOwl = function (apiKey, data) {
         var defer = $q.defer();
         var _data = data || {};
         if (!_.isString(apiKey) || 
@@ -8110,7 +8110,7 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
         $http.post(atlasHost + '/3.0/content.json?apiKey='+apiKey, _postdata)
         .success(function(res, status) {
             if (status === 200) {
-                defer.resolve(res);
+                defer.resolve(_data.atlas.id);
             }else{
                 defer.reject('nope', status);
             }
@@ -8118,8 +8118,16 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
         return defer.promise;
     }
 
+    var jumpQueue = function(id) {
+        var _publisher = 'scrubbables-producer.bbc.co.uk';
+        $http.post('http://scrubbables.metabroadcast.com/system/queuejump/' + id + '?publisher=' + _publisher).then(
+            function() {}, 
+            function(reason) { console.error(reason) });
+    }
+
     return {
         keys: getKeys,
+        jumpQueue: jumpQueue,
         create: postToOwl,
         search: searchContent,
         content: {
@@ -10549,7 +10557,7 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
         _out.segments = _segments;
 
         Scrubbables.create($scope.writeKey, _out)
-        .then(function(res) {   
+        .then(function(id) {   
             // when the item has been sent to atlas, clear all the things  
             $scope.showUI = false;
             $scope.loading = false;
@@ -10558,9 +10566,10 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
             $scope.atlasSearch = {};
             $scope.scrubber = {};
             showMessage('The item has been saved');
+            Scrubbables.jumpQueue(id);
         }, function(res) {
             console.error(res);
-            showMessage('There was a peoblem sending the item to Atlas');
+            showMessage('There was a problem sending the item to Atlas');
         });
     }
 

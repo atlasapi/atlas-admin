@@ -108,7 +108,7 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
         _out.segments = _segments;
 
         Scrubbables.create($scope.writeKey, _out)
-        .then(function(res) {   
+        .then(function(id) {   
             // when the item has been sent to atlas, clear all the things  
             $scope.showUI = false;
             $scope.loading = false;
@@ -117,9 +117,10 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
             $scope.atlasSearch = {};
             $scope.scrubber = {};
             showMessage('The item has been saved');
+            Scrubbables.jumpQueue(id);
         }, function(res) {
             console.error(res);
-            showMessage('There was a peoblem sending the item to Atlas');
+            showMessage('There was a problem sending the item to Atlas');
         });
     }
 
