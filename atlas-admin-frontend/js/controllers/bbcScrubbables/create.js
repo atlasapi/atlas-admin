@@ -17,7 +17,6 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
         $scope.searchKey = keys.owlRead;
         $scope.writeKey = keys.owlWrite;
         $scope.deerKey = keys.deerRead;
-
         // load previous item if there exists an id in the url
         if ($routeParams.atlasId) {
             loadAtlasItem($routeParams.atlasId);
@@ -170,22 +169,22 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
                     var upcoming, result;
                     for (var i in res.contents) {
                         upcoming = res.contents[i].upcoming_content;
-                        for (var ii in upcoming) {
-                            Scrubbables.content.uri(upcoming[ii].uri).then(
-                                function(data) {
-                                var result = Helpers.channelFilter(data.contents, 'cbbh');
+                        if (_.isUndefined(upcoming)) continue;
+                        upcoming.forEach(function(item) {
+                            Scrubbables.content.uri(item.uri).then(
+                                function(content) {
+                                var result = Helpers.channelFilter(content.contents, 'cbbh');
                                 if (_.isObject(result)) {
                                     $scope.atlasSearch.searchResults.push( Helpers.formatResponse(result[0]) );
                                 }
                             }, function(err) { console.error(err) });
-                        }
-                        
+                        })
                     }
                     $scope.atlasSearch.messageOutput(null);
                     $scope.atlasSearch.showAutocomplete = true;
-                }else{
-                    $scope.atlasSearch.showAutocomplete = false;
+                } else {
                     $scope.atlasSearch.messageOutput('No results found');
+                    $scope.atlasSearch.showAutocomplete = false;
                 }
             }, function(err) {
                 $scope.atlasSearch.showAutocomplete = false;
@@ -198,15 +197,11 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
             $scope.atlasSearch.message = null;
             $scope.atlasSearch.searchResults = [];
             if (!_.isString(_query)) return;
-
             if (!_query.length) {
                 $timeout.cancel(input_timer);
                 $scope.atlasSearch.search_results = null;
                 $scope.atlasSearch.showAutocomplete = false;
-                return;
-            }
-
-            if (_query.length > 2 || _query.length === 0) {
+            } else if (_query.length > 2) {
                 $scope.atlasSearch.messageOutput('Searching...');
                 $timeout.cancel(input_timer);
                 input_timer = $timeout(searchRequest, 1000);
