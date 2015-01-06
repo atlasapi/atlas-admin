@@ -7977,7 +7977,7 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
 
     var searchContent = function(apiKey, query) {
         var defer = $q.defer();
-        $http.get(atlasHost + '/3.0/search.json?apiKey='+encodeURIComponent(apiKey)+'&q='+encodeURIComponent(query)+'&limit=10&type=item&annotations=description,brand_summary,channel_summary,series_summary,upcoming,related_links&topLevelOnly=false&specialization=tv,film&currentBroadcastsOnly=true')
+        $http.get(atlasHost + '/3.0/search.json?apiKey='+encodeURIComponent(apiKey)+'&q='+encodeURIComponent(query)+'&limit=10&type=item&annotations=people,description,broadcasts,brand_summary,channel_summary,series_summary,upcoming,related_links&topLevelOnly=false&specialization=tv,film&currentBroadcastsOnly=true&broadcastWeighting=20')
              .success(function(data, status) {
                 if (status !== 200) {
                     defer.reject('Atlas search returned an error. Status: '+status);
@@ -10480,16 +10480,15 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
     var loadAtlasItem = function(id) {
         if (!_.isString(id)) return;
         $scope.loading = true;
-
         // load related links from deer
         Scrubbables.deerContent($scope.deerKey, id).then(
             function(item) {
+            console.log('deer', item.segment, item.segments);
             if (item.segment) {
                 $scope.showSegments.loadSegments(item.segment);
                 $scope.scrubber.loadSegments(item.segments);
             }
         }, function(err) { console.error(err) });
-
         // load broadcast content from owl
         Scrubbables.content.id(id).then(
             function(item) {

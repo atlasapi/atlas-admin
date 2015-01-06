@@ -37,16 +37,15 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
     var loadAtlasItem = function(id) {
         if (!_.isString(id)) return;
         $scope.loading = true;
-
         // load related links from deer
         Scrubbables.deerContent($scope.deerKey, id).then(
             function(item) {
+            console.log('deer', item.segment, item.segments);
             if (item.segment) {
                 $scope.showSegments.loadSegments(item.segment);
                 $scope.scrubber.loadSegments(item.segments);
             }
         }, function(err) { console.error(err) });
-
         // load broadcast content from owl
         Scrubbables.content.id(id).then(
             function(item) {
