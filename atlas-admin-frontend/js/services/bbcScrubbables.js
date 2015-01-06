@@ -264,16 +264,8 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
         return defer.promise;
     }
 
-    var jumpQueue = function(id) {
-        var _publisher = 'scrubbables-producer.bbc.co.uk';
-        $http.post('http://scrubbables.metabroadcast.com/system/queuejump/' + id + '?publisher=' + _publisher).then(
-            function() {}, 
-            function(reason) { console.error(reason) });
-    }
-
     return {
         keys: getKeys,
-        jumpQueue: jumpQueue,
         create: postToOwl,
         search: searchContent,
         content: {
