@@ -109,7 +109,7 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
 
         Scrubbables.create($scope.writeKey, _out)
         .then(function(id) {   
-            // when the item has been sent to atlas, clear all the things  
+            // after the item has been sent to atlas, clear all the things  
             $scope.showUI = false;
             $scope.loading = false;
             $scope.item = {};
@@ -206,7 +206,7 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
                 return;
             }
 
-            if (_query.length > 2 || _query.length == 0) {
+            if (_query.length > 2 || _query.length === 0) {
                 $scope.atlasSearch.messageOutput('Searching...');
                 $timeout.cancel(input_timer);
                 input_timer = $timeout(searchRequest, 1000);

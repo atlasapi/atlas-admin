@@ -7930,7 +7930,6 @@ app.factory('ScrubbablesHelpers', ['$q',
         _out.uri = item.uri;
         _out.id = item.id;
         _out.title = item.title;
-
         if (_.isObject(container)) {
             _out.title = (container.type === 'series' || container.type === 'brand')? container.title : item.title;
             if ((container.type === 'brand' || container.type === 'series') && !item.special) {
@@ -7940,12 +7939,9 @@ app.factory('ScrubbablesHelpers', ['$q',
                 _out.duration = secondsToHHMMSS(broadcast.duration);
             }
         }
-
         if (_.isObject(broadcast)) {
             _out.broadcast_date = transmissionTimeToDate(broadcast.transmission_time);
         }
-        console.log(_out);
-
         return _out;
     }
 
@@ -7981,13 +7977,13 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
 
     var searchContent = function(apiKey, query) {
         var defer = $q.defer();
-        $http.get(atlasHost + '/3.0/search.json?apiKey='+encodeURIComponent(apiKey)+'&q='+encodeURIComponent(query)+'&limit=10&type=item&annotations=people,description,broadcasts,brand_summary,channel_summary,series_summary,upcoming,related_links&topLevelOnly=false&specialization=tv,film&currentBroadcastsOnly=true&broadcastWeighting=20')
+        $http.get(atlasHost + '/3.0/search.json?apiKey='+encodeURIComponent(apiKey)+'&q='+encodeURIComponent(query)+'&limit=10&type=item&annotations=description,brand_summary,channel_summary,series_summary,upcoming,related_links&topLevelOnly=false&specialization=tv,film&currentBroadcastsOnly=true')
              .success(function(data, status) {
                 if (status !== 200) {
-                    defer.reject('Atlas search returned an error. Status:'+status);
-                }else{
-                    defer.resolve(data);
+                    defer.reject('Atlas search returned an error. Status: '+status);
+                    return;
                 }
+                defer.resolve(data);
              })
              .error(defer.reject);
         return defer.promise;
@@ -10556,7 +10552,7 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
 
         Scrubbables.create($scope.writeKey, _out)
         .then(function(id) {   
-            // when the item has been sent to atlas, clear all the things  
+            // after the item has been sent to atlas, clear all the things  
             $scope.showUI = false;
             $scope.loading = false;
             $scope.item = {};
@@ -10653,7 +10649,7 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
                 return;
             }
 
-            if (_query.length > 2 || _query.length == 0) {
+            if (_query.length > 2 || _query.length === 0) {
                 $scope.atlasSearch.messageOutput('Searching...');
                 $timeout.cancel(input_timer);
                 input_timer = $timeout(searchRequest, 1000);
