@@ -6920,7 +6920,6 @@ app.factory('AuthenticationInterceptor', ['$q', '$location', 'atlasHost', 'atlas
             if (_url.indexOf(atlasHost) !== -1 || _url.indexOf(atlasApiHost) !== -1) {
                 if (response.status === 400) {
                     console.error('Account not authenticated to make request to: '+_url);
-                    $location.path('/login');
                 }else if (response.status === 403) {
                     console.error('You do not have access to the resource ' + _url);
                 }
@@ -6994,7 +6993,8 @@ app.factory('LoadingInterceptor', ['$q', '$rootScope', '$injector', '$timeout', 
 var app = angular.module('atlasAdmin.interceptors');
 
 // For making sure the user's profile is complete. if it isn't, the request should
-// be forwarded to the /profile page so the user can fill out missing details
+// be forwarded to the /profile page so the user can fill out missing details. Also
+// does the same for whether /terms have been accepted
 app.factory('ProfileCompleteInterceptor', ['ProfileStatus', '$location', '$q', '$rootScope', 'Authentication',
     function (ProfileStatus, $location, $q, $rootScope, Auth) {
     return {
@@ -7002,13 +7002,24 @@ app.factory('ProfileCompleteInterceptor', ['ProfileStatus', '$location', '$q', '
             var _url = config.url;
             var _provider = Auth.getProvider() || null;
             var _token = Auth.getToken() || null;
-            if (_provider && _token) {
-                if (!ProfileStatus.isProfileComplete() &&
-                    _url.indexOf('/auth/') === -1 &&
+
+            // some paths are just for use by the application; we don't want
+            // those to be included in redirects etc
+            var allowedRoute = function () {
+                return (_url.indexOf('/auth/') === -1 &&
                     _url.indexOf('/logout') === -1 &&
                     _url.indexOf('/login') === -1 &&
-                    _url.indexOf('/profile') === -1) {
+                    _url.indexOf('/profile') === -1);
+            }
+
+            if (_provider && _token) {
+                if (!ProfileStatus.isProfileComplete() &&
+                    allowedRoute()) {
                         $location.path('/profile');       
+                }
+                if (!ProfileStatus.getLicenseAccepted() &&
+                    allowedRoute()) {
+                    $location.path('/terms');
                 }
             }
             return config || $q.reject(config);
@@ -7045,6 +7056,7 @@ app.factory('Authentication', ['$rootScope', 'ProfileStatus',
             localStorage.removeItem('auth.provider');
             localStorage.removeItem('auth.token');
             localStorage.removeItem('profile.complete');
+            localStorage.removeItem('license.accepted');
             $rootScope.status.loggedIn = false;
         },
         appendTokenToUrl: function (url) {
@@ -7111,8 +7123,13 @@ app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'Profile
         currentUser: function() {
             return Atlas.getRequest('/auth/user.json').then(function(result) {
                 if (result.data.user) {
-                    if (result.data.user.license_accepted) {
+                    if (result.data.user.profile_complete) {
                         ProfileStatus.setComplete(result.data.user.profile_complete);
+                    }
+                    if (typeof result.data.user.license_accepted === 'string') {
+                        ProfileStatus.setLicenseAccepted(true);
+                    }else{
+                        ProfileStatus.setLicenseAccepted(false);
                     }
                     return result.data.user;
                 }
@@ -7167,9 +7184,18 @@ app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'Profile
 
 app.factory('ProfileStatus', function() {
     return {
+        getLicenseAccepted: function () {
+            return localStorage.getItem("license.accepted") == "true";
+        },
+
+        setLicenseAccepted: function (status) {
+            return localStorage.setItem("license.accepted", status ? "true" : "false");
+        },
+
         setComplete: function(status) {
             localStorage.setItem("profile.complete", status ? "true" : "false");
         },
+
         isProfileComplete: function() {
             return localStorage.getItem("profile.complete") == "true";
         }
@@ -9581,7 +9607,7 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
     }
 }]);
 
-app.controller('UserLicenseController', function($scope, $rootScope, $routeParams, Users, $location, $window, $sce, $log) {
+app.controller('UserLicenseController', function($scope, $rootScope, $routeParams, Users, $location, $window, $sce, $log, ProfileStatus) {
     // only try to get user if logged in
     $scope.view_title = 'Atlas Terms and Conditions'
     $scope.app = {};
@@ -9599,10 +9625,11 @@ app.controller('UserLicenseController', function($scope, $rootScope, $routeParam
     }, error);
 
     $scope.app.accept = function() {
-       Users.acceptTermsAndConditions($scope.app.user.id).then(function(data) {
-          $location.path('/profile');
-       }, error);
-    };
+        Users.acceptTermsAndConditions($scope.app.user.id).then(function(data) {
+            ProfileStatus.setLicenseAccepted(true);
+            $location.path('/profile');
+        }, error);
+    }
 
     $scope.app.reject = function() {
         $location.path('/logout');
@@ -10475,10 +10502,16 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
         // load related links from deer
         Scrubbables.deerContent($scope.deerKey, id).then(
             function(item) {
-            console.log('deer', item.segment, item.segments);
-            if (item.segment) {
-                $scope.showSegments.loadSegments(item.segment);
-                $scope.scrubber.loadSegments(item.segments);
+            console.log('deer', item.segment_events, item.segment_events);
+            if (item.segment_events) {
+                var showSegments = _.filter(item.segment_events, function(segment) {
+                    return (segment.duration === $scope.broadcast.duration) ? true : false;
+                })
+                var timedSegments = _.filter(item.segment, function(segment) {
+                    return (segment.duration > $scope.broadcast.duration) ? true : false;
+                })
+                $scope.showSegments.loadSegments(showSegments);
+                $scope.scrubber.loadSegments(timedSegments);
             }
         }, function(err) { console.error(err) });
         // load broadcast content from owl
@@ -10673,7 +10706,11 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
         $scope.showSegments.showCreateUI = false;
         $scope.showSegments.submitted = false;
 
-        $scope.showSegments.loadSegments = function(segment) {
+        $scope.showSegments.loadSegments = function(segments) {
+            if (!_.isArray(segments)) {
+                console.error('segments expected to be an array')
+                return 
+            }
             if (segment.related_links.length) {
                 var _segment, _item;
                 for (var i in segment.related_links) {

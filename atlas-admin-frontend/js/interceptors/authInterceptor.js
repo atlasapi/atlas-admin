@@ -25,7 +25,6 @@ app.factory('AuthenticationInterceptor', ['$q', '$location', 'atlasHost', 'atlas
             if (_url.indexOf(atlasHost) !== -1 || _url.indexOf(atlasApiHost) !== -1) {
                 if (response.status === 400) {
                     console.error('Account not authenticated to make request to: '+_url);
-                    $location.path('/login');
                 }else if (response.status === 403) {
                     console.error('You do not have access to the resource ' + _url);
                 }

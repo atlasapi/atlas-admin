@@ -6,8 +6,13 @@ app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'Profile
         currentUser: function() {
             return Atlas.getRequest('/auth/user.json').then(function(result) {
                 if (result.data.user) {
-                    if (result.data.user.license_accepted) {
+                    if (result.data.user.profile_complete) {
                         ProfileStatus.setComplete(result.data.user.profile_complete);
+                    }
+                    if (typeof result.data.user.license_accepted === 'string') {
+                        ProfileStatus.setLicenseAccepted(true);
+                    }else{
+                        ProfileStatus.setLicenseAccepted(false);
                     }
                     return result.data.user;
                 }
@@ -62,9 +67,18 @@ app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'Profile
 
 app.factory('ProfileStatus', function() {
     return {
+        getLicenseAccepted: function () {
+            return localStorage.getItem("license.accepted") == "true";
+        },
+
+        setLicenseAccepted: function (status) {
+            return localStorage.setItem("license.accepted", status ? "true" : "false");
+        },
+
         setComplete: function(status) {
             localStorage.setItem("profile.complete", status ? "true" : "false");
         },
+
         isProfileComplete: function() {
             return localStorage.getItem("profile.complete") == "true";
         }

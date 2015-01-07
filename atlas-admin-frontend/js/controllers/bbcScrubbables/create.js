@@ -40,10 +40,16 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
         // load related links from deer
         Scrubbables.deerContent($scope.deerKey, id).then(
             function(item) {
-            console.log('deer', item.segment, item.segments);
-            if (item.segment) {
-                $scope.showSegments.loadSegments(item.segment);
-                $scope.scrubber.loadSegments(item.segments);
+            console.log('deer', item.segment_events, item.segment_events);
+            if (item.segment_events) {
+                var showSegments = _.filter(item.segment_events, function(segment) {
+                    return (segment.duration === $scope.broadcast.duration) ? true : false;
+                })
+                var timedSegments = _.filter(item.segment, function(segment) {
+                    return (segment.duration > $scope.broadcast.duration) ? true : false;
+                })
+                $scope.showSegments.loadSegments(showSegments);
+                $scope.scrubber.loadSegments(timedSegments);
             }
         }, function(err) { console.error(err) });
         // load broadcast content from owl
@@ -238,7 +244,11 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
         $scope.showSegments.showCreateUI = false;
         $scope.showSegments.submitted = false;
 
-        $scope.showSegments.loadSegments = function(segment) {
+        $scope.showSegments.loadSegments = function(segments) {
+            if (!_.isArray(segments)) {
+                console.error('segments expected to be an array')
+                return 
+            }
             if (segment.related_links.length) {
                 var _segment, _item;
                 for (var i in segment.related_links) {

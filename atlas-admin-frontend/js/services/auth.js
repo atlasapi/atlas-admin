@@ -23,6 +23,7 @@ app.factory('Authentication', ['$rootScope', 'ProfileStatus',
             localStorage.removeItem('auth.provider');
             localStorage.removeItem('auth.token');
             localStorage.removeItem('profile.complete');
+            localStorage.removeItem('license.accepted');
             $rootScope.status.loggedIn = false;
         },
         appendTokenToUrl: function (url) {

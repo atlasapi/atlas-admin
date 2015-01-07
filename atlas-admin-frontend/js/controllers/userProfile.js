@@ -150,7 +150,7 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
     }
 }]);
 
-app.controller('UserLicenseController', function($scope, $rootScope, $routeParams, Users, $location, $window, $sce, $log) {
+app.controller('UserLicenseController', function($scope, $rootScope, $routeParams, Users, $location, $window, $sce, $log, ProfileStatus) {
     // only try to get user if logged in
     $scope.view_title = 'Atlas Terms and Conditions'
     $scope.app = {};
@@ -168,10 +168,11 @@ app.controller('UserLicenseController', function($scope, $rootScope, $routeParam
     }, error);
 
     $scope.app.accept = function() {
-       Users.acceptTermsAndConditions($scope.app.user.id).then(function(data) {
-          $location.path('/profile');
-       }, error);
-    };
+        Users.acceptTermsAndConditions($scope.app.user.id).then(function(data) {
+            ProfileStatus.setLicenseAccepted(true);
+            $location.path('/profile');
+        }, error);
+    }
 
     $scope.app.reject = function() {
         $location.path('/logout');
