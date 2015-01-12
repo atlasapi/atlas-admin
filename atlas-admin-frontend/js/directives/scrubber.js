@@ -409,21 +409,21 @@ app.directive('scrubber', ['$document', '$compile',
             }
 
             $scope.scrubber.loadSegments = function(segment) {
-            return; // for now...
-            if (segment.related_links.length) {
-                var _segment, _item;
-                for (var i in segment.related_links) {
-                    _item = segment.related_links[i];
-                    _segment = createSegmentObj(_item.title, 
-                                                _item.url, 
-                                                0, 
-                                                segment.duration, 
-                                                $scope.generateID());
-                    $scope.showSegments.segments.push(_segment);
-                    $scope.showSegments.showCreateUI = false;
+                //return; // for now...
+                if (segment.related_links.length) {
+                    var _segment, _item;
+                    for (var i in segment.related_links) {
+                        _item = segment.related_links[i];
+                        _segment = createSegmentObj(_item.title, 
+                                                    _item.url, 
+                                                    0, 
+                                                    segment.duration, 
+                                                    $scope.generateID());
+                        $scope.showSegments.segments.push(_segment);
+                        $scope.showSegments.showCreateUI = false;
+                    }
                 }
             }
-        }
 
             $attr.$observe('scrubberLength', function() {
                 getContextLength();

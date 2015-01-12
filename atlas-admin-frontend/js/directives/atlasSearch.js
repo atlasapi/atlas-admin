@@ -22,7 +22,7 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
         }
 
         $scope.atlasSearch.messageOutput = function(message) {
-            $scope.atlasSearch.showMessage = (typeof message === 'string')? true : false;
+            $scope.atlasSearch.showMessage = (typeof message === 'string') ? true : false;
             var _messagetpl;
             if ($scope.atlasSearch.showMessage) {
                 $scope.atlasSearch.message = message;
@@ -37,35 +37,43 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
         var searchRequest = function() {
             var _query = $scope.atlasSearch.searchquery;
             if (!_query.length) return;
+
+            var getContentForUri = function(uri) {
+                var bbcone;
+                var defer = $q.defer();
+                if (!_.isString(uri)) {
+                    defer.reject(new Error('URI arg should be a string'));
+                    return defer.promise;
+                }
+                Scrubbables.content.uri(uri).then(function(item) {
+                    defer.resolve(item.contents[0]);
+                });
+                return defer.promise;
+            }
+
             Scrubbables.search($scope.searchKey, _query).then(function(res) {
-                if (res.contents.length) {
-                    var result, filteredItems;
-                    res.contents.forEach(function(item) {
-                        Scrubbables.content.uri(item.uri).then(
-                            function(contentResult) {
-                            result = contentResult.contents[0];
-                            if ('upcoming_content' in result) {
-                                result.upcoming_content.forEach( function(upcoming) {
-                                    Scrubbables.content.uri(upcoming.uri).then(
-                                        function(upcomingResult) {
-                                        filteredItems = Helpers.channelFilter(upcomingResult.contents, 'cbbh');
-                                        if (filteredItems) {
-                                            $scope.atlasSearch.searchResults.push( Helpers.formatResponse(filteredItems[0]) );
-                                        }
-                                    })
-                                })
-                            }
-                        })  
+                var broadcasts, air_date;
+                broadcasts = res.contents[0].broadcasts || null;
+                if (broadcasts) {
+                    broadcasts = _.filter(res.contents[0].broadcasts, function(bcast) {
+                        if (bcast.channel.id === 'cbbh') return true;
                     })
+                    console.log(broadcasts);
+                    if (broadcasts.length) {
+                        getContentForUri(res.uri).then(
+                            function(contents) {
+                            $scope.atlasSearch.searchResults.push( Helpers.formatResponse(contents) );
+                        }, function(err) { console.error(err) });
+                    }
+
                     $scope.atlasSearch.messageOutput(null);
                     $scope.atlasSearch.showAutocomplete = true;
-                } else {
+                }else{
                     $scope.atlasSearch.messageOutput('No results found');
                     $scope.atlasSearch.showAutocomplete = false;
                 }
             }, function(err) {
                 $scope.atlasSearch.showAutocomplete = false;
-                console.error(err)
             })
         }
 

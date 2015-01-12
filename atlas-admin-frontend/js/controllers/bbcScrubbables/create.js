@@ -40,14 +40,16 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
         // load related links from deer
         Scrubbables.deerContent($scope.deerKey, id).then(
             function(item) {
-            console.log('deer', item.segment_events, item.segment_events);
-            if (item.segment_events) {
-                var showSegments = _.filter(item.segment_events, function(segment) {
-                    return (segment.duration === $scope.broadcast.duration) ? true : false;
+            var _events = item.segment_events || null;
+            console.log('deer', _events);
+            if (_events) {
+                var showSegments = _.filter(_events, function(ev) {
+                    return (ev.segment.duration === $scope.broadcast.duration) ? true : false;
                 })
-                var timedSegments = _.filter(item.segment, function(segment) {
-                    return (segment.duration > $scope.broadcast.duration) ? true : false;
+                var timedSegments = _.filter(_events, function(ev) {
+                    return (ev.segment.duration > $scope.broadcast.duration) ? true : false;
                 })
+                console.log(showSegments, timedSegments);
                 $scope.showSegments.loadSegments(showSegments);
                 $scope.scrubber.loadSegments(timedSegments);
             }

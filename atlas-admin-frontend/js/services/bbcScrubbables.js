@@ -108,7 +108,7 @@ app.factory('ScrubbablesHelpers', ['$q',
 app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService',
     function(atlasHost, $http, $q, Groups) {
 
-    var owlAnnotations = 'annotations=description,extended_description,brand_summary,series_summary,people,topics,products,related_links,key_phrases,broadcasts,locations,first_broadcasts,next_broadcasts,available_locations,upcoming,sub_items,channel,channel_summary';
+    var owlAnnotations = 'annotations=next_broadcasts,broadcasts,brand_summary,series_summary,upcoming,locations,available_locations,upcoming';
     var deerAnnotations = 'annotations=segment_events,description,extended_description,series_summary,description';
 
     var getKeys = function() {
@@ -129,9 +129,10 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
 
     var searchContent = function(apiKey, query) {
         var defer = $q.defer();
-        $http.get(atlasHost + '/3.0/search.json?apiKey='+encodeURIComponent(apiKey)+'&q='+encodeURIComponent(query)+'&limit=10&type=item&annotations=description,brand_summary,channel_summary,series_summary,upcoming,related_links&topLevelOnly=false&specialization=tv,film&currentBroadcastsOnly=true')
+        var searchAnnotations = 'next_broadcasts,description,brand_summary,channel_summary,series_summary,upcoming,related_links';
+        $http.get(atlasHost + '/3.0/search.json?apiKey='+encodeURIComponent(apiKey)+'&q='+encodeURIComponent(query)+'&limit=10&type=item&annotations=' + searchAnnotations + '&topLevelOnly=false&specialization=tv,film&currentBroadcastsOnly=true')
              .success(function(data, status) {
-                if (status !== 200) {
+                if (status >= 300) {
                     defer.reject('Atlas search returned an error. Status: '+status);
                     return;
                 }
@@ -143,7 +144,7 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
 
     var getDeerContentURI = function(apiKey, id) {
         var defer = $q.defer();
-        $http.get(atlasHost.replace('stage.', '') + '/4/content/' + id + '.json?key=' + encodeURIComponent(apiKey) + '&' + deerAnnotations)
+        $http.get(atlasHost + '/4/content/' + id + '.json?key=' + encodeURIComponent(apiKey) + '&' + deerAnnotations)
              .success(function(data, status) {
                 if (status !== 200) {
                     defer.reject('Atlas deer content request returned an error. Status:'+status);
@@ -174,7 +175,7 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
     var getContentID = function(id) {
         if (!_.isString(id)) return null;
         var defer = $q.defer();
-        $http.get(atlasHost + '/3.0/content.json?id=' + encodeURIComponent(id) + '&'+owlAnnotations)
+        $http.get(atlasHost + '/3.0/content.json?id=' + encodeURIComponent(id) + '&' + owlAnnotations)
             .success(function(data, status) {
                 if (status !== 200) {
                     defer.reject('Atlas content request returned an error. Status:'+status);

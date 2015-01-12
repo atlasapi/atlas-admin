@@ -7982,7 +7982,7 @@ app.factory('ScrubbablesHelpers', ['$q',
 app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService',
     function(atlasHost, $http, $q, Groups) {
 
-    var owlAnnotations = 'annotations=description,extended_description,brand_summary,series_summary,people,topics,products,related_links,key_phrases,broadcasts,locations,first_broadcasts,next_broadcasts,available_locations,upcoming,sub_items,channel,channel_summary';
+    var owlAnnotations = 'annotations=next_broadcasts,broadcasts,brand_summary,series_summary,upcoming,locations,available_locations,upcoming';
     var deerAnnotations = 'annotations=segment_events,description,extended_description,series_summary,description';
 
     var getKeys = function() {
@@ -8003,9 +8003,10 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
 
     var searchContent = function(apiKey, query) {
         var defer = $q.defer();
-        $http.get(atlasHost + '/3.0/search.json?apiKey='+encodeURIComponent(apiKey)+'&q='+encodeURIComponent(query)+'&limit=10&type=item&annotations=description,brand_summary,channel_summary,series_summary,upcoming,related_links&topLevelOnly=false&specialization=tv,film&currentBroadcastsOnly=true')
+        var searchAnnotations = 'next_broadcasts,description,brand_summary,channel_summary,series_summary,upcoming,related_links';
+        $http.get(atlasHost + '/3.0/search.json?apiKey='+encodeURIComponent(apiKey)+'&q='+encodeURIComponent(query)+'&limit=10&type=item&annotations=' + searchAnnotations + '&topLevelOnly=false&specialization=tv,film&currentBroadcastsOnly=true')
              .success(function(data, status) {
-                if (status !== 200) {
+                if (status >= 300) {
                     defer.reject('Atlas search returned an error. Status: '+status);
                     return;
                 }
@@ -8017,7 +8018,7 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
 
     var getDeerContentURI = function(apiKey, id) {
         var defer = $q.defer();
-        $http.get(atlasHost.replace('stage.', '') + '/4/content/' + id + '.json?key=' + encodeURIComponent(apiKey) + '&' + deerAnnotations)
+        $http.get(atlasHost + '/4/content/' + id + '.json?key=' + encodeURIComponent(apiKey) + '&' + deerAnnotations)
              .success(function(data, status) {
                 if (status !== 200) {
                     defer.reject('Atlas deer content request returned an error. Status:'+status);
@@ -8048,7 +8049,7 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
     var getContentID = function(id) {
         if (!_.isString(id)) return null;
         var defer = $q.defer();
-        $http.get(atlasHost + '/3.0/content.json?id=' + encodeURIComponent(id) + '&'+owlAnnotations)
+        $http.get(atlasHost + '/3.0/content.json?id=' + encodeURIComponent(id) + '&' + owlAnnotations)
             .success(function(data, status) {
                 if (status !== 200) {
                     defer.reject('Atlas content request returned an error. Status:'+status);
@@ -8984,21 +8985,21 @@ app.directive('scrubber', ['$document', '$compile',
             }
 
             $scope.scrubber.loadSegments = function(segment) {
-            return; // for now...
-            if (segment.related_links.length) {
-                var _segment, _item;
-                for (var i in segment.related_links) {
-                    _item = segment.related_links[i];
-                    _segment = createSegmentObj(_item.title, 
-                                                _item.url, 
-                                                0, 
-                                                segment.duration, 
-                                                $scope.generateID());
-                    $scope.showSegments.segments.push(_segment);
-                    $scope.showSegments.showCreateUI = false;
+                //return; // for now...
+                if (segment.related_links.length) {
+                    var _segment, _item;
+                    for (var i in segment.related_links) {
+                        _item = segment.related_links[i];
+                        _segment = createSegmentObj(_item.title, 
+                                                    _item.url, 
+                                                    0, 
+                                                    segment.duration, 
+                                                    $scope.generateID());
+                        $scope.showSegments.segments.push(_segment);
+                        $scope.showSegments.showCreateUI = false;
+                    }
                 }
             }
-        }
 
             $attr.$observe('scrubberLength', function() {
                 getContextLength();
@@ -9043,6 +9044,8 @@ var app = angular.module('atlasAdmin.directives.bbcscrubbables');
 app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$http',
     function($document, $q, $timeout, atlasHost, $http) {
 
+    // For creating a new segment block to be pushed into the 
+    // showSegments.segments array
     var createSegmentObj = function(label, url, startTime, endTime, id) {
         return {
             label: label,
@@ -9053,6 +9056,7 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
         }
     }
 
+
     var controller = function($scope, $el, $attr) {
         var $el = $($el);
         $scope.showSegments = {};
@@ -9061,22 +9065,26 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
         $scope.showSegments.showCreateUI = false;
         $scope.showSegments.submitted = false;
 
-        $scope.showSegments.loadSegments = function(segments) {
-            if (!_.isArray(segments)) {
-                console.error('segments expected to be an array')
-                return 
+        $scope.showSegments.loadSegments = function(events) {
+            if (!_.isArray(events)) {
+                console.error('events expected to be an array')
+                return;
             }
-            if (segment.related_links.length) {
-                var _segment, _item;
-                for (var i in segment.related_links) {
-                    _item = segment.related_links[i];
-                    if (_item.duration === $scope.broadcast.duration) {
-                        _segment = createSegmentObj(_item.title, 
-                                                    _item.url, 
-                                                    0, 
-                                                    segment.duration, 
-                                                    $scope.generateID());
-                        $scope.showSegments.segments.push(_segment);
+            var _segment, _item, _offset, _duration;
+            for (var ev in events) {
+                _offset = events[ev].offset || 0;
+                _duration = events[ev].duration || 0;
+                if (events[ev].segment.related_links) {
+                    for (var i in events[ev].segment.related_links) {
+                        _item = events[ev].segment.related_links[i];
+                        if (_item.duration === $scope.broadcast.duration) {
+                            _segment = createSegmentObj(_item.title, 
+                                                        _item.url, 
+                                                        _offset, 
+                                                        _duration, 
+                                                        $scope.generateID());
+                            $scope.showSegments.segments.push(_segment);
+                        }
                     }
                 }
             }
@@ -9104,7 +9112,7 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
 
         $scope.showSegments.new = function() {
             $scope.showSegments.submitted = true;
-            //if (newSegmentForm.linkLabel.value === '' || newSegmentForm.linkUrl.value === '' ) return;
+            if (newSegmentForm.linkLabel.value === '' || newSegmentForm.linkUrl.value === '' ) return;
             var _segment = createSegmentObj($scope.showSegments.newItem.label, 
                                             $scope.showSegments.newItem.url, 
                                             0, 
@@ -9148,7 +9156,7 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
         }
 
         $scope.atlasSearch.messageOutput = function(message) {
-            $scope.atlasSearch.showMessage = (typeof message === 'string')? true : false;
+            $scope.atlasSearch.showMessage = (typeof message === 'string') ? true : false;
             var _messagetpl;
             if ($scope.atlasSearch.showMessage) {
                 $scope.atlasSearch.message = message;
@@ -9163,35 +9171,43 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
         var searchRequest = function() {
             var _query = $scope.atlasSearch.searchquery;
             if (!_query.length) return;
+
+            var getContentForUri = function(uri) {
+                var bbcone;
+                var defer = $q.defer();
+                if (!_.isString(uri)) {
+                    defer.reject(new Error('URI arg should be a string'));
+                    return defer.promise;
+                }
+                Scrubbables.content.uri(uri).then(function(item) {
+                    defer.resolve(item.contents[0]);
+                });
+                return defer.promise;
+            }
+
             Scrubbables.search($scope.searchKey, _query).then(function(res) {
-                if (res.contents.length) {
-                    var result, filteredItems;
-                    res.contents.forEach(function(item) {
-                        Scrubbables.content.uri(item.uri).then(
-                            function(contentResult) {
-                            result = contentResult.contents[0];
-                            if ('upcoming_content' in result) {
-                                result.upcoming_content.forEach( function(upcoming) {
-                                    Scrubbables.content.uri(upcoming.uri).then(
-                                        function(upcomingResult) {
-                                        filteredItems = Helpers.channelFilter(upcomingResult.contents, 'cbbh');
-                                        if (filteredItems) {
-                                            $scope.atlasSearch.searchResults.push( Helpers.formatResponse(filteredItems[0]) );
-                                        }
-                                    })
-                                })
-                            }
-                        })  
+                var broadcasts, air_date;
+                broadcasts = res.contents[0].broadcasts || null;
+                if (broadcasts) {
+                    broadcasts = _.filter(res.contents[0].broadcasts, function(bcast) {
+                        if (bcast.channel.id === 'cbbh') return true;
                     })
+                    console.log(broadcasts);
+                    if (broadcasts.length) {
+                        getContentForUri(res.uri).then(
+                            function(contents) {
+                            $scope.atlasSearch.searchResults.push( Helpers.formatResponse(contents) );
+                        }, function(err) { console.error(err) });
+                    }
+
                     $scope.atlasSearch.messageOutput(null);
                     $scope.atlasSearch.showAutocomplete = true;
-                } else {
+                }else{
                     $scope.atlasSearch.messageOutput('No results found');
                     $scope.atlasSearch.showAutocomplete = false;
                 }
             }, function(err) {
                 $scope.atlasSearch.showAutocomplete = false;
-                console.error(err)
             })
         }
 
@@ -10663,14 +10679,16 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
         // load related links from deer
         Scrubbables.deerContent($scope.deerKey, id).then(
             function(item) {
-            console.log('deer', item.segment_events, item.segment_events);
-            if (item.segment_events) {
-                var showSegments = _.filter(item.segment_events, function(segment) {
-                    return (segment.duration === $scope.broadcast.duration) ? true : false;
+            var _events = item.segment_events || null;
+            console.log('deer', _events);
+            if (_events) {
+                var showSegments = _.filter(_events, function(ev) {
+                    return (ev.segment.duration === $scope.broadcast.duration) ? true : false;
                 })
-                var timedSegments = _.filter(item.segment, function(segment) {
-                    return (segment.duration > $scope.broadcast.duration) ? true : false;
+                var timedSegments = _.filter(_events, function(ev) {
+                    return (ev.segment.duration > $scope.broadcast.duration) ? true : false;
                 })
+                console.log(showSegments, timedSegments);
                 $scope.showSegments.loadSegments(showSegments);
                 $scope.scrubber.loadSegments(timedSegments);
             }
