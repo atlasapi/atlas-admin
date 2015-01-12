@@ -70,9 +70,17 @@ app.factory('ScrubbablesHelpers', ['$q',
 
     // Format Atlas response 
     //
-    // ...to something usable in the UI
-    //
     // @param item {object}
+    // @returns {
+    //  broadcast: {Object | null}.
+    //  uri: {String},
+    //  id: {String},
+    //  title: {String},
+    //  subtitle: {String},
+    //  episode_number: {Number},
+    //  duration: {Number},
+    //  broadcast_date: {Object} { day:{String}, month:{String}, year:{String} }
+    // }
     var formatAtlasResponse = function(item) {
         if (!_.isObject(item)) return;
         var _out = {};
@@ -94,6 +102,7 @@ app.factory('ScrubbablesHelpers', ['$q',
         if (_.isObject(broadcast)) {
             _out.broadcast_date = transmissionTimeToDate(broadcast.transmission_time);
         }
+        console.log(_out);
         return _out;
     }
 
