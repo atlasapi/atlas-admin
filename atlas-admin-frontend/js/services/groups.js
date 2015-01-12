@@ -18,7 +18,7 @@ app.factory('GroupsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
             if (status === 200) {
                 defer.resolve(data)
             }else{
-                defer.reject(err);
+                defer.reject(new Error('Groups endpoint responded with status: ' + status));
             }
         })
         .error(function(data, status) {
