@@ -8993,19 +8993,27 @@ app.directive('scrubber', ['$document', '$compile',
                 return;
             }
 
-            $scope.scrubber.loadSegments = function(segment) {
-                //return; // for now...
-                if (segment.related_links.length) {
-                    var _segment, _item;
-                    for (var i in segment.related_links) {
-                        _item = segment.related_links[i];
-                        _segment = createSegmentObj(_item.title, 
-                                                    _item.url, 
-                                                    0, 
-                                                    segment.duration, 
-                                                    $scope.generateID());
-                        $scope.showSegments.segments.push(_segment);
-                        $scope.showSegments.showCreateUI = false;
+            $scope.scrubber.loadSegments = function(events) {
+                if (!_.isArray(events)) {
+                    console.error('events expected to be an array')
+                    return;
+                }
+                var _segment, _item, _offset, _duration;
+                for (var ev in events) {
+                    _offset = events[ev].offset || 0;
+                    _duration = events[ev].duration || 0;
+                    if (events[ev].segment.related_links) {
+                        for (var i in events[ev].segment.related_links) {
+                            _item = events[ev].segment.related_links[i];
+                            if (_item.duration === $scope.broadcast.duration) {
+                                _segment = createSegmentObj(_item.title, 
+                                                            _item.url, 
+                                                            _offset, 
+                                                            _duration, 
+                                                            $scope.generateID());
+                                $scope.scrubber.segments.push(_segment);
+                            }
+                        }
                     }
                 }
             }
