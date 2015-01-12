@@ -58,16 +58,17 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
                     broadcasts = _.filter(res.contents[0].broadcasts, function(bcast) {
                         if (bcast.channel.id === 'cbbh') return true;
                     })
-                    console.log(broadcasts);
                     if (broadcasts.length) {
                         getContentForUri(res.contents[0].uri).then(
                             function(contents) {
                             $scope.atlasSearch.searchResults.push( Helpers.formatResponse(contents) );
+                            $scope.atlasSearch.messageOutput(null);
+                            $scope.atlasSearch.showAutocomplete = true;
                         }, function(err) { console.error(err) });
+                    }else{
+                        $scope.atlasSearch.messageOutput('No results found');
+                        $scope.atlasSearch.showAutocomplete = false;
                     }
-
-                    $scope.atlasSearch.messageOutput(null);
-                    $scope.atlasSearch.showAutocomplete = true;
                 }else{
                     $scope.atlasSearch.messageOutput('No results found');
                     $scope.atlasSearch.showAutocomplete = false;
