@@ -41,8 +41,11 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
         // load related links from deer
         Scrubbables.deerContent($scope.deerKey, id).then(
             function(item) {
+            if (!_.isObject(item)) {
+                console.error('deer item is not an object')
+                return;
+            }
             var _events = item.episode.segment_events || null;
-            console.log('deer', _events);
             if (_events) {
                 var showSegments = _.filter(_events, function(ev) {
                     return (ev.segment.duration === $scope.broadcast.duration) ? true : false;
