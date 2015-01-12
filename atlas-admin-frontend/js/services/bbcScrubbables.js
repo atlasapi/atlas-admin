@@ -117,7 +117,7 @@ app.factory('ScrubbablesHelpers', ['$q',
 app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService',
     function(atlasHost, $http, $q, Groups) {
 
-    var owlAnnotations = 'annotations=next_broadcasts,broadcasts,brand_summary,series_summary,upcoming,locations,available_locations,upcoming';
+    var owlAnnotations = 'annotations=description,extended_description,next_broadcasts,broadcasts,brand_summary,series_summary,upcoming,locations,available_locations';
     var deerAnnotations = 'annotations=segment_events,description,extended_description,series_summary,description';
 
     var getKeys = function() {
@@ -138,7 +138,7 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
 
     var searchContent = function(apiKey, query) {
         var defer = $q.defer();
-        var searchAnnotations = 'next_broadcasts,description,brand_summary,channel_summary,series_summary,upcoming,related_links';
+        var searchAnnotations = 'description,extended_description,next_broadcasts,brand_summary,channel_summary,series_summary,upcoming,related_links';
         $http.get(atlasHost + '/3.0/search.json?apiKey='+encodeURIComponent(apiKey)+'&q='+encodeURIComponent(query)+'&limit=10&type=item&annotations=' + searchAnnotations + '&topLevelOnly=false&specialization=tv,film&currentBroadcastsOnly=true')
              .success(function(data, status) {
                 if (status >= 300) {
