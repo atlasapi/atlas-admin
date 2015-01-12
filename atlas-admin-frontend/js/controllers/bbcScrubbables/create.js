@@ -37,10 +37,11 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
     var loadAtlasItem = function(id) {
         if (!_.isString(id)) return;
         $scope.loading = true;
+
         // load related links from deer
         Scrubbables.deerContent($scope.deerKey, id).then(
             function(item) {
-            var _events = item.segment_events || null;
+            var _events = item.episode.segment_events || null;
             console.log('deer', _events);
             if (_events) {
                 var showSegments = _.filter(_events, function(ev) {
@@ -49,12 +50,12 @@ app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$
                 var timedSegments = _.filter(_events, function(ev) {
                     return (ev.segment.duration > $scope.broadcast.duration) ? true : false;
                 })
-                console.log(showSegments, timedSegments);
                 $scope.showSegments.loadSegments(showSegments);
                 $scope.scrubber.loadSegments(timedSegments);
             }
         }, function(err) { console.error(err) });
-        // load broadcast content from owl
+
+        // ..and load broadcast content from owl
         Scrubbables.content.id(id).then(
             function(item) {
             console.log(item);
