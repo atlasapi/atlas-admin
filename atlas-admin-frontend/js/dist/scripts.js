@@ -9194,7 +9194,7 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
                     })
                     console.log(broadcasts);
                     if (broadcasts.length) {
-                        getContentForUri(res.uri).then(
+                        getContentForUri(res.contents[0].uri).then(
                             function(contents) {
                             $scope.atlasSearch.searchResults.push( Helpers.formatResponse(contents) );
                         }, function(err) { console.error(err) });
