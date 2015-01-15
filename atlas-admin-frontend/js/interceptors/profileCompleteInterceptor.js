@@ -14,7 +14,7 @@ app.factory('ProfileCompleteInterceptor', ['ProfileStatus', '$location', '$q', '
             // some paths are just for use by the application; we don't want
             // those to be included in redirects etc
             var allowedRoute = function () {
-                return (_url.indexOf('/auth/') === -1 &&
+                return (_url.indexOf('/auth') === -1 &&
                     _url.indexOf('/logout') === -1 &&
                     _url.indexOf('/login') === -1 &&
                     _url.indexOf('/profile') === -1);
@@ -25,7 +25,7 @@ app.factory('ProfileCompleteInterceptor', ['ProfileStatus', '$location', '$q', '
                     allowedRoute()) {
                         $location.path('/profile');       
                 }
-                if (!ProfileStatus.getLicenseAccepted() &&
+                if (ProfileStatus.getLicenseAccepted() === false &&
                     allowedRoute()) {
                     $location.path('/terms');
                 }

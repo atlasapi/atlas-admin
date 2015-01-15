@@ -68,7 +68,11 @@ app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'Profile
 app.factory('ProfileStatus', function() {
     return {
         getLicenseAccepted: function () {
-            return localStorage.getItem("license.accepted") == "true";
+            if (localStorage.getItem("license.accepted")) {
+                return localStorage.getItem("license.accepted") == "true";
+            } else {
+                return null;
+            }
         },
 
         setLicenseAccepted: function (status) {
