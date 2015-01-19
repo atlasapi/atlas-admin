@@ -85,8 +85,62 @@ $navbar-shadow-color: rgba( red($color-purple), green($color-purple), blue($colo
 
 	}
 
+	// For the admin management dropdown nav
 	.nav-manage { 
-		margin-left: 2.25rem; 
+		position: relative;
+		margin-left: 2.25rem;
+	
+		> .menu-button { 
+			cursor: pointer;
+
+				&:before {
+					content: "";
+					display: block;
+					position: absolute;
+					bottom: 1.5rem;
+					right: 0;
+					border-left: 4px solid transparent;
+					border-right: 4px solid transparent;
+					border-top: 6px solid darken($navbar-color, 40%);
+				}
+		}
+
+		.admin-menu {
+			@extend %cf;
+			position: absolute;
+			top: 100%;
+			left: 0;
+			z-index: 1039;
+			display: block;
+			height: auto;
+			width: 300px;
+			background: white;
+			box-shadow: 0 1px 2px $navbar-shadow-color;
+
+			li { float: none; }
+
+			li > a {
+				color: white;
+				background: $color-pink;
+
+				.menu-button { box-sizing: border-box; width: 100%; }
+
+				&:hover { background: $color-purple }
+
+				&.active-menu-item .menu-button {
+					color: white;
+					background: $color-purple;
+					&::after { display: none; }
+				}
+			}
+
+			li, 
+			li a {
+				display: block;
+				height: auto;
+				line-height: 1.4;
+			}
+		}
 	}
 }
 

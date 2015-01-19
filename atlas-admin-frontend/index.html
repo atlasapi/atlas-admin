@@ -19,16 +19,16 @@
             <div class="navbar-brand">
                 <a class="navbar-logo" href="#"><img src="img/atlas_logo.png" alt="Atlas Admin logo" /></a>
             </div>
-
             <div class="navbar-links">
                 <ul ng-show="status.loggedIn" class="navbar-links-user">
                     <li ng-repeat="item in app.menu.users" ng-cloak>
                         <a ng-href="#{{item.path}}" active-path="active-menu-item"><span class="menu-button">{{item.label}}</span></a>
                     </li>
                     <li ng-if="app.menu.admins.length" class="nav-manage">
-                        <ul>
+                        <span class="menu-button" ng-click="app.toggleAdminMenu()">Manage</span>
+                        <ul class="admin-menu" ng-show="app.showAdminMenu">
                             <li ng-repeat="item in app.menu.admins" ng-cloak>
-                                <a ng-href="#{{item.path}}" active-path="active-menu-item"><span class="menu-button">{{item.label}}</span></a>
+                                <a ng-href="#{{item.path}}" active-path="active-menu-item"><span class="menu-button" ng-click="app.toggleAdminMenu()">{{item.label}}</span></a>
                             </li>
                         </ul>
                     </li>

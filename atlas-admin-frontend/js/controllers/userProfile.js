@@ -80,9 +80,14 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
     var privateItems;
     $scope.app = {};
     $scope.app.dropdown = false;
+    $scope.app.showAdminMenu = false;
 
     $scope.app.toggleDropdown = function() {
         $scope.app.dropdown = !$scope.app.dropdown;
+    }
+
+    $scope.app.toggleAdminMenu = function() {
+        $scope.app.showAdminMenu = !$scope.app.showAdminMenu; 
     }
 
     var getPrivateMenuItems = function() {
