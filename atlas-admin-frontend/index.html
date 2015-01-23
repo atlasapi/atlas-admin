@@ -10,6 +10,7 @@
         <![endif]-->
         <title>Atlas Administration</title>
         <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Molengo" rel="stylesheet">
         <link rel="stylesheet" href="css/base.css"/>
     </head>
 
@@ -17,7 +18,7 @@
         <!-- navigation -->
         <nav class="navbar" role="navigation" ng-controller="UserMenuController">
             <div class="navbar-brand">
-                <a class="navbar-logo" href="#"><img src="img/atlas_logo.png" alt="Atlas Admin logo" /></a>
+                <a class="navbar-logo" href="#"><img src="img/logo.png" alt="Atlas Admin logo" /></a>
             </div>
             <div class="navbar-links">
                 <ul ng-show="status.loggedIn" class="navbar-links-user">
@@ -50,10 +51,10 @@
         <!-- Top level directives -->
         <div preloader></div>
         <div notifications></div>
-        
+
         <!-- Application body -->
         <div class="application-container" ng-hide="show.cloak" ng-cloak ng-view></div>
-        
+
         <script src="js/vendor/jquery.min.js"></script>
         <script src="js/vendor/angular/angular.min.js"></script>
         <script src="js/vendor/angular/angular-resource.min.js"></script>
