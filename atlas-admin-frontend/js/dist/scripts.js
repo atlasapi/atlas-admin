@@ -9743,7 +9743,7 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
     }
 
     $scope.app.toggleAdminMenu = function() {
-        $scope.app.showAdminMenu = !$scope.app.showAdminMenu; 
+        $scope.app.showAdminMenu = !$scope.app.showAdminMenu;
     }
 
     var getPrivateMenuItems = function() {
@@ -9762,8 +9762,6 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
     var buildMenu = function(user, groups) {
         // if profile not complete the do not show menu
         var allMenu = [
-            {path:'/applications', label:'Applications'},
-            {path:'/wishlist', label:'Wishlist'},
             // admin only
             {path:'/manage/sources', label:'Sources', role:'admin'},
             {path:'/manage/requests', label:'Requests', role:'admin'},
@@ -9780,7 +9778,7 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
         }
 
         // build the menu
-        var menu = []; 
+        var menu = [];
         var admin_menu = [];
         for (var i = 0; i < allMenu.length; i++) {
             var item = allMenu[i];
@@ -9803,7 +9801,7 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
             getPrivateMenuItems().then(function(groups) {
                 $scope.app.userGroups = groups;
                 $scope.app.menu = buildMenu(user, groups);
-            }, 
+            },
             function() {
                 $scope.app.menu = buildMenu(user);
             });

@@ -55,23 +55,22 @@
                         </li>
                         <li class="has-dropdown-menu" id="content-menu">
                             <a href="#">Content</a>
+                            <ul class="content-dropdown dropdown-menu">
+                                <li ng-repeat="item in app.menu.users" ng-cloak>
+                                    <a ng-href="#{{item.path}}" active-path="active-menu-item"><span class="menu-button">{{item.label}}</span></a>
+                                </li>
+                            </ul>
                         </li>
-                        <li class="has-dropdown-menu" id="admin-menu">
-                            <a href="#">Admin</a>
                         </li>
-                    </ul>
-
-                        <!-- <li ng-repeat="item in app.menu.users" ng-cloak>
-                            <a ng-href="#{{item.path}}" active-path="active-menu-item"><span class="menu-button">{{item.label}}</span></a>
-                        </li>
-                        <li ng-if="app.menu.admins.length" class="nav-manage" ng-cloak>
-                            <span class="menu-button" ng-click="app.toggleAdminMenu()">Manage</span>
+                        <li ng-if="app.menu.admins.length" class="has-dropdown-menu" id="admin-menu" ng-cloak>
+                            <a href="#" ng-click="app.toggleAdminMenu()">Admin</a>
                             <ul class="admin-menu" ng-show="app.showAdminMenu">
                                 <li ng-repeat="item in app.menu.admins" ng-cloak>
                                     <a ng-href="#{{item.path}}" active-path="active-menu-item"><span class="menu-button" ng-click="app.toggleAdminMenu()">{{item.label}}</span></a>
                                 </li>
                             </ul>
-                        </li> -->
+                        </li>
+                    </ul>
                 </div>
             </div>
         </nav><!-- end navigation -->
