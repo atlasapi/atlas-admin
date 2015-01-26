@@ -81,13 +81,35 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
     $scope.app = {};
     $scope.app.dropdown = false;
     $scope.app.showAdminMenu = false;
+    $scope.app.showContentMenu = false;
+    $scope.app.showAppsMenu = false;
 
     $scope.app.toggleDropdown = function() {
         $scope.app.dropdown = !$scope.app.dropdown;
+        $scope.app.showAdminMenu = false;
+        $scope.app.showContentMenu = false;
+        $scope.app.showAppsMenu = false;
     }
 
     $scope.app.toggleAdminMenu = function() {
         $scope.app.showAdminMenu = !$scope.app.showAdminMenu;
+        $scope.app.dropdown = false;
+        $scope.app.showContentMenu = false;
+        $scope.app.showAppsMenu = false;
+    }
+
+    $scope.app.toggleContentMenu = function() {
+        $scope.app.showContentMenu = !$scope.app.showContentMenu;
+        $scope.app.dropdown = false;
+        $scope.app.showAdminMenu = false;
+        $scope.app.showAppsMenu = false;
+    }
+
+    $scope.app.toggleAppsMenu = function() {
+        $scope.app.showAppsMenu = !$scope.app.showAppsMenu;
+        $scope.app.dropdown = false;
+        $scope.app.showAdminMenu = false;
+        $scope.app.showContentMenu = false;
     }
 
     var getPrivateMenuItems = function() {
