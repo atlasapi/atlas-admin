@@ -25,6 +25,7 @@ h1, h2, h3, h4, h5, h6 {
     font-family: $header-font-family;
     font-weight: normal;
     text-shadow: 0 1px 0 #fff;
+    text-transform: lowercase;
 }
 
 h1 {

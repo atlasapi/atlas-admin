@@ -16,35 +16,63 @@
 
     <body>
         <!-- navigation -->
-        <nav class="navbar" role="navigation" ng-controller="UserMenuController">
-            <div class="navbar-brand">
-                <a class="navbar-logo" href="#"><img src="img/logo.png" alt="Atlas Admin logo" /></a>
-            </div>
-            <div class="navbar-links">
-                <ul ng-show="status.loggedIn" class="navbar-links-user">
-                    <li ng-repeat="item in app.menu.users" ng-cloak>
-                        <a ng-href="#{{item.path}}" active-path="active-menu-item"><span class="menu-button">{{item.label}}</span></a>
-                    </li>
-                    <li ng-if="app.menu.admins.length" class="nav-manage" ng-cloak>
-                        <span class="menu-button" ng-click="app.toggleAdminMenu()">Manage</span>
-                        <ul class="admin-menu" ng-show="app.showAdminMenu">
-                            <li ng-repeat="item in app.menu.admins" ng-cloak>
-                                <a ng-href="#{{item.path}}" active-path="active-menu-item"><span class="menu-button" ng-click="app.toggleAdminMenu()">{{item.label}}</span></a>
-                            </li>
+        <nav class="site-header" id="header" role="navigation" ng-controller="UserMenuController">
+            <div class="container">
+                <div class="navbar-brand">
+                    <a class="navbar-logo" href="#"><img src="img/logo.png" alt="Atlas Admin logo" /></a>
+                </div>
+                <div class="navbar-links">
+                    <ul ng-show="status.loggedIn" class="nav">
+                        <li><a href="/#widgets">Widgets</a></li>
+                        <li><a href="/#examples">Examples</a></li>
+                        <li><a href="/#reference">Reference</a></li>
+                        <li><a href="/#about">About</a></li>
+                    </ul>
+                </div>
+                <div class="navbar-tools" id="navbar-tools">
+                    <a class="navbar-api-explorer-btn btn" href="#apiExplorer">api explorer</a>
+                    <div class="navbar-user logged-in has-dropdown-menu" ng-show="status.loggedIn" ng-click="app.toggleDropdown()" ng-cloak>
+                        <a href="#" class="user-avatar">
+                            <img class="profile-picture" ng-src="{{app.user.profile_image}}" alt="profile picture"/>
+                            <span class="user-name">{{app.user.full_name}}</span>
+                        </a>
+                        <ul class="user-dropdown-menu dropdown-menu" ng-show="app.dropdown">
+                            <li><a href="#/profile">Your profile</a></li>
+                            <li><a href="#/terms">Terms of use</a></li>
+                            <li><a href="#/logout">Log out</a></li>
                         </ul>
-                    </li>
-                </ul>
-            </div>
-            <div class="navbar-user" ng-show="status.loggedIn" ng-click="app.toggleDropdown()" ng-cloak>
-                <span href="#" class="user-avatar">
-                    <img class="profile-picture" ng-src="{{app.user.profile_image}}" alt="profile picture"/>
-                    <span class="user-name">{{app.user.full_name}}</span>
-                </span>
-                <ul class="user-dropdown-menu" ng-show="app.dropdown">
-                    <li><a href="#/profile">Your profile</a></li>
-                    <li><a href="#/terms">Terms of use</a></li>
-                    <li><a href="#/logout">Log out</a></li>
-                </ul>
+                    </div>
+                </div>
+                <div class="navbar-links">
+                    <ul class="nav">
+                        <li class="has-dropdown-menu" id="apps-menu">
+                            <a href="#">Apps</a>
+                            <ul class="apps-dropdown dropdown-menu dropdown-menu-large">
+                                <!-- Show three applications here -->
+                                <li><a ng-href="#/applications">All applications&hellip;</a></li>
+                                <li><a ng-href="#/wishlist">Wishlist</a></li>
+                            </ul>
+                        </li>
+                        <li class="has-dropdown-menu" id="content-menu">
+                            <a href="#">Content</a>
+                        </li>
+                        <li class="has-dropdown-menu" id="admin-menu">
+                            <a href="#">Admin</a>
+                        </li>
+                    </ul>
+
+                        <!-- <li ng-repeat="item in app.menu.users" ng-cloak>
+                            <a ng-href="#{{item.path}}" active-path="active-menu-item"><span class="menu-button">{{item.label}}</span></a>
+                        </li>
+                        <li ng-if="app.menu.admins.length" class="nav-manage" ng-cloak>
+                            <span class="menu-button" ng-click="app.toggleAdminMenu()">Manage</span>
+                            <ul class="admin-menu" ng-show="app.showAdminMenu">
+                                <li ng-repeat="item in app.menu.admins" ng-cloak>
+                                    <a ng-href="#{{item.path}}" active-path="active-menu-item"><span class="menu-button" ng-click="app.toggleAdminMenu()">{{item.label}}</span></a>
+                                </li>
+                            </ul>
+                        </li> -->
+                </div>
             </div>
         </nav><!-- end navigation -->
 
@@ -53,7 +81,9 @@
         <div notifications></div>
 
         <!-- Application body -->
-        <div class="application-container" ng-hide="show.cloak" ng-cloak ng-view></div>
+        <div class="container">
+            <div class="application-container" ng-hide="show.cloak" ng-cloak ng-view></div>
+        </div>
 
         <script src="js/vendor/jquery.min.js"></script>
         <script src="js/vendor/angular/angular.min.js"></script>
