@@ -53,7 +53,7 @@
                                 <li><a ng-href="#/wishlist">Wishlist</a></li>
                             </ul>
                         </li>
-                        <li class="has-dropdown-menu" id="content-menu">
+                        <li ng-if="app.menu.users.length" class="has-dropdown-menu" id="content-menu">
                             <span ng-click="app.toggleContentMenu()">Content</span>
                             <ul class="content-dropdown dropdown-menu" ng-show="app.showContentMenu">
                                 <li ng-repeat="item in app.menu.users" ng-cloak>
