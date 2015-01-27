@@ -10,9 +10,10 @@ html, body { height: 100%; }
     @extend %cf;
     box-sizing: border-box;
     display: block;
+    min-width: 1300px;
     width: 100%;
     height: 100%;
-    padding-top: 46px;
+    padding: 46px 7% 0;
 }
 
 .app-surface {
