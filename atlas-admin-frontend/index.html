@@ -28,7 +28,7 @@
                     </ul>
                 </div>
                 <div class="navbar-links">
-                    <ul class="nav">
+                    <ul class="nav" ng-show="status.loggedIn">
                         <li class="has-dropdown-menu" id="apps-menu" ng-cloak>
                             <span ng-click="app.toggleAppsMenu()">Apps</span>
                             <ul class="apps-dropdown dropdown-menu dropdown-menu-large" ng-show="app.showAppsMenu">
