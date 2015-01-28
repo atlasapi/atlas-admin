@@ -32,7 +32,14 @@
                         <li class="has-dropdown-menu" id="apps-menu" ng-cloak>
                             <span ng-click="app.toggleAppsMenu()">Apps</span>
                             <ul class="apps-dropdown dropdown-menu dropdown-menu-large" ng-show="app.showAppsMenu">
-                                <!-- Show three applications here -->
+                                <li ng-controller="CtrlApplications">
+                                    <span ng-repeat="application in app.applications | orderBy:app.predicate:app.reverse | limitTo:3">
+                                        <a href="#/applications/{{application.id}}">
+                                            <strong>{{application.title}}:</strong>
+                                            {{application.credentials.apiKey}}
+                                        </a>
+                                    </span>
+                                </li>
                                 <li><a ng-href="#/applications">All applications&hellip;</a></li>
                                 <li><a ng-href="#/wishlist">Wishlist</a></li>
                             </ul>

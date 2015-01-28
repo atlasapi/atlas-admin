@@ -9673,6 +9673,7 @@ app.controller('UserProfileController', function($scope, $rootScope, $routeParam
         }
     };
 
+
     if ($routeParams.uid) {
         Users.get($routeParams.uid).then(function(user) {
             $scope.app.user = user;
