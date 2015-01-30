@@ -44,8 +44,8 @@
                 </div>
                 <div class="navbar-links">
                     <ul class="nav" ng-show="status.loggedIn">
-                        <li class="has-dropdown-menu" id="apps-menu" ng-cloak>
-                            <span ng-click="app.toggleAppsMenu()">Apps</span>
+                        <li class="has-dropdown-menu" id="apps-menu" ng-click="app.toggleAppsMenu()" ng-cloak>
+                            <span>Apps</span>
                             <ul class="apps-dropdown dropdown-menu dropdown-menu-large" ng-show="app.showAppsMenu">
                                 <li ng-if="status.loggedIn" ng-controller="CtrlApplications">
                                     <div ng-if="app.applications" class="menu-title"><h4><em>recent applications</em></h4></div>
@@ -61,8 +61,8 @@
                                 <li><a ng-href="#/wishlist">Wishlist</a></li>
                             </ul>
                         </li>
-                        <li ng-if="app.menu.users.length" class="has-dropdown-menu" id="content-menu" ng-cloak>
-                            <span ng-click="app.toggleContentMenu()">Content</span>
+                        <li ng-if="app.menu.users.length" class="has-dropdown-menu" id="content-menu" ng-click="app.toggleContentMenu()" ng-cloak>
+                            <span>Content</span>
                             <ul class="content-dropdown dropdown-menu" ng-show="app.showContentMenu">
                                 <li ng-repeat="item in app.menu.users" ng-cloak>
                                     <a ng-href="#{{item.path}}" active-path="active-menu-item"><span class="menu-button">{{item.label}}</span></a>
@@ -70,8 +70,8 @@
                             </ul>
                         </li>
                         </li>
-                        <li ng-if="app.menu.admins.length" class="has-dropdown-menu" id="admin-menu" ng-cloak>
-                            <span ng-click="app.toggleAdminMenu()">Admin</span>
+                        <li ng-if="app.menu.admins.length" class="has-dropdown-menu" id="admin-menu" ng-click="app.toggleAdminMenu()" ng-cloak>
+                            <span>Admin</span>
                             <ul class="admin-menu admin-dropdown dropdown-menu" ng-show="app.showAdminMenu">
                                 <li ng-repeat="item in app.menu.admins" ng-cloak>
                                     <a ng-href="#{{item.path}}" active-path="active-menu-item"><span class="menu-button" ng-click="app.toggleAdminMenu()">{{item.label}}</span></a>
