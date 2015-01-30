@@ -47,7 +47,7 @@
                         <li class="has-dropdown-menu" id="apps-menu" ng-click="app.toggleAppsMenu()" ng-cloak>
                             <span>Apps</span>
                             <ul class="apps-dropdown dropdown-menu dropdown-menu-large" ng-show="app.showAppsMenu">
-                                <li ng-if="status.loggedIn" ng-controller="CtrlApplications">
+                                <li ng-if="ProfileStatus.isProfileComplete()" ng-controller="CtrlApplications">
                                     <div ng-if="app.applications" class="menu-title"><h4><em>recent applications</em></h4></div>
                                     <span class="application-link" ng-repeat="application in app.applications | orderBy:app.predicate:app.reverse | limitTo:3">
                                         <a href="#/applications/{{application.id}}">
