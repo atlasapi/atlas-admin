@@ -67,7 +67,7 @@ var auth = function(request, response, next) {
                     agent: false
                 }
 
-                res.on('error', function () {
+                res.on('error', function (err) {
                     responder.error(err);
                 })
 
@@ -80,7 +80,11 @@ var auth = function(request, response, next) {
                         responder.authenticated();
                         next();
                     });
-                }).end();
+                })
+                    .on('error', function (err) {
+                        responder.error(err);
+                    })
+                    .end();
             }else{
                 if (res.statusCode === 200) {
                     responder.authenticated();
