@@ -33,9 +33,9 @@ var auth = function(request, response, next) {
             this.body += chunk;
             return;
         },
-        error: function () {
+        error: function (err) {
             console.log('Auth request error', err.message);
-            this.response.end({
+            this.response.send({
                 "error": "Server error occurred"
             });
         }
