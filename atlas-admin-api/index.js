@@ -10,6 +10,12 @@ var config                       = require('./config'),
 var _http_port = config.port.http;
 var _mongo_port = config.port.mongo;
 
+app.use( function (req, res, next) {
+    console.log('Request:'+req);
+    console.log('Response:'+res);
+    next();
+})
+
 // middleware: parse incoming request data as json
 app.use( bodyParser.json() );
 
