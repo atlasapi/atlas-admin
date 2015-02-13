@@ -34,6 +34,7 @@ var auth = function(request, response, next) {
             return;
         },
         error: function () {
+            console.log('Auth request error', err.message);
             this.response.end({
                 "error": "Server error occurred"
             });
@@ -66,6 +67,10 @@ var auth = function(request, response, next) {
                     agent: false
                 }
 
+                res.on('error', function () {
+                    responder.error(err);
+                })
+
                 http.request(redirectOpts, function(redirect_res) {
                     res.setEncoding('utf8');   
                     redirect_res.on('data', function(chunk) {
@@ -96,8 +101,7 @@ var auth = function(request, response, next) {
         }
         var auth = http.request(authOpts, handleAuth);
         auth.on('error', function (err) {
-            console.log('Auth request error', err.message);
-            responder.error();
+            responder.error(err);
         })
         auth.end();
     }else{
