@@ -94,11 +94,12 @@ var auth = function(request, response, next) {
             method: 'GET',
             agent: false
         }
-        var auth = http.request(authOpts, handleAuth).end();
+        var auth = http.request(authOpts, handleAuth);
         auth.on('error', function (err) {
             console.log('Auth request error', err.message);
             responder.error();
         })
+        auth.end();
     }else{
         responder.not_authenticated();
     }
