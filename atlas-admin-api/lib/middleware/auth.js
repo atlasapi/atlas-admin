@@ -32,6 +32,11 @@ var auth = function(request, response, next) {
         writeBody: function(chunk) {
             this.body += chunk;
             return;
+        },
+        error: function () {
+            this.response.end({
+                "error": "Server error occurred"
+            });
         }
     }
 
@@ -90,6 +95,10 @@ var auth = function(request, response, next) {
             agent: false
         }
         var auth = http.request(authOpts, handleAuth).end();
+        auth.on('error', function (err) {
+            console.log('Auth request error', err.message);
+            responder.error();
+        })
     }else{
         responder.not_authenticated();
     }
