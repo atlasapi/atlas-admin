@@ -11,8 +11,8 @@ var _http_port = config.port.http;
 var _mongo_port = config.port.mongo;
 
 app.use( function (req, res, next) {
-    console.log('Request:'+req);
-    console.log('Response:'+res);
+    console.log('Request:'+req.hostname + req.path);
+    console.log('Response status:'+res.statusCode);
     next();
 })
 
