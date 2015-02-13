@@ -89,6 +89,8 @@ var auth = function(request, response, next) {
                 if (res.statusCode === 200) {
                     responder.authenticated();
                     next();       
+                }else if (res.statusCode > 500) {
+                    responder.error();
                 }else{
                     responder.not_authenticated();
                 }
