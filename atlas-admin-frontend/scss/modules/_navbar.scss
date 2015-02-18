@@ -1,213 +1,265 @@
 //	The global navbar
 //
-$navbar-height: 5.06rem;
-$navbar-color: #EEEEEE;
-$navbar-shadow-color: rgba( red($color-purple), green($color-purple), blue($color-purple), .4);
 
-.navbar {
-	@extend %cf;
-	box-sizing: border-box;
-	display: block;
-	width: 100%;
-	height: $navbar-height;
-	background: $navbar-color;
-	color: $primary-text-color;
-	border-bottom: 1px solid $color-pink;
-	box-shadow: 0 1px 2px $navbar-shadow-color;
+
+/* Header */
+.site-header {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    background: #efefef;
+    background: rgba(239,239,239,0.95);
+    box-shadow: 0 1px #EF308F, 0 5px 10px rgba(0,0,0,0.2);
+    z-index: 1000;
+    text-transform: lowercase;
+    font-family: Molengo, sans-serif;
 }
 
-// atlas logo
-.navbar-brand {
-	@extend %cf;
-	display: block;
-	float: left;	
-	margin-left: 2.25rem;
-	
-	> a { display: inline-block; height: $navbar-height; line-height: $navbar-height; }
-	> a img { display: inline-block; margin: .8rem 0 0 0; }
+.site-logo {
+    float: left;
+    position: relative;
+    height: 4rem;
+    line-height: 4rem;
 }
 
-// main navigation list
+.site-logo img {
+    vertical-align: middle;
+}
+
+/* Navigation */
 .navbar-links {
-	@extend %cf;
-	display: block;
-	float: left;
-	margin-left: 2.25rem;
-
-	ul {
-		@extend %bare-list;
-		height: $navbar-height;
-		float: left;
-		
-		> li {
-			display: block;
-			float: left;
-			height: $navbar-height;
-			line-height: $navbar-height;
-		}
-
-		> li a {
-			display: block;
-			height: $navbar-height;
-			color: $primary-text-color;
-			font-size: 1.125rem;
-			text-decoration: none;
-			text-transform: lowercase;
-			transition: all 100ms ease;
-			
-			&:hover { color: $color-pink; }
-		}
-
-		.menu-button {
-			display: inline-block;
-			height: 3.375rem;
-			padding: 0 1rem;
-			vertical-align: bottom;
-			line-height: 3.375rem;
-		}
-
-		> li a.active-menu-item { color: $primary-text-color; }
-		> li a.active-menu-item .menu-button {
-			position: relative;
-			color: $color-pink;
-			&:after {
-				content: "";
-				position: absolute;
-				bottom: 0;
-				left: 50%;
-				display: block;
-				margin-left: -8px;
-				border-left: 8px solid transparent;
-				border-right: 8px solid transparent;
-				border-bottom: 8px solid $color-pink;
-			}
-		}
-
-	}
-
-	// For the admin management dropdown nav
-	.nav-manage { 
-		position: relative;
-		margin-left: 2.25rem;
-	
-		> .menu-button { 
-			cursor: pointer;
-
-				&:before {
-					content: "";
-					display: block;
-					position: absolute;
-					bottom: 1.5rem;
-					right: 0;
-					border-left: 4px solid transparent;
-					border-right: 4px solid transparent;
-					border-top: 6px solid darken($navbar-color, 40%);
-				}
-		}
-
-		.admin-menu {
-			@extend %cf;
-			position: absolute;
-			top: 100%;
-			left: 0;
-			z-index: 1039;
-			display: block;
-			height: auto;
-			width: 300px;
-			background: white;
-			box-shadow: 0 1px 2px $navbar-shadow-color;
-
-			li { float: none; }
-
-			li > a {
-				color: white;
-				background: $color-pink;
-
-				.menu-button { box-sizing: border-box; width: 100%; }
-
-				&:hover { background: $color-purple }
-
-				&.active-menu-item .menu-button {
-					color: white;
-					background: $color-purple;
-					&::after { display: none; }
-				}
-			}
-
-			li, 
-			li a {
-				display: block;
-				height: auto;
-				line-height: 1.4;
-			}
-		}
-	}
+    float: left;
+    margin-left: 1rem;
 }
 
-// the user avatar and prefs menu 
-//
+.nav > li {
+    float: left;
+}
+
+.nav a {
+    text-decoration: none;
+}
+
+.navbar-links .nav {
+    margin-top: 1.75rem;
+}
+
+.navbar-links .nav > li {
+    border-left: 1px solid #fff;
+    border-right: 1px solid #ddd;
+}
+
+.navbar-links .nav li:first-child {
+    border-left: 0;
+}
+
+.navbar-links .nav li:last-child {
+    border-right: 0;
+}
+
+.navbar-links .nav a,
+.navbar-links .nav span {
+    display: block;
+    padding: 0.25rem 0.75rem 0.5rem;
+    font-size: 1.125rem;
+    -webkit-transition: all .1s ease;
+    transition: all .1s ease;
+}
+
+.navbar-links .nav a:hover,
+.navbar-links .active-link > a,
+.navbar-links .nav span:hover,
+.navbar-links .active-link > a {
+    color: #fc0088;
+}
+
+.navbar-tools {
+    float: right;
+    height: 36px;
+    margin: 0.8rem 1rem 0 0;
+}
+
+.navbar-login {
+    position: relative;
+    top: 1.75rem;
+    font-size: 1.125rem;
+}
+
+.navbar-api-explorer-btn {
+    position: relative;
+    float: right;
+    margin: 0.8rem 0 0;
+    border: 1px solid #684090;
+    border-radius: 5px;
+    font-size: 18px;
+    padding: 5px 15px 8px;
+    background-color: #8e5dbf;
+    background: linear-gradient(180deg, #8e5bdf, #3e126a);
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.4), 0 1px 5px rgba(0,0,0,0.3);
+    line-height: 26px;
+    color: #fff;
+    text-decoration: none;
+}
+
+.navbar-api-explorer-btn:active {
+    box-shadow: inset 0 1px 5px rgba(0,0,0,0.4);
+    border: 1px solid #684090;
+}
+
+.navbar-api-explorer-btn:hover, .navbar-api-explorer-btn:focus {
+    text-decoration: none;
+    border: 1px solid #333;
+    outline: none;
+    color: #fff;
+}
+
+/* User profile nav */
 .navbar-user {
-	position: relative;
-	display: block;
-	float: right;
-	padding-right: 3rem;
-	height: $navbar-height;
-	cursor: pointer;
-
-	&:before {
-		content: "";
-		display: block;
-		position: absolute;
-		top: 36px;
-		right: 1rem;
-		border-left: 6px solid transparent;
-		border-right: 6px solid transparent;
-		border-top: 6px solid $color-pink;
-	}
-
-	.user-avatar { display: block; }
-	
-	.profile-picture {
-		display: inline-block;
-		width: 3.365rem;
-		height: 3.375rem;
-		margin: .8rem 0 0;
-		border-radius: 50%;
-		float: right;
-	}
-
-	.user-name {
-		display: block;
-		float: left;
-		height: $navbar-height;
-		margin-right: 1rem;
-		line-height: $navbar-height;
-		transition: all 100ms ease;
-	}
-
-	&:hover .user-name { color: $color-pink; }
+    position: relative;
+    float: right;
 }
 
-ul.user-dropdown-menu {
-	@extend %bare-list;
-	position: absolute;
-	z-index: 200;
-	top: 90%;
-	right: 1rem;
-	box-sizing: border-box;
-	width: 11.4rem;
-	padding: 1rem;
-	line-height: 2.25rem;
-	background: $navbar-color;
-	border: 1px solid $color-pink;
-	box-shadow: 0 1px 10px rgba(0,0,0,0.2);
-	border-radius: 4px;
+.profile-picture {
+    float: right;
+    width: 1.75rem;
+    height: 1.75rem;
+    margin: 0.5rem 0 0 0.5rem;
+    border-radius: 50%;
+}
 
-	> li {
-		display: block;
-		text-align: right;
+.user-avatar {
+    display: block;
+    padding-right: 6px;
+}
 
-		a { display: block; text-decoration: none; transition: all 100ms ease; }
-		a:hover { color: $color-pink; }
-	}
+.user-name {
+    float: left;
+    margin: 0.75rem 0 0;
+    -webkit-transition: all .1s ease;
+    transition: all .1s ease;
+}
+
+/* Generic */
+.container:before,
+.container:after,
+.nav:before,
+.nav:after {
+    content: " ";
+    display: table;
+}
+
+.container:after,
+.nav:after {
+    clear: both;
+}
+
+.navbar-links ul {
+	list-style: none;
+}
+
+.navbar-links > ul {
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    min-width: 960px;
+    margin: 0 auto;
+    padding: 0 7%;
+}
+
+/* Dropdowns */
+.has-dropdown-menu {
+    position: relative;
+    cursor: pointer;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 90%;
+    left: 50%;
+    width: 12rem;
+    margin-left: -6rem;
+    padding: 1rem;
+    border: 1px solid #fc0088;
+    border-radius: 4px;
+    background: #eee;
+    box-shadow: 0 1px 10px rgba(0,0,0,0.2);
+    line-height: 2.25rem;
+    box-sizing: border-box;
+    text-align: left;
+    list-style: none;
+    z-index: 1050;
+}
+
+.dropdown-menu a {
+    display: block;
+    text-decoration: none;
+}
+
+.dropdown-menu a:hover {
+    color: #fc0088;
+}
+
+.navbar-links .dropdown-menu a {
+    display: block;
+    padding: 0;
+    height: auto;
+}
+
+.dropdown-menu-large {
+    width: 20rem;
+    margin-left: -10rem;
+}
+
+.dropdown-menu:after {
+    content: "";
+    position: absolute;
+    top: -7px;
+    left: 50%;
+    display: block;
+    margin-left: -3px;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 6px solid #fc0088;
+}
+
+.user-dropdown-menu {
+    top: 1.5rem;
+    left: auto;
+    right: 0;
+}
+
+.user-dropdown-menu:after {
+    left: auto;
+    right: 1.75rem;
+}
+
+.logged-in {
+    cursor: pointer;
+}
+
+.nav .apps-dropdown span {
+    padding: 0;
+}
+
+.menu-separator {
+    border-bottom: 1px solid #ccc;
+    margin: 10px 0;
+}
+
+.apps-dropdown .application-link {
+    line-height: 1.5;
+}
+
+.menu-title h4 {
+    margin: 0;
+}
+
+.icn_mag {
+    width: 16px; height: 16px;
+    display: block;
+    float: left;
+    background: url(../img/apiMag.png) center no-repeat;
+    margin: 6px 10px 0 0;
 }

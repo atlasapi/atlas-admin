@@ -13,12 +13,12 @@ html, body { height: 100%; }
     min-width: 1300px;
     width: 100%;
     height: 100%;
-    padding: 0 7%;
+    padding: 46px 7% 0;
 }
 
 .app-surface {
     @extend %cf;
-    margin-top: 3.375rem;
+    margin-top: 5.5rem;
     width: 100%;
 }
 
@@ -75,10 +75,10 @@ html, body { height: 100%; }
 .panel-third { width: 33.333%; float: left; }
 .panel-quarter { width: 25%; float: left; }
 
-.panel-full, .panel-half, .panel-third, .panel-quarter { 
-    @extend %cf; 
+.panel-full, .panel-half, .panel-third, .panel-quarter {
+    @extend %cf;
     box-sizing: border-box;
-    display: block; 
+    display: block;
     margin-bottom: 3.375rem;
 
     &.snug { margin-bottom: 0; }
@@ -112,6 +112,6 @@ html, body { height: 100%; }
 
 //  Headings & title blocks
 //
-//  remove default margins on headings, because it's better 
+//  remove default margins on headings, because it's better
 //  to explicitly define them later
 h1, h2, h3, h4 { margin: 0; }

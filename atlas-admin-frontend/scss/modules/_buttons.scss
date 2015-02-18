@@ -57,10 +57,10 @@
         outline: none;
     }
 
-    &.stroke { 
-        background: none; 
-        color: $color-purple; 
-        border: 1px solid $color-purple; 
+    &.stroke {
+        background: none;
+        color: $color-purple;
+        border: 1px solid $color-purple;
         box-shadow: none;
     }
 
@@ -70,7 +70,7 @@
 
     &.large { font-size: 1.25rem; padding: 1em 1em; }
 
-    &.positive { 
+    &.positive {
         @include background-gradient($color-green, darken($color-green, 13%));
         color: white;
         border-color: darken($color-green, 15%);
@@ -117,9 +117,9 @@
         border-color: #999;
         cursor: default;
 
-        &:hover { 
+        &:hover {
             background: $color-grey;
-            color: #999; 
+            color: #999;
             border-color: #999;
         }
     }
@@ -161,12 +161,12 @@ a.button:hover { color: $color-purple; }
 
     &.input-mode {
         .button-state { display: none; }
-        .form-state { 
-            display: block; 
+        .form-state {
+            display: block;
             input { width: 370px; height: 30px; }
-            .button { 
+            .button {
                 float: right;
-                height: 30px; 
+                height: 30px;
                 line-height: 25px;
             }
         }
