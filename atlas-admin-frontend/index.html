@@ -31,8 +31,7 @@
                                 <li ng-if="ProfileStatus.isProfileComplete()" ng-controller="CtrlApplications">
                                     <span class="application-link" ng-repeat="application in app.applications | orderBy:app.predicate:app.reverse | limitTo:3">
                                         <a href="#/applications/{{application.id}}">
-                                            <strong>{{application.title}}:</strong>
-                                            {{application.credentials.apiKey}}
+                                            {{application.title}}
                                         </a>
                                     </span>
                                     <div ng-if="app.applications" class="menu-separator"></div>
