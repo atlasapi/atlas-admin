@@ -9,6 +9,6 @@
     "q": "^1.0.1"
   },
   "scripts": {
-    "start": "cowsay -s Ready! && node index"
+    "start": "node index.js"
   }
 }
