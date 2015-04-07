@@ -99,10 +99,10 @@ gulp.task('javascripts', function() {
 //
 gulp.task('watch', function() {
 	gulp.watch('scss/**/*.scss', ['styles']);
-    gulp.watch('js/**/*.js', ['javascripts']);
+  gulp.watch('js/**/*.js', ['javascripts']);
 });
 
-//  Resgister the default task. 
-//  to run:$ gulp
+//  Resgister the default task.
+//  to run: `$ gulp`
 //
 gulp.task('default', ['styles', 'javascripts', 'watch']);

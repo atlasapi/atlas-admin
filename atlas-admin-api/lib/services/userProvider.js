@@ -1,8 +1,7 @@
 'use strict';
-var common = require('../../common'),
-    config = require('../../config'),
-    Q      = require('q'),
-    _      = require('lodash');
+var common = require('../../common');
+var Q      = require('q');
+var _      = require('lodash');
 
 
 function User() {
@@ -12,7 +11,7 @@ function User() {
         };
 
 
-    //  Used for finding out which groups this user has access too
+    //  Used for finding out which groups this user has access to
     //
     //  @returns promise
     //
@@ -40,13 +39,13 @@ function User() {
             }));
 
             if (!_.isEmpty(groups)) {
-                defer.resolve(groups)
+                defer.resolve(groups);
             }else{
                 defer.resolve({});
             }
         });
         return defer.promise;
-    }
+    };
 
 
     //  Used for finding out if the loggied in user is part of a certain group
@@ -57,12 +56,12 @@ function User() {
     var isUserinGroup = function(groupname) {
         var defer = Q.defer();
         return defer.promise;
-    }
+    };
 
     return {
         groups: listGroups,
         inGroup: isUserinGroup
-    }
+    };
 }
 
 module.exports = User();

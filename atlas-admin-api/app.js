@@ -14,7 +14,7 @@ app.use( function (req, res, next) {
     console.log('Request:'+req.hostname + req.path);
     console.log('Response status:'+res.statusCode);
     next();
-})
+});
 
 // middleware: parse incoming request data as json
 app.use( bodyParser.json() );
