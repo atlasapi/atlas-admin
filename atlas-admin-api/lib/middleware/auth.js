@@ -32,6 +32,12 @@ var auth = function(request, response, next) {
         writeBody: function(chunk) {
             this.body += chunk;
             return;
+        },
+        error: function (err) {
+            console.log('Auth request error', err.message);
+            this.response.send({
+                "error": "Server error occurred"
+            });
         }
     };
 
@@ -61,6 +67,10 @@ var auth = function(request, response, next) {
                     agent: false
                 };
 
+                res.on('error', function (err) {
+                    responder.error(err);
+                });
+
                 http.request(redirectOpts, function(redirect_res) {
                     res.setEncoding('utf8');
                     redirect_res.on('data', function(chunk) {
@@ -70,11 +80,17 @@ var auth = function(request, response, next) {
                         responder.authenticated();
                         next();
                     });
-                }).end();
+                })
+                    .on('error', function (err) {
+                        responder.error(err);
+                    })
+                    .end();
             }else{
                 if (res.statusCode === 200) {
                     responder.authenticated();
                     next();
+                }else if (res.statusCode > 500) {
+                    responder.error();
                 }else{
                     responder.not_authenticated();
                 }
@@ -88,9 +104,13 @@ var auth = function(request, response, next) {
             path: auth_endpoint,
             method: 'GET',
             agent: false
-        };
 
-        http.request(authOpts, handleAuth).end();
+        };
+        var auth = http.request(authOpts, handleAuth);
+        auth.on('error', function (err) {
+            responder.error(err);
+        });
+        auth.end();
     }else{
         responder.not_authenticated();
     }
