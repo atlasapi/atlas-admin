@@ -19,14 +19,14 @@ function Feeds() {
                     return n.data.feeds;
                 }
             });
-            defer.resolve(_.compact(feeds)[0])
-        }, defer.reject)
+            defer.resolve(_.compact(feeds)[0]);
+        }, defer.reject);
         return defer.promise;
-    }
+    };
 
     return {
         getAll: getAllFeeds
-    }
+    };
 }
 
 module.exports = Feeds();

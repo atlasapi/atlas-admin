@@ -13,7 +13,7 @@ module.exports = function() {
             http: instanceConfig.listenPort || 9000
         },
 
-        database: instanceConfig.database || 'mongodb://localhost:27017/atlasadmin?readPreference=primary',
+        database: instanceConfig.database || 'mongodb://localhost:27017/atlas-admin?readPreference=primary',
 
         paths: {
             apiRoot: instanceConfig.apiRootPath || '/api'

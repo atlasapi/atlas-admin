@@ -26,7 +26,7 @@ function IsJSON(str) {
 
 function getAPIKey() {
     for (var feed in _feeds) {
-        if (_feeds[feed].name == 'BBC to YouView') {
+        if (_feeds[feed].name === 'BBC to YouView') {
             return _feeds[feed].apiKey;
         }
     }
@@ -40,16 +40,15 @@ function getAPIKey() {
 function proxyRequest(endpoint, request) {
     var defer           = Q.defer(),
         _endpoint       = endpoint,
-        _annotations    = request.query.annotations || null,
         _querystring    = { apiKey: getAPIKey() };
 
     for (var query in request.query) {
-        if ('status' === query 
-            || 'uri' === query 
-            || 'remote_id' === query
-            || 'limit' === query
-            || 'offset' === query
-            || 'annotations' === query) {
+        if ('status' === query ||
+            'uri' === query ||
+            'remote_id' === query ||
+            'limit' === query ||
+            'offset' === query ||
+            'annotations' === query) {
             _querystring[query] = request.query[query];
         }
     }
@@ -58,7 +57,7 @@ function proxyRequest(endpoint, request) {
         if (IsJSON(data)) {
             defer.resolve(JSON.parse(data));
         }else{
-            console.error('Response is invalid')
+            console.error('Response is invalid');
             defer.reject(common.errors.invalid_json);
         }
     });
@@ -84,13 +83,13 @@ function loadFeeds(req, res, next) {
     }, next);
 }
 
-//  REST interface for feeds 
+//  REST interface for feeds
 //
 var feedsInterface = function() {
     var router  = express.Router();
 
-    // Grab the feed from groups so before every request so the app uses 
-    // the correct api key 
+    // Grab the feed from groups so before every request so the app uses
+    // the correct api key
     router.use(loadFeeds);
 
     // Return a list of feeds
@@ -115,12 +114,12 @@ var feedsInterface = function() {
 
 
 
-    // Actions endpoint. actions must be sent to a processing url   
+    // Actions endpoint. actions must be sent to a processing url
     router.route('/youview/bbc_nitro/action/:action')
         .post(function(req, res) {
             if (!_.isString(req.body.uri)) {
                 res.end();
-                return false
+                return false;
             }
             var data;
             var uri = req.body.uri || '';
@@ -139,16 +138,16 @@ var feedsInterface = function() {
                 hostname: 'processing.stage.atlas.mbst.tv',
                 path: '/feeds/youview/bbc_nitro/'+action+'?'+qs.stringify(querystring),
                 method: 'post'
-            }
+            };
 
             var action_request = http.request(request_opts, function(action_res) {
                 action_res.setEncoding('utf8');
                 action_res.on('data', function(chunk) {
                     data += chunk;
-                })
+                });
                 action_res.on('end', function() {
                     res.end();
-                })
+                });
             });
 
             action_request.on('error', function() {
@@ -156,35 +155,34 @@ var feedsInterface = function() {
                 res.end();
             });
             action_request.end();
-        })
+        });
 
 
 
-    //  hardwired for now, catch the request to atlas so we can run 
+    //  hardwired for now, catch the request to atlas so we can run
     //  auth checks before returning any data
     router.route('/youview/bbc_nitro/:endpoint')
         .get(function(req, res) {
             proxyRequest(req.params.endpoint, req).then(function(result) {
-                var _output;
                 res.end(JSON.stringify(result));
             }, function(err) {
-                console.error(err)
-                res.end(JSON.stringify(common.errors.request_error));
+                console.error(err);
+              //  res.end(JSON.stringify(common.errors.request_error));
             });
         });
 
-    // For getting data about a particular task 
+    // For getting data about a particular task
     router.route('/youview/bbc_nitro/tasks/:task.json')
         .get(function(req, res) {
             proxyRequest('tasks/'+req.params.task+'.json', req).then(function(result) {
                 res.end(JSON.stringify(result));
             }, function(err) {
-                console.error(err)
-                res.end(JSON.stringify(common.errors.request_error));
+                console.error(err);
+                // res.end(JSON.stringify(common.errors.request_error));
             });
         });
 
     return router;
-}
+};
 
 module.exports = feedsInterface;

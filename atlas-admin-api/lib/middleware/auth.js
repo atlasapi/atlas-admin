@@ -20,7 +20,7 @@ var auth = function(request, response, next) {
         not_authenticated: function() {
             this.response.statusCode = 400;
             this.response.send({
-                "error": "Not authenticated"
+                'error': 'Not authenticated'
             });
         },
         authenticated: function() {
@@ -33,7 +33,7 @@ var auth = function(request, response, next) {
             this.body += chunk;
             return;
         }
-    }
+    };
 
     responder.response = response;
 
@@ -59,10 +59,10 @@ var auth = function(request, response, next) {
                     path: redirectUrl.path,
                     method: 'GET',
                     agent: false
-                }
+                };
 
                 http.request(redirectOpts, function(redirect_res) {
-                    res.setEncoding('utf8');   
+                    res.setEncoding('utf8');
                     redirect_res.on('data', function(chunk) {
                         responder.writeBody(chunk);
                     })
@@ -74,12 +74,12 @@ var auth = function(request, response, next) {
             }else{
                 if (res.statusCode === 200) {
                     responder.authenticated();
-                    next();       
+                    next();
                 }else{
                     responder.not_authenticated();
                 }
             }
-        }
+        };
 
         // make the request to Atlas, and pass response to handleAuth()
         var authOpts = {
@@ -88,11 +88,12 @@ var auth = function(request, response, next) {
             path: auth_endpoint,
             method: 'GET',
             agent: false
-        }
-        var auth = http.request(authOpts, handleAuth).end();
+        };
+
+        http.request(authOpts, handleAuth).end();
     }else{
         responder.not_authenticated();
     }
-}
+};
 
 module.exports = auth;

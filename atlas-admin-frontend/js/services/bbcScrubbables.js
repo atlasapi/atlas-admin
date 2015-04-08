@@ -1,28 +1,28 @@
 var app = angular.module('atlasAdmin.services.bbcscrubbables', []);
 
-app.factory('ScrubbablesHelpers', ['$q', 
+app.factory('ScrubbablesHelpers', ['$q',
     function($q) {
 
     // Seconds -> HHMMSS
     //
-    // Converts boring old seconds to object containing 
+    // Converts boring old seconds to object containing
     // HH MM SS as strings
     //
     // @return {Object} keys: hh, mm, ss
     function secondsToHHMMSS(secs) {
-        if (typeof secs !== 'number' && 
+        if (typeof secs !== 'number' &&
             typeof secs !== 'string') {
             return null;
         }
         var _seconds = parseInt(secs, 10);
         var hours = Math.floor(_seconds/3600);
-        var minutes = Math.floor((_seconds - (hours*3600)) / 60);;
+        var minutes = Math.floor((_seconds - (hours*3600)) / 60);
         var seconds = _seconds - (hours * 3600) - (minutes * 60);
         return {
             hh: (hours < 10) ? '0'+hours : hours.toString(),
             mm: (minutes < 10) ? '0'+minutes : minutes.toString(),
             ss: (seconds < 10) ? '0'+seconds : seconds.toString()
-        }
+        };
     }
 
 
@@ -36,7 +36,7 @@ app.factory('ScrubbablesHelpers', ['$q',
     // @return {array}
     var channelFilter = function(items, channel_id) {
         if (!_.isObject(items) || !_.isString(channel_id)) {
-            console.error('channelFilter() -> wrong type')
+            console.error('channelFilter() -> wrong type');
             return null;
         }
         for (var i=0; items.length > i; i++) {
@@ -50,7 +50,7 @@ app.factory('ScrubbablesHelpers', ['$q',
             }
         }
         return _.compact(items);
-    }
+    };
 
 
     // Transmission time to formatted date
@@ -64,11 +64,11 @@ app.factory('ScrubbablesHelpers', ['$q',
             month: _months[_date.getMonth()],
             day: _date.getDate(),
             year: _date.getFullYear()
-        }
-    }
+        };
+    };
 
 
-    // Format Atlas response 
+    // Format Atlas response
     //
     // @param item {object}
     // @returns {
@@ -104,14 +104,14 @@ app.factory('ScrubbablesHelpers', ['$q',
         }
         console.log(_out);
         return _out;
-    }
+    };
 
 
     return {
         formatResponse: formatAtlasResponse,
         channelFilter: channelFilter
-    }
-}])
+    };
+}]);
 
 
 app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService',
@@ -126,15 +126,15 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
             for (var i=0; i<res.length; i++) {
                 if (res[i].name === 'BBC-Scrubbables') {
                     defer.resolve({
-                        owlRead: res[i].data.searchApiKey, 
-                        owlWrite: res[i].data.writeApiKey, 
+                        owlRead: res[i].data.searchApiKey,
+                        owlWrite: res[i].data.writeApiKey,
                         deerRead: res[i].data.scrubbableApiKey
                     });
                 }
             }
         }, defer.reject);
         return defer.promise;
-    }
+    };
 
     var searchContent = function(apiKey, query) {
         var defer = $q.defer();
@@ -149,7 +149,7 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
              })
              .error(defer.reject);
         return defer.promise;
-    }
+    };
 
     var getDeerContentURI = function(apiKey, id) {
         var defer = $q.defer();
@@ -164,8 +164,8 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
              .error(defer.reject);
 
         return defer.promise;
-    }
-    
+    };
+
     var getContentURI = function(uri) {
         if (!_.isString(uri)) return null;
         var defer = $q.defer();
@@ -179,7 +179,7 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
             })
             .error(defer.reject);
         return defer.promise;
-    }
+    };
 
     var getContentID = function(id) {
         if (!_.isString(id)) return null;
@@ -190,11 +190,11 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
                     defer.reject('Atlas content request returned an error. Status:'+status);
                 }else{
                     defer.resolve(data);
-                }   
+                }
             })
             .error(defer.reject);
         return defer.promise;
-    }
+    };
 
     // Create content block
     //
@@ -203,46 +203,44 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
     // @param id {string}
     var createContentBlock = function(segments, uri, id) {
         var _template = {
-            "segment_events": [],
-            "same_as": [uri],
-            "equivalents":[{"uri": uri, "id": id}],
-            "publisher": {
-                "country": "GB",
-                "key": "scrubbables-producer.bbc.co.uk",
-                "name": "BBC Scrubbables Producer"
+            'segment_events': [],
+            'same_as': [uri],
+            'equivalents':[{'uri': uri, 'id': id}],
+            'publisher': {
+                'country': 'GB',
+                'key': 'scrubbables-producer.bbc.co.uk',
+                'name': 'BBC Scrubbables Producer'
             },
-            "type": "item",
-            "uri":"http://scrubbables-frontend.metabroadcast.com"
-        }
+            'type': 'item',
+            'uri':'http://scrubbables-frontend.metabroadcast.com/' + id
+        };
 
         if (typeof segments === 'object') {
             for (var i in segments) {
-                var _segment = segments[i]; 
+                var _segment = segments[i];
                 var _event = {
-                    "position": 0,
-                    "offset": _segment.offset,
-                    "segment": {
-                        "duration": _segment.duration,
-                        "segment_type": "VIDEO",
-                        "related_links":[
+                    'position': 0,
+                    'offset': _segment.offset,
+                    'segment': {
+                        'duration': _segment.duration,
+                        'segment_type': 'VIDEO',
+                        'related_links':[
                             {
-                                "type":"article",
-                                "url":_segment.url,
-                                "title":_segment.title,
-                                "thumbnail":"http://www.images.com/thumbnail",
-                                "image":"http://www.images.com/thumbnail",
-                                "shortName":_segment.title,    
-                                "description": _segment.title,
-                                "sourceId":"Source"
+                                'type':'article',
+                                'url':_segment.url,
+                                'title':_segment.title,
+                                'shortName':_segment.title,
+                                'description': _segment.title,
+                                'sourceId':'Source'
                             }
                         ]
                     }
-                }
+                };
                 _template.segment_events.push(_event);
             }
         }
         return _template;
-    }
+    };
 
 
     // Post to owl
@@ -252,17 +250,17 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
     var postToOwl = function (apiKey, data) {
         var defer = $q.defer();
         var _data = data || {};
-        if (!_.isString(apiKey) || 
+        if (!_.isString(apiKey) ||
             !_.isObject(_data.segments) ||
             !_.isObject(_data.atlas)) {
             defer.reject();
             console.error('postToOwl() -> incorrect param');
             return defer.promise;
         }
-        var _postdata = createContentBlock( _data.segments,  
+        var _postdata = createContentBlock( _data.segments,
                                             _data.atlas.uri,
                                             _data.atlas.id);
-        
+
         $http.post(atlasHost + '/3.0/content.json?apiKey='+apiKey, _postdata)
         .success(function(res, status) {
             if (status === 200) {

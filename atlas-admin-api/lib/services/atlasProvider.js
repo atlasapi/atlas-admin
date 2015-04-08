@@ -11,10 +11,13 @@ function Atlas() {
     //  @param path {string}
     //
     function appendOauthToken(path) {
-        if (!common.oauth.token || !common.oauth.provider) return false;
+        if (! common.oauth.token || ! common.oauth.provider) {
+          console.warn('Token and provider should be present');
+          return false;
+        }
         var path = path || '',
             prepend = (path.indexOf('?') > -1)? '&' : '?';
-        return path+prepend+'oauth_provider='+common.oauth.provider+'&oauth_token='+common.oauth.token;
+        return path + prepend + 'oauth_provider=' + common.oauth.provider + '&oauth_token=' + common.oauth.token;
     }
 
 
@@ -25,8 +28,8 @@ function Atlas() {
     //  @param callback {function}
     //
     function request(path, type, callback) {
-        var type = type || 'GET';
-        var path = path || '';
+        type = type || 'GET';
+        path = path || '';
         var opts = {
             port: 80,
             method: type,
@@ -35,7 +38,8 @@ function Atlas() {
             headers: {
                 'Accept': 'application/json'
             }
-        }
+        };
+        console.log(opts);
         var request = http.request(opts, function(response) {
             response.setEncoding('utf8');
             var data = '',
@@ -43,13 +47,13 @@ function Atlas() {
             response.on('data', function(chunk) {
                 data += chunk;
             })
-            .on('end', function() { 
+            .on('end', function() {
                 if (_.isFunction(callback)) callback(status, data);
             });
         });
         request.on('error', function() {
             if (_.isFunction(callback)) callback(500, common.errors.request_error);
-        })
+        });
         request.end();
     }
 
@@ -60,8 +64,8 @@ function Atlas() {
     //  @param callback {function}
     //
     function apiRequest(path, type, callback) {
-        var type = type || 'GET';
-        var path = path || '';
+        type = type || 'GET';
+        path = path || '';
         var opts = {
             port: 80,
             method: type,
@@ -70,7 +74,7 @@ function Atlas() {
             headers: {
                 'Accept': 'application/json'
             }
-        }
+        };
         var request = http.request(opts, function(response) {
             response.setEncoding('utf8');
             var data = '',
@@ -78,7 +82,7 @@ function Atlas() {
             response.on('data', function(chunk) {
                 data += chunk;
             })
-            .on('end', function() { 
+            .on('end', function() {
                 if (_.isFunction(callback)) callback(status, data);
             });
         });
@@ -89,7 +93,7 @@ function Atlas() {
         appendOauthToken: appendOauthToken,
         request: request,
         api: apiRequest
-    }
+    };
 }
 
 module.exports = Atlas();
