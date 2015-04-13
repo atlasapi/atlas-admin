@@ -175,6 +175,7 @@
 }
 
 .dropdown-menu {
+    display: none;
     position: absolute;
     top: 90%;
     left: 50%;
@@ -190,6 +191,12 @@
     text-align: left;
     list-style: none;
     z-index: 1050;
+}
+
+.has-dropdown-menu:hover .dropdown-menu,
+.has-dropdown-menu:active .dropdown-menu,
+.has-dropdown-menu:focus .dropdown-menu {
+    display: block;
 }
 
 .dropdown-menu a {
@@ -225,7 +232,7 @@
 }
 
 .user-dropdown-menu {
-    top: 1.5rem;
+    top: 1.25rem;
     left: auto;
     right: 0;
 }
