@@ -8997,9 +8997,9 @@ app.directive('scrubber', ['$document', '$compile',
             };
 
             $scope.scrubber.loadSegments = function(events) {
-              if (!_.isArray(events)) {
-                  console.error('events expected to be an array');
-                  return;
+              if (! _.isArray(events)) {
+                console.warn('events expected to be an array');
+                return;
               }
               var _segment, offset;
               _.forEach(events, function (ev) {
@@ -9084,29 +9084,20 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
       $scope.showSegments.submitted = false;
 
       $scope.showSegments.loadSegments = function(events) {
-        if (!_.isArray(events)) {
-            console.error('events expected to be an array');
-            return;
-        }
-        if (_.isEmpty(events)) {
+        if (! _.isArray(events)) {
+          console.error('events expected to be an array');
           return;
         }
         var _segment;
-        _.forEach(events,
-        function (ev) {
-          if (_.isEmpty(ev)) {
-            return false;
-          }
-          _duration = ev.duration;
+        _.forEach(events, function (ev) {
           if ( _.has(ev.segment, 'related_links') ) {
             _.forEach(ev.segment.related_links,
             function (link) {
               _segment = createSegmentObj(link.title,
                                           link.url,
                                           0,
-                                          _duration,
+                                          ev.duration,
                                           $scope.generateID());
-              console.log(_segment);
               $scope.showSegments.segments.push(_segment);
             });
           }
@@ -10785,24 +10776,27 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
 
     if (!! broadcastDuration) {
 
-      var showSegments = _.map(_events, function (ev) {
+      var showSegments = _.compact( _.map(_events, function (ev) {
         if (ev.offset === 0 && ev.segment.duration === broadcastDuration) {
-          return ev.segment.related_links;
+          return ev;
         }
-      });
+      }) );
 
-      var timedSegments = _.filter(_events, function(ev) {
+      var timedSegments = _.compact( _.map(_events, function(ev) {
         if (ev.segment.duration < broadcastDuration) {
-          return ev.segment.related_links;
+          return ev;
         }
-      });
+      }) );
 
       console.log('show segments', showSegments);
       console.log('timed segments', timedSegments);
 
-      $scope.showSegments.loadSegments(showSegments);
-      $scope.scrubber.loadSegments(timedSegments);
-
+      if (showSegments.length) {
+        $scope.showSegments.loadSegments(showSegments);
+      }
+      if (timedSegments.length) {
+        $scope.scrubber.loadSegments(timedSegments);
+      }
     }
   };
 

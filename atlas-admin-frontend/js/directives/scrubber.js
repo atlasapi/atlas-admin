@@ -409,9 +409,9 @@ app.directive('scrubber', ['$document', '$compile',
             };
 
             $scope.scrubber.loadSegments = function(events) {
-              if (!_.isArray(events)) {
-                  console.error('events expected to be an array');
-                  return;
+              if (! _.isArray(events)) {
+                console.warn('events expected to be an array');
+                return;
               }
               var _segment, offset;
               _.forEach(events, function (ev) {

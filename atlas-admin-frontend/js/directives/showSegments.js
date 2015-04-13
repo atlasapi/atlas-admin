@@ -25,29 +25,20 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
       $scope.showSegments.submitted = false;
 
       $scope.showSegments.loadSegments = function(events) {
-        if (!_.isArray(events)) {
-            console.error('events expected to be an array');
-            return;
-        }
-        if (_.isEmpty(events)) {
+        if (! _.isArray(events)) {
+          console.error('events expected to be an array');
           return;
         }
         var _segment;
-        _.forEach(events,
-        function (ev) {
-          if (_.isEmpty(ev)) {
-            return false;
-          }
-          _duration = ev.duration;
+        _.forEach(events, function (ev) {
           if ( _.has(ev.segment, 'related_links') ) {
             _.forEach(ev.segment.related_links,
             function (link) {
               _segment = createSegmentObj(link.title,
                                           link.url,
                                           0,
-                                          _duration,
+                                          ev.duration,
                                           $scope.generateID());
-              console.log(_segment);
               $scope.showSegments.segments.push(_segment);
             });
           }

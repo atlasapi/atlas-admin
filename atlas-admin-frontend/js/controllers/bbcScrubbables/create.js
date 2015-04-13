@@ -95,24 +95,27 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
 
     if (!! broadcastDuration) {
 
-      var showSegments = _.map(_events, function (ev) {
+      var showSegments = _.compact( _.map(_events, function (ev) {
         if (ev.offset === 0 && ev.segment.duration === broadcastDuration) {
-          return ev.segment.related_links;
+          return ev;
         }
-      });
+      }) );
 
-      var timedSegments = _.filter(_events, function(ev) {
+      var timedSegments = _.compact( _.map(_events, function(ev) {
         if (ev.segment.duration < broadcastDuration) {
-          return ev.segment.related_links;
+          return ev;
         }
-      });
+      }) );
 
       console.log('show segments', showSegments);
       console.log('timed segments', timedSegments);
 
-      $scope.showSegments.loadSegments(showSegments);
-      $scope.scrubber.loadSegments(timedSegments);
-
+      if (showSegments.length) {
+        $scope.showSegments.loadSegments(showSegments);
+      }
+      if (timedSegments.length) {
+        $scope.scrubber.loadSegments(timedSegments);
+      }
     }
   };
 
