@@ -174,8 +174,8 @@ app.directive('scrubber', ['$document', '$compile',
         // Clear the timeline of everything except items
         // represented in TIMELINE_SEGMENTS
         function clearImpermanentItems() {
-            $('.scrubber-timeline-item.new', TIMELINE).remove();
-            $('.scrubber-edit-dialog', TIMELINE).remove();
+          $('.scrubber-timeline-item.new', TIMELINE).remove();
+          $('.scrubber-edit-dialog', TIMELINE).remove();
         }
 
 
@@ -184,10 +184,10 @@ app.directive('scrubber', ['$document', '$compile',
         // For pushing a new timeline item into the LIVE_ITEM array
         // starting at the current cursor position
         function newTimelineItem() {
-            var _item = {
-                start: CURSOR_POS.x
-            };
-            LIVE_ITEM.push(_item);
+          var _item = {
+            start: CURSOR_POS.x
+          };
+          LIVE_ITEM.push(_item);
         }
 
 
@@ -198,14 +198,14 @@ app.directive('scrubber', ['$document', '$compile',
         // @param id {string} the _id of the item
         function removeSegment(id) {
             if (!TIMELINE_SEGMENTS.length || !_.isString(id)) {
-                return false;
+              return false;
             }
             // Splice from the TIMELINE_SEGMENTS array
             for (var i in TIMELINE_SEGMENTS) {
-                if (TIMELINE_SEGMENTS[i]._id === id) {
-                    TIMELINE_SEGMENTS.splice(i, 1);
-                    break;
-                }
+              if (TIMELINE_SEGMENTS[i]._id === id) {
+                TIMELINE_SEGMENTS.splice(i, 1);
+                break;
+              }
             }
             // Remove from the DOM
             var _el = $('[data-segment-id='+ id +']', CREATED);
@@ -214,13 +214,13 @@ app.directive('scrubber', ['$document', '$compile',
 
 
         function createSegmentObj(label, url, startTime, endTime, id) {
-            return {
-                label: label,
-                url: url,
-                startTime: startTime,
-                endTime: endTime,
-                _id: id
-            };
+          return {
+            label: label,
+            url: url,
+            startTime: startTime,
+            endTime: endTime,
+            _id: id
+          };
         }
 
 
@@ -409,28 +409,25 @@ app.directive('scrubber', ['$document', '$compile',
             };
 
             $scope.scrubber.loadSegments = function(events) {
-                if (!_.isArray(events)) {
-                    console.error('events expected to be an array');
-                    return;
+              if (!_.isArray(events)) {
+                  console.error('events expected to be an array');
+                  return;
+              }
+              var _segment, offset;
+              _.forEach(events, function (ev) {
+                offset = ev.offset || 0;
+                if (ev.segment.related_links) {
+                  _.forEach(ev.segment.related_links,
+                  function (link) {
+                    _segment = createSegmentObj(link.title,
+                                                link.url,
+                                                offset,
+                                                ev.segment.duration,
+                                                $scope.generateID());
+                    TIMELINE_SEGMENTS.push(_segment);
+                  });
                 }
-                var _segment, _item, _offset, _duration;
-                for (var ev in events) {
-                    _offset = events[ev].offset || 0;
-                    _duration = events[ev].duration || 0;
-                    if (events[ev].segment.related_links) {
-                        for (var i in events[ev].segment.related_links) {
-                            _item = events[ev].segment.related_links[i];
-                            if (_item.duration === $scope.broadcast.duration) {
-                                _segment = createSegmentObj(_item.title,
-                                                            _item.url,
-                                                            _offset,
-                                                            _duration,
-                                                            $scope.generateID());
-                                $scope.scrubber.segments.push(_segment);
-                            }
-                        }
-                    }
-                }
+              });
             };
 
             $attr.$observe('scrubberLength', function() {

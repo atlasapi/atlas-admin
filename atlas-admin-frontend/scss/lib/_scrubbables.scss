@@ -474,12 +474,15 @@
     &.cancel { background: $color-grey-dark; }
     &.create { background: $color-green; }
 }
-
-button.is-posting {
-  transition: all 300ms;
-  background: $color-green url('../img/loading-spinner.svg') center no-repeat;
+button.send-data {
+  background: $color-green url('../img/loading-spinner.svg') 0 -200px no-repeat;
   background-size: 1.7rem;
-  color: transparent;
+
+  &.is-posting {
+    transition: all 200ms;
+    color: transparent;
+    background-position: center;
+  }
 }
 
 // The video
