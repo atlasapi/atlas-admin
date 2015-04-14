@@ -23,11 +23,29 @@
                     <ul ng-show="status.loggedIn" class="nav">
                         <li><a href="/#widgets">Widgets</a></li>
                         <li><a href="/#examples">Examples</a></li>
-                        <li><a href="/#reference">Reference</a></li>
+                        <li class="has-dropdown-menu">
+                            <a href="/#reference">Reference</a>
+                            <ul class="dropdown-menu">
+                                <li><a href="/#reference_overview">overview</a></li>
+                                <li><a href="/#reference_dataModel">data model</a></li>
+                                <li><a href="/#reference_sources">sources</a></li>
+                                <li><a href="/#reference_feeds">feeds</a></li>
+                            </ul>
+                        </li>
                         <li><a href="/#about">About</a></li>
-                        <li ng-show="status.loggedIn" class="has-dropdown-menu user-menu" id="apps-menu" ng-click="app.toggleAppsMenu()" ng-cloak>
+                        <li class="has-dropdown-menu">
+                            <a href="/#api-docs">Docs</a>
+                            <ul class="dropdown-menu">
+                                <li><a href="/#api-docs-content">content</a></li>
+                                <li><a href="/#api-docs-topics">topics</a></li>
+                                <li><a href="/#api-docs-schedules">schedules</a></li>
+                                <li><a href="/#api-docs-channels">channels</a></li>
+                                <li><a href="/#api-docs-channel_groups">channel_groups</a></li>
+                            </ul>
+                        </li>
+                        <li ng-show="status.loggedIn" class="has-dropdown-menu user-menu" id="apps-menu" ng-click="app.hideAppsMenu()" ng-mouseleave="app.showAppsMenu()" ng-cloak>
                             <span>Apps</span>
-                            <ul class="apps-dropdown dropdown-menu dropdown-menu-large" ng-show="app.showAppsMenu">
+                            <ul class="apps-dropdown dropdown-menu dropdown-menu-large" ng-show="app.appsMenu">
                                 <li ng-if="ProfileStatus.isProfileComplete()" ng-controller="CtrlApplications">
                                     <span class="application-link" ng-repeat="application in app.applications | orderBy:app.predicate:app.reverse | limitTo:3">
                                         <a href="#/applications/{{application.id}}">
@@ -40,17 +58,17 @@
                                 <li><a ng-href="#/wishlist">Wishlist</a></li>
                             </ul>
                         </li>
-                        <li ng-show="status.loggedIn" ng-if="app.menu.users.length" class="has-dropdown-menu user-menu" id="content-menu" ng-click="app.toggleContentMenu()" ng-cloak>
+                        <li ng-show="status.loggedIn" ng-if="app.menu.users.length" class="has-dropdown-menu user-menu" id="content-menu" ng-click="app.hideContentMenu()" ng-mouseleave="app.showContentMenu()" ng-cloak>
                             <span>Content</span>
-                            <ul class="content-dropdown dropdown-menu" ng-show="app.showContentMenu">
+                            <ul class="content-dropdown dropdown-menu" ng-show="app.contentMenu">
                                 <li ng-repeat="item in app.menu.users" ng-cloak>
                                     <a ng-href="#{{item.path}}" active-path="active-menu-item"><span class="menu-button">{{item.label}}</span></a>
                                 </li>
                             </ul>
                         </li>
-                        <li ng-show="status.loggedIn" ng-if="app.menu.admins.length" class="has-dropdown-menu user-menu" id="admin-menu" ng-click="app.toggleAdminMenu()" ng-cloak>
+                        <li ng-show="status.loggedIn" ng-if="app.menu.admins.length" class="has-dropdown-menu user-menu" id="admin-menu" ng-click="app.hideAdminMenu()" ng-mouseleave="app.showAdminMenu()" ng-cloak>
                             <span>Admin</span>
-                            <ul class="admin-menu admin-dropdown dropdown-menu" ng-show="app.showAdminMenu">
+                            <ul class="admin-menu admin-dropdown dropdown-menu" ng-show="app.adminMenu">
                                 <li ng-repeat="item in app.menu.admins" ng-cloak>
                                     <a ng-href="#{{item.path}}" active-path="active-menu-item"><span class="menu-button" ng-click="app.toggleAdminMenu()">{{item.label}}</span></a>
                                 </li>
@@ -63,7 +81,7 @@
                     api explorer &amp; free key
                 </a>
                 <div class="navbar-tools" id="navbar-tools">
-                    <div class="navbar-user logged-in has-dropdown-menu" ng-show="status.loggedIn" ng-click="app.toggleDropdown()" ng-cloak>
+                    <div class="navbar-user logged-in has-dropdown-menu" ng-show="status.loggedIn" ng-click="app.hideDropdown()" ng-mouseleave="app.showDropdown()" ng-cloak>
                         <span class="user-avatar">
                             <img class="profile-picture" ng-src="{{app.user.profile_image}}" alt="profile picture"/>
                             <span class="user-name">{{app.user.full_name}}</span>

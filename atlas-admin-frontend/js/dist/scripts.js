@@ -9735,38 +9735,42 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
     function($scope, Users, $rootScope, Authentication, $location, Groups, $q) {
     var privateItems;
     $scope.app = {};
-    $scope.app.dropdown = false;
-    $scope.app.showAdminMenu = false;
-    $scope.app.showContentMenu = false;
-    $scope.app.showAppsMenu = false;
+    $scope.app.dropdown = true;
+    $scope.app.adminMenu = true;
+    $scope.app.contentMenu = true;
+    $scope.app.appsMenu = true;
 
-    $scope.app.toggleDropdown = function() {
-        $scope.app.dropdown = !$scope.app.dropdown;
-        $scope.app.showAdminMenu = false;
-        $scope.app.showContentMenu = false;
-        $scope.app.showAppsMenu = false;
-    }
+    $scope.app.showDropdown = function () {
+        $scope.app.dropdown = true;
+    };
 
-    $scope.app.toggleAdminMenu = function() {
-        $scope.app.showAdminMenu = !$scope.app.showAdminMenu;
+    $scope.app.showAdminMenu = function () {
+        $scope.app.adminMenu = true;
+    };
+
+    $scope.app.showContentMenu = function () {
+        $scope.app.contentMenu = true;
+    };
+
+    $scope.app.showAppsMenu = function () {
+        $scope.app.appsMenu = true;
+    };
+
+    $scope.app.hideDropdown = function () {
         $scope.app.dropdown = false;
-        $scope.app.showContentMenu = false;
-        $scope.app.showAppsMenu = false;
-    }
+    };
 
-    $scope.app.toggleContentMenu = function() {
-        $scope.app.showContentMenu = !$scope.app.showContentMenu;
-        $scope.app.dropdown = false;
-        $scope.app.showAdminMenu = false;
-        $scope.app.showAppsMenu = false;
-    }
+    $scope.app.hideAdminMenu = function () {
+        $scope.app.adminMenu = false;
+    };
 
-    $scope.app.toggleAppsMenu = function() {
-        $scope.app.showAppsMenu = !$scope.app.showAppsMenu;
-        $scope.app.dropdown = false;
-        $scope.app.showAdminMenu = false;
-        $scope.app.showContentMenu = false;
-    }
+    $scope.app.hideContentMenu = function () {
+        $scope.app.contentMenu = false;
+    };
+
+    $scope.app.hideAppsMenu = function () {
+        $scope.app.appsMenu = false;
+    };
 
     var getPrivateMenuItems = function() {
         var defer = $q.defer();
