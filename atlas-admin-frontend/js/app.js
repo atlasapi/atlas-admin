@@ -2,23 +2,23 @@
 
 // Declare app level module which depends on filters, and services
 var app = angular.module('atlasAdmin', [
-                         'atlasAdmin.interceptors', 
-                         'atlasAdmin.filters', 
-                         'atlasAdmin.preloader', 
+                         'atlasAdmin.interceptors',
+                         'atlasAdmin.filters',
+                         'atlasAdmin.preloader',
                          'atlasAdmin.services.auth',
                          'atlasAdmin.services.atlas',
                          'atlasAdmin.services.applications',
                          'atlasAdmin.services.sources',
                          'atlasAdmin.services.sourceRequests',
                          'atlasAdmin.services.sourceLicenses',
-                         'atlasAdmin.services.users', 
+                         'atlasAdmin.services.users',
                          'atlasAdmin.services.uservideosources',
                          'atlasAdmin.services.uservideosources.youtube',
                          'atlasAdmin.services.propositions',
                          'atlasAdmin.services.usage',
                          'atlasAdmin.services.feeds',
                          'atlasAdmin.services.bbcscrubbables',
-                         'atlasAdmin.directives.orderable', 
+                         'atlasAdmin.directives.orderable',
                          'atlasAdmin.directives.focus',
                          'atlasAdmin.directives.activePath',
                          'atlasAdmin.directives.validUsage',
@@ -68,7 +68,7 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/applications', {templateUrl: 'partials/applications.html', controller: 'CtrlApplications'});
     $routeProvider.when('/applications/:applicationId', {templateUrl: 'partials/applicationEdit.html', controller: 'CtrlApplicationEdit'});
     $routeProvider.when('/applications/:applicationId/requestSource/:sourceId', {templateUrl: 'partials/requestSource.html', controller: 'CtrlRequestSource'});
-    $routeProvider.when('/wishlist', {templateUrl: 'partials/wishlist/wishlist.html', controller: 'CtrlWishlist'})
+    $routeProvider.when('/wishlist', {templateUrl: 'partials/wishlist/wishlist.html', controller: 'CtrlWishlist'});
     $routeProvider.when('/login', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
     $routeProvider.when('/login/:providerNamespace', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
     $routeProvider.when('/oauth/:providerNamespace', {templateUrl: 'partials/oauth.html', controller: 'CtrlOAuth', reloadOnSearch: false});

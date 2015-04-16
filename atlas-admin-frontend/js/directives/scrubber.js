@@ -1,6 +1,6 @@
 var app = angular.module('atlasAdmin.directives.bbcscrubbables', []);
 
-app.directive('scrubber', ['$document', '$compile', 
+app.directive('scrubber', ['$document', '$compile',
     function($document, $compile) {
 
     var controller = function($scope, $el, $attr) {
@@ -36,13 +36,13 @@ app.directive('scrubber', ['$document', '$compile',
 
         // Draw
         //
-        // Used for drawing a 'frame'. All rendering stuff to the 
+        // Used for drawing a 'frame'. All rendering stuff to the
         // screen should be done in the draw method
         var _new_el;
         var _last_cursor_pos = {};
         function draw() {
             // Determine the difference between a 'drag' or a 'click'
-            // by figuring out how much the mouse has moved since the 
+            // by figuring out how much the mouse has moved since the
             // last draw cycle
             if (MOUSEDOWN && !IS_DRAGGING) {
                 if ((_last_cursor_pos.x-1 > CURSOR_POS.x) ||
@@ -55,13 +55,13 @@ app.directive('scrubber', ['$document', '$compile',
             }
 
             // When the cursor is dragging
-            if (!LIVE_ITEM.length && 
-                IS_DRAGGING && 
+            if (!LIVE_ITEM.length &&
+                IS_DRAGGING &&
                 MOUSEDOWN) {
                 newTimelineItem();
             }
 
-            // Render the new timeline item - this is the item that is 
+            // Render the new timeline item - this is the item that is
             // currently being created or edited
             if (LIVE_ITEM.length) {
                 if (!$('.scrubber-timeline-item', TIMELINE).length) {
@@ -78,7 +78,7 @@ app.directive('scrubber', ['$document', '$compile',
                 _new_el.css('margin-left', LIVE_ITEM[0].start+'px');
                 _new_el.css('width', LIVE_ITEM[0].end - LIVE_ITEM[0].start+'px');
             }else{
-                clearImpermanentItems()
+                clearImpermanentItems();
             }
 
             // Render segments to the timeline
@@ -91,13 +91,13 @@ app.directive('scrubber', ['$document', '$compile',
                 $('.scrubber-time-cursor', TIME_MARKERS).css('left', (CURSOR_TIME.width_ratio*100)+'%');
             }
 
-            requestAnimationFrame(draw)
+            requestAnimationFrame(draw);
         }
 
 
         // Update timeline segments
         //
-        // 
+        //
         function updateTimelineSegments() {
             var i, _item, _el, _segment_id;
             for (i in TIMELINE_SEGMENTS) {
@@ -113,7 +113,7 @@ app.directive('scrubber', ['$document', '$compile',
                         _el.css('margin-left', secondsToPixels(_item.startTime) +'px');
                         _el.css('width', secondsToPixels(_item.endTime) - secondsToPixels(_item.startTime) +'px');
                         _el.append('<h3>'+ _item.label +'</h3><p><a href="'+ _item.url +'" target="_blank">'+ _item.url +'</a></p>');
-                        _el.append('<span class="delete-segment" ng-click="scrubber.removeItem(\''+ _segment_id +'\')">x</span>')
+                        _el.append('<span class="delete-segment" ng-click="scrubber.removeItem(\''+ _segment_id +'\')">x</span>');
                         CREATED.append(_el);
                         $compile($(_el))($scope);
                     }
@@ -122,14 +122,14 @@ app.directive('scrubber', ['$document', '$compile',
         }
 
 
-        // Pixels -> seconds 
+        // Pixels -> seconds
         //
         // Turns a pixel x value into seconds relative to the timeline
         //
-        // @param pixels {number | string} 
+        // @param pixels {number | string}
         // @returns seconds {number}
         function pixelsToSeconds(pixels) {
-            if (typeof pixels !== 'number' && 
+            if (typeof pixels !== 'number' &&
                 typeof pixels !== 'string') {
                 return null;
             }
@@ -141,15 +141,15 @@ app.directive('scrubber', ['$document', '$compile',
         }
 
 
-        // Seconds -> pixels 
+        // Seconds -> pixels
         //
-        // Turns a seconds value pixels relative to the 
+        // Turns a seconds value pixels relative to the
         // x-axis of the timeline
         //
-        // @param seconds {number | string} 
+        // @param seconds {number | string}
         // @returns pixels {number}
         function secondsToPixels(seconds) {
-            if (typeof seconds !== 'number' && 
+            if (typeof seconds !== 'number' &&
                 typeof seconds !== 'string') {
                 return null;
             }
@@ -161,7 +161,7 @@ app.directive('scrubber', ['$document', '$compile',
         }
 
 
-        // For generating a unique id 
+        // For generating a unique id
         //
         // @returns id {string}
         function generateID() {
@@ -171,11 +171,11 @@ app.directive('scrubber', ['$document', '$compile',
 
         //  Clear impermanent items
         //
-        // Clear the timeline of everything except items 
-        // represented in TIMELINE_SEGMENTS 
+        // Clear the timeline of everything except items
+        // represented in TIMELINE_SEGMENTS
         function clearImpermanentItems() {
-            $('.scrubber-timeline-item.new', TIMELINE).remove();
-            $('.scrubber-edit-dialog', TIMELINE).remove();
+          $('.scrubber-timeline-item.new', TIMELINE).remove();
+          $('.scrubber-edit-dialog', TIMELINE).remove();
         }
 
 
@@ -184,28 +184,28 @@ app.directive('scrubber', ['$document', '$compile',
         // For pushing a new timeline item into the LIVE_ITEM array
         // starting at the current cursor position
         function newTimelineItem() {
-            var _item = {
-                start: CURSOR_POS.x
-            };
-            LIVE_ITEM.push(_item);
+          var _item = {
+            start: CURSOR_POS.x
+          };
+          LIVE_ITEM.push(_item);
         }
 
 
         // Remove timeline segment
         //
-        // Clear an item from the timeline segments array 
+        // Clear an item from the timeline segments array
         //
         // @param id {string} the _id of the item
         function removeSegment(id) {
             if (!TIMELINE_SEGMENTS.length || !_.isString(id)) {
-                return false;
+              return false;
             }
             // Splice from the TIMELINE_SEGMENTS array
             for (var i in TIMELINE_SEGMENTS) {
-                if (TIMELINE_SEGMENTS[i]._id === id) {
-                    TIMELINE_SEGMENTS.splice(i, 1);
-                    break;
-                }
+              if (TIMELINE_SEGMENTS[i]._id === id) {
+                TIMELINE_SEGMENTS.splice(i, 1);
+                break;
+              }
             }
             // Remove from the DOM
             var _el = $('[data-segment-id='+ id +']', CREATED);
@@ -214,13 +214,13 @@ app.directive('scrubber', ['$document', '$compile',
 
 
         function createSegmentObj(label, url, startTime, endTime, id) {
-            return {
-                label: label,
-                url: url,
-                startTime: startTime,
-                endTime: endTime,
-                _id: id
-            }
+          return {
+            label: label,
+            url: url,
+            startTime: startTime,
+            endTime: endTime,
+            _id: id
+          };
         }
 
 
@@ -232,14 +232,14 @@ app.directive('scrubber', ['$document', '$compile',
         // @param new_segment {Object} the options for the new segment
         function addSegment() {
             $scope.scrubber.submitted = true;
-            var _create = $scope.scrubber.create;
+            _create = $scope.scrubber.create;
             if (scrubberForm.linkLabel.value === '' ||
                 scrubberForm.linkUrl.value === '' ||
                 !LIVE_ITEM.length) {
                 return false;
             }
-            var _segment = createSegmentObj($scope.scrubber.create.label, 
-                            $scope.scrubber.create.url, 
+            var _segment = createSegmentObj($scope.scrubber.create.label,
+                            $scope.scrubber.create.url,
                             (pixelsToSeconds(LIVE_ITEM[0].start) < 0) ? 0 : pixelsToSeconds(LIVE_ITEM[0].start),
                             pixelsToSeconds(LIVE_ITEM[0].end),
                             generateID());
@@ -255,7 +255,7 @@ app.directive('scrubber', ['$document', '$compile',
 
         // Get cursor position
         //
-        // For getting the current cursor position relative to the 
+        // For getting the current cursor position relative to the
         // TIMELINE dom element, and writing it to CURSOR_POS variable
         function getCursorPosition() {
             CURSOR_POS = CURSOR_POS || {x:0, y:0};
@@ -284,7 +284,7 @@ app.directive('scrubber', ['$document', '$compile',
 
         // Get context length
         //
-        // Used for getting the context length in seconds from the 
+        // Used for getting the context length in seconds from the
         // data-scrubber-length attribute
         function getContextLength() {
             CONTEXT_LENGTH = parseInt($attr.scrubberLength, 10);
@@ -307,24 +307,24 @@ app.directive('scrubber', ['$document', '$compile',
 
         // Seconds -> HHMMSS
         //
-        // Converts boring old seconds to object containing 
+        // Converts boring old seconds to object containing
         // HH MM SS as strings
         //
         // @returns {Object} keys: hh, mm, ss
         function secondsToHHMMSS (secs) {
-            if (typeof secs !== 'number' && 
+            if (typeof secs !== 'number' &&
                 typeof secs !== 'string') {
                 return null;
             }
             var _seconds = parseInt(secs, 10);
             var hours = (Math.floor(_seconds/3600) < 0) ? 0 : Math.floor(_seconds/3600);
-            var minutes = Math.floor((_seconds - (hours*3600)) / 60);;
+            var minutes = Math.floor((_seconds - (hours*3600)) / 60);
             var seconds = _seconds - (hours * 3600) - (minutes * 60);
             return {
                 hh: (hours < 10) ? '0'+hours : hours.toString(),
                 mm: (minutes < 10) ? '0'+minutes : minutes.toString(),
                 ss: (seconds < 10) ? '0'+seconds : seconds.toString()
-            }
+            };
         }
 
 
@@ -345,19 +345,19 @@ app.directive('scrubber', ['$document', '$compile',
         // Templates povider
         //
         // A provider that returns jQuery elements for use as templates.
-        // See return value for available templates 
+        // See return value for available templates
         //
         // @returns {Object}
         function templates() {
             var timeline_item = function() {
                 return $('<div class="scrubber-timeline-item"></div>');
-            }
+            };
 
             var edit_bubble = function() {
                 var lines = [];
                 lines.push('<div class="scrubber-edit-dialog"><form novalidate name="scrubberForm">');
                 lines.push('<h2>New segment</h2>');
-                lines.push('<div class="scrubber-form-row">')
+                lines.push('<div class="scrubber-form-row">');
                 //lines.push('<span class="segment-form-error" ng-show="scrubber.submitted && scrubberForm.linkLabel.$invalid">This link needs a label</span>');
                 lines.push('<input type="text" name="linkLabel" ng-model="scrubber.create.label" placeholder="label">');
                 lines.push('</div>');
@@ -368,7 +368,7 @@ app.directive('scrubber', ['$document', '$compile',
                 lines.push('<div class="scrubber-button-group"><button class="cancel" ng-click="scrubber.clearTempSegment()">Cancel</button><button class="create" ng-click="scrubber.createLink()">Create link</button></div>');
                 lines.push('</form></div>');
                 return $(lines.join(''));
-            }
+            };
 
             var time_markers = function() {
                 var lines = [];
@@ -378,13 +378,13 @@ app.directive('scrubber', ['$document', '$compile',
                 lines.push('<div class="scrubber-time-end"><span class="scrubber-time-label"></span></div>');
                 lines.push('</div>');
                 return $(lines.join(''));
-            }
+            };
 
             return {
                 timeline_item: timeline_item(),
                 edit_bubble: edit_bubble(),
                 time_markers: time_markers()
-            }
+            };
         }
 
 
@@ -406,45 +406,42 @@ app.directive('scrubber', ['$document', '$compile',
                 LIVE_ITEM = [];
                 $scope.scrubber.create = {};
                 return;
-            }
+            };
 
             $scope.scrubber.loadSegments = function(events) {
-                if (!_.isArray(events)) {
-                    console.error('events expected to be an array')
-                    return;
+              if (! _.isArray(events)) {
+                console.warn('events expected to be an array');
+                return;
+              }
+              var _segment, offset;
+              _.forEach(events, function (ev) {
+                offset = ev.offset || 0;
+                if (ev.segment.related_links) {
+                  _.forEach(ev.segment.related_links,
+                  function (link) {
+                    _segment = createSegmentObj(link.title,
+                                                link.url,
+                                                offset,
+                                                ev.segment.duration,
+                                                $scope.generateID());
+                    TIMELINE_SEGMENTS.push(_segment);
+                  });
                 }
-                var _segment, _item, _offset, _duration;
-                for (var ev in events) {
-                    _offset = events[ev].offset || 0;
-                    _duration = events[ev].duration || 0;
-                    if (events[ev].segment.related_links) {
-                        for (var i in events[ev].segment.related_links) {
-                            _item = events[ev].segment.related_links[i];
-                            if (_item.duration === $scope.broadcast.duration) {
-                                _segment = createSegmentObj(_item.title, 
-                                                            _item.url, 
-                                                            _offset, 
-                                                            _duration, 
-                                                            $scope.generateID());
-                                $scope.scrubber.segments.push(_segment);
-                            }
-                        }
-                    }
-                }
-            }
+              });
+            };
 
             $attr.$observe('scrubberLength', function() {
                 getContextLength();
                 setTimeMarkers();
-            })
+            });
 
             EL
-            .on('mouseenter', function (e) {
+            .on('mouseenter', function () {
                 IS_FOCUSED = true;
             })
             .on('mouseleave', function() {
                 IS_FOCUSED = false;
-            })
+            });
 
             TIMELINE
             .on('mousedown', function (e) {
@@ -454,20 +451,20 @@ app.directive('scrubber', ['$document', '$compile',
                     MOUSEDOWN = false;
                 }
             })
-            .on('mouseup', function (e) {
+            .on('mouseup', function () {
                 if (IS_DRAGGING) {
                     IS_DRAGGING = false;
                 }
                 MOUSEDOWN = false;
             });
-            requestAnimationFrame(draw)
+            requestAnimationFrame(draw);
         }
         bootstrap();
-    }
+    };
 
 
     return {
         template: '<div class="scrubber-created-segments"></div><div class="scrubber-timeline"></div>',
         link: controller
-    }
-}])
+    };
+}]);
