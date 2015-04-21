@@ -250,32 +250,49 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
     var postToOwl = function (apiKey, data) {
         var defer = $q.defer();
         var _data = data || {};
-        if (!_.isString(apiKey) ||
-            !_.isObject(_data.segments) ||
-            !_.isObject(_data.atlas)) {
-            defer.reject();
+        if (! _.isString(apiKey) ||
+            ! _.isObject(_data.segments) ||
+            ! _.isObject(_data.atlas)) {
             console.error('postToOwl() -> incorrect param');
+            defer.reject();
             return defer.promise;
         }
         var _postdata = createContentBlock( _data.segments,
                                             _data.atlas.uri,
                                             _data.atlas.id);
 
-        $http.post(atlasHost + '/3.0/content.json?apiKey='+apiKey, _postdata)
+        $http.post(atlasHost + '/3.0/content.json?apiKey=' + apiKey, _postdata)
         .success(function(res, status) {
             if (status === 200) {
                 defer.resolve(_data.atlas.id);
             }else{
-                defer.reject('nope', status);
+                defer.reject(status);
             }
         })
         return defer.promise;
-    }
+    };
+
+
+    var triggerMigration = function (id) {
+      var defer = $q.defer();
+      var _migrationUri = '//scrubbables.metabroadcast.com/1/scrubbables/' + id + '/migrate';
+      if (! _.isString(id)) {
+        defer.reject( new Error('id param must be a string') );
+        return defer.promise;
+      }
+      $http.post(_migrationUri).then(
+      function () {
+
+      });
+      return defer.promise;
+    };
+
 
     return {
         keys: getKeys,
         create: postToOwl,
         search: searchContent,
+        triggerMigration: triggerMigration,
         content: {
             uri: getContentURI,
             id: getContentID,

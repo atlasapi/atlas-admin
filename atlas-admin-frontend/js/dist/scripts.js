@@ -7154,7 +7154,7 @@ app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'Profile
         getTermsAndConditions: function() {
             return Atlas.getRequest('/eula.json').then(function(result) {
                 if (result.status > 399) {
-                    throw 'NOT_AVAILABLE/'+result.status;
+                  throw 'NOT_AVAILABLE/'+result.status;
                 }
                 return result.data.license.license;
             });
@@ -7205,6 +7205,7 @@ app.factory('ProfileStatus', function() {
         }
     };
 });
+
 'use strict';
 
 /* Services */
@@ -7397,11 +7398,14 @@ var app = angular.module('atlasAdmin.services.sourceLicenses', []);
 app.factory('SourceLicenses', function (Atlas, Users) {
     return {
         get: function(sourceId) {
-            return Atlas.getRequest('/source_licenses/' + sourceId + '.json').then(function (results) {
-                return results.data.source_license});
+          return Atlas.getRequest('/source_licenses/' + sourceId + '.json').then(
+          function (results) {
+            return results.data.source_license
+          });
         }
     }
 });
+
 var app = angular.module('atlasAdmin.services.uservideosources', []);
 app.factory('UserVideoSources', function (Atlas, atlasVersion, Applications) {
     return {
@@ -7734,35 +7738,36 @@ app.factory('factoryWishes', ['$http', 'Authentication', 'atlasApiHost', '$q',
 var app = angular.module('atlasAdmin.services.users');
 
 app.factory('GroupsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
-    function($http, Authentication, atlasApiHost, $q) {
+function($http, Authentication, atlasApiHost, $q) {
 
-    //  Used for getting an array of available groups for this user
-    //
-    //  @returns promise
-    //
-    var getGroups = function() {
-        var defer = $q.defer();
-        $http({
-            method: 'get',
-            url: Authentication.appendTokenToUrl(atlasApiHost+'/user/groups')
-        })
-        .success(function(data, status) {
-            if (status === 200) {
-                defer.resolve(data)
-            }else{
-                defer.reject(new Error('Groups endpoint responded with status: ' + status));
-            }
-        })
-        .error(function(data, status) {
-            defer.reject(status);
-        });
-        return defer.promise;
-    }
+  //  Used for getting an array of available groups for this user
+  //
+  //  @returns promise
+  //
+  var getGroups = function() {
+    var defer = $q.defer();
+    $http({
+      method: 'get',
+      url: Authentication.appendTokenToUrl(atlasApiHost+'/user/groups')
+    })
+    .success(function(data, status) {
+      if (status === 200) {
+        defer.resolve(data)
+      }else{
+        defer.reject(new Error('Groups endpoint responded with status: ' + status));
+      }
+    })
+    .error(function(data, status) {
+      defer.reject(status);
+    });
+    return defer.promise;
+  }
 
-    return {
-        get: getGroups
-    }
+  return {
+    get: getGroups
+  }
 }]);
+
 'use strict';
 var app = angular.module('atlasAdmin.services.feeds', []);
 
@@ -8128,32 +8133,49 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
     var postToOwl = function (apiKey, data) {
         var defer = $q.defer();
         var _data = data || {};
-        if (!_.isString(apiKey) ||
-            !_.isObject(_data.segments) ||
-            !_.isObject(_data.atlas)) {
-            defer.reject();
+        if (! _.isString(apiKey) ||
+            ! _.isObject(_data.segments) ||
+            ! _.isObject(_data.atlas)) {
             console.error('postToOwl() -> incorrect param');
+            defer.reject();
             return defer.promise;
         }
         var _postdata = createContentBlock( _data.segments,
                                             _data.atlas.uri,
                                             _data.atlas.id);
 
-        $http.post(atlasHost + '/3.0/content.json?apiKey='+apiKey, _postdata)
+        $http.post(atlasHost + '/3.0/content.json?apiKey=' + apiKey, _postdata)
         .success(function(res, status) {
             if (status === 200) {
                 defer.resolve(_data.atlas.id);
             }else{
-                defer.reject('nope', status);
+                defer.reject(status);
             }
         })
         return defer.promise;
-    }
+    };
+
+
+    var triggerMigration = function (id) {
+      var defer = $q.defer();
+      var _migrationUri = '//scrubbables.metabroadcast.com/1/scrubbables/' + id + '/migrate';
+      if (! _.isString(id)) {
+        defer.reject( new Error('id param must be a string') );
+        return defer.promise;
+      }
+      $http.post(_migrationUri).then(
+      function () {
+
+      });
+      return defer.promise;
+    };
+
 
     return {
         keys: getKeys,
         create: postToOwl,
         search: searchContent,
+        triggerMigration: triggerMigration,
         content: {
             uri: getContentURI,
             id: getContentID,
@@ -9088,15 +9110,16 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
           console.error('events expected to be an array');
           return;
         }
-        var _segment;
+        var _segment, _duration;
         _.forEach(events, function (ev) {
           if ( _.has(ev.segment, 'related_links') ) {
             _.forEach(ev.segment.related_links,
             function (link) {
+              _duration = ev.segment.duration || 0;
               _segment = createSegmentObj(link.title,
                                           link.url,
                                           0,
-                                          ev.duration,
+                                          _duration,
                                           $scope.generateID());
               $scope.showSegments.segments.push(_segment);
             });
@@ -9844,7 +9867,7 @@ app.controller('UserLicenseController', function($scope, $rootScope, $routeParam
     };
 
     Users.getTermsAndConditions().then(function(license) {
-        $scope.app.license = $sce.trustAsHtml(license);
+      $scope.app.license = $sce.trustAsHtml(license);
     }, error);
 
     $scope.app.accept = function() {
@@ -10711,6 +10734,7 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
 
 
   var calculateSegmentDuration = function(start, end, broadcastDuration) {
+    console.log(start, end, broadcastDuration);
     return (broadcastDuration - start) - (broadcastDuration - end);
   };
 

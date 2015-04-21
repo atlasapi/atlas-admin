@@ -9,7 +9,6 @@
                 <atlas-search class="atlas-search">
             </div>
             <div ng-show="loading" class="loading">Just a sec...</div>
-            <div class="status-message" ng-show="showMessage">{{message}}</div>
             <div class="scrubbables-result-wrapper" ng-show="showUI">
                 <article class="result-content">
                     <header class="panel-header broadcast-header">
@@ -45,6 +44,8 @@
                 </div>
             </div>
         </section>
+        
+        <div class="status-message" ng-show="showMessage">{{message}}</div>
 
         <section class="panel-full" ng-show="showUI">
             <button ng-click="killCurrent()" class="">Cancel</button>

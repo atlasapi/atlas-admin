@@ -194,7 +194,7 @@ app.controller('UserLicenseController', function($scope, $rootScope, $routeParam
     };
 
     Users.getTermsAndConditions().then(function(license) {
-        $scope.app.license = $sce.trustAsHtml(license);
+      $scope.app.license = $sce.trustAsHtml(license);
     }, error);
 
     $scope.app.accept = function() {

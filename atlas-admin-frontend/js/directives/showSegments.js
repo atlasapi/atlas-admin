@@ -29,15 +29,16 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
           console.error('events expected to be an array');
           return;
         }
-        var _segment;
+        var _segment, _duration;
         _.forEach(events, function (ev) {
           if ( _.has(ev.segment, 'related_links') ) {
             _.forEach(ev.segment.related_links,
             function (link) {
+              _duration = ev.segment.duration || 0;
               _segment = createSegmentObj(link.title,
                                           link.url,
                                           0,
-                                          ev.duration,
+                                          _duration,
                                           $scope.generateID());
               $scope.showSegments.segments.push(_segment);
             });
