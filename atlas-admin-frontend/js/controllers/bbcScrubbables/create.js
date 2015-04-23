@@ -169,8 +169,8 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
     $target.addClass('is-posting');
     $target.prop('disabled', 'true');
 
-    Scrubbables.create($scope.writeKey, _out)
-    .then(function() {
+    Scrubbables.create($scope.writeKey, _out).then(
+    function(contentId) {
       // after the item has been sent to atlas, clear all the things
       $scope.showUI = false;
       $scope.loading = false;
@@ -181,6 +181,8 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
       $target.removeClass('is-posting');
       $target.removeProp('disabled');
       showMessage('The item has been saved');
+
+      Scrubbables.migrateContent(contentId);
     }, function(res) {
       console.error(res);
       showMessage('There was a problem sending the item to Atlas');
