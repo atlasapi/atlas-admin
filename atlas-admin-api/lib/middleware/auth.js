@@ -18,7 +18,7 @@ var auth = function(request, response, next) {
         body: '',
         response: null,
         not_authenticated: function() {
-            this.response.statusCode = 400;
+            this.response.statusCode = 400; // catch all - should be 401
             this.response.send({
                 'error': 'Not authenticated'
             });
