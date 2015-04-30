@@ -9096,13 +9096,13 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
     // For creating a new segment block to be pushed into the
     // showSegments.segments array
     var createSegmentObj = function(label, url, startTime, endTime, id) {
-        return {
-            label: label,
-            url: url,
-            startTime: startTime,
-            endTime: endTime,
-            _id: id
-        };
+      return {
+        label: label,
+        url: url,
+        startTime: startTime,
+        endTime: endTime,
+        _id: id
+      };
     };
 
 
@@ -9137,7 +9137,10 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
       };
 
       $scope.showSegments.removeItem = function(id) {
-          if (!_.isString(id)) return false;
+          if (!_.isString(id)) {
+            return false;
+          }
+
           for (var i in $scope.showSegments.segments) {
               if ($scope.showSegments.segments[i]._id === id) {
                   $scope.showSegments.segments.splice(i, 1);
@@ -9158,7 +9161,10 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
 
       $scope.showSegments.new = function() {
           $scope.showSegments.submitted = true;
-          if (newSegmentForm.linkLabel.value === '' || newSegmentForm.linkUrl.value === '' ) return;
+          if (newSegmentForm.linkLabel.value === '' || newSegmentForm.linkUrl.value === '' ) {
+            return;
+          }
+
           var _segment = createSegmentObj($scope.showSegments.newItem.label,
                                           $scope.showSegments.newItem.url,
                                           0,
@@ -10780,7 +10786,9 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
 
 
   var loadAtlasItem = function (id) {
-    if (!_.isString(id)) return;
+    if (!_.isString(id)) {
+      return;
+    }
     $scope.loading = true;
 
     // load related links from deer
@@ -10807,7 +10815,8 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
       return;
     }
     var _events = $scope.scrubbableSegments;
-    var broadcastDuration = _.has($scope.broadcast, 'broadcast_duration') ? $scope.broadcast.broadcast_duration : null;
+    console.log($scope.broadcast);
+    var broadcastDuration = _.has($scope.broadcast, 'published_duration') ? $scope.broadcast.published_duration : null;
 
     console.log('ev', _events);
 
@@ -10849,6 +10858,7 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
       $scope.showUI = true;
       $scope.loading = false;
       pushSegmentsToTimeline();
+      console.log($scope.episode);
     }
   });
 

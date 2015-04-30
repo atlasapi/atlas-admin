@@ -1,4 +1,4 @@
-module.exports = function() {
+module.exports = (function() {
     'use strict';
 
     var instanceConfig = {};
@@ -7,18 +7,18 @@ module.exports = function() {
     } catch (fileMissing) {}
 
     return {
-        atlasHost: instanceConfig.atlasHost || 'stage.atlas.metabroadcast.com',
+        atlasHost: instanceConfig.atlasHost || 'atlas.metabroadcast.com',
 
         port: {
             http: instanceConfig.listenPort || 9000
         },
 
-        database: instanceConfig.database || 'mongodb://localhost:27017/atlas-admin?readPreference=primary',
+        database: instanceConfig.database || 'mongodb://localhost:27017/atlas-admin-pseudo-prod?readPreference=primary',
 
         paths: {
             apiRoot: instanceConfig.apiRootPath || '/api'
         },
 
-        allowedDomains: instanceConfig.allowedDomains || ['http://aa.metabroadcast.com:8000', 'http://localhost:8000', 'http://dev.mbst.tv:8000']
+        allowedDomains: instanceConfig.allowedDomains || ['http://nosaj.metabroadcast.com:8000', 'http://localhost:8000', 'http://dev.mbst.tv:8000']
     };
-}();
+})();
