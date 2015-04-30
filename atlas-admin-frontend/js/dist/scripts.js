@@ -7967,7 +7967,7 @@ app.factory('ScrubbablesHelpers', ['$q',
       if (!_.isObject(item)) {
         return;
       }
-      
+
       var _out = {};
       var broadcast = item.broadcasts[0] || null;
       var container = item.container || null;
@@ -8160,7 +8160,7 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
       var indexOfId = location.indexOf("id=");
       var contentId = location.substr(indexOfId + 3);
       defer.resolve(contentId);
-    })
+    });
     return defer.promise;
   };
 
@@ -8837,7 +8837,7 @@ app.directive('scrubber', ['$document', '$compile',
             label: label,
             url: url,
             startTime: startTime,
-            endTime: endTime,
+            endTime: startTime + endTime,
             _id: id
           };
         }
@@ -9017,14 +9017,13 @@ app.directive('scrubber', ['$document', '$compile',
             $scope.scrubber.create = {};
             $scope.scrubber.segments = [];
             $scope.scrubber.submitted = false;
-
             $scope.scrubber.createLink = addSegment;
             $scope.scrubber.removeItem = removeSegment;
 
             $scope.scrubber.clearTempSegment = function() {
-                LIVE_ITEM = [];
-                $scope.scrubber.create = {};
-                return;
+              LIVE_ITEM = [];
+              $scope.scrubber.create = {};
+              return;
             };
 
             $scope.scrubber.loadSegments = function(events) {
@@ -9032,6 +9031,7 @@ app.directive('scrubber', ['$document', '$compile',
                 console.warn('events expected to be an array');
                 return;
               }
+
               var _segment, offset;
               _.forEach(events, function (ev) {
                 offset = ev.offset || 0;
@@ -10816,6 +10816,7 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
     }
     var _events = $scope.scrubbableSegments;
     var broadcastDuration = _.has($scope.broadcast, 'published_duration') ? $scope.broadcast.published_duration : null;
+
     // Keeping this in for debugging
     console.log('ev', _events);
 

@@ -93,6 +93,7 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
     }
     var _events = $scope.scrubbableSegments;
     var broadcastDuration = _.has($scope.broadcast, 'published_duration') ? $scope.broadcast.published_duration : null;
+
     // Keeping this in for debugging
     console.log('ev', _events);
 

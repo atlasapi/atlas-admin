@@ -85,7 +85,7 @@ app.factory('ScrubbablesHelpers', ['$q',
       if (!_.isObject(item)) {
         return;
       }
-      
+
       var _out = {};
       var broadcast = item.broadcasts[0] || null;
       var container = item.container || null;
@@ -278,7 +278,7 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
       var indexOfId = location.indexOf("id=");
       var contentId = location.substr(indexOfId + 3);
       defer.resolve(contentId);
-    })
+    });
     return defer.promise;
   };
 
