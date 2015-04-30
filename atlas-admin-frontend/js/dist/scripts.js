@@ -7964,7 +7964,10 @@ app.factory('ScrubbablesHelpers', ['$q',
   //  broadcast_date: {Object} { day:{String}, month:{String}, year:{String} }
   // }
   var formatAtlasResponse = function(item) {
-      if (!_.isObject(item)) return;
+      if (!_.isObject(item)) {
+        return;
+      }
+      
       var _out = {};
       var broadcast = item.broadcasts[0] || null;
       var container = item.container || null;
@@ -7984,7 +7987,6 @@ app.factory('ScrubbablesHelpers', ['$q',
       if (_.isObject(broadcast)) {
           _out.broadcast_date = transmissionTimeToDate(broadcast.transmission_time);
       }
-      console.log(_out);
       return _out;
   };
 
@@ -7999,9 +8001,7 @@ app.factory('ScrubbablesHelpers', ['$q',
 app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService',
   function(atlasHost, $http, $q, Groups) {
 
-  console.log(atlasHost);
   var SCRUBBABLES_HOST = atlasHost.indexOf('stage') > -1 ? '//scrubbables-stage.metabroadcast.com' : '//scrubbables.metabroadcast.com';
-
   var owlAnnotations = 'annotations=description,extended_description,next_broadcasts,broadcasts,brand_summary,series_summary,upcoming,locations,available_locations';
   var deerAnnotations = 'annotations=segment_events,description,extended_description,series_summary,description';
 
@@ -10816,9 +10816,9 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
     }
     var _events = $scope.scrubbableSegments;
     var broadcastDuration = _.has($scope.broadcast, 'published_duration') ? $scope.broadcast.published_duration : null;
-
-
+    // Keeping this in for debugging
     console.log('ev', _events);
+
     if (!! broadcastDuration) {
 
       var showSegments = _.compact( _.map(_events, function (ev) {
@@ -10832,9 +10832,6 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
           return ev;
         }
       }) );
-
-      console.log('show segments', showSegments);
-      console.log('timed segments', timedSegments);
 
       if (showSegments.length) {
         $scope.showSegments.loadSegments(showSegments);
