@@ -92,11 +92,10 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
       return;
     }
     var _events = $scope.scrubbableSegments;
-    console.log($scope.broadcast);
     var broadcastDuration = _.has($scope.broadcast, 'published_duration') ? $scope.broadcast.published_duration : null;
 
-    console.log('ev', _events);
 
+    console.log('ev', _events);
     if (!! broadcastDuration) {
 
       var showSegments = _.compact( _.map(_events, function (ev) {
