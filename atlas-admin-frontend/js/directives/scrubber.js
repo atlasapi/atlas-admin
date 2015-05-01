@@ -218,7 +218,7 @@ app.directive('scrubber', ['$document', '$compile',
             label: label,
             url: url,
             startTime: startTime,
-            endTime: endTime,
+            endTime: startTime + endTime,
             _id: id
           };
         }
@@ -398,14 +398,13 @@ app.directive('scrubber', ['$document', '$compile',
             $scope.scrubber.create = {};
             $scope.scrubber.segments = [];
             $scope.scrubber.submitted = false;
-
             $scope.scrubber.createLink = addSegment;
             $scope.scrubber.removeItem = removeSegment;
 
             $scope.scrubber.clearTempSegment = function() {
-                LIVE_ITEM = [];
-                $scope.scrubber.create = {};
-                return;
+              LIVE_ITEM = [];
+              $scope.scrubber.create = {};
+              return;
             };
 
             $scope.scrubber.loadSegments = function(events) {
@@ -413,6 +412,7 @@ app.directive('scrubber', ['$document', '$compile',
                 console.warn('events expected to be an array');
                 return;
               }
+
               var _segment, offset;
               _.forEach(events, function (ev) {
                 offset = ev.offset || 0;

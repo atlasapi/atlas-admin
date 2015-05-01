@@ -63,7 +63,9 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
 
 
   var loadAtlasItem = function (id) {
-    if (!_.isString(id)) return;
+    if (!_.isString(id)) {
+      return;
+    }
     $scope.loading = true;
 
     // load related links from deer
@@ -90,8 +92,9 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
       return;
     }
     var _events = $scope.scrubbableSegments;
-    var broadcastDuration = _.has($scope.broadcast, 'broadcast_duration') ? $scope.broadcast.broadcast_duration : null;
+    var broadcastDuration = _.has($scope.broadcast, 'published_duration') ? $scope.broadcast.published_duration : null;
 
+    // Keeping this in for debugging
     console.log('ev', _events);
 
     if (!! broadcastDuration) {
@@ -107,9 +110,6 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
           return ev;
         }
       }) );
-
-      console.log('show segments', showSegments);
-      console.log('timed segments', timedSegments);
 
       if (showSegments.length) {
         $scope.showSegments.loadSegments(showSegments);
@@ -132,6 +132,7 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
       $scope.showUI = true;
       $scope.loading = false;
       pushSegmentsToTimeline();
+      console.log($scope.episode);
     }
   });
 
