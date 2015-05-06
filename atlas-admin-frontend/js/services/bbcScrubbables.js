@@ -169,10 +169,10 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
       return defer.promise;
   };
 
-  var getContentURI = function(uri) {
+  var getContentURI = function(apiKey, uri) {
       if (!_.isString(uri)) return null;
       var defer = $q.defer();
-      $http.get(atlasHost + '/3.0/content.json?uri=' + encodeURIComponent(uri) + '&' + owlAnnotations)
+      $http.get(atlasHost + '/3.0/content.json?apiKey='+encodeURIComponent(apiKey)+'&uri=' + encodeURIComponent(uri) + '&' + owlAnnotations)
           .success(function(data, status) {
               if (status !== 200) {
                   defer.reject('Atlas content request returned an error. Status:'+status);
@@ -184,18 +184,21 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
       return defer.promise;
   };
 
-  var getContentID = function(id) {
-      if (!_.isString(id)) return null;
+  var getContentID = function(apiKey, id) {
       var defer = $q.defer();
-      $http.get(atlasHost + '/3.0/content.json?id=' + encodeURIComponent(id) + '&' + owlAnnotations)
-          .success(function(data, status) {
-              if (status !== 200) {
-                  defer.reject('Atlas content request returned an error. Status:'+status);
-              }else{
-                  defer.resolve(data);
-              }
-          })
-          .error(defer.reject);
+      if (!_.isString(id)) {
+        return null;
+      }
+
+      $http.get(atlasHost + '/3.0/content.json?apiKey='+encodeURIComponent(apiKey)+'&id=' + encodeURIComponent(id) + '&' + owlAnnotations).success(
+      function(data, status) {
+        if (status !== 200) {
+          defer.reject('Atlas content request returned an error. Status:'+status);
+        }else{
+            defer.resolve(data);
+        }
+      })
+        .error(defer.reject);
       return defer.promise;
   };
 
@@ -218,6 +221,7 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
           'uri':'http://scrubbables-frontend.metabroadcast.com/' + id
       };
 
+      console.log(segments);
       if (typeof segments === 'object') {
           for (var i in segments) {
               var _segment = segments[i];
@@ -308,5 +312,5 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
           id: getContentID,
       },
       deerContent: getDeerContentURI
-  }
+  };
 }]);

@@ -53,6 +53,7 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
 
           for (var i in $scope.showSegments.segments) {
               if ($scope.showSegments.segments[i]._id === id) {
+                  console.log(id);
                   $scope.showSegments.segments.splice(i, 1);
                   break;
               }

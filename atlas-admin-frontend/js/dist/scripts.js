@@ -8051,10 +8051,10 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
       return defer.promise;
   };
 
-  var getContentURI = function(uri) {
+  var getContentURI = function(apiKey, uri) {
       if (!_.isString(uri)) return null;
       var defer = $q.defer();
-      $http.get(atlasHost + '/3.0/content.json?uri=' + encodeURIComponent(uri) + '&' + owlAnnotations)
+      $http.get(atlasHost + '/3.0/content.json?apiKey='+encodeURIComponent(apiKey)+'&uri=' + encodeURIComponent(uri) + '&' + owlAnnotations)
           .success(function(data, status) {
               if (status !== 200) {
                   defer.reject('Atlas content request returned an error. Status:'+status);
@@ -8066,18 +8066,21 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
       return defer.promise;
   };
 
-  var getContentID = function(id) {
-      if (!_.isString(id)) return null;
+  var getContentID = function(apiKey, id) {
       var defer = $q.defer();
-      $http.get(atlasHost + '/3.0/content.json?id=' + encodeURIComponent(id) + '&' + owlAnnotations)
-          .success(function(data, status) {
-              if (status !== 200) {
-                  defer.reject('Atlas content request returned an error. Status:'+status);
-              }else{
-                  defer.resolve(data);
-              }
-          })
-          .error(defer.reject);
+      if (!_.isString(id)) {
+        return null;
+      }
+
+      $http.get(atlasHost + '/3.0/content.json?apiKey='+encodeURIComponent(apiKey)+'&id=' + encodeURIComponent(id) + '&' + owlAnnotations).success(
+      function(data, status) {
+        if (status !== 200) {
+          defer.reject('Atlas content request returned an error. Status:'+status);
+        }else{
+            defer.resolve(data);
+        }
+      })
+        .error(defer.reject);
       return defer.promise;
   };
 
@@ -8100,6 +8103,7 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
           'uri':'http://scrubbables-frontend.metabroadcast.com/' + id
       };
 
+      console.log(segments);
       if (typeof segments === 'object') {
           for (var i in segments) {
               var _segment = segments[i];
@@ -8190,7 +8194,7 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
           id: getContentID,
       },
       deerContent: getDeerContentURI
-  }
+  };
 }]);
 
 var app = angular.module('atlasAdmin.services.bbcscrubbables');
@@ -8822,13 +8826,16 @@ app.directive('scrubber', ['$document', '$compile',
             // Splice from the TIMELINE_SEGMENTS array
             for (var i in TIMELINE_SEGMENTS) {
               if (TIMELINE_SEGMENTS[i]._id === id) {
+                console.log(TIMELINE_SEGMENTS[i]);
                 TIMELINE_SEGMENTS.splice(i, 1);
                 break;
               }
             }
             // Remove from the DOM
             var _el = $('[data-segment-id='+ id +']', CREATED);
-            if (_el.length) $(_el).remove();
+            if (_el.length) {
+              $(_el).remove();
+            }
         }
 
 
@@ -8837,7 +8844,7 @@ app.directive('scrubber', ['$document', '$compile',
             label: label,
             url: url,
             startTime: startTime,
-            endTime: startTime + endTime,
+            endTime: endTime,
             _id: id
           };
         }
@@ -9143,6 +9150,7 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
 
           for (var i in $scope.showSegments.segments) {
               if ($scope.showSegments.segments[i]._id === id) {
+                  console.log(id);
                   $scope.showSegments.segments.splice(i, 1);
                   break;
               }
@@ -10795,9 +10803,8 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
     Scrubbables.deerContent($scope.deerKey, id).then(
     function(res) {
       // ..and load broadcast content from owl
-      Scrubbables.content.id(id).then(
+      Scrubbables.content.id($scope.deerKey, id).then(
       function(item) {
-        console.log(item);
         $scope.atlasSearch.selectedItem = Helpers.channelFilter(item.contents, 'cbbh')[0];
         $scope.scrubbableSegments = loadSavedSegments(res);
       },

@@ -203,13 +203,16 @@ app.directive('scrubber', ['$document', '$compile',
             // Splice from the TIMELINE_SEGMENTS array
             for (var i in TIMELINE_SEGMENTS) {
               if (TIMELINE_SEGMENTS[i]._id === id) {
+                console.log(TIMELINE_SEGMENTS[i]);
                 TIMELINE_SEGMENTS.splice(i, 1);
                 break;
               }
             }
             // Remove from the DOM
             var _el = $('[data-segment-id='+ id +']', CREATED);
-            if (_el.length) $(_el).remove();
+            if (_el.length) {
+              $(_el).remove();
+            }
         }
 
 
@@ -218,7 +221,7 @@ app.directive('scrubber', ['$document', '$compile',
             label: label,
             url: url,
             startTime: startTime,
-            endTime: startTime + endTime,
+            endTime: endTime,
             _id: id
           };
         }

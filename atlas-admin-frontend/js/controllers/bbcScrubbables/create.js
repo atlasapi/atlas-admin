@@ -72,9 +72,8 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
     Scrubbables.deerContent($scope.deerKey, id).then(
     function(res) {
       // ..and load broadcast content from owl
-      Scrubbables.content.id(id).then(
+      Scrubbables.content.id($scope.deerKey, id).then(
       function(item) {
-        console.log(item);
         $scope.atlasSearch.selectedItem = Helpers.channelFilter(item.contents, 'cbbh')[0];
         $scope.scrubbableSegments = loadSavedSegments(res);
       },
