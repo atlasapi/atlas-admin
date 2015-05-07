@@ -45,7 +45,7 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
                     defer.reject(new Error('URI arg should be a string'));
                     return defer.promise;
                 }
-                Scrubbables.content.uri(uri).then(function(item) {
+                Scrubbables.content.uri($scope.searchKey, uri).then(function(item) {
                     defer.resolve(item.contents[0]);
                 });
                 return defer.promise;

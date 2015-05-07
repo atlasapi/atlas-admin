@@ -170,8 +170,11 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
   };
 
   var getContentURI = function(apiKey, uri) {
-      if (!_.isString(uri)) return null;
       var defer = $q.defer();
+      if (!_.isString(uri))
+        defer.reject('uri is not a string');
+        return defer.promise;
+      }
       $http.get(atlasHost + '/3.0/content.json?apiKey='+encodeURIComponent(apiKey)+'&uri=' + encodeURIComponent(uri) + '&' + owlAnnotations)
           .success(function(data, status) {
               if (status !== 200) {
