@@ -8052,8 +8052,11 @@ app.factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService
   };
 
   var getContentURI = function(apiKey, uri) {
-      if (!_.isString(uri)) return null;
       var defer = $q.defer();
+      if (!_.isString(uri)) {
+        defer.reject('uri is not a string');
+        return defer.promise;
+      }
       $http.get(atlasHost + '/3.0/content.json?apiKey='+encodeURIComponent(apiKey)+'&uri=' + encodeURIComponent(uri) + '&' + owlAnnotations)
           .success(function(data, status) {
               if (status !== 200) {
@@ -9240,7 +9243,7 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
                     defer.reject(new Error('URI arg should be a string'));
                     return defer.promise;
                 }
-                Scrubbables.content.uri(uri).then(function(item) {
+                Scrubbables.content.uri($scope.searchKey, uri).then(function(item) {
                     defer.resolve(item.contents[0]);
                 });
                 return defer.promise;
@@ -9298,6 +9301,7 @@ app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http
         templateUrl: 'partials/bbcScrubbables/atlasSearch.html'
     }
 }]);
+
 'use strict';
 var app = angular.module('atlasAdmin.controllers.errors', []);
 app.controller('ErrorController', function($scope, $rootScope, $routeParams) {
