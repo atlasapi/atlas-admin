@@ -10787,13 +10787,19 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
   //
   // @param result {Object} Deer result object
   var loadSavedSegments = function (result) {
-    var _events = ( ! _.has(result.item, 'segment_events') ) ? null :
-                    ( _.isArray(result.item.segment_events) ) ? result.item.segment_events : null;
-    if (! _events) {
-      console.warn('segment_events array isn\'t in returned Deer object');
-      return null;
+    if(_.has(result.episode, 'segment_events')) {
+      if(_.isArray(result.episode.segment_events)) {
+        return result.episode.segment_events;
+      }
+      else {
+        console.warn('segment_events on deer object is not an array');
+      }
     }
-    return _events;
+    else {
+      console.warn('segment_events missing on deer object');
+    }
+
+    return null;
   };
 
 
