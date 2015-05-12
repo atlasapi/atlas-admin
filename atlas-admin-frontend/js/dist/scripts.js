@@ -10787,19 +10787,28 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
   //
   // @param result {Object} Deer result object
   var loadSavedSegments = function (result) {
-    if(_.has(result.episode, 'segment_events')) {
-      if(_.isArray(result.episode.segment_events)) {
-        return result.episode.segment_events;
-      }
-      else {
-        console.warn('segment_events on deer object is not an array');
-      }
-    }
-    else {
-      console.warn('segment_events missing on deer object');
-    }
+    // try all possible content types:
+    var TYPES = ['item', 'episode', 'film'];
 
-    return null;
+    var _events = null;
+
+    _.each(TYPES, function checkType(type) {
+      if(_.has(result, type)) {
+        if(_.has(result[type], 'segment_events')) {
+          if(_.isArray(result[type].segment_events)) {
+            _events = result[type].segment_events;
+          }
+          else {
+            console.warn('segment_events on deer object is not an array');
+          }
+        }
+        else {
+          console.warn('segment_events missing on deer object');
+        }
+      }
+    });
+
+    return _events;
   };
 
 
