@@ -480,7 +480,7 @@ button.send-data {
 
   &.is-posting {
     transition: all 200ms;
-    color: transparent;
+    opacity: 0.3;
     background-position: center;
   }
 }
