@@ -5,12 +5,12 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
 
     // For creating a new segment block to be pushed into the
     // showSegments.segments array
-    var createSegmentObj = function(label, url, startTime, endTime, id) {
+    var createSegmentObj = function(label, url, startTime, duration, id) {
       return {
         label: label,
         url: url,
         startTime: startTime,
-        endTime: endTime,
+        endTime: startTime + duration,
         _id: id
       };
     };

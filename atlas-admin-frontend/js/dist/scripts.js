@@ -8842,12 +8842,12 @@ app.directive('scrubber', ['$document', '$compile',
         }
 
 
-        function createSegmentObj(label, url, startTime, endTime, id) {
+        function createSegmentObj(label, url, startTime, duration, id) {
           return {
             label: label,
             url: url,
             startTime: startTime,
-            endTime: endTime,
+            endTime: startTime + duration,
             _id: id
           };
         }
@@ -8867,10 +8867,12 @@ app.directive('scrubber', ['$document', '$compile',
                 !LIVE_ITEM.length) {
                 return false;
             }
+            var startTime = (pixelsToSeconds(LIVE_ITEM[0].start) < 0) ? 0 : pixelsToSeconds(LIVE_ITEM[0].start);
+            var endTime = (pixelsToSeconds(LIVE_ITEM[0].end) <= startTime) ? startTime+1 : pixelsToSeconds(LIVE_ITEM[0].end);
             var _segment = createSegmentObj($scope.scrubber.create.label,
                             $scope.scrubber.create.url,
-                            (pixelsToSeconds(LIVE_ITEM[0].start) < 0) ? 0 : pixelsToSeconds(LIVE_ITEM[0].start),
-                            pixelsToSeconds(LIVE_ITEM[0].end),
+                            startTime,
+                            endTime - startTime,
                             generateID());
             if (_segment.label && _segment.url) {
                 $scope.scrubber.clearTempSegment();
@@ -9105,12 +9107,12 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
 
     // For creating a new segment block to be pushed into the
     // showSegments.segments array
-    var createSegmentObj = function(label, url, startTime, endTime, id) {
+    var createSegmentObj = function(label, url, startTime, duration, id) {
       return {
         label: label,
         url: url,
         startTime: startTime,
-        endTime: endTime,
+        endTime: startTime + duration,
         _id: id
       };
     };
