@@ -8941,7 +8941,7 @@ app.directive('scrubber', ['$document', '$compile',
         // Converts boring old seconds to object containing
         // HH MM SS as strings
         //
-        // @returns {Object} keys: hh, mm, ss
+        // @returns {Object} of {Number}s. keys: hh, mm, ss
         function secondsToHHMMSS (secs) {
             if (typeof secs !== 'number' &&
                 typeof secs !== 'string') {
@@ -9088,6 +9088,7 @@ app.directive('scrubber', ['$document', '$compile',
                 }
                 MOUSEDOWN = false;
             });
+            $scope.scrubber.segments = TIMELINE_SEGMENTS;
             requestAnimationFrame(draw);
         }
         bootstrap();
