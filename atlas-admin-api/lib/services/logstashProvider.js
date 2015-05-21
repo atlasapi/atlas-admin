@@ -7,7 +7,7 @@ var common = require('../../common'),
 
 
 function Logstash() {
-    var _logstash_host = 'node1.logstash.mbst.tv';
+    var _logstash_host = 'logstash.mbst.tv';
     var _errors = {
         connection: {'error': 'There was a problem connecting to elasticsearch'}
     }
