@@ -9,7 +9,6 @@
                 <atlas-search class="atlas-search">
             </div>
             <div ng-show="loading" class="loading">Just a sec...</div>
-            <div class="status-message" ng-show="showMessage">{{message}}</div>
             <div class="scrubbables-result-wrapper" ng-show="showUI">
                 <article class="result-content">
                     <header class="panel-header broadcast-header">
@@ -32,6 +31,7 @@
         </section>
         <section class="panel-full scrubbables-link-editor" ng-show="showUI">
             <h2>Related links</h2>
+            <p class="note">Note: links must be unique.</h2>
             <div class="show-level-links panel-full">
                 <h3>Show level links</h3>
                 <div class="panel-content">
@@ -45,10 +45,12 @@
                 </div>
             </div>
         </section>
+        
+        <div class="status-message" ng-show="showMessage">{{message}}</div>
 
         <section class="panel-full" ng-show="showUI">
             <button ng-click="killCurrent()" class="">Cancel</button>
-            <button class="positive send-data" ng-click="createNew($event)">Create</button>
+            <button class="positive send-data" ng-click="createNew($event)">Save</button>
         </section>
     </div>
 </div>

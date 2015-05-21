@@ -1,4 +1,4 @@
-module.exports = function() {
+module.exports = (function() {
     'use strict';
 
     var instanceConfig = {};
@@ -19,6 +19,6 @@ module.exports = function() {
             apiRoot: instanceConfig.apiRootPath || '/api'
         },
 
-        allowedDomains: instanceConfig.allowedDomains || ['http://aa.metabroadcast.com:8000', 'http://localhost:8000', 'http://dev.mbst.tv:8000', 'http://dev.mbst.tv']
+        allowedDomains: instanceConfig.allowedDomains || ['http://localhost:8000', 'http://dev.mbst.tv:8000', 'http://dev.mbst.tv']
     };
-}();
+})();

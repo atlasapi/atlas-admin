@@ -15,7 +15,7 @@ var config      = require('../../config'),
 //
 //  @returns {bool}
 //
-function IsJSON(str) {
+function isJSON(str) {
     try {
         JSON.parse(str);
     } catch (e) {
@@ -54,7 +54,7 @@ function proxyRequest(endpoint, request) {
     }
 
     Atlas.api('/3.0/feeds/youview/bbc_nitro/'+_endpoint+'?'+qs.stringify(_querystring), 'GET', function(status, data) {
-        if (IsJSON(data)) {
+        if (isJSON(data)) {
             defer.resolve(JSON.parse(data));
         }else{
             console.error('Response is invalid');
