@@ -11274,9 +11274,18 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'APIUsage',
         }
     }
 
+    var showLoadingState = function () {
+        $('.rpm-chart-container').empty();
+        $('.rpm-chart-container').css({
+            height: '400px',
+            background: 'url(img/loading.svg) center center no-repeat'
+        });
+    };
+
     var loadGraphHour = function() {
         var _key = $scope.apiKey || '';
         if (_key.length) {
+            showLoadingState();
             $scope.tabState = 'hour';
             Usage.hour(_key).then(function(data) {
                 var endTime = new Date(),
@@ -11294,6 +11303,7 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'APIUsage',
     var loadGraphDay = function() {
         var _key = $scope.apiKey || '';
         if (_key.length) {
+            showLoadingState();
             $scope.tabState = 'day';
             Usage.day(_key).then(function(data) {
                 var endTime = new Date(),
@@ -11311,6 +11321,7 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'APIUsage',
     var loadGraphWeek = function() {
         var _key = $scope.apiKey || '';
         if (_key.length) {
+            showLoadingState();
             $scope.tabState = 'week';
             Usage.week(_key).then(function(data) {
                 var endTime = new Date(),
@@ -11328,6 +11339,7 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'APIUsage',
     var loadGraphMonth = function() {
         var _key = $scope.apiKey || '';
         if (_key.length) {
+            showLoadingState();
             $scope.tabState = 'month';
             Usage.month(_key).then(function(data) {
                 var endTime = new Date(),
@@ -11344,6 +11356,7 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'APIUsage',
 
     loadGraphDay();
 }]);
+
 'use strict';
 var app = angular.module('atlasAdmin.controllers.atlas', []);
 
