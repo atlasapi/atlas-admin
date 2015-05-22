@@ -15,6 +15,11 @@
         border-radius: 0 0 4px 4px;
     }
 
+    .loading {
+        height: 400px;
+        background: url('../img/loading.svg') center center no-repeat;
+    }
+
     .rpm-chart-options {
         @extend %cf;
         box-sizing: border-box;

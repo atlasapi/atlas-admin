@@ -87,10 +87,11 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'APIUsage',
 
     var showLoadingState = function () {
         $('.rpm-chart-container').empty();
-        $('.rpm-chart-container').css({
-            height: '400px',
-            background: 'url(img/loading.svg) center center no-repeat'
-        });
+        $('.rpm-chart-container').addClass('loading');
+    };
+
+    var removeLoadingState = function () {
+        $('.rpm-chart-container').removeClass('loading');
     };
 
     var loadGraphHour = function() {
@@ -105,6 +106,7 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'APIUsage',
                 graph.endTime = endTime;
                 graph.startTime = startTime;
                 graph.draw();
+                removeLoadingState();
             }, function(err) {
                 $scope.errorMessage('Can\'t load data for the api key')
             });
@@ -123,6 +125,7 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'APIUsage',
                 graph.endTime = endTime;
                 graph.startTime = startTime;
                 graph.draw();
+                removeLoadingState();
             }, function(err) {
                 $scope.errorMessage('Can\'t load data for the api key')
             });
@@ -141,6 +144,7 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'APIUsage',
                 graph.endTime = endTime;
                 graph.startTime = startTime;
                 graph.draw();
+                removeLoadingState();
             }, function(err) {
                 $scope.errorMessage('Can\'t load data for the api key')
             });
@@ -159,6 +163,7 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'APIUsage',
                 graph.endTime = endTime;
                 graph.startTime = startTime;
                 graph.draw();
+                removeLoadingState();
             }, function(err) {
                 $scope.errorMessage('Can\'t load data for the api key')
             });
