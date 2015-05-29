@@ -7078,6 +7078,7 @@ var app = angular.module('atlasAdmin.services.atlas', []);
 app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $log) {
     return {
         getRequest: function(url) {
+            console.log(atlasHost);
             return $http.get(Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion +  url));
         },
         postRequest: function(url, data) {
@@ -7114,6 +7115,7 @@ app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $
         }
     };
 });
+
 var app = angular.module('atlasAdmin.services.users', []);
 
 app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'ProfileStatus', '$log', 'atlasApiHost', '$q',
