@@ -4,7 +4,8 @@ var app = angular.module('atlasAdmin.services.atlas', []);
 app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $log) {
     return {
         getRequest: function(url) {
-            return $http.get(Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion +  url));
+            var usersUrl = Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion +  url);
+            return $http.get(usersUrl);
         },
         postRequest: function(url, data) {
             return $http.post(Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + url), data, {withCredentials: false});
