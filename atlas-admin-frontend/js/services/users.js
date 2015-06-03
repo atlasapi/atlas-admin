@@ -29,12 +29,9 @@ app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'Profile
             ProfileStatus.setComplete(true);
             return Atlas.postRequest("/users/" + user.id + ".json", user);
         },
-        get: function(uid, callback) {
-            $.ajax({
-                url: Atlas.getUrl('/users/' + uid + '.json'),
-                success: function (result) {
-                    callback(result.user);
-                }
+        get: function(uid) {
+            return Atlas.getRequest('/users/' + uid + '.json').then(function(result) {
+                return result.data.user;
             });
         },
         all: function() {
