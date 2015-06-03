@@ -3,21 +3,26 @@ var app = angular.module('atlasAdmin.services.users', []);
 app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'ProfileStatus', '$log', 'atlasApiHost', '$q',
     function($http, Atlas, $rootScope, Authentication, ProfileStatus, $log, atlasApiHost, $q) {
     return {
-        currentUser: function() {
-            return Atlas.getRequest('/auth/user.json').then(function(result) {
-                if (result.data.user) {
-                    if (result.data.user.profile_complete) {
-                        ProfileStatus.setComplete(result.data.user.profile_complete);
+        currentUser: function(callback) {
+            $.ajax({
+                url: Atlas.getUrl('/auth/user.json'),
+                success: function (result) {
+                    if (result.user) {
+                        if (result.user.profile_complete) {
+                            ProfileStatus.setComplete(result.user.profile_complete);
+                        }
+                        if (typeof result.user.license_accepted === 'string') {
+                            ProfileStatus.setLicenseAccepted(true);
+                        }else{
+                            ProfileStatus.setLicenseAccepted(false);
+                        }
+                        callback(result.user);
                     }
-                    if (typeof result.data.user.license_accepted === 'string') {
-                        ProfileStatus.setLicenseAccepted(true);
-                    }else{
-                        ProfileStatus.setLicenseAccepted(false);
-                    }
-                    return result.data.user;
+                },
+                error: function () {
+                    $log.error("No user");
+                    return null;
                 }
-                $log.error("No user");
-                return null;
             });
         },
         update: function(user, callback) {
