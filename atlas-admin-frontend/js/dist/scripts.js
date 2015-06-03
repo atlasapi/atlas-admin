@@ -6889,7 +6889,8 @@ app.config(['$httpProvider', function($httpProvider) {
 app.config(['$sceDelegateProvider', function($sceDelegateProvider) {
     $sceDelegateProvider.resourceUrlWhitelist([
         'self',
-        'http://*.metabroadcast.com/**'
+        'http://*.metabroadcast.com/**',
+        'https://*.metabroadcast.com/**'
         ]);
 }]);
 
