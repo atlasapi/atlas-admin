@@ -7150,9 +7150,12 @@ app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'Profile
             ProfileStatus.setComplete(true);
             return Atlas.postRequest("/users/" + user.id + ".json", user);
         },
-        get: function(uid) {
-            return Atlas.getRequest('/users/' + uid + '.json').then(function(result) {
-                return result.data.user;
+        get: function(uid, callback) {
+            $.ajax({
+                url: Atlas.getUrl('/users/' + uid + '.json'),
+                success: function (result) {
+                    callback(result.user);
+                }
             });
         },
         all: function() {
@@ -9728,7 +9731,7 @@ app.controller('UserProfileController', function($scope, $rootScope, $routeParam
 
 
     if ($routeParams.uid) {
-        Users.get($routeParams.uid).then(function(user) {
+        Users.get($routeParams.uid, function(user) {
             $scope.app.user = user;
             var title = 'Profile for ';
             if (user.full_name) {
