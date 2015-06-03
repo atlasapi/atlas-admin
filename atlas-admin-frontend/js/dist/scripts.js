@@ -7081,6 +7081,9 @@ app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $
             var usersUrl = Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion +  url);
             return $http.get(usersUrl);
         },
+        getUrl: function (url) {
+            return Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + url);
+        },
         postRequest: function(url, data) {
             return $http.post(Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + url), data, {withCredentials: false});
         },
@@ -7121,21 +7124,26 @@ var app = angular.module('atlasAdmin.services.users', []);
 app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'ProfileStatus', '$log', 'atlasApiHost', '$q',
     function($http, Atlas, $rootScope, Authentication, ProfileStatus, $log, atlasApiHost, $q) {
     return {
-        currentUser: function() {
-            return Atlas.getRequest('/auth/user.json').then(function(result) {
-                if (result.data.user) {
-                    if (result.data.user.profile_complete) {
-                        ProfileStatus.setComplete(result.data.user.profile_complete);
+        currentUser: function(callback) {
+            $.ajax({
+                url: Atlas.getUrl('/auth/user.json'),
+                success: function (result) {
+                    if (result.user) {
+                        if (result.user.profile_complete) {
+                            ProfileStatus.setComplete(result.user.profile_complete);
+                        }
+                        if (typeof result.user.license_accepted === 'string') {
+                            ProfileStatus.setLicenseAccepted(true);
+                        }else{
+                            ProfileStatus.setLicenseAccepted(false);
+                        }
+                        callback(result.user);
                     }
-                    if (typeof result.data.user.license_accepted === 'string') {
-                        ProfileStatus.setLicenseAccepted(true);
-                    }else{
-                        ProfileStatus.setLicenseAccepted(false);
-                    }
-                    return result.data.user;
+                },
+                error: function () {
+                    $log.error("No user");
+                    return null;
                 }
-                $log.error("No user");
-                return null;
             });
         },
         update: function(user, callback) {
@@ -9357,14 +9365,8 @@ app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location
         var redirectToSources = function() {
             window.location.search = "";
         };
-        Users.currentUser().then(redirectToSources, 
-            function(error) {
-            $log.error("Error setting user.");
-            $log.error(error);
-            $location.hash("/login");
-            localStorage.removeItem('auth.provider');
-            localStorage.removeItem('auth.token');
-            localStorage.removeItem('profile.complete');
+        Users.currentUser(function (user) {
+            redirectToSources();
         });
     },
 
@@ -9374,6 +9376,7 @@ app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location
         $location.hash("/login");
     });
 });
+
 'use strict';
 var app = angular.module('atlasAdmin.controllers.auth');
 
@@ -9672,7 +9675,7 @@ app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$sce', '$routePara
         })
 
         // use provider to get user data, then pass result to $scope
-        Users.currentUser().then( function(user) {
+        Users.currentUser(function(user) {
             $scope.user = user;
         });
 
@@ -9703,6 +9706,7 @@ app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$sce', '$routePara
             $location.path('/applications/'+appId);
         }
 }]);
+
 'use strict';
 var app = angular.module('atlasAdmin.controllers.user', []);
 app.controller('UserProfileController', function($scope, $rootScope, $routeParams, Users, Applications, $location) {
@@ -9733,7 +9737,7 @@ app.controller('UserProfileController', function($scope, $rootScope, $routeParam
                 title += 'user id ' + user.id;
             }
             $rootScope.view_title = title;
-            Users.currentUser().then(function(editingUser) {
+            Users.currentUser(function(editingUser) {
                 $scope.app.isAdmin = editingUser.role === 'admin';
                 $scope.app.editingUser = editingUser.id;
 
@@ -9743,7 +9747,7 @@ app.controller('UserProfileController', function($scope, $rootScope, $routeParam
             });
         });
     } else {
-        Users.currentUser().then(function(user) {
+        Users.currentUser(function(user) {
             $scope.app.user = user;
             $rootScope.view_title = 'Your profile';
         });
@@ -9871,7 +9875,7 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
     };
 
     if (Authentication.getToken()) {
-        Users.currentUser().then(function(user) {
+        Users.currentUser(function(user) {
             $scope.app.user = user;
             // find any custom menu items for this user
             getPrivateMenuItems().then(function(groups) {
@@ -9889,7 +9893,7 @@ app.controller('UserLicenseController', function($scope, $rootScope, $routeParam
     // only try to get user if logged in
     $scope.view_title = 'Atlas Terms and Conditions'
     $scope.app = {};
-    Users.currentUser().then(function(user) {
+    Users.currentUser(function(user) {
         $scope.app.user = user;
     });
 

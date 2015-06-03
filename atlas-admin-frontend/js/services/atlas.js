@@ -7,6 +7,9 @@ app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $
             var usersUrl = Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion +  url);
             return $http.get(usersUrl);
         },
+        getUrl: function (url) {
+            return Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + url);
+        },
         postRequest: function(url, data) {
             return $http.post(Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + url), data, {withCredentials: false});
         },
