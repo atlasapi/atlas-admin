@@ -47,7 +47,7 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'APIUsage',
                       .attr("class", "y axis")
                       .attr("transform", "translate(-25,0)")
                       .call(yAxis);
-            Graph.prototype.graph.append('svg:path').attr('d', line(histogram));
+            Graph.prototype.graph.append('svg:path').attr('d', line(histogram)).attr('class', 'graph-data');
         }
 
         this.draw = function() {

@@ -71,11 +71,13 @@
             stroke-width: 1;
             fill: lighten($color-pink, 50%);
         }
+
+        .graph-data {
+            fill: $color-pink;
+        }
          
         line {
             stroke: $color-purple;
         }
-         
-        text {}
     }
 }
