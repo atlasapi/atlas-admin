@@ -129,12 +129,13 @@
     }
 
     path {
-        stroke: $color-pink;
+        stroke: $color-purple;
         stroke-width: 1;
         fill: lighten($color-pink, 50%);
     }
 
     .graph-data {
+        stroke: $color-pink;
         fill: $color-pink;
     }
      
