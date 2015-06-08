@@ -28,14 +28,14 @@
             <div class="chart-card">
                 <div class="notifications" ng-show="errorMessage"></div>
                 <div class="graph-container">
-                    <div class="rpm-chart-container"></div>
-                    <p class="graph-caption"></p>
                     <div class="graph-controls clearfix">
                         <div class="graph-control graph-control-hour" ng-class="{'selected':tabState=='hour'}" ng-click="switchTime('hour')">- 1 hour</div>
                         <div class="graph-control graph-control-day" ng-class="{'selected':tabState=='day'}" ng-click="switchTime('day')">- 24 hours</div>
                         <div class="graph-control graph-control-week" ng-class="{'selected':tabState=='week'}" ng-click="switchTime('week')">- 7 days</div>
                         <div class="graph-control graph-control-month" ng-class="{'selected':tabState=='month'}" ng-click="switchTime('month')">- 30 days</div>
                     </div>
+                    <div class="rpm-chart-container"></div>
+                    <p class="graph-caption"></p>
                 </div>
             </div>
         </div>
