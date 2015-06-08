@@ -132,6 +132,8 @@ angular.module('atlasAdmin.controllers.applications')
                 graph.startTime = startTime;
                 graph.draw();
                 removeLoadingState();
+            }, function (err) {
+                $scope.errorMessage('Can\'t load data for the api key');
             });
         }
     };
@@ -149,6 +151,8 @@ angular.module('atlasAdmin.controllers.applications')
                 graph.startTime = startTime;
                 graph.draw();
                 removeLoadingState();
+            }, function (error) {
+                $scope.errorMessage('Can\'t load data for the api key');
             });
         }
     };
@@ -166,6 +170,8 @@ angular.module('atlasAdmin.controllers.applications')
                 graph.startTime = startTime;
                 graph.draw();
                 removeLoadingState();
+            }, function (error) {
+                $scope.errorMessage('Can\'t load data for the api key');
             });
         }
     };  
@@ -182,6 +188,8 @@ angular.module('atlasAdmin.controllers.applications')
                 graph.endTime = endTime;
                 graph.startTime = startTime;
                 removeLoadingState();
+            }, function (error) {
+                $scope.errorMessage('Can\'t load data for the api key');
             });
         }
     };
