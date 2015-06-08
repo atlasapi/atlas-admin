@@ -54,65 +54,65 @@
         height: 400px;
         background: url('../img/loading.gif') center center no-repeat;
     }
+}
 
-    .rpm-chart-options {
+.rpm-chart-options {
+    @extend %cf;
+    box-sizing: border-box;
+    width: 100%;
+
+    .chart-option {
         @extend %cf;
+        position: relative;
         box-sizing: border-box;
-        width: 100%;
+        display: block;
+        float: left;
+        width: 20%;
+        margin: 0 2.5%;
+        padding: 2.25rem 0;
+        background: white;
+        border: 1px solid $color-silver-dark;
+        border-radius: 3px;
+        text-align: center;
+        cursor: pointer;
 
-        .chart-option {
-            @extend %cf;
-            position: relative;
-            box-sizing: border-box;
-            display: block;
-            float: left;
-            width: 20%;
-            margin: 0 2.5%;
-            padding: 2.25rem 0;
-            background: white;
-            border: 1px solid $color-silver-dark;
-            border-radius: 3px;
-            text-align: center;
-            cursor: pointer;
+        &.selected {
+            border-color: $color-pink;
 
-            &.selected {
-                border-color: $color-pink;
-
-                &:before {
-                    content: "";
-                    display: block;
-                    position: absolute;
-                    top: -10px;
-                    left: 50%;
-                    margin-left: -10px;
-                    border-left: 10px solid transparent;
-                    border-right: 10px solid transparent;
-                    border-bottom: 10px solid $color-pink;
-                    border-radius: 4px;
-                }
+            &:before {
+                content: "";
+                display: block;
+                position: absolute;
+                top: -10px;
+                left: 50%;
+                margin-left: -10px;
+                border-left: 10px solid transparent;
+                border-right: 10px solid transparent;
+                border-bottom: 10px solid $color-pink;
+                border-radius: 4px;
             }
-
-            &:hover { border-color: $color-pink; }
         }
+
+        &:hover { border-color: $color-pink; }
+    }
+}
+
+.rpm-chart-container {
+    svg {
+        margin: 0 auto;
     }
 
-    .rpm-chart-container {
-        svg {
-            margin: 0 auto;
-        }
+    path {
+        stroke: $color-pink;
+        stroke-width: 1;
+        fill: lighten($color-pink, 50%);
+    }
 
-        path {
-            stroke: $color-pink;
-            stroke-width: 1;
-            fill: lighten($color-pink, 50%);
-        }
-
-        .graph-data {
-            fill: $color-pink;
-        }
-         
-        line {
-            stroke: $color-purple;
-        }
+    .graph-data {
+        fill: $color-pink;
+    }
+     
+    line {
+        stroke: $color-purple;
     }
 }

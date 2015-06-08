@@ -25,7 +25,10 @@
         
         <div class="api-usage-graph" id="api-usage-graph">
             <h1>API key usage</h1>
-            <div class="graph-container" id="graph-container"></div>
+            <div class="chart-card">
+                <div class="notifications" ng-show="errorMessage"></div>
+                <div class="rpm-chart-container graph-container" id="graph-container"></div>  
+            </div>
             <div class="graph-controls clearfix">
                 <div class="graph-control graph-control-hour" ng-class="{'selected':tabState=='hour'}" ng-click="switchTime('hour')">- 1 hour</div>
                 <div class="graph-control graph-control-day" ng-class="{'selected':tabState=='day'}" ng-click="switchTime('day')">- 24 hours</div>

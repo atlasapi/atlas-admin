@@ -10313,8 +10313,8 @@ angular.module('atlasAdmin.controllers.applications')
 'use strict';
 
 angular.module('atlasAdmin.controllers.applications')
-.controller('CtrlApplicationEdit', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Sources', 'SourceLicenses', 'Authentication', 'atlasApiHost', '$modal', '$sce', '$log', '$http', '$q', 
-    function($scope, $rootScope, $routeParams, Applications, Sources, SourceLicenses, Authentication, atlasApiHost, $modal, $sce, $log, $http, $q) {
+.controller('CtrlApplicationEdit', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Sources', 'SourceLicenses', 'Authentication', 'atlasApiHost', '$modal', '$sce', '$log', '$http', '$q', 'APIUsage',
+    function($scope, $rootScope, $routeParams, Applications, Sources, SourceLicenses, Authentication, atlasApiHost, $modal, $sce, $log, $http, $q, Usage) {
 
     $scope.app = {};
     $scope.app.edited = {};
@@ -10329,19 +10329,66 @@ angular.module('atlasAdmin.controllers.applications')
         }
     };
 
-    $scope.switchTime = function (timeRange) {
-        loadGraph(timeRange);
-    };
-
     var $graphContainer = $('#graph-container');
 
-    var loadGraph = function (timeRange) {
-        timeRange = timeRange || 'hour';
-        showLoadingState();
-        $scope.tabState = timeRange;
-        $graphContainer.html('<h2>' + timeRange + '</h2>');
-        getApplicationId(timeRange);
-    };
+    function Graph(data) {
+        var histogram = data.facets[0].entries;
+        var maxCount = _.max(histogram, function(n) {
+            return n.count;
+        });
+
+        this.clear_graph();
+
+        var margin = {top: 30, right: 30, bottom: 60, left: 60},
+            width = 1000 - margin.left - margin.right,
+            height = 400 - margin.top - margin.bottom;
+
+        this.startTime = null;
+        this.endTime = null;
+
+        this.create_axes = function() {
+            var x = d3.time.scale().domain([this.startTime, this.endTime]).range([0, width]);
+            var y = d3.scale.linear().domain([0, (maxCount.count + 100)]).range([height, 0]);
+            var line = d3.svg.line()
+                .x(function(d,i) { 
+                    return x(d.time); 
+                })
+                .y(function(d) { 
+                    return y(d.count); 
+                })
+
+            var xAxis = d3.svg.axis().scale(x).tickSize(-height).tickSubdivide(true);
+            Graph.prototype.graph.append("svg:g")
+                 .attr("class", "x axis")
+                 .attr("transform", "translate(0,"+height+")")
+                 .call(xAxis);
+
+            var yAxis = d3.svg.axis().scale(y).ticks(4).orient("left");
+            Graph.prototype.graph.append("svg:g")
+                      .attr("class", "y axis")
+                      .attr("transform", "translate(-25,0)")
+                      .call(yAxis);
+            Graph.prototype.graph.append('svg:path').attr('d', line(histogram)).attr('class', 'graph-data');
+        }
+
+        this.draw = function() {
+            Graph.prototype.graph = d3.select('.rpm-chart-container')
+                           .append('svg:svg')
+                           .attr("width", width + margin.left + margin.right)
+                           .attr("height", height + margin.top + margin.bottom)
+                           .append('svg:g')
+                           .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            this.create_axes();
+        }
+    }
+
+    Graph.prototype.graph = null;
+    Graph.prototype.clear_graph = function() {
+        if (this.graph) {
+            $('.rpm-chart-container svg').remove();
+            this.graph = null;
+        }
+    }
 
     var showLoadingState = function () {
         $graphContainer.empty().addClass('loading');
@@ -10351,7 +10398,11 @@ angular.module('atlasAdmin.controllers.applications')
         $graphContainer.removeClass('loading');
     };
 
-    var getApplicationId = function (timeRange) {
+    $scope.switchTime = function (timeRange) {
+        getApiKey(timeRange);
+    };
+
+    var getApiKey = function (timeRange) {
         // Seems to be the only way to find out the current API key
         Applications.get($routeParams.applicationId).then(function (application) {
             $scope.app.application = application;
@@ -10360,16 +10411,91 @@ angular.module('atlasAdmin.controllers.applications')
             $scope.app.writes.reverse = false;
             $scope.view_subtitle = application.title;
             var apiKey = application.credentials.apiKey;
-            makeUsageRequest(apiKey, timeRange);
+            loadGraph(apiKey, timeRange);
         });
     };
 
-    var makeUsageRequest = function (apiKey, timePeriod) {
-        var queryUrl = Authentication.appendTokenToUrl(atlasApiHost +'/usage/' + apiKey + '/' + timePeriod);
-        $http.get(queryUrl).success(function (response) {
-            console.log(response);
-            removeLoadingState();
-        });
+    var loadGraph = function (apiKey, timeRange) {
+        switch(timeRange) {
+            case 'hour':
+                loadGraphHour(apiKey);
+                break;
+            case 'day':
+                loadGraphDay(apiKey);
+                break;
+            case 'week':
+                loadGraphWeek(apiKey);
+                break;
+            case 'month':
+                loadGraphMonth(apiKey);
+        }
+    };
+
+    var loadGraphHour = function (apiKey) {
+        var _key = apiKey || '';
+        if (_key.length) {
+            showLoadingState();
+            $scope.tabState = 'hour';
+            Usage.hour(_key).then(function (data) {
+                var endTime = new Date();
+                var startTime = new Date(new Date().setHours(endTime.getHours() - 1));
+                var graph = new Graph(data);
+                graph.endTime = endTime;
+                graph.startTime = startTime;
+                graph.draw();
+                removeLoadingState();
+            });
+        }
+    };
+
+    var loadGraphDay = function (apiKey) {
+        var _key = apiKey || '';
+        if (_key.length) {
+            showLoadingState();
+            $scope.tabState = 'day';
+            Usage.day(_key).then(function (data) {
+                var endTime = new Date();
+                var startTime = new Date(new Date().setHours(endTime.getHours() - 24));
+                var graph = new Graph(data);
+                graph.endTime = endTime;
+                graph.startTime = startTime;
+                graph.draw();
+                removeLoadingState();
+            });
+        }
+    };
+
+    var loadGraphWeek = function (apiKey) {
+        var _key = apiKey || '';
+        if (_key.length) {
+            showLoadingState();
+            $scope.tabState = 'week';
+            Usage.week(_key).then(function (data) {
+                var endTime = new Date();
+                var startTime = new Date(new Date().setDate(endTime.getDate() - 7));
+                var graph = new Graph(data);
+                graph.endTime = endTime;
+                graph.startTime = startTime;
+                graph.draw();
+                removeLoadingState();
+            });
+        }
+    };  
+
+    var loadGraphMonth = function (apiKey) {
+        var _key = apiKey || '';
+        if (_key.length) {
+            showLoadingState();
+            $scope.tabState = 'month';
+            Usage.week(_key).then(function (data) {
+                var endTime = new Date();
+                var startTime = new Date(new Date().setDate(endTime.getDate() - 30));
+                var graph = new Graph(data);
+                graph.endTime = endTime;
+                graph.startTime = startTime;
+                removeLoadingState();
+            });
+        }
     };
 
     $scope.$on('$locationChangeStart', function(event, next, current) {
