@@ -187,6 +187,7 @@ angular.module('atlasAdmin.controllers.applications')
                 var graph = new Graph(data);
                 graph.endTime = endTime;
                 graph.startTime = startTime;
+                graph.draw();
                 removeLoadingState();
             }, function (error) {
                 $scope.errorMessage('Can\'t load data for the api key');
