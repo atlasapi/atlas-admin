@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('atlasAdmin.controllers.applications')
-.controller('CtrlApplicationEdit', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Sources', 'SourceLicenses', '$modal', '$sce', '$log', 
-    function($scope, $rootScope, $routeParams, Applications, Sources, SourceLicenses, $modal, $sce, $log) {
+.controller('CtrlApplicationEdit', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Sources', 'SourceLicenses', 'Authentication', 'atlasApiHost', '$modal', '$sce', '$log', '$http', '$q', 
+    function($scope, $rootScope, $routeParams, Applications, Sources, SourceLicenses, Authentication, atlasApiHost, $modal, $sce, $log, $http, $q) {
 
     $scope.app = {};
     $scope.app.edited = {};
@@ -18,53 +18,17 @@ angular.module('atlasAdmin.controllers.applications')
     };
 
     $scope.switchTime = function (timeRange) {
-        switch(timeRange) {
-            case 'hour':
-                loadGraphHour();
-                break;
-            case 'day':
-                loadGraphDay();
-                break;
-            case 'week':
-                loadGraphWeek();
-                break;
-            case 'month':
-                loadGraphMonth();
-                break;
-            default:
-                loadGraphHour();
-                break;
-        }
+        loadGraph(timeRange);
     };
 
     var $graphContainer = $('#graph-container');
 
-    var loadGraphHour = function () {
+    var loadGraph = function (timeRange) {
+        timeRange = timeRange || 'hour';
         showLoadingState();
-        $scope.tabState = 'hour';
-        $graphContainer.html('<h2>Hour graph loaded</h2>');
-        makeUsageRequest();
-    };
-
-    var loadGraphDay = function () {
-        showLoadingState();
-        $scope.tabState = 'day';
-        $graphContainer.html('<h2>Day graph loaded</h2>');
-        makeUsageRequest();
-    };
-
-    var loadGraphWeek = function () {
-        showLoadingState();
-        $scope.tabState = 'week';
-        $graphContainer.html('<h2>Week graph loaded</h2>');
-        makeUsageRequest();
-    };
-
-    var loadGraphMonth = function () {
-        showLoadingState();
-        $scope.tabState = 'month';
-        $graphContainer.html('<h2>Month graph loaded</h2>');
-        makeUsageRequest();
+        $scope.tabState = timeRange;
+        $graphContainer.html('<h2>' + timeRange + '</h2>');
+        getApplicationId(timeRange);
     };
 
     var showLoadingState = function () {
@@ -75,11 +39,26 @@ angular.module('atlasAdmin.controllers.applications')
         $graphContainer.removeClass('loading');
     };
 
-    var makeUsageRequest = function () {
-        removeLoadingState();
+    var getApplicationId = function (timeRange) {
+        // Seems to be the only way to find out the current API key
+        Applications.get($routeParams.applicationId).then(function (application) {
+            $scope.app.application = application;
+            $scope.app.writes = {};
+            $scope.app.writes.predicate = 'name';
+            $scope.app.writes.reverse = false;
+            $scope.view_subtitle = application.title;
+            var apiKey = application.credentials.apiKey;
+            makeUsageRequest(apiKey, timeRange);
+        });
     };
 
-    loadGraphHour();
+    var makeUsageRequest = function (apiKey, timePeriod) {
+        var queryUrl = Authentication.appendTokenToUrl(atlasApiHost +'/usage/' + apiKey + '/' + timePeriod);
+        $http.get(queryUrl).success(function (response) {
+            console.log(response);
+            removeLoadingState();
+        });
+    };
 
     $scope.$on('$locationChangeStart', function(event, next, current) {
         if ($scope.app.changed && !confirm(leavingPageText + '\n\nAre you sure you want to leave this page?')) {
