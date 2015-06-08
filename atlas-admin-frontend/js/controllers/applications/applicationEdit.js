@@ -17,8 +17,6 @@ angular.module('atlasAdmin.controllers.applications')
         }
     };
 
-    var $graphContainer = $('#graph-container');
-
     function Graph(data) {
         var histogram = data.facets[0].entries;
         var maxCount = _.max(histogram, function(n) {
@@ -79,11 +77,11 @@ angular.module('atlasAdmin.controllers.applications')
     }
 
     var showLoadingState = function () {
-        $graphContainer.empty().addClass('loading');
+        $('.rpm-chart-container').empty().addClass('loading');
     };
 
     var removeLoadingState = function () {
-        $graphContainer.removeClass('loading');
+        $('.rpm-chart-container').removeClass('loading');
     };
 
     $scope.switchTime = function (timeRange) {
@@ -124,6 +122,7 @@ angular.module('atlasAdmin.controllers.applications')
         if (_key.length) {
             showLoadingState();
             $scope.tabState = 'hour';
+            $('.graph-caption').text('API requests over the past hour');
             Usage.hour(_key).then(function (data) {
                 var endTime = new Date();
                 var startTime = new Date(new Date().setHours(endTime.getHours() - 1));
@@ -143,6 +142,7 @@ angular.module('atlasAdmin.controllers.applications')
         if (_key.length) {
             showLoadingState();
             $scope.tabState = 'day';
+            $('.graph-caption').text('API requests over the past day');
             Usage.day(_key).then(function (data) {
                 var endTime = new Date();
                 var startTime = new Date(new Date().setHours(endTime.getHours() - 24));
@@ -162,6 +162,7 @@ angular.module('atlasAdmin.controllers.applications')
         if (_key.length) {
             showLoadingState();
             $scope.tabState = 'week';
+            $('.graph-caption').text('API requests over the past week');
             Usage.week(_key).then(function (data) {
                 var endTime = new Date();
                 var startTime = new Date(new Date().setDate(endTime.getDate() - 7));
@@ -181,6 +182,7 @@ angular.module('atlasAdmin.controllers.applications')
         if (_key.length) {
             showLoadingState();
             $scope.tabState = 'month';
+            $('.graph-caption').text('API requests over the past month');
             Usage.week(_key).then(function (data) {
                 var endTime = new Date();
                 var startTime = new Date(new Date().setDate(endTime.getDate() - 30));
