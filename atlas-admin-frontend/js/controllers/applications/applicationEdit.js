@@ -17,6 +17,70 @@ angular.module('atlasAdmin.controllers.applications')
         }
     };
 
+    $scope.switchTime = function (timeRange) {
+        switch(timeRange) {
+            case 'hour':
+                loadGraphHour();
+                break;
+            case 'day':
+                loadGraphDay();
+                break;
+            case 'week':
+                loadGraphWeek();
+                break;
+            case 'month':
+                loadGraphMonth();
+                break;
+            default:
+                loadGraphHour();
+                break;
+        }
+    };
+
+    var $graphContainer = $('#graph-container');
+
+    var loadGraphHour = function () {
+        showLoadingState();
+        $scope.tabState = 'hour';
+        $graphContainer.html('<h2>Hour graph loaded</h2>');
+        makeUsageRequest();
+    };
+
+    var loadGraphDay = function () {
+        showLoadingState();
+        $scope.tabState = 'day';
+        $graphContainer.html('<h2>Day graph loaded</h2>');
+        makeUsageRequest();
+    };
+
+    var loadGraphWeek = function () {
+        showLoadingState();
+        $scope.tabState = 'week';
+        $graphContainer.html('<h2>Week graph loaded</h2>');
+        makeUsageRequest();
+    };
+
+    var loadGraphMonth = function () {
+        showLoadingState();
+        $scope.tabState = 'month';
+        $graphContainer.html('<h2>Month graph loaded</h2>');
+        makeUsageRequest();
+    };
+
+    var showLoadingState = function () {
+        $graphContainer.empty().addClass('loading');
+    };
+
+    var removeLoadingState = function () {
+        $graphContainer.removeClass('loading');
+    };
+
+    var makeUsageRequest = function () {
+        removeLoadingState();
+    };
+
+    loadGraphHour();
+
     $scope.$on('$locationChangeStart', function(event, next, current) {
         if ($scope.app.changed && !confirm(leavingPageText + '\n\nAre you sure you want to leave this page?')) {
             event.preventDefault();

@@ -22,6 +22,18 @@
     </section>
 
     <section class="edit-form">
+        
+        <div class="api-usage-graph" id="api-usage-graph">
+            <h1>API key usage</h1>
+            <div class="graph-container" id="graph-container"></div>
+            <div class="graph-controls clearfix">
+                <div class="graph-control graph-control-hour" ng-class="{'selected':tabState=='hour'}" ng-click="switchTime('hour')">- 1 hour</div>
+                <div class="graph-control graph-control-day" ng-class="{'selected':tabState=='day'}" ng-click="switchTime('day')">- 24 hours</div>
+                <div class="graph-control graph-control-week" ng-class="{'selected':tabState=='week'}" ng-click="switchTime('week')">- 7 days</div>
+                <div class="graph-control graph-control-month" ng-class="{'selected':tabState=='month'}" ng-click="switchTime('month')">- 30 days</div>
+            </div>
+        </div>
+
         <form name="detailsForm" class="panel-full">
             <div class="panel-full padded edit-app-info">
                 <div class="panel-half padded-right stroke-right snug">
