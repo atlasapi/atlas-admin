@@ -125,6 +125,120 @@ angular.module('atlasAdmin.controllers.applications')
         }
     };
 
+    var makeGraph = function (data) {
+        console.log(data);
+
+        var barData = data.facets[0].entries;
+
+        var vis = d3.select('.usage-graph'),
+            WIDTH = 1000,
+            HEIGHT = 500,
+            MARGINS = {
+                top: 20,
+                right: 20,
+                bottom: 20,
+                left: 50
+            },
+            xRange = d3.scale.ordinal()
+                .rangeRoundBands([MARGINS.left, WIDTH - MARGINS.right], 0.1)
+                .domain(barData.map(function (d) {
+                    return d.count;
+            })),
+            yRange = d3.scale.linear().
+                range([HEIGHT - MARGINS.top, MARGINS.bottom])
+                .domain([0, d3.max(barData, function(d) {
+                    return d.time;
+            })]),
+            xAxis = d3.svg.axis()
+                .scale(xRange)
+                .tickSize(5)
+                .tickSubdivide(true),
+            yAxis = d3.svg.axis()
+                .scale(yRange)
+                .tickSize(5)
+                .orient('left')
+                .tickSubdivide(true);
+
+        vis.append('svg:g')
+            .attr('class', 'x axis')
+            .attr('transform', 'translate(0,' + (HEIGHT - MARGINS.bottom) + ')')
+            .call(xAxis);
+         
+        vis.append('svg:g')
+            .attr('class', 'y axis')
+            .attr('transform', 'translate(' + (MARGINS.left) + ',0)')
+            .call(yAxis);
+
+        vis.selectAll('rect')
+            .data(barData)
+            .enter()
+            .append('rect')
+            .attr('x', function (d) { // sets the x position of the bar
+                return xRange(d.count);
+            })
+            .attr('y', function (d) { // sets the y position of the bar
+                return yRange(d.time);
+            })
+            .attr('width', '20px') // sets the width of bar
+            .attr('height', function (d) {      // sets the height of bar
+                return d.count + 'px';
+            })
+            .attr('fill', 'grey');   // fills the bar with grey color
+        // var vis = d3.select('.usage-graph');
+        // var WIDTH = 1000;
+        // var HEIGHT = 500;
+        // var MARGINS = {
+        //     top: 20,
+        //     right: 20,
+        //     bottom: 20,
+        //     left: 50
+        // };
+        // var xRange = d3.scale.ordinal()
+        //     .rangeRoundBands([MARGINS.left, WIDTH - MARGINS.right], 0.1)
+        //     .domain(barData.map(function(d) {
+        //         return d.count;
+        //     }));
+        // var yRange = d3.scale.linear().range([HEIGHT - MARGINS.top, MARGINS.bottom])
+        //     .domain([0, d3.max(barData, function(d) {
+        //         return d.time;
+        //     })]);
+        // var xAxis = d3.svg.axis()
+        //     .scale(xRange)
+        //     .tickSize(5)
+        //     .tickSubdivide(true);
+        // var yAxis = d3.svg.axis()
+        //     .scale(yRange)
+        //     .tickSize(5)
+        //     .orient('left')
+        //     .tickSubdivide(true);
+
+        // vis.append('svg:g')
+        //     .attr('class', 'x axis')
+        //     .attr('transform', 'translate(0,' + (HEIGHT - MARGINS.bottom) + ')')
+        //     .call(xAxis);
+
+        // vis.append('svg:g')
+        //     .attr('class', 'y axis')
+        //     .attr('transform', 'translate(' + (MARGINS.left) + ',0)')
+        //     .call(yAxis);
+
+        // vis.selectAll('rect')
+        //     .data(barData)
+        //     .enter()
+        //     .append('rect')
+        //     .attr('x', function (d) {
+        //         return xRange(d.count);
+        //     })
+        //     .attr('y', function (d) {
+        //         return yRange(d.time);
+        //     })
+        //     .attr('width', xRange.rangeBand())
+        //     .attr('height', function (d) {
+        //         return ((HEIGHT - MARGINS.bottom) - yRange(d.time));
+        //     })
+        //     .attr('fill', 'grey');
+    };
+
     var loadGraphHour = function (apiKey) {
         var _key = apiKey || '';
         if (_key.length) {
@@ -137,7 +251,8 @@ angular.module('atlasAdmin.controllers.applications')
                 var graph = new Graph(data);
                 graph.endTime = endTime;
                 graph.startTime = startTime;
-                graph.draw();
+                // graph.draw();
+                makeGraph(data);
                 removeLoadingState();
             }, function (err) {
                 $scope.errorMessage('Can\'t load data for the api key');
@@ -157,7 +272,8 @@ angular.module('atlasAdmin.controllers.applications')
                 var graph = new Graph(data);
                 graph.endTime = endTime;
                 graph.startTime = startTime;
-                graph.draw();
+                // graph.draw();
+                makeGraph(data);
                 removeLoadingState();
             }, function (error) {
                 $scope.errorMessage('Can\'t load data for the api key');
@@ -177,7 +293,8 @@ angular.module('atlasAdmin.controllers.applications')
                 var graph = new Graph(data);
                 graph.endTime = endTime;
                 graph.startTime = startTime;
-                graph.draw();
+                // graph.draw();
+                makeGraph(data);
                 removeLoadingState();
             }, function (error) {
                 $scope.errorMessage('Can\'t load data for the api key');
@@ -197,7 +314,8 @@ angular.module('atlasAdmin.controllers.applications')
                 var graph = new Graph(data);
                 graph.endTime = endTime;
                 graph.startTime = startTime;
-                graph.draw();
+                // graph.draw();
+                makeGraph(data);
                 removeLoadingState();
             }, function (error) {
                 $scope.errorMessage('Can\'t load data for the api key');

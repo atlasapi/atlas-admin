@@ -156,3 +156,24 @@
         stroke: $color-purple;
     }
 }
+
+.rpm-chart-container {
+    
+    rect {
+        fill: $color-pink;
+    }
+
+    text {
+        fill: white;
+        font: 10px sans-serif;
+        text-anchor: middle;
+    }
+}
+
+.usage-graph {
+    display: block;
+    margin: 0 auto;
+    width: 1000px;
+    height: 800px;
+}
+
