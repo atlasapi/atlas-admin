@@ -1,10 +1,10 @@
 .graph-container {
     position: relative;
-    border: 1px solid $color-silver-dark;
+    border: 1px solid #bdadca;
     border-radius: 5px;
     margin: 1rem 0;
     padding: 2.25rem;
-    background-color: $color-silver;
+    background-color: #efebf2;
 }
 
 .graph-caption {
@@ -47,9 +47,9 @@
 .graph-control {
     float: left;
     padding: 0.5rem 1rem;
-    border: 1px solid darken($color-silver-dark, 10%);
+    border: 1px solid #a2a2a2;
     border-left-width: 0;
-    background: $color-silver-dark;
+    background: #efebf2;
 
     &:first-child {
         border-left-width: 1px;
@@ -61,7 +61,7 @@
     }
 
     &:hover {
-        background: darken($color-silver-dark, 5%);
+        border-color: #333;
     }
 
     &.selected {
