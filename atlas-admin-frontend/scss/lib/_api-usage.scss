@@ -22,6 +22,20 @@
     }
 }
 
+.usage-graph-wrapper {
+
+    &.loading {
+        background-image: url('../img/loading.gif');
+        background-position: center center;
+        background-repeat: no-repeat;
+    }
+}
+
+.usage-graph {
+    display: block;
+    margin: 0 auto;
+}
+
 .chart-card {
     display: none;
 }

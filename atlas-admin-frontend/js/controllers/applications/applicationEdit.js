@@ -85,11 +85,12 @@ angular.module('atlasAdmin.controllers.applications')
     }
 
     var showLoadingState = function () {
-        $('.rpm-chart-container').empty().addClass('loading');
+        $('.usage-graph-wrapper').addClass('loading');
+        $('#visualisation').empty();
     };
 
     var removeLoadingState = function () {
-        $('.rpm-chart-container').removeClass('loading');
+        $('.usage-graph-wrapper').removeClass('loading');
     };
 
     $scope.switchTime = function (timeRange) {
