@@ -129,9 +129,9 @@ angular.module('atlasAdmin.controllers.applications')
     var makeGraph = function (data) {
         var data = data.facets[0].entries;
         var barData = [];
-        for (var i = 0, ii = data.length; i < 30; i++) {
+        for (var i = 0, ii = data.length; i < ii; i++) {
             barData.push({
-                x: new Date(data[i].time).toString(),
+                x: new Date(data[i].time).getDay() + '-' + new Date(data[i].time).getMonth() + '-' + new Date(data[i].time).getFullYear(),
                 y: data[i].count
             });
         }
