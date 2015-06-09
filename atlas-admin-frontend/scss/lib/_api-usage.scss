@@ -169,3 +169,8 @@
         text-anchor: middle;
     }
 }
+
+.x.axis text {
+    transform: rotate(-90deg);
+    text-anchor: end !important;
+}
