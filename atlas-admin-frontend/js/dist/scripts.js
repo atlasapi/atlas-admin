@@ -10313,8 +10313,8 @@ angular.module('atlasAdmin.controllers.applications')
 'use strict';
 
 angular.module('atlasAdmin.controllers.applications')
-.controller('CtrlApplicationEdit', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Sources', 'SourceLicenses', 'Authentication', 'atlasApiHost', '$modal', '$sce', '$log', '$http', '$q', 'APIUsage',
-    function($scope, $rootScope, $routeParams, Applications, Sources, SourceLicenses, Authentication, atlasApiHost, $modal, $sce, $log, $http, $q, Usage) {
+.controller('CtrlApplicationEdit', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Sources', 'SourceLicenses', 'Authentication', 'atlasApiHost', '$modal', '$sce', '$log', '$http', '$q', 'APIUsage', 'Atlas',
+    function($scope, $rootScope, $routeParams, Applications, Sources, SourceLicenses, Authentication, atlasApiHost, $modal, $sce, $log, $http, $q, Usage, Atlas) {
 
     $scope.app = {};
     $scope.app.edited = {};
@@ -10322,6 +10322,14 @@ angular.module('atlasAdmin.controllers.applications')
     $scope.app.changed = false;
     var leavingPageText = 'You have unsaved changes!';
     $scope.view_title = 'Edit application';
+
+    $scope.isAdmin = false;
+
+    Atlas.getRequest('/auth/user.json').then(function (result) {
+        if (result.data.user.role === 'admin') {
+            $scope.isAdmin = true;
+        }
+    });
 
     window.onbeforeunload = function() {
         if ($scope.app.changed) {

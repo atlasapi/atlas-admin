@@ -23,7 +23,8 @@
 
     <section class="edit-form">
         
-        <div class="api-usage-graph" id="api-usage-graph">
+        <!-- if admin show this -->
+        <div class="api-usage-graph" id="api-usage-graph" ng-show="isAdmin">
             <div class="api-usage-trigger button">API key usage</div>
             <div class="chart-card">
                 <div class="notifications" ng-show="errorMessage"></div>
@@ -42,6 +43,7 @@
                 </div>
             </div>
         </div>
+        <!-- // .api-usage-graph -->
 
         <form name="detailsForm" class="panel-full">
             <div class="panel-full padded edit-app-info">
