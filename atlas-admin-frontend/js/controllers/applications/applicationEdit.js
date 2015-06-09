@@ -197,6 +197,29 @@ angular.module('atlasAdmin.controllers.applications')
         }
     };
 
+    var closeUsageGraph = function () {
+        $('.close-usage-graph').on('click', function () {
+            $('.chart-card').slideUp();
+        });
+    };
+
+    var toggleUsageGraph = function () {
+        $('.api-usage-trigger').on('click', function () {
+            var $graphContainer = $('.chart-card');
+            if ($graphContainer.is(':visible')) {
+                $graphContainer.slideUp();
+            } else {
+                if ($('.rpm-chart-container svg').length <= 0) {
+                    getApiKey('week');
+                }
+                $graphContainer.slideDown();
+            }
+        });
+    };
+
+    toggleUsageGraph();
+    closeUsageGraph();
+
     $scope.$on('$locationChangeStart', function(event, next, current) {
         if ($scope.app.changed && !confirm(leavingPageText + '\n\nAre you sure you want to leave this page?')) {
             event.preventDefault();

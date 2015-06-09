@@ -22,6 +22,19 @@
     }
 }
 
+.chart-card {
+    display: none;
+}
+
+.close-usage-graph {
+    float: right;
+}
+
+.api-usage-trigger {
+    margin-bottom: 1rem;
+    cursor: pointer;
+}
+
 .graph-controls {
     @extend %cf;
     float: right;
