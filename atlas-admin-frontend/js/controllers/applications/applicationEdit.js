@@ -82,7 +82,7 @@ angular.module('atlasAdmin.controllers.applications')
             var MARGINS = {
                 top: 20,
                 right: 20,
-                bottom: 20,
+                bottom: 21,
                 left: 50
             };        
             var xRange = d3.scale.ordinal()
@@ -113,20 +113,26 @@ angular.module('atlasAdmin.controllers.applications')
                 .attr('transform', 'translate(' + (MARGINS.left) + ',0)')
                 .call(yAxis);
             vis.selectAll('rect')
-            .data(barData)
-            .enter()
-            .append('rect')
-            .attr('x', function (d) { // sets the x position of the bar
-                return xRange(d.x);
-            })
-            .attr('y', function (d) { // sets the y position of the bar
-                return yRange(d.y);
-            })
-            .attr('width', xRange.rangeBand()) // sets the width of bar
-            .attr('height', function (d) {      // sets the height of bar
-                return ((HEIGHT - MARGINS.bottom) - yRange(d.y));
-            })
-            .attr('class', 'bar-col');
+                .data(barData)
+                .enter()
+                .append('rect')
+                .attr('x', function (d) { // sets the x position of the bar
+                    return xRange(d.x);
+                })
+                .attr('y', function (d) { // sets the y position of the bar
+                    return yRange(d.y);
+                })
+                .attr('width', xRange.rangeBand()) // sets the width of bar
+                .attr('height', function (d) {      // sets the height of bar
+                    return ((HEIGHT - MARGINS.bottom) - yRange(d.y));
+                })
+                .attr('class', 'bar-col');
+            vis.selectAll('.x text')
+                .attr('dy', '1')
+                .attr('x', '-6');
+            vis.selectAll('.y text')
+                .attr('dy', '1')
+                .attr('x', '-6');
         } else {
             $('.usage-graph').before('<p class="no-usage-message">No usage in that time period</p>');
         }
