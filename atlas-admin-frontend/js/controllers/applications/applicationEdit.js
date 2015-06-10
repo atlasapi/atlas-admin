@@ -165,8 +165,7 @@ angular.module('atlasAdmin.controllers.applications')
                 data = data.facets[0].entries;
                 data.forEach(function (d) {
                     var formattedDate = moment(d.time).format('HH');
-                    d.time = formattedDate;
-                    console.log(d.time);
+                    d.time = formattedDate + ':00';
                 });
                 makeGraph(data);
                 removeLoadingState();
