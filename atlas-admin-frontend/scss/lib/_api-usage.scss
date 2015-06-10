@@ -184,13 +184,22 @@
     }
 }
 
+.x.axis,
+.y.axis {
+    fill: $color-purple;
+}
+
 .x.axis text {
     transform: rotate(-90deg);
-    text-anchor: end !important;
+    text-anchor: end !important; // Only way to override styles set by default
 }
 
 .no-usage-message {
     clear: both;
     text-align: center;
     margin: 3rem 0;
+}
+
+.bar-col {
+    fill: $color-pink
 }

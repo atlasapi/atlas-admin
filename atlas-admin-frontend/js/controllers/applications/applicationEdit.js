@@ -72,7 +72,6 @@ angular.module('atlasAdmin.controllers.applications')
             if ($('.no-usage-message')) {
                 $('.no-usage-message').remove();
             }
-            
             barData.forEach(function (d) {
                 d.x = d.time;
                 d.y = d.count;
@@ -90,22 +89,20 @@ angular.module('atlasAdmin.controllers.applications')
                 .rangeRoundBands([MARGINS.left, WIDTH - MARGINS.right], 0.1)
                 .domain(barData.map(function(d) {
                     return d.x;
-                }
-            ));
+                }));
             var yRange = d3.scale.linear()
                 .range([HEIGHT - MARGINS.top, MARGINS.bottom])
                 .domain([0, d3.max(barData, function(d) {
                     return d.y;
-                })
-            ]);
+                })]);
             var xAxis = d3.svg.axis()
                 .scale(xRange)
-                .tickSize(5)
+                .tickSize(1)
                 .tickSubdivide(true);
             var yAxis = d3.svg.axis()
                 .scale(yRange)
-                .tickSize(5)
-                .orient("left")
+                .tickSize(1)
+                .orient('left')
                 .tickSubdivide(true);
             vis.append('svg:g')
                 .attr('class', 'x axis')
@@ -129,7 +126,7 @@ angular.module('atlasAdmin.controllers.applications')
             .attr('height', function (d) {      // sets the height of bar
                 return ((HEIGHT - MARGINS.bottom) - yRange(d.y));
             })
-            .attr('fill', 'grey');   // fills the bar with grey color
+            .attr('class', 'bar-col');
         } else {
             $('.usage-graph').before('<p class="no-usage-message">No usage in that time period</p>');
         }
@@ -184,7 +181,7 @@ angular.module('atlasAdmin.controllers.applications')
             Usage.week(_key).then(function (data) {
                 data = data.facets[0].entries;
                 data.forEach(function (d) {
-                    var formattedDate = moment(d.time).format('Do MMM');
+                    var formattedDate = moment(d.time).format('Do MMMM');
                     d.time = formattedDate;
                 });
                 makeGraph(data);
@@ -204,7 +201,7 @@ angular.module('atlasAdmin.controllers.applications')
             Usage.month(_key).then(function (data) {
                 data = data.facets[0].entries;
                 data.forEach(function (d) {
-                    var formattedDate = moment(d.time).format('Do MMM');
+                    var formattedDate = moment(d.time).format('Do MMMM');
                     d.time = formattedDate;
                 });
                 makeGraph(data);
