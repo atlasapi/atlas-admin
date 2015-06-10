@@ -25,65 +25,6 @@ angular.module('atlasAdmin.controllers.applications')
         }
     };
 
-    // function Graph(data) {
-    //     var histogram = data.facets[0].entries;
-    //     var maxCount = _.max(histogram, function(n) {
-    //         return n.count;
-    //     });
-
-    //     this.clear_graph();
-
-    //     var margin = {top: 30, right: 30, bottom: 60, left: 60},
-    //         width = 1000 - margin.left - margin.right,
-    //         height = 400 - margin.top - margin.bottom;
-
-    //     this.startTime = null;
-    //     this.endTime = null;
-
-    //     this.create_axes = function() {
-    //         var x = d3.time.scale().domain([this.startTime, this.endTime]).range([0, width]);
-    //         var y = d3.scale.linear().domain([0, (maxCount.count + 100)]).range([height, 0]);
-    //         var line = d3.svg.line()
-    //             .x(function(d,i) { 
-    //                 return x(d.time); 
-    //             })
-    //             .y(function(d) { 
-    //                 return y(d.count); 
-    //             })
-
-    //         var xAxis = d3.svg.axis().scale(x).tickSize(-height).tickSubdivide(true);
-    //         Graph.prototype.graph.append("svg:g")
-    //              .attr("class", "x axis")
-    //              .attr("transform", "translate(0,"+height+")")
-    //              .call(xAxis);
-
-    //         var yAxis = d3.svg.axis().scale(y).ticks(4).orient("left");
-    //         Graph.prototype.graph.append("svg:g")
-    //                   .attr("class", "y axis")
-    //                   .attr("transform", "translate(-25,0)")
-    //                   .call(yAxis);
-    //         Graph.prototype.graph.append('svg:path').attr('d', line(histogram)).attr('class', 'graph-data');
-    //     }
-
-    //     this.draw = function() {
-    //         Graph.prototype.graph = d3.select('.rpm-chart-container')
-    //                        .append('svg:svg')
-    //                        .attr("width", width + margin.left + margin.right)
-    //                        .attr("height", height + margin.top + margin.bottom)
-    //                        .append('svg:g')
-    //                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    //         this.create_axes();
-    //     }
-    // }
-
-    // Graph.prototype.graph = null;
-    // Graph.prototype.clear_graph = function() {
-    //     if (this.graph) {
-    //         $('.rpm-chart-container svg').remove();
-    //         this.graph = null;
-    //     }
-    // }
-
     var showLoadingState = function () {
         $('.usage-graph-wrapper').addClass('loading');
         $('#visualisation').empty();
@@ -126,64 +67,72 @@ angular.module('atlasAdmin.controllers.applications')
         }
     };
 
-    var makeGraph = function (barData, endTime, startTime) {
-        barData.forEach(function (d) {
-            d.x = d.time;
-            d.y = d.count;
-        });
-        var vis = d3.select('#visualisation');
-        var WIDTH = 1000;
-        var HEIGHT = 500;
-        var MARGINS = {
-            top: 20,
-            right: 20,
-            bottom: 20,
-            left: 50
-        };        
-        var xRange = d3.scale.ordinal()
-            .rangeRoundBands([MARGINS.left, WIDTH - MARGINS.right], 0.1)
-            .domain(barData.map(function(d) {
-                return d.x;
+    var makeGraph = function (barData) {
+        if (barData.length > 0) {
+            if ($('.no-usage-message')) {
+                $('.no-usage-message').remove();
             }
-        ));
-        var yRange = d3.scale.linear()
-            .range([HEIGHT - MARGINS.top, MARGINS.bottom])
-            .domain([0, d3.max(barData, function(d) {
-                return d.y;
+            
+            barData.forEach(function (d) {
+                d.x = d.time;
+                d.y = d.count;
+            });
+            var vis = d3.select('#visualisation');
+            var WIDTH = 1000;
+            var HEIGHT = 500;
+            var MARGINS = {
+                top: 20,
+                right: 20,
+                bottom: 20,
+                left: 50
+            };        
+            var xRange = d3.scale.ordinal()
+                .rangeRoundBands([MARGINS.left, WIDTH - MARGINS.right], 0.1)
+                .domain(barData.map(function(d) {
+                    return d.x;
+                }
+            ));
+            var yRange = d3.scale.linear()
+                .range([HEIGHT - MARGINS.top, MARGINS.bottom])
+                .domain([0, d3.max(barData, function(d) {
+                    return d.y;
+                })
+            ]);
+            var xAxis = d3.svg.axis()
+                .scale(xRange)
+                .tickSize(5)
+                .tickSubdivide(true);
+            var yAxis = d3.svg.axis()
+                .scale(yRange)
+                .tickSize(5)
+                .orient("left")
+                .tickSubdivide(true);
+            vis.append('svg:g')
+                .attr('class', 'x axis')
+                .attr('transform', 'translate(0,' + (HEIGHT - MARGINS.bottom) + ')')
+                .call(xAxis);
+            vis.append('svg:g')
+                .attr('class', 'y axis')
+                .attr('transform', 'translate(' + (MARGINS.left) + ',0)')
+                .call(yAxis);
+            vis.selectAll('rect')
+            .data(barData)
+            .enter()
+            .append('rect')
+            .attr('x', function (d) { // sets the x position of the bar
+                return xRange(d.x);
             })
-        ]);
-        var xAxis = d3.svg.axis()
-            .scale(xRange)
-            .tickSize(5)
-            .tickSubdivide(true);
-        var yAxis = d3.svg.axis()
-            .scale(yRange)
-            .tickSize(5)
-            .orient("left")
-            .tickSubdivide(true);
-        vis.append('svg:g')
-            .attr('class', 'x axis')
-            .attr('transform', 'translate(0,' + (HEIGHT - MARGINS.bottom) + ')')
-            .call(xAxis);
-        vis.append('svg:g')
-            .attr('class', 'y axis')
-            .attr('transform', 'translate(' + (MARGINS.left) + ',0)')
-            .call(yAxis);
-        vis.selectAll('rect')
-        .data(barData)
-        .enter()
-        .append('rect')
-        .attr('x', function (d) { // sets the x position of the bar
-            return xRange(d.x);
-        })
-        .attr('y', function (d) { // sets the y position of the bar
-            return yRange(d.y);
-        })
-        .attr('width', xRange.rangeBand()) // sets the width of bar
-        .attr('height', function (d) {      // sets the height of bar
-            return ((HEIGHT - MARGINS.bottom) - yRange(d.y));
-        })
-        .attr('fill', 'grey');   // fills the bar with grey color
+            .attr('y', function (d) { // sets the y position of the bar
+                return yRange(d.y);
+            })
+            .attr('width', xRange.rangeBand()) // sets the width of bar
+            .attr('height', function (d) {      // sets the height of bar
+                return ((HEIGHT - MARGINS.bottom) - yRange(d.y));
+            })
+            .attr('fill', 'grey');   // fills the bar with grey color
+        } else {
+            $('.usage-graph').before('<p class="no-usage-message">No usage in that time period</p>');
+        }
     };
 
     var loadGraphHour = function (apiKey) {
@@ -193,14 +142,12 @@ angular.module('atlasAdmin.controllers.applications')
             $scope.tabState = 'hour';
             $('.graph-caption').text('API requests over the past hour');
             Usage.hour(_key).then(function (data) {
-                var endTime = new Date();
-                var startTime = new Date(new Date().setHours(endTime.getHours() - 1));
                 data = data.facets[0].entries;
                 data.forEach(function (d) {
-                    var formattedDate = moment(d.time).format('mm');
+                    var formattedDate = moment(d.time).format('HH:mm');
                     d.time = formattedDate;
                 });
-                makeGraph(data, endTime, startTime);
+                makeGraph(data);
                 removeLoadingState();
             }, function (err) {
                 $scope.errorMessage('Can\'t load data for the api key');
@@ -215,14 +162,13 @@ angular.module('atlasAdmin.controllers.applications')
             $scope.tabState = 'day';
             $('.graph-caption').text('API requests over the past day');
             Usage.day(_key).then(function (data) {
-                var endTime = new Date();
-                var startTime = new Date(new Date().setHours(endTime.getHours() - 24));
                 data = data.facets[0].entries;
                 data.forEach(function (d) {
                     var formattedDate = moment(d.time).format('HH');
                     d.time = formattedDate;
+                    console.log(d.time);
                 });
-                makeGraph(data, endTime, startTime);
+                makeGraph(data);
                 removeLoadingState();
             }, function (error) {
                 $scope.errorMessage('Can\'t load data for the api key');
@@ -237,14 +183,12 @@ angular.module('atlasAdmin.controllers.applications')
             $scope.tabState = 'week';
             $('.graph-caption').text('API requests over the past week');
             Usage.week(_key).then(function (data) {
-                var endTime = new Date();
-                var startTime = new Date(new Date().setDate(endTime.getDate() - 7));
                 data = data.facets[0].entries;
                 data.forEach(function (d) {
                     var formattedDate = moment(d.time).format('Do MMM');
                     d.time = formattedDate;
                 });
-                makeGraph(data, endTime, startTime);
+                makeGraph(data);
                 removeLoadingState();
             }, function (error) {
                 $scope.errorMessage('Can\'t load data for the api key');
@@ -259,14 +203,12 @@ angular.module('atlasAdmin.controllers.applications')
             $scope.tabState = 'month';
             $('.graph-caption').text('API requests over the past month');
             Usage.month(_key).then(function (data) {
-                var endTime = new Date();
-                var startTime = new Date(new Date().setDate(endTime.getDate() - 30));
                 data = data.facets[0].entries;
                 data.forEach(function (d) {
                     var formattedDate = moment(d.time).format('Do MMM');
                     d.time = formattedDate;
                 });
-                makeGraph(data, endTime, startTime);
+                makeGraph(data);
                 removeLoadingState();
             }, function (error) {
                 $scope.errorMessage('Can\'t load data for the api key');
@@ -276,7 +218,7 @@ angular.module('atlasAdmin.controllers.applications')
 
     var closeUsageGraph = function () {
         $('.close-usage-graph').on('click', function () {
-            $('.chart-card').slideUp();
+            $('.chart-card').slideUp('fast');
         });
     };
 
@@ -284,12 +226,12 @@ angular.module('atlasAdmin.controllers.applications')
         $('.api-usage-trigger').on('click', function () {
             var $graphContainer = $('.chart-card');
             if ($graphContainer.is(':visible')) {
-                $graphContainer.slideUp();
+                $graphContainer.slideUp('fast');
             } else {
-                if ($('.rpm-chart-container svg').length <= 0) {
+                if ($('.usage-graph g').length <= 0) {
                     getApiKey('week');
                 }
-                $graphContainer.slideDown();
+                $graphContainer.slideDown('fast');
             }
         });
     };
