@@ -3,6 +3,19 @@
         <h1 class="page-title">API Usage Stats</h1>
     </header>
     <div class="app-content">
-        
+        <table class="tbl" id="usage-table" ng-controller="CtrlUsage">
+            <thead>
+                <tr>
+                    <th>API key</th>
+                    <th>Number of requests</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="request in requests">
+                    <td>{{request.key}}</td>
+                    <td>{{request.doc_count}}</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
