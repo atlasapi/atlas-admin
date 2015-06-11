@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('atlasAdmin.controllers.applications')
-.controller('CtrlApplicationEdit', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Sources', 'SourceLicenses', '$modal', '$sce', '$log', 
-    function($scope, $rootScope, $routeParams, Applications, Sources, SourceLicenses, $modal, $sce, $log) {
+.controller('CtrlApplicationEdit', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Sources', 'SourceLicenses', 'Authentication', 'atlasApiHost', '$modal', '$sce', '$log', '$http', '$q', 'APIUsage', 'Atlas',
+    function($scope, $rootScope, $routeParams, Applications, Sources, SourceLicenses, Authentication, atlasApiHost, $modal, $sce, $log, $http, $q, Usage, Atlas) {
 
     $scope.app = {};
     $scope.app.edited = {};
@@ -11,11 +11,235 @@ angular.module('atlasAdmin.controllers.applications')
     var leavingPageText = 'You have unsaved changes!';
     $scope.view_title = 'Edit application';
 
+    $scope.isAdmin = false;
+
+    Atlas.getRequest('/auth/user.json').then(function (result) {
+        if (result.data.user.role === 'admin') {
+            $scope.isAdmin = true;
+        }
+    });
+
     window.onbeforeunload = function() {
         if ($scope.app.changed) {
             return leavingPageText;
         }
     };
+
+    var showLoadingState = function () {
+        $('.usage-graph-wrapper').addClass('loading');
+        $('#visualisation').empty();
+    };
+
+    var removeLoadingState = function () {
+        $('.usage-graph-wrapper').removeClass('loading');
+    };
+
+    $scope.switchTime = function (timeRange) {
+        getApiKey(timeRange);
+    };
+
+    var getApiKey = function (timeRange) {
+        // Seems to be the only way to find out the current API key
+        Applications.get($routeParams.applicationId).then(function (application) {
+            $scope.app.application = application;
+            $scope.app.writes = {};
+            $scope.app.writes.predicate = 'name';
+            $scope.app.writes.reverse = false;
+            $scope.view_subtitle = application.title;
+            var apiKey = application.credentials.apiKey;
+            loadGraph(apiKey, timeRange);
+        });
+    };
+
+    var loadGraph = function (apiKey, timeRange) {
+        switch(timeRange) {
+            case 'hour':
+                loadGraphHour(apiKey);
+                break;
+            case 'day':
+                loadGraphDay(apiKey);
+                break;
+            case 'week':
+                loadGraphWeek(apiKey);
+                break;
+            case 'month':
+                loadGraphMonth(apiKey);
+        }
+    };
+
+    var makeGraph = function (barData) {
+        if (barData.length > 0) {
+            if ($('.no-usage-message')) {
+                $('.no-usage-message').remove();
+            }
+            barData.forEach(function (d) {
+                d.x = d.time;
+                d.y = d.count;
+            });
+            var vis = d3.select('#visualisation');
+            var WIDTH = 1000;
+            var HEIGHT = 500;
+            var MARGINS = {
+                top: 20,
+                right: 20,
+                bottom: 21,
+                left: 50
+            };        
+            var xRange = d3.scale.ordinal()
+                .rangeRoundBands([MARGINS.left, WIDTH - MARGINS.right], 0.1)
+                .domain(barData.map(function(d) {
+                    return d.x;
+                }));
+            var yRange = d3.scale.linear()
+                .range([HEIGHT - MARGINS.top, MARGINS.bottom])
+                .domain([0, d3.max(barData, function(d) {
+                    return d.y;
+                })]);
+            var xAxis = d3.svg.axis()
+                .scale(xRange)
+                .tickSize(1)
+                .tickSubdivide(true);
+            var yAxis = d3.svg.axis()
+                .scale(yRange)
+                .tickSize(1)
+                .orient('left')
+                .tickSubdivide(true);
+            vis.append('svg:g')
+                .attr('class', 'x axis')
+                .attr('transform', 'translate(0,' + (HEIGHT - MARGINS.bottom) + ')')
+                .call(xAxis);
+            vis.append('svg:g')
+                .attr('class', 'y axis')
+                .attr('transform', 'translate(' + (MARGINS.left) + ',0)')
+                .call(yAxis);
+            vis.selectAll('rect')
+                .data(barData)
+                .enter()
+                .append('rect')
+                .attr('x', function (d) { // sets the x position of the bar
+                    return xRange(d.x);
+                })
+                .attr('y', function (d) { // sets the y position of the bar
+                    return yRange(d.y);
+                })
+                .attr('width', xRange.rangeBand()) // sets the width of bar
+                .attr('height', function (d) {      // sets the height of bar
+                    return ((HEIGHT - MARGINS.bottom) - yRange(d.y));
+                })
+                .attr('class', 'bar-col');
+            vis.selectAll('.x text')
+                .attr('dy', '1')
+                .attr('x', '-6');
+            vis.selectAll('.y text')
+                .attr('dy', '1')
+                .attr('x', '-6');
+        } else {
+            $('.usage-graph').before('<p class="no-usage-message">No usage in that time period</p>');
+        }
+    };
+
+    var loadGraphHour = function (apiKey) {
+        var _key = apiKey || '';
+        if (_key.length) {
+            showLoadingState();
+            $scope.tabState = 'hour';
+            $('.graph-caption').text('API requests over the past hour');
+            Usage.hour(_key).then(function (data) {
+                data = data.facets[0].entries;
+                data.forEach(function (d) {
+                    var formattedDate = moment(d.time).format('HH:mm');
+                    d.time = formattedDate;
+                });
+                makeGraph(data);
+                removeLoadingState();
+            }, function (err) {
+                $scope.errorMessage('Can\'t load data for the api key');
+            });
+        }
+    };
+
+    var loadGraphDay = function (apiKey) {
+        var _key = apiKey || '';
+        if (_key.length) {
+            showLoadingState();
+            $scope.tabState = 'day';
+            $('.graph-caption').text('API requests over the past day');
+            Usage.day(_key).then(function (data) {
+                data = data.facets[0].entries;
+                data.forEach(function (d) {
+                    var formattedDate = moment(d.time).format('HH');
+                    d.time = formattedDate + ':00';
+                });
+                makeGraph(data);
+                removeLoadingState();
+            }, function (error) {
+                $scope.errorMessage('Can\'t load data for the api key');
+            });
+        }
+    };
+
+    var loadGraphWeek = function (apiKey) {
+        var _key = apiKey || '';
+        if (_key.length) {
+            showLoadingState();
+            $scope.tabState = 'week';
+            $('.graph-caption').text('API requests over the past week');
+            Usage.week(_key).then(function (data) {
+                data = data.facets[0].entries;
+                data.forEach(function (d) {
+                    var formattedDate = moment(d.time).format('Do MMMM');
+                    d.time = formattedDate;
+                });
+                makeGraph(data);
+                removeLoadingState();
+            }, function (error) {
+                $scope.errorMessage('Can\'t load data for the api key');
+            });
+        }
+    };  
+
+    var loadGraphMonth = function (apiKey) {
+        var _key = apiKey || '';
+        if (_key.length) {
+            showLoadingState();
+            $scope.tabState = 'month';
+            $('.graph-caption').text('API requests over the past month');
+            Usage.month(_key).then(function (data) {
+                data = data.facets[0].entries;
+                data.forEach(function (d) {
+                    var formattedDate = moment(d.time).format('Do MMMM');
+                    d.time = formattedDate;
+                });
+                makeGraph(data);
+                removeLoadingState();
+            }, function (error) {
+                $scope.errorMessage('Can\'t load data for the api key');
+            });
+        }
+    };
+
+    var closeUsageGraph = function () {
+        $('.close-usage-graph').on('click', function () {
+            $('.chart-card').slideUp('fast');
+        });
+    };
+
+    var toggleUsageGraph = function () {
+        $('.api-usage-trigger').on('click', function () {
+            var $graphContainer = $('.chart-card');
+            if ($graphContainer.is(':visible')) {
+                $graphContainer.slideUp('fast');
+            } else {
+                if ($('.usage-graph g').length <= 0) {
+                    getApiKey('week');
+                }
+                $graphContainer.slideDown('fast');
+            }
+        });
+    };
+
+    toggleUsageGraph();
+    closeUsageGraph();
 
     $scope.$on('$locationChangeStart', function(event, next, current) {
         if ($scope.app.changed && !confirm(leavingPageText + '\n\nAre you sure you want to leave this page?')) {

@@ -1,4 +1,5 @@
 'use strict';
+
 var app = angular.module('atlasAdmin.controllers.admins.usage', []);
 
 app.controller('CtrlUsage', ['$scope', '$rootScope', 'APIUsage', 
@@ -46,7 +47,7 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'APIUsage',
                       .attr("class", "y axis")
                       .attr("transform", "translate(-25,0)")
                       .call(yAxis);
-            Graph.prototype.graph.append('svg:path').attr('d', line(histogram));
+            Graph.prototype.graph.append('svg:path').attr('d', line(histogram)).attr('class', 'graph-data');
         }
 
         this.draw = function() {
@@ -85,9 +86,19 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'APIUsage',
         }
     }
 
+    var showLoadingState = function () {
+        $('.rpm-chart-container').empty();
+        $('.rpm-chart-container').addClass('loading');
+    };
+
+    var removeLoadingState = function () {
+        $('.rpm-chart-container').removeClass('loading');
+    };
+
     var loadGraphHour = function() {
         var _key = $scope.apiKey || '';
         if (_key.length) {
+            showLoadingState();
             $scope.tabState = 'hour';
             Usage.hour(_key).then(function(data) {
                 var endTime = new Date(),
@@ -96,6 +107,7 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'APIUsage',
                 graph.endTime = endTime;
                 graph.startTime = startTime;
                 graph.draw();
+                removeLoadingState();
             }, function(err) {
                 $scope.errorMessage('Can\'t load data for the api key')
             });
@@ -105,6 +117,7 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'APIUsage',
     var loadGraphDay = function() {
         var _key = $scope.apiKey || '';
         if (_key.length) {
+            showLoadingState();
             $scope.tabState = 'day';
             Usage.day(_key).then(function(data) {
                 var endTime = new Date(),
@@ -113,6 +126,7 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'APIUsage',
                 graph.endTime = endTime;
                 graph.startTime = startTime;
                 graph.draw();
+                removeLoadingState();
             }, function(err) {
                 $scope.errorMessage('Can\'t load data for the api key')
             });
@@ -122,6 +136,7 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'APIUsage',
     var loadGraphWeek = function() {
         var _key = $scope.apiKey || '';
         if (_key.length) {
+            showLoadingState();
             $scope.tabState = 'week';
             Usage.week(_key).then(function(data) {
                 var endTime = new Date(),
@@ -130,6 +145,7 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'APIUsage',
                 graph.endTime = endTime;
                 graph.startTime = startTime;
                 graph.draw();
+                removeLoadingState();
             }, function(err) {
                 $scope.errorMessage('Can\'t load data for the api key')
             });
@@ -139,6 +155,7 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'APIUsage',
     var loadGraphMonth = function() {
         var _key = $scope.apiKey || '';
         if (_key.length) {
+            showLoadingState();
             $scope.tabState = 'month';
             Usage.month(_key).then(function(data) {
                 var endTime = new Date(),
@@ -147,6 +164,7 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'APIUsage',
                 graph.endTime = endTime;
                 graph.startTime = startTime;
                 graph.draw();
+                removeLoadingState();
             }, function(err) {
                 $scope.errorMessage('Can\'t load data for the api key')
             });

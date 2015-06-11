@@ -10,6 +10,7 @@ var assets      = {};
 // Javascripts must be loaded in order, so hence the large array
 assets.js = ['js/vendor/highlight.js',
             'js/vendor/lodash.js',
+            'js/vendor/moment.js',
             'js/vendor/d3.min.js',
             'js/app.js',
             'js/interceptors/authInterceptor.js',
