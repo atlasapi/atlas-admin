@@ -18,8 +18,8 @@ function Usage() {
                 res.end(JSON.stringify(common.errors.not_permitted));
                 return;
             }
-            var key = req.param('apiKey'),
-                time_period = req.param('timePeriod');
+            var key = req.params.apiKey,
+                time_period = req.params.timePeriod;
 
             switch (time_period) {
                 case 'hour':
@@ -51,7 +51,7 @@ function Usage() {
                     });
                     break;
             }
-        })
+        });
 
     return router;
 }

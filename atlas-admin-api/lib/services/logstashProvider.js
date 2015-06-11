@@ -220,12 +220,66 @@ function Logstash() {
         return defer.promise;
     }
 
+    function search_top_usage(timePeriod) {
+        var defer = Q.defer();
+        if (!_.isString(timePeriod)) {
+            console.error('search_top_usage() - timePeriod arg must be a string');
+            defer.reject();
+            return defer.promise;
+        }
+        make_top_usage_query(timePeriod).then(defer.resolve, defer.reject);
+        return defer.promise;
+    }
+
+    function make_top_usage_query(timePeriod) {
+        var queryUrl = 'http://logstash.mbst.tv:9200/logstash-atlas-access-2015.06.09,logstash-atlas-access-2015.06.08,logstash-atlas-access-2015.06.07,logstash-atlas-access-2015.06.06,logstash-atlas-access-2015.06.05,logstash-atlas-access-2015.06.04,logstash-atlas-access-2015.06.03,logstash-atlas-access-2015.06.02/_search?pretty=&search_type=count&oauth_provider=twitter&oauth_token=10217752-Am9b6Tsl1eRJDYkOUCElICkXmFDyO6ulEa94XT54c';
+
+        var postData = {
+            "aggs" : {
+                "apiKeys" : {
+                    "terms" : { 
+                        "field" : "params.apiKey", 
+                        "size": 0 
+                    }
+                }
+            }
+        };
+
+        postData = JSON.stringify(postData);
+
+        var defer = Q.defer();
+        
+        var postOptions = {
+            hostname: _logstash_host,
+            port: 9200,
+            path: '/' + timePeriod + '/_search?search_type=count',
+            method: 'XGET'
+        };
+
+        var postReq = http.request(postOptions, function (res) {
+            var data = '';
+            res.setEncoding('utf8');
+            res.on('data', function (chunk) {
+                data = chunk;
+            });
+            res.on('end', function() {
+                defer.resolve(data);
+            });
+        });
+
+        postReq.write(postData);
+        postReq.end();
+
+        return defer.promise;
+    }
+
     return {
         search: {
             past_hour: search_on_past_hour,
             past_day: search_on_past_day,
             past_week: search_on_past_week,
-            past_month: search_on_past_month
+            past_month: search_on_past_month,
+            top_usage: search_top_usage
         }
     }
 }
