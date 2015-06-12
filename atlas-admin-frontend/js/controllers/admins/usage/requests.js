@@ -13,8 +13,18 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'Authentication', 'atlasApi
 
     dates = dates.join(',');
 
+    var numberWithCommas = function (x) {
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    };
+
     $http.get(Authentication.appendTokenToUrl(atlasApiHost + '/usage-list/' + dates)).then(function (response) {
-      $scope.requests = response.data.aggregations.apiKeys.buckets;
+
+      // TODO: Add commas between each group of three digits to improve readability
+      var usageData = response.data.aggregations.apiKeys.buckets;
+      _.forEach(usageData, function (d) {
+        d.readableCount = numberWithCommas(d.doc_count);
+      });
+      $scope.requests = usageData;
     });
   };
 
