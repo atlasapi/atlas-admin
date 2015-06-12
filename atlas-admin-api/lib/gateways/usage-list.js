@@ -29,6 +29,7 @@ function UsageList() {
     }, function (error) {
       console.log(res);
       res.end(error);
+      console.log(error.stack);
     });
   });
 

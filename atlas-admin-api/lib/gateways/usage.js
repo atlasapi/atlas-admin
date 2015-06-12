@@ -27,6 +27,7 @@ function Usage() {
                         res.end(data);
                     }, function(err) {
                         res.end(err);
+                        console.log(err.stack);
                     });
                     break;
                 case 'day':
@@ -34,6 +35,7 @@ function Usage() {
                         res.end(data);
                     }, function(err) {
                         res.end(err);
+                        console.log(err.stack);
                     });
                     break;
                 case 'week':
@@ -41,6 +43,7 @@ function Usage() {
                         res.end(data);
                     }, function(err) {
                         res.end(err);
+                        console.log(err.stack);
                     });
                     break;
                 case 'month':
@@ -48,6 +51,7 @@ function Usage() {
                         res.end(data);
                     }, function(err) {
                         res.end(err);
+                        console.log(err.stack);
                     });
                     break;
             }
