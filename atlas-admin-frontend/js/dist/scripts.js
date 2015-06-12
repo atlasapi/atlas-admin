@@ -13414,8 +13414,19 @@ angular.module('atlasAdmin.controllers.applications')
             _.forEach(usageData, function (d) {
                 d.readableCount = numberWithCommas(d.doc_count);
             });
+            applications = handleNullUsage(applications);
             mapUsageDataToApplications(applications, usageData);
         });
+    };
+
+    var handleNullUsage = function (applications) {
+        _.forEach(applications, function (application) {
+            application.usage = {
+                doc_count: 0,
+                readableCount: 0
+            };
+        });
+        return applications;
     };
 
     var mapUsageDataToApplications = function (applications, usageData) {

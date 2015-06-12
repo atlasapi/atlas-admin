@@ -14,7 +14,7 @@
                     <th ng-click="app.predicate='credentials.apiKey'; app.reverse=!app.reverse;">API Key</th>
                     <th ng-click="app.predicate='created'; app.reverse=!app.reverse;">Created</th>
                     <!-- if admin, show this -->
-                    <th ng-show="isAdmin">API usage (past week)</th>
+                    <th ng-click="app.predicate='usage.doc_count'; app.reverse=!app.reverse;" ng-show="isAdmin">API usage (past week)</th>
                 </tr>
             </thead>
             <tbody>
