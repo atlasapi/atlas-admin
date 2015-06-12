@@ -13,6 +13,8 @@
                     <th ng-click="app.predicate='title'; app.reverse=!app.reverse;">Application</th>
                     <th ng-click="app.predicate='credentials.apiKey'; app.reverse=!app.reverse;">API Key</th>
                     <th ng-click="app.predicate='created'; app.reverse=!app.reverse;">Created</th>
+                    <!-- if admin, show this -->
+                    <th ng-click="app.predicate='usage.doc_count'; app.reverse=!app.reverse;" ng-show="isAdmin">API usage (past week)</th>
                 </tr>
             </thead>
             <tbody>
@@ -20,6 +22,8 @@
                     <td><a ng-href="#/applications/{{application.id}}">{{application.title}}</a></td>
                     <td>{{application.credentials.apiKey}}</td>
                     <td>{{application.created|date:'dd MMM yyyy H:mm'}}</td>
+                    <!-- if admin, show this -->
+                    <td ng-show="isAdmin">{{application.usage.readableCount}}</td>
                 </tr>
             </tbody>
         </table>

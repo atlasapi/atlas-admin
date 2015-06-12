@@ -18,8 +18,6 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'Authentication', 'atlasApi
     };
 
     $http.get(Authentication.appendTokenToUrl(atlasApiHost + '/usage-list/' + dates)).then(function (response) {
-
-      // TODO: Add commas between each group of three digits to improve readability
       var usageData = response.data.aggregations.apiKeys.buckets;
       _.forEach(usageData, function (d) {
         d.readableCount = numberWithCommas(d.doc_count);
