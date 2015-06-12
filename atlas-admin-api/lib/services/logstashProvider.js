@@ -110,6 +110,8 @@ function Logstash() {
             }
         });
 
+        console.log('elastic search query', _query);
+
         var _opts = {
             hostname: _logstash_host,
             port: 9200,
@@ -255,7 +257,7 @@ function Logstash() {
         };
 
         var postReq = http.request(postOptions, function (res) {
-            console.log(postOptions);
+            console.log('postOptions', postOptions);
             var data = '';
             res.setEncoding('utf8');
             res.on('data', function (chunk) {
