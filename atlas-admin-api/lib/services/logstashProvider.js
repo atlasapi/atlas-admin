@@ -253,7 +253,7 @@ function Logstash() {
             hostname: _logstash_host,
             port: 9200,
             path: '/' + timePeriod + '/_search?search_type=count',
-            method: 'XGET'
+            method: 'GET'
         };
 
         var postReq = http.request(postOptions, function (res) {
