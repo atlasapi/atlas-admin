@@ -13,6 +13,8 @@ function UsageList() {
 
   router.route('/:timePeriod').get(function (req, res) {
     var isAdmin = (common.user.role === 'admin')? true : false;
+
+    console.log('req', req);
     
     if (!isAdmin) {
       res.end(JSON.stringify(common.errors.not_permitted));
