@@ -135,9 +135,12 @@ function Logstash() {
             })
         });
 
+        console.log('logstash req', req);
+
         req.on('error', function(err) {
             console.log('Problem with ES request');
             console.log(err);
+            console.log(err.stack);
         })
 
         // send the query data along with the request
