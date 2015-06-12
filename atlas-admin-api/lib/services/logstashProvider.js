@@ -232,8 +232,6 @@ function Logstash() {
     }
 
     function make_top_usage_query(timePeriod) {
-        var queryUrl = 'http://logstash.mbst.tv:9200/logstash-atlas-access-2015.06.09,logstash-atlas-access-2015.06.08,logstash-atlas-access-2015.06.07,logstash-atlas-access-2015.06.06,logstash-atlas-access-2015.06.05,logstash-atlas-access-2015.06.04,logstash-atlas-access-2015.06.03,logstash-atlas-access-2015.06.02/_search?pretty=&search_type=count&oauth_provider=twitter&oauth_token=10217752-Am9b6Tsl1eRJDYkOUCElICkXmFDyO6ulEa94XT54c';
-
         var postData = {
             "aggs" : {
                 "apiKeys" : {
@@ -257,6 +255,7 @@ function Logstash() {
         };
 
         var postReq = http.request(postOptions, function (res) {
+            console.log(postOptions);
             var data = '';
             res.setEncoding('utf8');
             res.on('data', function (chunk) {
