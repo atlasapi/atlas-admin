@@ -2,7 +2,6 @@
 var config      = require('../../config'),
     common      = require('../../common'),
     Logstash    = require('../services/logstashProvider'),
-    qs          = require('querystring'),
     express     = require('express'),
     _           = require('lodash'),
     ObjectID    = require('mongodb').ObjectID;
