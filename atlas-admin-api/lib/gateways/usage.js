@@ -7,7 +7,9 @@ var config      = require('../../config'),
     ObjectID    = require('mongodb').ObjectID;
 
 function Usage() {
-    var router = express.Router()
+    var router = express.Router();
+
+    console.log('Usage');
 
     // used for requesting usage data about a api key over a certain time period
     router.route('/:apiKey/:timePeriod')

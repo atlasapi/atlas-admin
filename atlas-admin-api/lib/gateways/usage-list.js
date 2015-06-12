@@ -11,6 +11,8 @@ var ObjectID = require('mongodb').ObjectID;
 function UsageList() {
   var router = express.Router();
 
+  console.log('UsageList');
+
   router.route('/:timePeriod').get(function (req, res) {
     var isAdmin = (common.user.role === 'admin')? true : false;
     console.log('top usage route');
