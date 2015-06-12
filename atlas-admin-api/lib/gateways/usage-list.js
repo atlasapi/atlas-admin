@@ -27,6 +27,7 @@ function UsageList() {
       console.log(res);
       res.end(data);
     }, function (error) {
+      console.log(res);
       res.end(error);
     });
   });
