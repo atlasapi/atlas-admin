@@ -116,7 +116,7 @@ function Logstash() {
             hostname: _logstash_host,
             port: 9200,
             path: '/_search',
-            method: 'XGET'
+            method: 'GET'
         }
 
         var req = http.request(_opts, function(response) {
