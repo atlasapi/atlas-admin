@@ -229,6 +229,7 @@ function Logstash() {
             return defer.promise;
         }
         make_top_usage_query(timePeriod).then(defer.resolve, defer.reject);
+        console.log('search_top_usage', defer.promise);
         return defer.promise;
     }
 
@@ -268,6 +269,8 @@ function Logstash() {
 
         postReq.write(postData);
         postReq.end();
+
+        console.log('make_top_usage_query', defer.promise);
 
         return defer.promise;
     }
