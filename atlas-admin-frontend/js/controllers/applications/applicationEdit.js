@@ -157,6 +157,11 @@ angular.module('atlasAdmin.controllers.applications')
                 $scope.errorMessage('Can\'t load data for the api key');
             });
         }
+        var timeoutDuration = 300000; // 5 mins
+        var graphTimeout = setTimeout(function () {
+            $scope.reloadGraph();
+            clearTimeout(graphTimeout);
+        }, timeoutDuration);
     };
 
     var loadGraphDay = function (apiKey) {
@@ -251,6 +256,11 @@ angular.module('atlasAdmin.controllers.applications')
             }
             getApiKey(timePeriod);
         }
+    };
+
+    $scope.reloadGraph = function () {
+        var timePeriod = $location.search().usage;
+        getApiKey(timePeriod);
     };
 
     toggleUsageGraph();

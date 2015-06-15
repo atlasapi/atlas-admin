@@ -34,6 +34,7 @@
                         <div class="graph-control graph-control-day" ng-class="{'selected':tabState=='day'}" ng-click="switchTime('day')">- 24 hours</div>
                         <div class="graph-control graph-control-week" ng-class="{'selected':tabState=='week'}" ng-click="switchTime('week')">- 7 days</div>
                         <div class="graph-control graph-control-month" ng-class="{'selected':tabState=='month'}" ng-click="switchTime('month')">- 30 days</div>
+                        <div class="graph-control graph-control-refresh" ng-click="reloadGraph()">Refresh</div>
                     </div>
                     <div class="usage-graph-wrapper">
                         <svg class="usage-graph" id="visualisation" width="1000" height="600"></svg>
