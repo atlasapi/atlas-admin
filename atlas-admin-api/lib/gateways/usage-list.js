@@ -21,7 +21,6 @@ function UsageList() {
     var timePeriod = req.params.timePeriod;
 
     Logstash.search.top_usage(timePeriod).then(function (data) {
-      console.log('data', data);
       res.end(data);
     }, function (error) {
       res.end(error);
