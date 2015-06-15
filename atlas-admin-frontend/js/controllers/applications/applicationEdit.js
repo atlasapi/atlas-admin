@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('atlasAdmin.controllers.applications')
-.controller('CtrlApplicationEdit', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Sources', 'SourceLicenses', 'Authentication', 'atlasApiHost', '$modal', '$sce', '$log', '$http', '$q', 'APIUsage', 'Atlas',
-    function($scope, $rootScope, $routeParams, Applications, Sources, SourceLicenses, Authentication, atlasApiHost, $modal, $sce, $log, $http, $q, Usage, Atlas) {
+.controller('CtrlApplicationEdit', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Sources', 'SourceLicenses', 'Authentication', 'atlasApiHost', '$modal', '$sce', '$log', '$http', '$q', 'APIUsage', 'Atlas', '$location',
+    function($scope, $rootScope, $routeParams, Applications, Sources, SourceLicenses, Authentication, atlasApiHost, $modal, $sce, $log, $http, $q, Usage, Atlas, $location) {
 
     $scope.app = {};
     $scope.app.edited = {};
@@ -140,6 +140,7 @@ angular.module('atlasAdmin.controllers.applications')
 
     var loadGraphHour = function (apiKey) {
         var _key = apiKey || '';
+        $location.search({usage: 'hour'});
         if (_key.length) {
             showLoadingState();
             $scope.tabState = 'hour';
@@ -156,10 +157,16 @@ angular.module('atlasAdmin.controllers.applications')
                 $scope.errorMessage('Can\'t load data for the api key');
             });
         }
+        var timeoutDuration = 300000; // 5 mins
+        var graphTimeout = setTimeout(function () {
+            $scope.reloadGraph();
+            clearTimeout(graphTimeout);
+        }, timeoutDuration);
     };
 
     var loadGraphDay = function (apiKey) {
         var _key = apiKey || '';
+        $location.search({usage: 'day'});
         if (_key.length) {
             showLoadingState();
             $scope.tabState = 'day';
@@ -180,6 +187,7 @@ angular.module('atlasAdmin.controllers.applications')
 
     var loadGraphWeek = function (apiKey) {
         var _key = apiKey || '';
+        $location.search({usage: 'week'});
         if (_key.length) {
             showLoadingState();
             $scope.tabState = 'week';
@@ -200,6 +208,7 @@ angular.module('atlasAdmin.controllers.applications')
 
     var loadGraphMonth = function (apiKey) {
         var _key = apiKey || '';
+        $location.search({usage: 'month'});
         if (_key.length) {
             showLoadingState();
             $scope.tabState = 'month';
@@ -238,8 +247,25 @@ angular.module('atlasAdmin.controllers.applications')
         });
     };
 
+    var openGraphFromUrl = function () {
+        var timePeriod = $location.search().usage;
+        var $graphContainer = $('.chart-card');
+        if (timePeriod) {
+            if ($graphContainer.is(':hidden')) {
+                $graphContainer.slideDown('fast');
+            }
+            getApiKey(timePeriod);
+        }
+    };
+
+    $scope.reloadGraph = function () {
+        var timePeriod = $location.search().usage;
+        getApiKey(timePeriod);
+    };
+
     toggleUsageGraph();
     closeUsageGraph();
+    openGraphFromUrl();
 
     $scope.$on('$locationChangeStart', function(event, next, current) {
         if ($scope.app.changed && !confirm(leavingPageText + '\n\nAre you sure you want to leave this page?')) {
