@@ -110,8 +110,6 @@ function Logstash() {
             }
         });
 
-        console.log('elastic search query', _query);
-
         var _opts = {
             hostname: _logstash_host,
             port: 9200,
@@ -135,12 +133,10 @@ function Logstash() {
             })
         });
 
-        console.log('logstash req', req);
 
         req.on('error', function(err) {
             console.log('Problem with ES request');
             console.log(err);
-            console.log(err.stack);
         })
 
         // send the query data along with the request
@@ -260,7 +256,6 @@ function Logstash() {
         };
 
         var postReq = http.request(postOptions, function (res) {
-            console.log('postOptions', postOptions);
             var data = '';
             res.setEncoding('utf8');
             res.on('data', function (chunk) {

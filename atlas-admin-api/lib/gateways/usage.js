@@ -9,12 +9,9 @@ var config      = require('../../config'),
 function Usage() {
     var router = express.Router();
 
-    console.log('Usage');
-
     // used for requesting usage data about a api key over a certain time period
     router.route('/:apiKey/:timePeriod')
         .get(function(req, res) {
-            console.log('per app usage route');
             var isAdmin = (common.user.role === 'admin')? true : false;
             if (!isAdmin) {
                 res.end(JSON.stringify(common.errors.not_permitted));
@@ -29,7 +26,6 @@ function Usage() {
                         res.end(data);
                     }, function(err) {
                         res.end(err);
-                        console.log(err.stack);
                     });
                     break;
                 case 'day':
@@ -37,7 +33,6 @@ function Usage() {
                         res.end(data);
                     }, function(err) {
                         res.end(err);
-                        console.log(err.stack);
                     });
                     break;
                 case 'week':
@@ -45,7 +40,6 @@ function Usage() {
                         res.end(data);
                     }, function(err) {
                         res.end(err);
-                        console.log(err.stack);
                     });
                     break;
                 case 'month':
@@ -53,7 +47,6 @@ function Usage() {
                         res.end(data);
                     }, function(err) {
                         res.end(err);
-                        console.log(err.stack);
                     });
                     break;
             }

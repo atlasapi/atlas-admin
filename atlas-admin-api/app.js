@@ -42,8 +42,6 @@ MongoClient.connect(config.database, function(err, db) {
     app.use(config.paths.apiRoot + '/user',         require('./lib/gateways/user')(db));
     app.use(config.paths.apiRoot + '/feeds',        require('./lib/gateways/feeds')(db));
 
-    console.log('routes');
-
     app.listen(_http_port, function () {
         // listen for requests to server on _http_port
         console.log('listen on port: ' + _http_port);
