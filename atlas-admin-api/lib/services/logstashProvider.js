@@ -133,6 +133,7 @@ function Logstash() {
             })
         });
 
+
         req.on('error', function(err) {
             console.log('Problem with ES request');
             console.log(err);
@@ -220,12 +221,64 @@ function Logstash() {
         return defer.promise;
     }
 
+    function search_top_usage(timePeriod) {
+        var defer = Q.defer();
+        if (!_.isString(timePeriod)) {
+            console.error('search_top_usage() - timePeriod arg must be a string');
+            defer.reject();
+            return defer.promise;
+        }
+        make_top_usage_query(timePeriod).then(defer.resolve, defer.reject);
+        return defer.promise;
+    }
+
+    function make_top_usage_query(timePeriod) {
+        var postData = {
+            "aggs" : {
+                "apiKeys" : {
+                    "terms" : { 
+                        "field" : "params.apiKey", 
+                        "size": 0 
+                    }
+                }
+            }
+        };
+
+        postData = JSON.stringify(postData);
+
+        var defer = Q.defer();
+        
+        var postOptions = {
+            hostname: _logstash_host,
+            port: 9200,
+            path: '/' + timePeriod + '/_search?search_type=count',
+            method: 'POST'
+        };
+
+        var postReq = http.request(postOptions, function (res) {
+            var data = '';
+            res.setEncoding('utf8');
+            res.on('data', function (chunk) {
+                data = chunk;
+            });
+            res.on('end', function() {
+                defer.resolve(data);
+            });
+        });
+
+        postReq.write(postData);
+        postReq.end();
+
+        return defer.promise;
+    }
+
     return {
         search: {
             past_hour: search_on_past_hour,
             past_day: search_on_past_day,
             past_week: search_on_past_week,
-            past_month: search_on_past_month
+            past_month: search_on_past_month,
+            top_usage: search_top_usage
         }
     }
 }
