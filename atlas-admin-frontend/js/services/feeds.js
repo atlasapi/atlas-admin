@@ -79,7 +79,7 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
                     return task.id === item;
                 });
                 _postdata = {
-                    uri: _selected.content,
+                    uri: _selected.content_uri,
                     type: _selected.element_type,
                     element_id: _selected.element_id
                 }
@@ -89,9 +89,9 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
                 });
             })
         }else{
-            if (tasks.content && tasks.element_type && tasks.element_id) {
+            if (tasks.content_uri && tasks.element_type && tasks.element_id) {
                 _postdata = {
-                    uri: tasks.content,
+                    uri: tasks.content_uri,
                     type: tasks.element_type,
                     element_id: tasks.element_id
                 }

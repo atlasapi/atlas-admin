@@ -10972,7 +10972,7 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
                     return task.id === item;
                 });
                 _postdata = {
-                    uri: _selected.content,
+                    uri: _selected.content_uri,
                     type: _selected.element_type,
                     element_id: _selected.element_id
                 }
@@ -10982,9 +10982,9 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
                 });
             })
         }else{
-            if (tasks.content && tasks.element_type && tasks.element_id) {
+            if (tasks.content_uri && tasks.element_type && tasks.element_id) {
                 _postdata = {
-                    uri: tasks.content,
+                    uri: tasks.content_uri,
                     type: tasks.element_type,
                     element_id: tasks.element_id
                 }
@@ -11004,6 +11004,7 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
         request: request
     }
 }]);
+
 var app = angular.module('atlasAdmin.services.bbcscrubbables', []);
 
 app.factory('ScrubbablesHelpers', ['$q',
@@ -13140,6 +13141,7 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     $scope.error.show = false;
     $scope.view_title = 'Feeds Console';
     $scope.statusFilter = ['accepted', 'validating', 'failed', 'quarantined', 'committing', 'committed', 'publishing', 'published'];
+    $scope.transactionFilter = ['BRAND', 'SERIES', 'ITEM', 'VERSION', 'BROADCAST', 'ONDEMAND'];
 
     // set up ordering and search
     $scope.table = {}; 
@@ -13237,7 +13239,9 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     // are inserted automatically based on $scope variables
     var getTasks = function() {
         var _filter = '';
-        if ($scope.activeFilter === 'uri' && !_.isEmpty($scope.search.uri)) {
+        if ($scope.activeFilter === 'transaction' && !_.isEmpty($scope.search.transaction)) {
+            _filter = '&type='+$scope.search.transaction;
+        }else if ($scope.activeFilter === 'uri' && !_.isEmpty($scope.search.uri)) {
             _filter = '&uri='+$scope.search.uri;
         }else if ($scope.activeFilter === 'status' && !_.isEmpty($scope.search.status)) {
             _filter = '&status='+$scope.search.status;
@@ -13246,7 +13250,7 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
         }
         var request_url = 'youview/bbc_nitro/tasks.json?limit='+$scope.page.limit+'&offset='+$scope.page.offset+_filter;
         Feeds.request(request_url).then(pushTasksTable);
-    }
+    };
 
 
     // For loading the feed statistics from atlas
@@ -13255,7 +13259,7 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
             $scope.statistics = data.feed_stats[0];
             $scope.statistics.uptime = calculateUptime( new Date(data.feed_stats[0].last_outage) );
         });
-    }
+    };
     getStats();
 
 
@@ -13348,6 +13352,7 @@ app.controller('CtrlFeedsAcceptModal', ['$scope', '$modalInstance', '$q', 'Feeds
         $modalInstance.dismiss();
     }
 }])
+
 var app = angular.module('atlasAdmin.controllers.feeds');
 
 app.controller('CtrlFeedsBreakdown', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modal',
