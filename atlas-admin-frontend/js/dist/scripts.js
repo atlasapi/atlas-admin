@@ -10001,7 +10001,8 @@ app.config(['$httpProvider', function($httpProvider) {
 app.config(['$sceDelegateProvider', function($sceDelegateProvider) {
     $sceDelegateProvider.resourceUrlWhitelist([
         'self',
-        'http://*.metabroadcast.com/**'
+        'http://*.metabroadcast.com/**',
+        'https://*.metabroadcast.com/**'
         ]);
 }]);
 
@@ -10191,7 +10192,11 @@ app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $
     return {
         getRequest: function(url) {
             var usersUrl = Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion +  url);
+            console.log('get-> ' + usersUrl);
             return $http.get(usersUrl);
+        },
+        getUrl: function (url) {
+            return Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + url);
         },
         postRequest: function(url, data) {
             return $http.post(Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + url), data, {withCredentials: false});
@@ -10201,7 +10206,6 @@ app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $
         },
         getAuthProviders: function() {
             return $http.get(atlasHost + "/" + atlasVersion + "/auth/providers.json").then(function(results){
-                var authProviders = [];
                 return results.data.auth_providers;
             }, function(error) {
                 $log.error(error);
@@ -10233,21 +10237,26 @@ var app = angular.module('atlasAdmin.services.users', []);
 app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'ProfileStatus', '$log', 'atlasApiHost', '$q',
     function($http, Atlas, $rootScope, Authentication, ProfileStatus, $log, atlasApiHost, $q) {
     return {
-        currentUser: function() {
-            return Atlas.getRequest('/auth/user.json').then(function(result) {
-                if (result.data.user) {
-                    if (result.data.user.profile_complete) {
-                        ProfileStatus.setComplete(result.data.user.profile_complete);
+        currentUser: function(callback) {
+            $.ajax({
+                url: Atlas.getUrl('/auth/user.json'),
+                success: function (result) {
+                    if (result.user) {
+                        if (result.user.profile_complete) {
+                            ProfileStatus.setComplete(result.user.profile_complete);
+                        }
+                        if (typeof result.user.license_accepted === 'string') {
+                            ProfileStatus.setLicenseAccepted(true);
+                        }else{
+                            ProfileStatus.setLicenseAccepted(false);
+                        }
+                        callback(result.user);
                     }
-                    if (typeof result.data.user.license_accepted === 'string') {
-                        ProfileStatus.setLicenseAccepted(true);
-                    }else{
-                        ProfileStatus.setLicenseAccepted(false);
-                    }
-                    return result.data.user;
+                },
+                error: function () {
+                    $log.error("No user");
+                    return null;
                 }
-                $log.error("No user");
-                return null;
             });
         },
         update: function(user, callback) {
@@ -10963,7 +10972,7 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
                     return task.id === item;
                 });
                 _postdata = {
-                    uri: _selected.content,
+                    uri: _selected.content_uri,
                     type: _selected.element_type,
                     element_id: _selected.element_id
                 }
@@ -10973,9 +10982,9 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
                 });
             })
         }else{
-            if (tasks.content && tasks.element_type && tasks.element_id) {
+            if (tasks.content_uri && tasks.element_type && tasks.element_id) {
                 _postdata = {
-                    uri: tasks.content,
+                    uri: tasks.content_uri,
                     type: tasks.element_type,
                     element_id: tasks.element_id
                 }
@@ -10995,6 +11004,7 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
         request: request
     }
 }]);
+
 var app = angular.module('atlasAdmin.services.bbcscrubbables', []);
 
 app.factory('ScrubbablesHelpers', ['$q',
@@ -12470,14 +12480,8 @@ app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location
         var redirectToSources = function() {
             window.location.search = "";
         };
-        Users.currentUser().then(redirectToSources, 
-            function(error) {
-            $log.error("Error setting user.");
-            $log.error(error);
-            $location.hash("/login");
-            localStorage.removeItem('auth.provider');
-            localStorage.removeItem('auth.token');
-            localStorage.removeItem('profile.complete');
+        Users.currentUser(function (user) {
+            redirectToSources();
         });
     },
 
@@ -12487,6 +12491,7 @@ app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location
         $location.hash("/login");
     });
 });
+
 'use strict';
 var app = angular.module('atlasAdmin.controllers.auth');
 
@@ -12786,7 +12791,7 @@ app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$sce', '$routePara
         })
 
         // use provider to get user data, then pass result to $scope
-        Users.currentUser().then( function(user) {
+        Users.currentUser(function(user) {
             $scope.user = user;
         });
 
@@ -12817,6 +12822,7 @@ app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$sce', '$routePara
             $location.path('/applications/'+appId);
         }
 }]);
+
 'use strict';
 var app = angular.module('atlasAdmin.controllers.user', []);
 app.controller('UserProfileController', function($scope, $rootScope, $routeParams, Users, Applications, $location) {
@@ -12847,7 +12853,7 @@ app.controller('UserProfileController', function($scope, $rootScope, $routeParam
                 title += 'user id ' + user.id;
             }
             $rootScope.view_title = title;
-            Users.currentUser().then(function(editingUser) {
+            Users.currentUser(function(editingUser) {
                 $scope.app.isAdmin = editingUser.role === 'admin';
                 $scope.app.editingUser = editingUser.id;
 
@@ -12857,7 +12863,7 @@ app.controller('UserProfileController', function($scope, $rootScope, $routeParam
             });
         });
     } else {
-        Users.currentUser().then(function(user) {
+        Users.currentUser(function(user) {
             $scope.app.user = user;
             $rootScope.view_title = 'Your profile';
         });
@@ -12985,7 +12991,7 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
     };
 
     if (Authentication.getToken()) {
-        Users.currentUser().then(function(user) {
+        Users.currentUser(function(user) {
             $scope.app.user = user;
             // find any custom menu items for this user
             getPrivateMenuItems().then(function(groups) {
@@ -13003,7 +13009,7 @@ app.controller('UserLicenseController', function($scope, $rootScope, $routeParam
     // only try to get user if logged in
     $scope.view_title = 'Atlas Terms and Conditions'
     $scope.app = {};
-    Users.currentUser().then(function(user) {
+    Users.currentUser(function(user) {
         $scope.app.user = user;
     });
 
@@ -13135,6 +13141,7 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     $scope.error.show = false;
     $scope.view_title = 'Feeds Console';
     $scope.statusFilter = ['accepted', 'validating', 'failed', 'quarantined', 'committing', 'committed', 'publishing', 'published'];
+    $scope.transactionFilter = ['BRAND', 'SERIES', 'ITEM', 'VERSION', 'BROADCAST', 'ONDEMAND'];
 
     // set up ordering and search
     $scope.table = {}; 
@@ -13232,7 +13239,9 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     // are inserted automatically based on $scope variables
     var getTasks = function() {
         var _filter = '';
-        if ($scope.activeFilter === 'uri' && !_.isEmpty($scope.search.uri)) {
+        if ($scope.activeFilter === 'transaction' && !_.isEmpty($scope.search.transaction)) {
+            _filter = '&type='+$scope.search.transaction;
+        }else if ($scope.activeFilter === 'uri' && !_.isEmpty($scope.search.uri)) {
             _filter = '&uri='+$scope.search.uri;
         }else if ($scope.activeFilter === 'status' && !_.isEmpty($scope.search.status)) {
             _filter = '&status='+$scope.search.status;
@@ -13241,7 +13250,7 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
         }
         var request_url = 'youview/bbc_nitro/tasks.json?limit='+$scope.page.limit+'&offset='+$scope.page.offset+_filter;
         Feeds.request(request_url).then(pushTasksTable);
-    }
+    };
 
 
     // For loading the feed statistics from atlas
@@ -13250,7 +13259,7 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
             $scope.statistics = data.feed_stats[0];
             $scope.statistics.uptime = calculateUptime( new Date(data.feed_stats[0].last_outage) );
         });
-    }
+    };
     getStats();
 
 
@@ -13343,6 +13352,7 @@ app.controller('CtrlFeedsAcceptModal', ['$scope', '$modalInstance', '$q', 'Feeds
         $modalInstance.dismiss();
     }
 }])
+
 var app = angular.module('atlasAdmin.controllers.feeds');
 
 app.controller('CtrlFeedsBreakdown', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modal',

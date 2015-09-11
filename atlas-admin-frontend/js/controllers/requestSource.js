@@ -38,7 +38,7 @@ app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$sce', '$routePara
         })
 
         // use provider to get user data, then pass result to $scope
-        Users.currentUser().then( function(user) {
+        Users.currentUser(function(user) {
             $scope.user = user;
         });
 

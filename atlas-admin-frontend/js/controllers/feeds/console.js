@@ -8,6 +8,7 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     $scope.error.show = false;
     $scope.view_title = 'Feeds Console';
     $scope.statusFilter = ['accepted', 'validating', 'failed', 'quarantined', 'committing', 'committed', 'publishing', 'published'];
+    $scope.transactionFilter = ['BRAND', 'SERIES', 'ITEM', 'VERSION', 'BROADCAST', 'ONDEMAND'];
 
     // set up ordering and search
     $scope.table = {}; 
@@ -105,7 +106,9 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     // are inserted automatically based on $scope variables
     var getTasks = function() {
         var _filter = '';
-        if ($scope.activeFilter === 'uri' && !_.isEmpty($scope.search.uri)) {
+        if ($scope.activeFilter === 'transaction' && !_.isEmpty($scope.search.transaction)) {
+            _filter = '&type='+$scope.search.transaction;
+        }else if ($scope.activeFilter === 'uri' && !_.isEmpty($scope.search.uri)) {
             _filter = '&uri='+$scope.search.uri;
         }else if ($scope.activeFilter === 'status' && !_.isEmpty($scope.search.status)) {
             _filter = '&status='+$scope.search.status;
@@ -114,7 +117,7 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
         }
         var request_url = 'youview/bbc_nitro/tasks.json?limit='+$scope.page.limit+'&offset='+$scope.page.offset+_filter;
         Feeds.request(request_url).then(pushTasksTable);
-    }
+    };
 
 
     // For loading the feed statistics from atlas
@@ -123,7 +126,7 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
             $scope.statistics = data.feed_stats[0];
             $scope.statistics.uptime = calculateUptime( new Date(data.feed_stats[0].last_outage) );
         });
-    }
+    };
     getStats();
 
 
