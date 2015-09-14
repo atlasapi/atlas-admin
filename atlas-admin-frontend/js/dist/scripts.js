@@ -10909,16 +10909,16 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
         })
         .success(function(data, status) {
             if (status === 200) {
-              defer.resolve(data)
+              defer.resolve(data);
             }else{
-              defer.reject(err);
+              defer.reject();
             }
         })
         .error(function(data, status) {
             defer.reject(status);
         });
         return defer.promise;
-    }
+    };
 
     //  Used for making a request
     //
@@ -10928,20 +10928,20 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
     //  @returns promise
     //
     var request = function(feed_uri, method, params) {
-        var request;
+        method = method || 'get';
+        params = params || null;
         var defer = $q.defer();
-        var method = method || 'get';
-        var params = params || null;
+        var request;
 
-        if (!_.isString(feed_uri)) {
-            defer.reject('Feed uri must be included as first argument')
+        if (! _.isString(feed_uri)) {
+            defer.reject('Feed uri must be included as first argument');
             return defer.promise;
         }
 
         request = {
             method: method,
             url: Authentication.appendTokenToUrl(atlasApiHost+'/feeds/'+feed_uri)
-        }
+        };
 
         if (_.isObject(params)) {
             request.data = params;
@@ -10949,7 +10949,7 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
 
         $http(request).success(defer.resolve);
         return defer.promise;
-    }
+    };
     
 
     //  Used for running actions on tasks
@@ -10959,8 +10959,8 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
     //  @param selection {array}
     //
     var doAction = function(action, tasks, selection) {
+        action = action || null;
         var defer = $q.defer();
-        var action = action || null;
         var _tasks = tasks || null;
         var _selection = selection || null; 
         var _postdata = {};
@@ -10975,19 +10975,21 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
                     uri: _selected.content_uri,
                     type: _selected.element_type,
                     element_id: _selected.element_id
-                }
+                };
                 request('youview/bbc_nitro/action/'+action, 'post', _postdata).then(function() {
                     counter--;
-                    if (!counter) defer.resolve();
+                    if (! counter) {
+                      defer.resolve();
+                    }
                 });
-            })
+            });
         }else{
             if (tasks.content_uri && tasks.element_type && tasks.element_id) {
                 _postdata = {
                     uri: tasks.content_uri,
                     type: tasks.element_type,
                     element_id: tasks.element_id
-                }
+                };
                 request('youview/bbc_nitro/action/'+action, 'post', _postdata).then(function() {
                     defer.resolve();
                 });
@@ -10996,13 +10998,13 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
             }
         }   
         return defer.promise;
-    }
+    };
 
     return {
         action: doAction,
         get: getFeeds,
         request: request
-    }
+    };
 }]);
 
 var app = angular.module('atlasAdmin.services.bbcscrubbables', []);
@@ -11713,8 +11715,8 @@ app.directive('loadContent', ['$document', 'FeedsService', '$q', '$sce',
 
         // convert nitro links to bbc web links
         attr.$observe('loadContent', function(val) {
-            _content = $scope.content = attr.loadContent;
-            $scope.hrefContent = $scope.content.replace('http://nitro', 'http://www');
+            _content = $scope.content_uri = attr.loadContent;
+            $scope.hrefContent = $scope.content_uri.replace('http://nitro', 'http://www');
         })
 
         // show the result of the xml query when 'load data' button is pressed
@@ -11749,6 +11751,7 @@ app.directive('loadContent', ['$document', 'FeedsService', '$q', '$sce',
         link: controller
     } 
 }]);
+
 var app = angular.module('atlasAdmin.directives.bbcscrubbables', []);
 
 app.directive('scrubber', ['$document', '$compile',
@@ -13165,17 +13168,20 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     //
     var input_timer;
     $scope.filter = function(filter_on) {
-        if (!_.isString(filter_on)) return;
-        if ($scope.search[filter_on].length > 3 || $scope.search[filter_on].length == 0) {
+        if (!_.isString(filter_on)) {
+          return;
+        }
+        
+        if ($scope.search[filter_on].length > 3 || $scope.search[filter_on].length === 0) {
             $timeout.cancel(input_timer);
             input_timer = $timeout(function() {
                 $scope.isloading = true;
                 $scope.activeFilter = filter_on;
                 $scope.page.current = 0;
-                getTasks()
+                getTasks();
             }, 700);
         }
-    }
+    };
 
 
     // Used for controlling pagination functionality. The idea is that
@@ -13195,7 +13201,7 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
 
     $scope.$watch('page.current + page.limit', function(new_val, old_val) {
         $scope.page.offset = $scope.page.current * $scope.page.limit;
-        getTasks()
+        getTasks();
     });
     
     $scope.page.next = function() {
@@ -13205,7 +13211,7 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
             $scope.selectedTasks = [];
             $scope.disableActions = true;
         }
-    }
+    };
 
     $scope.page.previous = function() {
         if ($scope.page.current > 0 && !$scope.isloading) {
@@ -13214,7 +13220,7 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
             $scope.selectedTasks = [];
             $scope.disableActions = true;
         }
-    }
+    };
 
 
     // The following is used for selecting individual tasks 
@@ -13233,7 +13239,7 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
         }else{
             $scope.disableActions = true;
         }
-    }
+    };
 
     // For loading sets of tasks from atlas. Filters and offsets
     // are inserted automatically based on $scope variables
@@ -13273,7 +13279,7 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
         }
         $scope.isloading = false;
         $scope.tasks = data.tasks;
-    }
+    };
 
 
     // Used for calculating uptime since last outage
@@ -13283,8 +13289,8 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
             _then = last_outage,
             _delta = Math.round(Math.abs((_now.getTime() - _then.getTime()))/(24*60*60*1000));
         return _delta.toString();
-    }
-}])
+    };
+}]);
 
 
 app.directive('actionModal', ['$document', '$q', '$modal',
@@ -13303,19 +13309,19 @@ app.directive('actionModal', ['$document', '$q', '$modal',
             var _content = {
                 title: 'Are you sure you want to <strong>'+action+' '+_tasksLength+'</strong> tasks?',
                 action: action.charAt(0).toUpperCase() + action.slice(1)
-            }
+            };
 
             var _modalInstance = $modal.open({
                 template: '<h1>'+_content.title+'</h1></div><div class="feed-modal-options"><button ng-disabled="isSendingAction" ng-click="ok()">'+_content.action+'</button><button ng-click="dismiss()">Cancel</button>',
                 controller: 'CtrlFeedsAcceptModal',
                 windowClass: 'feedsAcceptModal',
                 scope: $scope,
-                resolve: { modalAction: function() { return action } }
+                resolve: { modalAction: function() { return action; } }
             });
 
             _modalInstance.result.then(defer.resolve, defer.reject);
             return defer.promise;
-        }
+        };
 
         $(el).on('click', function() {
             if ($scope.task || $scope.tasks) {
@@ -13323,16 +13329,16 @@ app.directive('actionModal', ['$document', '$q', '$modal',
                 modal(action).then(function() {
                     $scope.selectedTasks = [];
                     $scope.updateSelection();
-                })
+                });
             }
         });
-    }
+    };
 
     return {
         scope: false,
         link: controller
-    }
-}])
+    };
+}]);
 
 app.controller('CtrlFeedsAcceptModal', ['$scope', '$modalInstance', '$q', 'FeedsService', 'modalAction',
     function($scope, $modalInstance, $q, Feeds, modalAction) {
@@ -13344,14 +13350,14 @@ app.controller('CtrlFeedsAcceptModal', ['$scope', '$modalInstance', '$q', 'Feeds
         $scope.isSendingAction = true;
         Feeds.action(action, _task, $scope.selectedTasks).then($modalInstance.close,
         function() {
-            console.error('Problem with action request')
+            console.error('Problem with action request');
         });
-    }
+    };
 
     $scope.dismiss = function() {
         $modalInstance.dismiss();
-    }
-}])
+    };
+}]);
 
 var app = angular.module('atlasAdmin.controllers.feeds');
 
@@ -13368,7 +13374,7 @@ app.controller('CtrlFeedsBreakdown', ['$scope', '$rootScope', '$routeParams', 'F
         modalInstance.result.then(function() {
  
         });
-    }
+    };
 
     var loadTask = function() {
         Feeds.request('youview/bbc_nitro/tasks/'+$routeParams.taskId+'.json?annotations=remote_responses')
@@ -13377,15 +13383,16 @@ app.controller('CtrlFeedsBreakdown', ['$scope', '$rootScope', '$routeParams', 'F
                 $scope.task = _task;
                 $scope.view_title = "Breakdown for transaction: "+_task.remote_id;
             });
-    }
+    };
     loadTask();
 
-}])
+}]);
 
 app.controller('CtrlStatusDetail', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modalInstance',
     function($scope, $rootScope, $routeParams, $q, $modalInstance) {
         
-}])
+}]);
+
 'use strict';
 
 // define 'applications' module to be used for application controllers

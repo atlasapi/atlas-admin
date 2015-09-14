@@ -62,8 +62,8 @@ app.directive('loadContent', ['$document', 'FeedsService', '$q', '$sce',
 
         // convert nitro links to bbc web links
         attr.$observe('loadContent', function(val) {
-            _content = $scope.content = attr.loadContent;
-            $scope.hrefContent = $scope.content.replace('http://nitro', 'http://www');
+            _content = $scope.content_uri = attr.loadContent;
+            $scope.hrefContent = $scope.content_uri.replace('http://nitro', 'http://www');
         })
 
         // show the result of the xml query when 'load data' button is pressed

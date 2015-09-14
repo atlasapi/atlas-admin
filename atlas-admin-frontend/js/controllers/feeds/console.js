@@ -32,17 +32,20 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     //
     var input_timer;
     $scope.filter = function(filter_on) {
-        if (!_.isString(filter_on)) return;
-        if ($scope.search[filter_on].length > 3 || $scope.search[filter_on].length == 0) {
+        if (!_.isString(filter_on)) {
+          return;
+        }
+        
+        if ($scope.search[filter_on].length > 3 || $scope.search[filter_on].length === 0) {
             $timeout.cancel(input_timer);
             input_timer = $timeout(function() {
                 $scope.isloading = true;
                 $scope.activeFilter = filter_on;
                 $scope.page.current = 0;
-                getTasks()
+                getTasks();
             }, 700);
         }
-    }
+    };
 
 
     // Used for controlling pagination functionality. The idea is that
@@ -62,7 +65,7 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
 
     $scope.$watch('page.current + page.limit', function(new_val, old_val) {
         $scope.page.offset = $scope.page.current * $scope.page.limit;
-        getTasks()
+        getTasks();
     });
     
     $scope.page.next = function() {
@@ -72,7 +75,7 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
             $scope.selectedTasks = [];
             $scope.disableActions = true;
         }
-    }
+    };
 
     $scope.page.previous = function() {
         if ($scope.page.current > 0 && !$scope.isloading) {
@@ -81,7 +84,7 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
             $scope.selectedTasks = [];
             $scope.disableActions = true;
         }
-    }
+    };
 
 
     // The following is used for selecting individual tasks 
@@ -100,7 +103,7 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
         }else{
             $scope.disableActions = true;
         }
-    }
+    };
 
     // For loading sets of tasks from atlas. Filters and offsets
     // are inserted automatically based on $scope variables
@@ -140,7 +143,7 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
         }
         $scope.isloading = false;
         $scope.tasks = data.tasks;
-    }
+    };
 
 
     // Used for calculating uptime since last outage
@@ -150,8 +153,8 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
             _then = last_outage,
             _delta = Math.round(Math.abs((_now.getTime() - _then.getTime()))/(24*60*60*1000));
         return _delta.toString();
-    }
-}])
+    };
+}]);
 
 
 app.directive('actionModal', ['$document', '$q', '$modal',
@@ -170,19 +173,19 @@ app.directive('actionModal', ['$document', '$q', '$modal',
             var _content = {
                 title: 'Are you sure you want to <strong>'+action+' '+_tasksLength+'</strong> tasks?',
                 action: action.charAt(0).toUpperCase() + action.slice(1)
-            }
+            };
 
             var _modalInstance = $modal.open({
                 template: '<h1>'+_content.title+'</h1></div><div class="feed-modal-options"><button ng-disabled="isSendingAction" ng-click="ok()">'+_content.action+'</button><button ng-click="dismiss()">Cancel</button>',
                 controller: 'CtrlFeedsAcceptModal',
                 windowClass: 'feedsAcceptModal',
                 scope: $scope,
-                resolve: { modalAction: function() { return action } }
+                resolve: { modalAction: function() { return action; } }
             });
 
             _modalInstance.result.then(defer.resolve, defer.reject);
             return defer.promise;
-        }
+        };
 
         $(el).on('click', function() {
             if ($scope.task || $scope.tasks) {
@@ -190,16 +193,16 @@ app.directive('actionModal', ['$document', '$q', '$modal',
                 modal(action).then(function() {
                     $scope.selectedTasks = [];
                     $scope.updateSelection();
-                })
+                });
             }
         });
-    }
+    };
 
     return {
         scope: false,
         link: controller
-    }
-}])
+    };
+}]);
 
 app.controller('CtrlFeedsAcceptModal', ['$scope', '$modalInstance', '$q', 'FeedsService', 'modalAction',
     function($scope, $modalInstance, $q, Feeds, modalAction) {
@@ -211,11 +214,11 @@ app.controller('CtrlFeedsAcceptModal', ['$scope', '$modalInstance', '$q', 'Feeds
         $scope.isSendingAction = true;
         Feeds.action(action, _task, $scope.selectedTasks).then($modalInstance.close,
         function() {
-            console.error('Problem with action request')
+            console.error('Problem with action request');
         });
-    }
+    };
 
     $scope.dismiss = function() {
         $modalInstance.dismiss();
-    }
-}])
+    };
+}]);

@@ -13,7 +13,7 @@ app.controller('CtrlFeedsBreakdown', ['$scope', '$rootScope', '$routeParams', 'F
         modalInstance.result.then(function() {
  
         });
-    }
+    };
 
     var loadTask = function() {
         Feeds.request('youview/bbc_nitro/tasks/'+$routeParams.taskId+'.json?annotations=remote_responses')
@@ -22,12 +22,12 @@ app.controller('CtrlFeedsBreakdown', ['$scope', '$rootScope', '$routeParams', 'F
                 $scope.task = _task;
                 $scope.view_title = "Breakdown for transaction: "+_task.remote_id;
             });
-    }
+    };
     loadTask();
 
-}])
+}]);
 
 app.controller('CtrlStatusDetail', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modalInstance',
     function($scope, $rootScope, $routeParams, $q, $modalInstance) {
         
-}])
+}]);

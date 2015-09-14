@@ -16,16 +16,16 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
         })
         .success(function(data, status) {
             if (status === 200) {
-              defer.resolve(data)
+              defer.resolve(data);
             }else{
-              defer.reject(err);
+              defer.reject();
             }
         })
         .error(function(data, status) {
             defer.reject(status);
         });
         return defer.promise;
-    }
+    };
 
     //  Used for making a request
     //
@@ -35,20 +35,20 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
     //  @returns promise
     //
     var request = function(feed_uri, method, params) {
-        var request;
+        method = method || 'get';
+        params = params || null;
         var defer = $q.defer();
-        var method = method || 'get';
-        var params = params || null;
+        var request;
 
-        if (!_.isString(feed_uri)) {
-            defer.reject('Feed uri must be included as first argument')
+        if (! _.isString(feed_uri)) {
+            defer.reject('Feed uri must be included as first argument');
             return defer.promise;
         }
 
         request = {
             method: method,
             url: Authentication.appendTokenToUrl(atlasApiHost+'/feeds/'+feed_uri)
-        }
+        };
 
         if (_.isObject(params)) {
             request.data = params;
@@ -56,7 +56,7 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
 
         $http(request).success(defer.resolve);
         return defer.promise;
-    }
+    };
     
 
     //  Used for running actions on tasks
@@ -66,8 +66,8 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
     //  @param selection {array}
     //
     var doAction = function(action, tasks, selection) {
+        action = action || null;
         var defer = $q.defer();
-        var action = action || null;
         var _tasks = tasks || null;
         var _selection = selection || null; 
         var _postdata = {};
@@ -82,19 +82,21 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
                     uri: _selected.content_uri,
                     type: _selected.element_type,
                     element_id: _selected.element_id
-                }
+                };
                 request('youview/bbc_nitro/action/'+action, 'post', _postdata).then(function() {
                     counter--;
-                    if (!counter) defer.resolve();
+                    if (! counter) {
+                      defer.resolve();
+                    }
                 });
-            })
+            });
         }else{
             if (tasks.content_uri && tasks.element_type && tasks.element_id) {
                 _postdata = {
                     uri: tasks.content_uri,
                     type: tasks.element_type,
                     element_id: tasks.element_id
-                }
+                };
                 request('youview/bbc_nitro/action/'+action, 'post', _postdata).then(function() {
                     defer.resolve();
                 });
@@ -103,11 +105,11 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
             }
         }   
         return defer.promise;
-    }
+    };
 
     return {
         action: doAction,
         get: getFeeds,
         request: request
-    }
+    };
 }]);
