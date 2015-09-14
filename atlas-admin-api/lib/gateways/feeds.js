@@ -42,14 +42,18 @@ function proxyRequest(endpoint, request) {
         _endpoint       = endpoint,
         _querystring    = { apiKey: getAPIKey() };
 
+    
     for (var query in request.query) {
         if ('status' === query ||
             'uri' === query ||
             'remote_id' === query ||
             'limit' === query ||
             'offset' === query ||
+            'type' === query ||
             'annotations' === query) {
             _querystring[query] = request.query[query];
+        } else {
+          console.warn('I don\'t know about this querystring param = ' + query);
         }
     }
 

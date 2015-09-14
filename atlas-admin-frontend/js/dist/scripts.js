@@ -10909,9 +10909,9 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
         })
         .success(function(data, status) {
             if (status === 200) {
-                defer.resolve(data)
+              defer.resolve(data)
             }else{
-                defer.reject(err);
+              defer.reject(err);
             }
         })
         .error(function(data, status) {
@@ -13239,13 +13239,13 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     // are inserted automatically based on $scope variables
     var getTasks = function() {
         var _filter = '';
-        if ($scope.activeFilter === 'transaction' && !_.isEmpty($scope.search.transaction)) {
-            _filter = '&type='+$scope.search.transaction;
-        }else if ($scope.activeFilter === 'uri' && !_.isEmpty($scope.search.uri)) {
+        if ($scope.activeFilter === 'transaction' && ! _.isEmpty($scope.search.transaction)) {
+            _filter = '&type='+$scope.search.transaction.toLowerCase();
+        }else if ($scope.activeFilter === 'uri' && ! _.isEmpty($scope.search.uri)) {
             _filter = '&uri='+$scope.search.uri;
-        }else if ($scope.activeFilter === 'status' && !_.isEmpty($scope.search.status)) {
+        }else if ($scope.activeFilter === 'status' && ! _.isEmpty($scope.search.status)) {
             _filter = '&status='+$scope.search.status;
-        }else if ($scope.activeFilter === 'remote_id' && !_.isEmpty($scope.search.remote_id)){
+        }else if ($scope.activeFilter === 'remote_id' && ! _.isEmpty($scope.search.remote_id)){
             _filter = '&remote_id='+$scope.search.remote_id;
         }
         var request_url = 'youview/bbc_nitro/tasks.json?limit='+$scope.page.limit+'&offset='+$scope.page.offset+_filter;

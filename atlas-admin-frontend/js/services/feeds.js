@@ -16,9 +16,9 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
         })
         .success(function(data, status) {
             if (status === 200) {
-                defer.resolve(data)
+              defer.resolve(data)
             }else{
-                defer.reject(err);
+              defer.reject(err);
             }
         })
         .error(function(data, status) {
