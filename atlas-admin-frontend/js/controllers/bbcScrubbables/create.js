@@ -52,27 +52,43 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
   //
   // @param result {Object} Deer result object
   var loadSavedSegments = function (result) {
-    var _events = ( ! _.has(result.item, 'segment_events') ) ? null :
-                    ( _.isArray(result.item.segment_events) ) ? result.item.segment_events : null;
-    if (! _events) {
-      console.warn('segment_events array isn\'t in returned Deer object');
-      return null;
-    }
+    // try all possible content types:
+    var TYPES = ['item', 'episode', 'film'];
+
+    var _events = null;
+
+    _.each(TYPES, function checkType(type) {
+      if(_.has(result, type)) {
+        if(_.has(result[type], 'segment_events')) {
+          if(_.isArray(result[type].segment_events)) {
+            _events = result[type].segment_events;
+          }
+          else {
+            console.warn('segment_events on deer object is not an array');
+          }
+        }
+        else {
+          console.warn('segment_events missing on deer object');
+        }
+      }
+    });
+
     return _events;
   };
 
 
   var loadAtlasItem = function (id) {
-    if (!_.isString(id)) return;
+    if (!_.isString(id)) {
+      return;
+    }
     $scope.loading = true;
 
     // load related links from deer
     Scrubbables.deerContent($scope.deerKey, id).then(
     function(res) {
       // ..and load broadcast content from owl
-      Scrubbables.content.id(id).then(
+      Scrubbables.content.id($scope.deerKey, id).then(
       function(item) {
-        console.log(item);
         $scope.atlasSearch.selectedItem = Helpers.channelFilter(item.contents, 'cbbh')[0];
         $scope.scrubbableSegments = loadSavedSegments(res);
       },
@@ -90,8 +106,9 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
       return;
     }
     var _events = $scope.scrubbableSegments;
-    var broadcastDuration = _.has($scope.broadcast, 'broadcast_duration') ? $scope.broadcast.broadcast_duration : null;
+    var broadcastDuration = _.has($scope.broadcast, 'published_duration') ? $scope.broadcast.published_duration : null;
 
+    // Keeping this in for debugging
     console.log('ev', _events);
 
     if (!! broadcastDuration) {
@@ -107,9 +124,6 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
           return ev;
         }
       }) );
-
-      console.log('show segments', showSegments);
-      console.log('timed segments', timedSegments);
 
       if (showSegments.length) {
         $scope.showSegments.loadSegments(showSegments);
@@ -132,6 +146,7 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
       $scope.showUI = true;
       $scope.loading = false;
       pushSegmentsToTimeline();
+      console.log($scope.episode);
     }
   });
 

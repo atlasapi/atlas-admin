@@ -4,7 +4,12 @@ var app = angular.module('atlasAdmin.services.atlas', []);
 app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $log) {
     return {
         getRequest: function(url) {
-            return $http.get(Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion +  url));
+            var usersUrl = Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion +  url);
+            console.log('get-> ' + usersUrl);
+            return $http.get(usersUrl);
+        },
+        getUrl: function (url) {
+            return Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + url);
         },
         postRequest: function(url, data) {
             return $http.post(Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + url), data, {withCredentials: false});
@@ -14,7 +19,6 @@ app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $
         },
         getAuthProviders: function() {
             return $http.get(atlasHost + "/" + atlasVersion + "/auth/providers.json").then(function(results){
-                var authProviders = [];
                 return results.data.auth_providers;
             }, function(error) {
                 $log.error(error);

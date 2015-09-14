@@ -45,6 +45,12 @@
                 <thead>
                     <tr class="filter-bar">
                         <th>
+                          <select ng-change="filter('transaction')" ng-model="search.transaction" placeholder="Filter by Transaction" class="search-cell">
+                              <option ng-selected value="">Filter by transaction</option>
+                              <option ng-repeat="transaction in transactionFilter" value="{{transaction}}">{{transaction}}</option>
+                          </select>
+                        </th>
+                        <th>
                             <input placeholder="Filter by Content URI" ng-model="search.uri" ng-change="filter('uri')" class="search-cell" type="text">
                         </th>
                         <th>
@@ -60,6 +66,7 @@
                         <th></th>
                     </tr>
                     <tr>
+                        <th class="sortable" ng-click="table.order='element_type'; table.reverse=!table.reverse">Transaction type</th>
                         <th class="sortable" ng-click="table.order='content[0]'; table.reverse=!table.reverse">Content URI</th>
                         <th class="sortable" ng-click="table.order='id'; table.reverse=!table.reverse">YouView transaction ID</th>
                         <th class="sortable" ng-click="table.order='upload_time'; table.reverse=!table.reverse">Upload time</th>
@@ -69,7 +76,8 @@
                 </thead>
                 <tbody>
                     <tr ng-repeat="task in tasks | orderBy:table.order:table.reverse">
-                        <td><a ng-href="#/feeds/youview/{{task.id}}">{{task.content}}</a></td>
+                        <td><a ng-href="#/feeds/youview/{{task.id}}">{{task.element_type}}</a></td>
+                        <td><a ng-href="#/feeds/youview/{{task.id}}">{{task.content_uri}}</a></td>
                         <td><a ng-href="#/feeds/youview/{{task.id}}">{{task.remote_id}}</a></td>
                         <td><a ng-href="#/feeds/youview/{{task.id}}">{{task.upload_time}}</a></td>
                         <td><a ng-href="#/feeds/youview/{{task.id}}">{{task.status}}</a></td>
@@ -100,4 +108,3 @@
         </div>
     </section>
 </div>
-

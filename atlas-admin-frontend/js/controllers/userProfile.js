@@ -28,7 +28,7 @@ app.controller('UserProfileController', function($scope, $rootScope, $routeParam
                 title += 'user id ' + user.id;
             }
             $rootScope.view_title = title;
-            Users.currentUser().then(function(editingUser) {
+            Users.currentUser(function(editingUser) {
                 $scope.app.isAdmin = editingUser.role === 'admin';
                 $scope.app.editingUser = editingUser.id;
 
@@ -38,7 +38,7 @@ app.controller('UserProfileController', function($scope, $rootScope, $routeParam
             });
         });
     } else {
-        Users.currentUser().then(function(user) {
+        Users.currentUser(function(user) {
             $scope.app.user = user;
             $rootScope.view_title = 'Your profile';
         });
@@ -166,7 +166,7 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
     };
 
     if (Authentication.getToken()) {
-        Users.currentUser().then(function(user) {
+        Users.currentUser(function(user) {
             $scope.app.user = user;
             // find any custom menu items for this user
             getPrivateMenuItems().then(function(groups) {
@@ -184,7 +184,7 @@ app.controller('UserLicenseController', function($scope, $rootScope, $routeParam
     // only try to get user if logged in
     $scope.view_title = 'Atlas Terms and Conditions'
     $scope.app = {};
-    Users.currentUser().then(function(user) {
+    Users.currentUser(function(user) {
         $scope.app.user = user;
     });
 

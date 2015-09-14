@@ -203,22 +203,25 @@ app.directive('scrubber', ['$document', '$compile',
             // Splice from the TIMELINE_SEGMENTS array
             for (var i in TIMELINE_SEGMENTS) {
               if (TIMELINE_SEGMENTS[i]._id === id) {
+                console.log(TIMELINE_SEGMENTS[i]);
                 TIMELINE_SEGMENTS.splice(i, 1);
                 break;
               }
             }
             // Remove from the DOM
             var _el = $('[data-segment-id='+ id +']', CREATED);
-            if (_el.length) $(_el).remove();
+            if (_el.length) {
+              $(_el).remove();
+            }
         }
 
 
-        function createSegmentObj(label, url, startTime, endTime, id) {
+        function createSegmentObj(label, url, startTime, duration, id) {
           return {
             label: label,
             url: url,
             startTime: startTime,
-            endTime: endTime,
+            endTime: startTime + duration,
             _id: id
           };
         }
@@ -238,10 +241,12 @@ app.directive('scrubber', ['$document', '$compile',
                 !LIVE_ITEM.length) {
                 return false;
             }
+            var startTime = (pixelsToSeconds(LIVE_ITEM[0].start) < 0) ? 0 : pixelsToSeconds(LIVE_ITEM[0].start);
+            var endTime = (pixelsToSeconds(LIVE_ITEM[0].end) <= startTime) ? startTime+1 : pixelsToSeconds(LIVE_ITEM[0].end);
             var _segment = createSegmentObj($scope.scrubber.create.label,
                             $scope.scrubber.create.url,
-                            (pixelsToSeconds(LIVE_ITEM[0].start) < 0) ? 0 : pixelsToSeconds(LIVE_ITEM[0].start),
-                            pixelsToSeconds(LIVE_ITEM[0].end),
+                            startTime,
+                            endTime - startTime,
                             generateID());
             if (_segment.label && _segment.url) {
                 $scope.scrubber.clearTempSegment();
@@ -310,7 +315,7 @@ app.directive('scrubber', ['$document', '$compile',
         // Converts boring old seconds to object containing
         // HH MM SS as strings
         //
-        // @returns {Object} keys: hh, mm, ss
+        // @returns {Object} of {Number}s. keys: hh, mm, ss
         function secondsToHHMMSS (secs) {
             if (typeof secs !== 'number' &&
                 typeof secs !== 'string') {
@@ -398,14 +403,13 @@ app.directive('scrubber', ['$document', '$compile',
             $scope.scrubber.create = {};
             $scope.scrubber.segments = [];
             $scope.scrubber.submitted = false;
-
             $scope.scrubber.createLink = addSegment;
             $scope.scrubber.removeItem = removeSegment;
 
             $scope.scrubber.clearTempSegment = function() {
-                LIVE_ITEM = [];
-                $scope.scrubber.create = {};
-                return;
+              LIVE_ITEM = [];
+              $scope.scrubber.create = {};
+              return;
             };
 
             $scope.scrubber.loadSegments = function(events) {
@@ -413,6 +417,7 @@ app.directive('scrubber', ['$document', '$compile',
                 console.warn('events expected to be an array');
                 return;
               }
+
               var _segment, offset;
               _.forEach(events, function (ev) {
                 offset = ev.offset || 0;
@@ -457,6 +462,7 @@ app.directive('scrubber', ['$document', '$compile',
                 }
                 MOUSEDOWN = false;
             });
+            $scope.scrubber.segments = TIMELINE_SEGMENTS;
             requestAnimationFrame(draw);
         }
         bootstrap();

@@ -5,14 +5,14 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
 
     // For creating a new segment block to be pushed into the
     // showSegments.segments array
-    var createSegmentObj = function(label, url, startTime, endTime, id) {
-        return {
-            label: label,
-            url: url,
-            startTime: startTime,
-            endTime: endTime,
-            _id: id
-        };
+    var createSegmentObj = function(label, url, startTime, duration, id) {
+      return {
+        label: label,
+        url: url,
+        startTime: startTime,
+        endTime: startTime + duration,
+        _id: id
+      };
     };
 
 
@@ -47,9 +47,13 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
       };
 
       $scope.showSegments.removeItem = function(id) {
-          if (!_.isString(id)) return false;
+          if (!_.isString(id)) {
+            return false;
+          }
+
           for (var i in $scope.showSegments.segments) {
               if ($scope.showSegments.segments[i]._id === id) {
+                  console.log(id);
                   $scope.showSegments.segments.splice(i, 1);
                   break;
               }
@@ -68,7 +72,10 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
 
       $scope.showSegments.new = function() {
           $scope.showSegments.submitted = true;
-          if (newSegmentForm.linkLabel.value === '' || newSegmentForm.linkUrl.value === '' ) return;
+          if (newSegmentForm.linkLabel.value === '' || newSegmentForm.linkUrl.value === '' ) {
+            return;
+          }
+
           var _segment = createSegmentObj($scope.showSegments.newItem.label,
                                           $scope.showSegments.newItem.url,
                                           0,
