@@ -11657,7 +11657,7 @@ var app = angular.module('atlasAdmin.directives.loadContent', []);
 app.directive('loadContent', ['$document', 'FeedsService', '$q', '$sce',
     function($document, Feeds, $q, $sce) {
 
-    var _loaded = false;
+    var _loaded;
     var loadContent = function(content) {
         var defer = $q.defer();
         if (!_loaded) {
@@ -11669,7 +11669,7 @@ app.directive('loadContent', ['$document', 'FeedsService', '$q', '$sce',
             defer.reject(null);
         }
         return defer.promise;
-    }
+    };
 
     var escapeHtml = function(unsafe) {
         return unsafe
@@ -11678,7 +11678,7 @@ app.directive('loadContent', ['$document', 'FeedsService', '$q', '$sce',
              .replace(/>/g, "&gt;")
              .replace(/"/g, "&quot;")
              .replace(/'/g, "&#039;");
-    }
+    };
 
     var formatXml = function(xml) {
         var formatted = '';
@@ -11690,7 +11690,7 @@ app.directive('loadContent', ['$document', 'FeedsService', '$q', '$sce',
             if (node.match( /.+<\/\w[^>]*>$/ )) {
                 indent = 0;
             } else if (node.match( /^<\/\w/ )) {
-                if (pad != 0) {
+                if (pad !== 0) {
                     pad -= 1;
                 }
             } else if (node.match( /^<\w[^>]*[^\/]>.*$/ )) {
@@ -11706,24 +11706,25 @@ app.directive('loadContent', ['$document', 'FeedsService', '$q', '$sce',
             pad += indent;
         });
         return formatted;
-    }
+    };
 
     var controller = function($scope, element, attr) {
+        _loaded = false;
         var _content;
         var $el = $(element);
         $scope.showData = false;
 
         // convert nitro links to bbc web links
-        attr.$observe('loadContent', function(val) {
-            _content = $scope.content_uri = attr.loadContent;
-            $scope.hrefContent = $scope.content_uri.replace('http://nitro', 'http://www');
-        })
+        attr.$observe('loadContent', function() {
+          _content = $scope.content_uri = attr.loadContent;
+          $scope.hrefContent = $scope.content_uri.replace('http://nitro', 'http://www');
+        });
 
         // show the result of the xml query when 'load data' button is pressed
         $('.loadData', $el).on('click', function() {
             var _this = $(this);
             _this.text('Loading data...');
-            loadContent(_content).then(function(xml) {
+            loadContent(attr.loadContent).then(function(xml) {
                 var formattedXML = formatXml(xml);
                 $scope.trustedXML = $sce.trustAsHtml(formattedXML);
                 var codeNode = jQuery('.xml-data pre');
@@ -11740,16 +11741,16 @@ app.directive('loadContent', ['$document', 'FeedsService', '$q', '$sce',
                         _this.text('Hide data');
                     }
                     $scope.showData = !$scope.showData;
-                })
+                });
             });
 
-        })
-    }
+        });
+    };
 
     return {
         template: '<header><h2><a href="{{hrefContent}}" target="_blank">{{hrefContent}}</a></h2><span class="button small loadData">Show data</span></header><div ng-show="showData" class="xml-data"><pre ng-bind-html="trustedXML">{{trustedXML}}</pre></div>',
         link: controller
-    } 
+    };
 }]);
 
 var app = angular.module('atlasAdmin.directives.bbcscrubbables', []);
@@ -13262,6 +13263,9 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     // For loading the feed statistics from atlas
     var getStats = function() {
         Feeds.request('youview/bbc_nitro/statistics.json').then(function(data) {
+            if (! data.feed_stats) {
+              return;
+            }
             $scope.statistics = data.feed_stats[0];
             $scope.statistics.uptime = calculateUptime( new Date(data.feed_stats[0].last_outage) );
         });

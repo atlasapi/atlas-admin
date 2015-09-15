@@ -126,6 +126,9 @@ app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'Fee
     // For loading the feed statistics from atlas
     var getStats = function() {
         Feeds.request('youview/bbc_nitro/statistics.json').then(function(data) {
+            if (! data.feed_stats) {
+              return;
+            }
             $scope.statistics = data.feed_stats[0];
             $scope.statistics.uptime = calculateUptime( new Date(data.feed_stats[0].last_outage) );
         });
