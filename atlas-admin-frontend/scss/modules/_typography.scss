@@ -1,21 +1,21 @@
 body {
-    font-size: $base-font-size;
+  font-size: $base-font-size;
 }
 
 // Links base styles
 //
 a {
-    color: $color-purple;
-    text-decoration: underline;
+  color: $color-purple;
+  text-decoration: underline;
 
-    &:hover {
-        color: $color-pink;
-    }
+  &:hover {
+      color: $color-pink;
+  }
 }
 
 .link {
-    text-decoration: underline;
-    cursor: pointer;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 // Headings base styles
@@ -23,49 +23,49 @@ a {
 h1, h2, h3, h4, h5, h6 { font-weight: normal; }
 
 h1 {
-    font-size: $h1-size;
-    color: $color-purple;
+  font-size: $h1-size;
+  color: $color-purple;
 }
 
 h2 {
-    font-size: $h2-size;
-    color: $color-pink;
+  font-size: $h2-size;
+  color: $color-pink;
 }
 
 h3 {
-    font-size: $h3-size;
-    color: $color-purple;
+  font-size: $h3-size;
+  color: $color-purple;
 }
 
 h4 {
-    font-size: $h4-size;
-    color: $color-pink;
+  font-size: $h4-size;
+  color: $color-pink;
 }
 
 h5 {
-    font-size: $h5-size;
-    color: $color-purple;
+  font-size: $h5-size;
+  color: $color-purple;
 }
 
 h6 {
-    font-size: $h6-size;
-    color: $color-pink;
+  font-size: $h6-size;
+  color: $color-pink;
 }
 
 .form-heading {
-    margin-bottom: 1em;
+  margin-bottom: 1em;
 }
 
 .page-title {
-    &.align-mid {
-        color: #333;
-        font-size: 2rem;
-        text-align: center;
-    }
+  &.align-mid {
+    color: #333;
+    font-size: 2rem;
+    text-align: center;
+  }
 }
 
 .subheading {
-    display: block;
-    margin: 1rem 0;
-    font-size: 1rem;
+  display: block;
+  margin: 1rem 0;
+  font-size: 1rem;
 }
