@@ -18,7 +18,13 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'Authentication', 'atlasApi
     };
 
     $http.get(Authentication.appendTokenToUrl(atlasApiHost + '/usage-list/' + dates)).then(function (response) {
-      var usageData = response.data.aggregations.apiKeys.buckets;
+      var usageData =  _.has(response, 'data') ? response.data.aggregations.apiKeys.buckets : null;
+      
+      if (! usageData) {
+        console.warn('Response data doesnt have the `data` property', response);
+        return;
+      }
+      
       _.forEach(usageData, function (d) {
         d.readableCount = numberWithCommas(d.doc_count);
       });

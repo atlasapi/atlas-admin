@@ -10029,7 +10029,11 @@ app.factory('AuthenticationInterceptor', ['$q', '$location', 'atlasHost', 'atlas
         },
 
         'responseError': function(response) {
-            var _url = response.config.url;
+            var _url = _.has(response.config, 'url') ? response.config.url : null;
+            if (! _url) {
+              console.warn('Cannot find url property in response', response.config);
+              return;
+            }
             if (_url.indexOf(atlasHost) !== -1 || _url.indexOf(atlasApiHost) !== -1) {
                 if (response.status === 400) {
                     console.error('Account not authenticated to make request to: '+_url);
@@ -10039,8 +10043,9 @@ app.factory('AuthenticationInterceptor', ['$q', '$location', 'atlasHost', 'atlas
             }
             return response || $q.defer(response);
         } 
-    }
+    };
 }]);
+
 var app = angular.module('atlasAdmin.interceptors');
 
 // the loading bar will show when there are requests still pending, but will
@@ -13431,7 +13436,13 @@ angular.module('atlasAdmin.controllers.applications')
           return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         };
         $http.get(Authentication.appendTokenToUrl(atlasApiHost + '/usage-list/' + dates)).then(function (response) {
-            var usageData = response.data.aggregations.apiKeys.buckets;
+            var usageData =  _.has(response, 'data') ? response.data.aggregations.apiKeys.buckets : null;
+            
+            if (! usageData) {
+              console.warn('Response data doesnt have the `data` property', response);
+              return;
+            }
+            
             _.forEach(usageData, function (d) {
                 d.readableCount = numberWithCommas(d.doc_count);
             });
@@ -14644,7 +14655,13 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'Authentication', 'atlasApi
     };
 
     $http.get(Authentication.appendTokenToUrl(atlasApiHost + '/usage-list/' + dates)).then(function (response) {
-      var usageData = response.data.aggregations.apiKeys.buckets;
+      var usageData =  _.has(response, 'data') ? response.data.aggregations.apiKeys.buckets : null;
+      
+      if (! usageData) {
+        console.warn('Response data doesnt have the `data` property', response);
+        return;
+      }
+      
       _.forEach(usageData, function (d) {
         d.readableCount = numberWithCommas(d.doc_count);
       });
