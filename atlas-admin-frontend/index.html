@@ -15,86 +15,100 @@
     </head>
 
     <body>
+
+      <div class="site-header">
+        <div class="site-header-inner clearfix">
+          <a class="site-logo" href="https://metabroadcast.com"><img src="img/mb-logo.png" alt="MetaBroadcast"></a>
+          <ul class="site-nav">
+            <li class="nav-atlas"><a href="https://atlas.metabroadcast.com">atlas</a></li>
+            <li class="nav-voila"><a href="http://voila.metabroadcast.com">voila</a></li>
+            <li><a href="https://metabroadcast.com/blog">blog</a></li>
+            <li><a href="https://metabroadcast.com/jobs">jobs</a></li>
+            <li><a href="https://metabroadcast.com/team">team</a></li>
+            <li><a href="https://metabroadcast.com/mentions">mentions</a></li>
+            <li><a href="https://metabroadcast.com/contact">contact</a></li>
+          </ul>
+        </div>
+      </div>
+
         <!-- navigation -->
-        <nav class="site-header" id="header" role="navigation" ng-controller="UserMenuController">
-            <div class="container header-inner">
-                <a class="site-logo" href="#"><img src="img/logo.png" alt="Atlas Admin logo" /></a>
-                <div class="navbar-links" ng-cloak>
-                    <ul ng-show="status.loggedIn" class="nav">
-                        <li><a href="/#widgets">Widgets</a></li>
-                        <li><a href="/#examples">Examples</a></li>
-                        <li class="has-dropdown-menu">
-                            <a href="/#reference">Reference</a>
-                            <ul class="dropdown-menu">
-                                <li><a href="/#reference_overview">overview</a></li>
-                                <li><a href="/#reference_dataModel">data model</a></li>
-                                <li><a href="/#reference_sources">sources</a></li>
-                                <li><a href="/#reference_feeds">feeds</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="/#about">About</a></li>
-                        <li class="has-dropdown-menu">
-                            <a href="/api-docs">Docs</a>
-                            <ul class="dropdown-menu">
-                                <li><a href="/#api-docs-content">content</a></li>
-                                <li><a href="/#api-docs-topics">topics</a></li>
-                                <li><a href="/#api-docs-schedules">schedules</a></li>
-                                <li><a href="/#api-docs-channels">channels</a></li>
-                                <li><a href="/#api-docs-channel_groups">channel_groups</a></li>
-                            </ul>
-                        </li>
-                        <li ng-show="status.loggedIn" class="has-dropdown-menu user-menu" id="apps-menu" ng-click="app.hideAppsMenu()" ng-mouseleave="app.showAppsMenu()" ng-cloak>
-                            <span>Apps</span>
-                            <ul class="apps-dropdown dropdown-menu dropdown-menu-large" ng-show="app.appsMenu">
-                                <li ng-if="ProfileStatus.isProfileComplete()" ng-controller="CtrlApplications">
-                                    <span class="application-link" ng-repeat="application in app.applications | orderBy:app.predicate:app.reverse | limitTo:3">
-                                        <a href="#/applications/{{application.id}}">
-                                            {{application.title}}
-                                        </a>
-                                    </span>
-                                    <div ng-if="app.applications" class="menu-separator"></div>
-                                </li>
-                                <li><a ng-href="#/applications">All applications&hellip;</a></li>
-                                <li><a ng-href="#/wishlist">Wishlist</a></li>
-                            </ul>
-                        </li>
-                        <li ng-show="status.loggedIn" ng-if="app.menu.users.length" class="has-dropdown-menu user-menu" id="content-menu" ng-click="app.hideContentMenu()" ng-mouseleave="app.showContentMenu()" ng-cloak>
-                            <span>Content</span>
-                            <ul class="content-dropdown dropdown-menu" ng-show="app.contentMenu">
-                                <li ng-repeat="item in app.menu.users" ng-cloak>
-                                    <a ng-href="#{{item.path}}" active-path="active-menu-item"><span class="menu-button">{{item.label}}</span></a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li ng-show="status.loggedIn" ng-if="app.menu.admins.length" class="has-dropdown-menu user-menu" id="admin-menu" ng-click="app.hideAdminMenu()" ng-mouseleave="app.showAdminMenu()" ng-cloak>
-                            <span>Admin</span>
-                            <ul class="admin-menu admin-dropdown dropdown-menu" ng-show="app.adminMenu">
-                                <li ng-repeat="item in app.menu.admins" ng-cloak>
-                                    <a ng-href="#{{item.path}}" active-path="active-menu-item"><span class="menu-button" ng-click="app.toggleAdminMenu()">{{item.label}}</span></a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-                <a class="navbar-api-explorer-btn" href="/api-docs#apiExplorer">
-                    <span class="icn_mag"></span>
-                    api explorer &amp; free key
-                </a>
-                <div class="navbar-tools" id="navbar-tools">
-                    <div class="navbar-user logged-in has-dropdown-menu" ng-show="status.loggedIn" ng-click="app.hideDropdown()" ng-mouseleave="app.showDropdown()" ng-cloak>
-                        <span class="user-avatar">
-                            <img class="profile-picture" ng-src="{{app.user.profile_image}}" alt="profile picture"/>
-                            <span class="user-name">{{app.user.full_name}}</span>
-                        </span>
-                        <ul class="user-dropdown-menu dropdown-menu" ng-show="app.dropdown">
-                            <li><a href="#/profile">Your profile</a></li>
-                            <li><a href="#/terms">Terms of use</a></li>
-                            <li><a href="#/logout">Log out</a></li>
-                        </ul>
-                    </div>
-                </div>
+      <nav class="sub-header" id="header" role="navigation" ng-controller="UserMenuController">
+        <div class="sub-header-inner header-inner">
+          <div class="navbar-links" ng-cloak>
+            <ul ng-show="status.loggedIn" class="sub-nav nav">
+              <li><a href="/#widgets">Widgets</a></li>
+              <li><a href="/#examples">Examples</a></li>
+              <li class="has-dropdown-menu">
+                <a href="/#reference">Reference</a>
+                <ul class="dropdown-menu">
+                  <li><a href="/#reference_overview">overview</a></li>
+                  <li><a href="/#reference_dataModel">data model</a></li>
+                  <li><a href="/#reference_sources">sources</a></li>
+                  <li><a href="/#reference_feeds">feeds</a></li>
+                </ul>
+              </li>
+              <li><a href="/#about">About</a></li>
+              <li class="has-dropdown-menu">
+                <a href="/api-docs">Docs</a>
+                <ul class="dropdown-menu">
+                  <li><a href="/#api-docs-content">content</a></li>
+                  <li><a href="/#api-docs-topics">topics</a></li>
+                  <li><a href="/#api-docs-schedules">schedules</a></li>
+                  <li><a href="/#api-docs-channels">channels</a></li>
+                  <li><a href="/#api-docs-channel_groups">channel_groups</a></li>
+                </ul>
+              </li>
+              <li ng-show="status.loggedIn" class="has-dropdown-menu user-menu" id="apps-menu" ng-click="app.hideAppsMenu()" ng-mouseleave="app.showAppsMenu()" ng-cloak>
+                <span>Apps</span>
+                <ul class="apps-dropdown dropdown-menu dropdown-menu-large" ng-show="app.appsMenu">
+                  <li ng-if="ProfileStatus.isProfileComplete()" ng-controller="CtrlApplications">
+                    <span class="application-link" ng-repeat="application in app.applications | orderBy:app.predicate:app.reverse | limitTo:3">
+                      <a href="#/applications/{{application.id}}">{{application.title}}</a>
+                    </span>
+                    <div ng-if="app.applications" class="menu-separator"></div>
+                  </li>
+                  <li><a ng-href="#/applications">All applications&hellip;</a></li>
+                  <li><a ng-href="#/wishlist">Wishlist</a></li>
+                </ul>
+              </li>
+              <li ng-show="status.loggedIn" ng-if="app.menu.users.length" class="has-dropdown-menu user-menu" id="content-menu" ng-click="app.hideContentMenu()" ng-mouseleave="app.showContentMenu()" ng-cloak>
+                <span>Content</span>
+                <ul class="content-dropdown dropdown-menu" ng-show="app.contentMenu">
+                  <li ng-repeat="item in app.menu.users" ng-cloak>
+                    <a ng-href="#{{item.path}}" active-path="active-menu-item"><span class="menu-button">{{item.label}}</span></a>
+                  </li>
+                </ul>
+              </li>
+              <li ng-show="status.loggedIn" ng-if="app.menu.admins.length" class="has-dropdown-menu user-menu" id="admin-menu" ng-click="app.hideAdminMenu()" ng-mouseleave="app.showAdminMenu()" ng-cloak>
+                <span>Admin</span>
+                <ul class="admin-menu admin-dropdown dropdown-menu" ng-show="app.adminMenu">
+                  <li ng-repeat="item in app.menu.admins" ng-cloak>
+                    <a ng-href="#{{item.path}}" active-path="active-menu-item"><span class="menu-button" ng-click="app.toggleAdminMenu()">{{item.label}}</span></a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+          <div class="sub-nav-tools">
+            <a class="navbar-api-explorer-btn" href="/api-docs#apiExplorer">
+              <span class="icn_mag"></span> api explorer &amp; free key
+            </a>
+            <div class="navbar-tools" id="navbar-tools">
+              <div class="navbar-user logged-in has-dropdown-menu" ng-show="status.loggedIn" ng-click="app.hideDropdown()" ng-mouseleave="app.showDropdown()" ng-cloak>
+                <span class="user-avatar">
+                  <img class="profile-picture" ng-src="{{app.user.profile_image}}" alt="profile picture"/>
+                  <span class="user-name">{{app.user.full_name}}</span>
+                </span>
+                <ul class="user-dropdown-menu dropdown-menu" ng-show="app.dropdown">
+                  <li><a href="#/profile">Your profile</a></li>
+                  <li><a href="#/terms">Terms of use</a></li>
+                  <li><a href="#/logout">Log out</a></li>
+                </ul>
+              </div>
             </div>
-        </nav><!-- end navigation -->
+          </div>
+        </div>
+      </nav><!-- end navigation -->
 
         <!-- Top level directives -->
         <div preloader></div>
