@@ -8,7 +8,6 @@
   z-index: 1500;
 }
 
-
 .site-header-inner {
   text-align: left;
   width: 96%;
@@ -46,7 +45,7 @@
 
 .site-nav a {
   display: block;
-  height: 32px;
+  height: 52px;
   line-height: 44px;
   vertical-align: baseline;
   padding: 10px 14px;
@@ -68,20 +67,20 @@
 .nav-atlas a,
 .nav-voila a {
   display: block;
-  height: 32px;
+  height: 52px;
   text-indent: -9999px;
   background-image: url(../img/logo-sprite.png);
   background-repeat: no-repeat;
 }
 
 .nav-atlas a {
-  width: 53px;
+  width: 81px;
   background-position: 0 -52px;
   background-color: #eee;
 }
 
 .nav-voila a {
-  width: 50px;
+  width: 78px;
   background-position: -81px 0;
 }
 
