@@ -1,78 +1,78 @@
-//  Tables
 .tbl,
 .table {
-    width: 100%;
-    margin-bottom: 20px;
-    background: #fff;
-    box-shadow: 0 1px 10px rgba(0,0,0,0.2);
-    text-transform: none;
+  box-sizing: border-box;
+  width: 100%;
+  background: white;
+  box-shadow: 0 1px 10px rgba(0,0,0,0.2);
+  text-transform: none;
+  border-spacing: 0;
 }
 
 .tbl thead,
 .table thead {
-    border-bottom: 1px solid #ccc;
+  border-radius: 5px 5px 0 0;
 }
 
 .tbl thead tr,
 .table thead tr {
-    border: 1px solid #684090;
-    background-color: #8e5dbf;
-    background: -moz-linear-gradient(top, #8e5dbf, #3e126a);
-    background: -webkit-gradient(linear, left top, left bottom, from(#8e5dbf), to(#3e126a));
-    box-shadow: inset 0 1px 1px rgba(255,255,255,0.4);
-    text-shadow: 0 -1px 0 rgba(0,0,0,0.6);
+  background-color: $secondary-color;
+  box-shadow: inset 0 1px 1px rgba(255,255,255,0.4);
+  text-shadow: 0 -1px 0 rgba(0,0,0,0.6);
 }
 
 .tbl thead th,
 .table thead th {
-    padding: 3px 5px 5px;
-    color: #fff;
-    font-size: 16px;
-    border-right: 1px solid #8e5dbf;
-    border-left: 1px solid #684090;
+  padding: .5rem .5rem .6rem;
+  color: #fff;
+  border-left: 1px solid $secondary-color;
+  font-family: $secondary-header-font-family;
+  font-weight: 500;
+}
+
+.tbl thead th:first-child,
+.table thead th:first-child {
+  border-left: none;
 }
 
 .tbl tbody,
 .table tbody {
-    border-bottom: 1px solid #684090;
+  border: 1px solid $secondary-color;
+  border-top: none;
 }
 
 .tbl tbody td,
 .table tbody td {
-    padding: .666rem .444rem;
-    font-size: 14px;
-    border-left: 1px solid #ddd;
-    border-right: 1px solid #8e5dbf;
-    border-left: 1px solid #684090;
+  padding: 5px;
+  font-size: 14px;
+  border-left: 1px solid $secondary-color;
 }
 
-th.first,
-td.first {
-    width: 200px;
-}
-
-th.second,
-td.second {
-    width: 362px;
-}
-
-th.fourth,
-td.fourth {
-    width: 290px;
+.tbl tbody td:first-child,
+.table tbody td:first-child {
+  border-left: none;
 }
 
 tr:nth-child(even) {
-    background: #F2EDF8;
+  background: transparentize($secondary-color, .9);
 }
 
-//  Tabular structure with blocks
-ul.tabular { @extend %bare-list; }
-.tabular {
-    @extend %cf;
+// Add border-radius to the corner cells
+.tbl thead th:last-child,
+.table thead th:last-child {
+  border-top-right-radius: 5px;
 }
-.tabular-row {
-    @extend %cf;
-    display: block;
-    padding: 1.125rem 0;
-    border-bottom: 1px solid $color-grey;
+
+.tbl thead th:first-child,
+.table thead th:first-child {
+  border-top-left-radius: 5px;
+}
+
+.tbl tbody tr:last-child td:last-child,
+.table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 5px;
+}
+
+.tbl tbody tr:first-child td:first-child,
+.table tbody tr:first-child td:first-child {
+  border-bottom-left-radius: 5px;
 }
