@@ -126,7 +126,7 @@
 .sub-nav > li {
   position: relative;
   float: left;
-  font: 21px 'Raleway', sans-serif;
+  font: 18px 'Raleway', sans-serif;
   font-weight: 400;
 }
 
@@ -169,11 +169,11 @@
 .navbar-api-explorer-btn {
     position: relative;
     float: right;
-    margin: 2px 0 0;
+    margin: 1px 0 0;
     border: 1px solid #684090;
     border-radius: 5px;
-    font-size: 18px;
-    padding: 5px 15px 8px;
+    font-size: 16px;
+    padding: 4px 15px 6px;
     background-color: #8e5dbf;
     background: linear-gradient(180deg, #8e5bdf, #3e126a);
     box-shadow: inset 0 1px 1px rgba(255,255,255,0.4), 0 1px 5px rgba(0,0,0,0.3);
@@ -205,7 +205,7 @@
     float: right;
     width: 25px;
     height: 25px;
-    margin: 8px 0 0 8px;
+    margin: 6px 0 0 8px;
     border-radius: 50%;
 }
 
@@ -220,7 +220,7 @@
     -webkit-transition: all .1s ease;
     transition: all .1s ease;
     font-family: 'Raleway', sans-serif;
-    font-size: 16px;
+    font-size: 14px;
     color: #306;
 }
 
@@ -291,7 +291,7 @@
     top: 12px;
     left: auto;
     right: 0;
-    font-size: 21px;
+    font-size: 18px;
     font-family: 'Raleway', sans-serif;
 }
 
