@@ -11053,15 +11053,17 @@ app.factory('ScrubbablesHelpers', ['$q',
           console.error('channelFilter() -> wrong type');
           return null;
       }
+      console.log(channel_id);
+      channel_id = channel_id.toLowerCase();
       for (var i=0; items.length > i; i++) {
-          var _result = _.filter(items[i].broadcasts, function(itm) {
-              return (itm.channel.id === channel_id) ? true : false;
-          });
-          if (_result.length) {
-              items[i].broadcasts = _result;
-          }else{
-              items[i] = null;
-          }
+        var _result = _.filter(items[i].broadcasts, function(itm) {
+          return (itm.channel.id === channel_id) ? true : false;
+        });
+        if (_result.length) {
+          items[i].broadcasts = _result;
+        }else{
+          items[i] = null;
+        }
       }
       return _.compact(items);
   };
@@ -12336,108 +12338,136 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
 var app = angular.module('atlasAdmin.directives.bbcscrubbables');
 
 app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http', 'GroupsService', 'BBCScrubbablesService', 'ScrubbablesHelpers', '$location',
-    function($document, $q, $timeout, atlasHost, $http, Groups, Scrubbables, Helpers, $location) {
-
-    var controller = function($scope, $el, $attr) {
-        var $el = $($el);
-        var input_timer;
-        $scope.atlasSearch = {};
-        $scope.atlasSearch.selectedItem = {};
+function($document, $q, $timeout, atlasHost, $http, Groups, Scrubbables, Helpers, $location) {
+  
+  var controller = function($scope, $el) {
+    $el = $($el);
+    var input_timer;
+    $scope.atlasSearch = {};
+    $scope.atlasSearch.selectedItem = {};
+    $scope.atlasSearch.showAutocomplete = false;
+    
+    $scope.atlasSearch.selectAtlasItem = function(title, id) {
+      if (!_.isString(title) && !_.isString(id)) { 
+        return false;
+      }
+      $location.path('/scrubbables/'+id);
+      $scope.loading = true;
+      $scope.atlasSearch.searchquery = title;
+      $scope.atlasSearch.showAutocomplete = false;
+    };
+    
+    $scope.atlasSearch.messageOutput = function(message) {
+      $scope.atlasSearch.showMessage = (typeof message === 'string') ? true : false;
+      if ($scope.atlasSearch.showMessage) {
+        $scope.atlasSearch.message = message;
+        $scope.atlasSearch.showMessage = true;
         $scope.atlasSearch.showAutocomplete = false;
-
-        $scope.atlasSearch.selectAtlasItem = function(title, id) {
-            if (!_.isString(title) && !_.isString(id)) { 
+      }else{
+        $scope.atlasSearch.message = '';
+        $scope.atlasSearch.showMessage = false;
+      }
+    };
+    
+    var searchRequest = function() {
+      var _query = $scope.atlasSearch.searchquery;
+      if (!_query.length) {
+        return;
+      }
+      
+      var getContentForUri = function(uri) {
+        var defer = $q.defer();
+        if (!_.isString(uri)) {
+          defer.reject(new Error('URI arg should be a string'));
+          return defer.promise;
+        }
+        Scrubbables.content.uri($scope.searchKey, uri).then(function(item) {
+          defer.resolve(item.contents[0]);
+        });
+        return defer.promise;
+      };
+      
+      Scrubbables.search($scope.searchKey, _query).then(function(res) {
+        if (! _.has(res.contents[0], 'broadcasts')) {
+          console.warn('Result content has no broadcasts');
+          return false;
+        }
+        
+        var broadcasts = res.contents[0].broadcasts || null;
+        if (broadcasts) {
+          broadcasts = _.filter(res.contents[0].broadcasts, function(bcast) {
+            var channelId = bcast.channel.id || '';
+            if (channelId.toLowerCase() === 'cbbh') {
+              return true;
+            }
+          });
+          
+          // When the broadcast cant be found on the original correct channel, look
+          // inside the variations array
+          if (_.isEmpty(broadcasts)) {
+            broadcasts = _.filter(res.contents[0].broadcasts, 
+            function (bcast) {
+              if (! _.isArray(bcast.channel.parent.variations)) {
                 return false;
-            }
-            var _result;
-            $location.path('/scrubbables/'+id);
-            $scope.loading = true;
-            $scope.atlasSearch.searchquery = title;
-            $scope.atlasSearch.showAutocomplete = false;
-        }
-
-        $scope.atlasSearch.messageOutput = function(message) {
-            $scope.atlasSearch.showMessage = (typeof message === 'string') ? true : false;
-            var _messagetpl;
-            if ($scope.atlasSearch.showMessage) {
-                $scope.atlasSearch.message = message;
-                $scope.atlasSearch.showMessage = true;
-                $scope.atlasSearch.showAutocomplete = false;
+              }
+              var variations = bcast.channel.parent.variations;
+              _.forEach(variations, function (variant) {
+                if (variant.id.toLowerCase() === 'cbbh') {
+                  return true;
+                }
+              });
+            });
+          }
+          
+          if (! _.isEmpty(broadcasts)) {
+            getContentForUri(res.contents[0].uri).then(
+              function(contents) {
+                $scope.atlasSearch.searchResults.push( Helpers.formatResponse(contents) );
+                $scope.atlasSearch.messageOutput(null);
+                $scope.atlasSearch.showAutocomplete = true;
+              }, function(err) { console.error(err); });
             }else{
-                $scope.atlasSearch.message = '';
-                $scope.atlasSearch.showMessage = false;
+              $scope.atlasSearch.messageOutput('No results found');
+              $scope.atlasSearch.showAutocomplete = false;
             }
+          }else{
+            $scope.atlasSearch.messageOutput('No results found');
+            $scope.atlasSearch.showAutocomplete = false;
+          }
+        }, function() {
+          $scope.atlasSearch.showAutocomplete = false;
+        });
+      };
+      
+      $scope.atlasSearch.lookupAtlasItem = function() {
+        var _query = $scope.atlasSearch.searchquery;
+        $scope.atlasSearch.message = null;
+        $scope.atlasSearch.searchResults = [];
+        
+        if (!_.isString(_query)) {
+          return;
         }
-
-        var searchRequest = function() {
-            var _query = $scope.atlasSearch.searchquery;
-            if (!_query.length) return;
-
-            var getContentForUri = function(uri) {
-                var bbcone;
-                var defer = $q.defer();
-                if (!_.isString(uri)) {
-                    defer.reject(new Error('URI arg should be a string'));
-                    return defer.promise;
-                }
-                Scrubbables.content.uri($scope.searchKey, uri).then(function(item) {
-                    defer.resolve(item.contents[0]);
-                });
-                return defer.promise;
-            }
-
-            Scrubbables.search($scope.searchKey, _query).then(function(res) {
-                var broadcasts, air_date;
-                broadcasts = res.contents[0].broadcasts || null;
-                if (broadcasts) {
-                    broadcasts = _.filter(res.contents[0].broadcasts, function(bcast) {
-                        if (bcast.channel.id === 'cbbh') return true;
-                    })
-                    if (broadcasts.length) {
-                        getContentForUri(res.contents[0].uri).then(
-                            function(contents) {
-                            $scope.atlasSearch.searchResults.push( Helpers.formatResponse(contents) );
-                            $scope.atlasSearch.messageOutput(null);
-                            $scope.atlasSearch.showAutocomplete = true;
-                        }, function(err) { console.error(err) });
-                    }else{
-                        $scope.atlasSearch.messageOutput('No results found');
-                        $scope.atlasSearch.showAutocomplete = false;
-                    }
-                }else{
-                    $scope.atlasSearch.messageOutput('No results found');
-                    $scope.atlasSearch.showAutocomplete = false;
-                }
-            }, function(err) {
-                $scope.atlasSearch.showAutocomplete = false;
-            })
+        
+        if (! _query.length) {
+          $timeout.cancel(input_timer);
+          $scope.atlasSearch.search_results = null;
+          $scope.atlasSearch.showAutocomplete = false;
+        } else if (_query.length > 2) {
+          $scope.atlasSearch.messageOutput('Searching...');
+          $timeout.cancel(input_timer);
+          input_timer = $timeout(searchRequest, 1000);
         }
-
-        $scope.atlasSearch.lookupAtlasItem = function() {
-            var _query = $scope.atlasSearch.searchquery;
-            $scope.atlasSearch.message = null;
-            $scope.atlasSearch.searchResults = [];
-            if (!_.isString(_query)) return;
-            if (!_query.length) {
-                $timeout.cancel(input_timer);
-                $scope.atlasSearch.search_results = null;
-                $scope.atlasSearch.showAutocomplete = false;
-            } else if (_query.length > 2) {
-                $scope.atlasSearch.messageOutput('Searching...');
-                $timeout.cancel(input_timer);
-                input_timer = $timeout(searchRequest, 1000);
-            }
-        }
-
-    }
-
+      };
+      
+    };
+    
     return {
-        restrict: 'E',
-        scope: false,
-        link: controller,
-        templateUrl: 'partials/bbcScrubbables/atlasSearch.html'
-    }
-}]);
+      restrict: 'E',
+      scope: false,
+      link: controller,
+      templateUrl: 'partials/bbcScrubbables/atlasSearch.html'
+    };
+  }]);
 
 'use strict';
 var app = angular.module('atlasAdmin.controllers.errors', []);
@@ -14212,7 +14242,7 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
 
 
   var calculateSegmentDuration = function(start, end, broadcastDuration) {
-    console.log(start, end, broadcastDuration);
+    // console.log(start, end, broadcastDuration);
     return (broadcastDuration - start) - (broadcastDuration - end);
   };
 
@@ -14275,7 +14305,7 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
       // ..and load broadcast content from owl
       Scrubbables.content.id($scope.deerKey, id).then(
       function(item) {
-        $scope.atlasSearch.selectedItem = Helpers.channelFilter(item.contents, 'cbbh')[0];
+        $scope.atlasSearch.selectedItem = item.contents[0];
         $scope.scrubbableSegments = loadSavedSegments(res);
       },
       function(err) {
@@ -14332,7 +14362,6 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
       $scope.showUI = true;
       $scope.loading = false;
       pushSegmentsToTimeline();
-      console.log($scope.episode);
     }
   });
 

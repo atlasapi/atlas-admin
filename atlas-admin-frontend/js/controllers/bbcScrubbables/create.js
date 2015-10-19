@@ -26,7 +26,7 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
 
 
   var calculateSegmentDuration = function(start, end, broadcastDuration) {
-    console.log(start, end, broadcastDuration);
+    // console.log(start, end, broadcastDuration);
     return (broadcastDuration - start) - (broadcastDuration - end);
   };
 
@@ -89,7 +89,7 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
       // ..and load broadcast content from owl
       Scrubbables.content.id($scope.deerKey, id).then(
       function(item) {
-        $scope.atlasSearch.selectedItem = Helpers.channelFilter(item.contents, 'cbbh')[0];
+        $scope.atlasSearch.selectedItem = item.contents[0];
         $scope.scrubbableSegments = loadSavedSegments(res);
       },
       function(err) {
@@ -146,7 +146,6 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
       $scope.showUI = true;
       $scope.loading = false;
       pushSegmentsToTimeline();
-      console.log($scope.episode);
     }
   });
 

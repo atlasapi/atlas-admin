@@ -39,15 +39,17 @@ app.factory('ScrubbablesHelpers', ['$q',
           console.error('channelFilter() -> wrong type');
           return null;
       }
+      console.log(channel_id);
+      channel_id = channel_id.toLowerCase();
       for (var i=0; items.length > i; i++) {
-          var _result = _.filter(items[i].broadcasts, function(itm) {
-              return (itm.channel.id === channel_id) ? true : false;
-          });
-          if (_result.length) {
-              items[i].broadcasts = _result;
-          }else{
-              items[i] = null;
-          }
+        var _result = _.filter(items[i].broadcasts, function(itm) {
+          return (itm.channel.id === channel_id) ? true : false;
+        });
+        if (_result.length) {
+          items[i].broadcasts = _result;
+        }else{
+          items[i] = null;
+        }
       }
       return _.compact(items);
   };
