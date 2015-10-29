@@ -252,3 +252,34 @@
 }
 
 .select-row { text-align: center; }
+
+
+.feedsAcceptModal {
+  .pid-check {
+    display: block;
+    width: 100%;
+  }
+  
+  .search-result {
+    @extend %cf;
+    display: block;
+    width: 100%;
+    background: rgb(212, 212, 212);
+  }
+  
+  .result-img { 
+    float: left;
+    box-sizing: border-box;
+    width: 40%;
+    padding-right: 5%;
+    > img { width: 100%; }
+    
+  }
+  
+  
+  .result-content { 
+    float: left;
+    box-sizing: border-box;
+    width: 60%;
+  }
+}

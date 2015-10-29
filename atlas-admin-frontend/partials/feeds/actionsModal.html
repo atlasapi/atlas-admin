@@ -1,0 +1,21 @@
+<h1>Enter the pid for the content you would like to {{actionName}}</h1>
+<div class="statusMessage" ng-show="resultMessage">{{resultMessage}}</div>
+<section class="pid-check" ng-hide="clearUI">
+  <div class="field-holder">
+    <input type="text" ng-model="pidValue" required placeholder="pid">
+    <button ng-click="findPid(pidValue)">Check pid</button>
+  </div>  
+</section>
+<section class="search-result" ng-show="showSearchRes">
+  <button ng-click="triggerAction(actionName, pidValue)">{{actionName}}</button>
+  <div class="atlasresult">
+    <div class="result-img"><img ng-src="{{atlasResult.imageUrl}}"></div>
+    <div class="result-content">
+      <header>
+        <h2 class="meta-title">{{atlasResult.title}}</h2>
+        <span class="meta-time">{{atlasResult.time}}</span>
+      </header>
+      <p>{{atlasResult.description}}</p>
+    </div>
+  </div>
+</section>

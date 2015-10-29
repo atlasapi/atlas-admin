@@ -155,7 +155,8 @@ function($document, $q, $modal) {
       };
       
       var _modalInstance = $modal.open({
-        template: '<h1>'+_content.title+'</h1></div><div class="feed-modal-options"><button ng-disabled="isSendingAction" ng-click="ok()">'+_content.action+'</button><button ng-click="dismiss()">Cancel</button>',
+        // template: '<h1>'+_content.title+'</h1></div><div class="feed-modal-options"><button ng-disabled="isSendingAction" ng-click="ok()">'+_content.action+'</button><button ng-click="dismiss()">Cancel</button>',
+        templateUrl: 'partials/feeds/actionsModal.html',
         controller: 'CtrlFeedsAcceptModal',
         windowClass: 'feedsAcceptModal',
         scope: $scope,
@@ -169,8 +170,8 @@ function($document, $q, $modal) {
     $(el).on('click', function() {
       if ($scope.task || $scope.tasks) {
         var action = attr.actionModal || null;
-        modal(action).then(function() {
-
+        modal(action).then( function() {
+          
         });
       }
     });
@@ -182,18 +183,63 @@ function($document, $q, $modal) {
   };
 }]);
 
-app.controller('CtrlFeedsAcceptModal', ['$scope', '$modalInstance', '$q', 'FeedsService', 'modalAction',
-function($scope, $modalInstance, $q, Feeds, modalAction) {
-  var action = modalAction;
-  $scope.isSendingAction = false;
-  
-  $scope.ok = function() {
-    var _task = $scope.tasks || $scope.task;
-    $scope.isSendingAction = true;
-    Feeds.action(action, _task, $scope.selectedTask).then($modalInstance.close,
-      function() {
-        console.error('Problem with action request');
-      });
+app.controller('CtrlFeedsAcceptModal', ['$scope', '$modalInstance', '$q', 'FeedsService', 'modalAction', '$http', 'atlasHost',
+function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
+    var pidLength = 8;
+    $scope.actionName = modalAction;
+    $scope.pidValue = '';
+    $scope.showSearchRes = false;
+    $scope.resultMessage = false;
+    $scope.clearUI = false;
+    $scope.atlasResult = {  };
+    
+    var runRevoke = function (pid) {
+      var defer = $q.defer();
+      Feeds.request('youview/bbc_nitro/action/revoke', 'post').then(
+      function (data, status) {
+        $scope.showSearchRes = false;
+        $scope.atlasResult = {  };
+        $scope.resultMessage = 'The content has been successfully revoked';
+        $scope.clearUI = true;
+      }, console.error);
+      
+      return defer.promise;
+    };
+    
+    var runIngest = function (pid) {
+      console.log('ingest' + pid);
+    };
+
+    
+    $scope.findPid = function (pidValue) {
+      if (pidValue.length !== pidLength) {
+        return console.warn('PID isn\'t the correct length');
+      }
+      var nitroUri = 'http://nitro.bbc.co.uk/programmes/' + pidValue;
+      $http.get(atlasHost + '/3.0/content.json?apiKey=2b8d39c3ed3040aca8c30a46bd38e685&uri=' + nitroUri + '&annotations=description,extended_description')
+        .success( function (data, status) {
+          var atlasres = data.contents[0];
+          if (atlasres) {
+            $scope.showSearchRes = true;
+            $scope.atlasResult.imageUrl = atlasres.image;
+            $scope.atlasResult.title = atlasres.title;
+            $scope.atlasResult.time = 1;
+            $scope.atlasResult.description = atlasres.description;
+          }
+        });
+    };    
+    
+    $scope.triggerAction = function (actionName, pid) {
+      if (! pid) {
+        return console.warn('cannot trigger action because there is no pid argument');
+      }
+      if (! actionName) {
+        return console.warn('cannot trigger action because there is no actionName argument');
+      }
+      switch (actionName) {
+        case 'upload': runIngest(pid); break;
+        case 'revoke': runRevoke(pid); break;
+      }
     };
     
     $scope.dismiss = function() {

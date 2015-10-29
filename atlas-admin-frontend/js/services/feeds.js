@@ -32,7 +32,7 @@ app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
     //  @param feed_uri {string}
     //  @param method {string}
     //  @param params {object}
-    //  @returns promise
+    //  @returns promise<$http Response, String>
     //
     var request = function(feed_uri, method, params) {
         method = method || 'get';
