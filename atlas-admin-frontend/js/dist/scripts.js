@@ -13342,7 +13342,7 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
       function (data, status) {
         $scope.showSearchRes = false;
         $scope.atlasResult = {  };
-        $scope.resultMessage = 'The content has been successfully revoked';
+        $scope.resultMessage = 'The revoke transaction has been added to the queue';
         $scope.clearUI = true;
       }, console.error);
       
@@ -13356,7 +13356,7 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
       function (data, status) {
         $scope.showSearchRes = false;
         $scope.atlasResult = {  };
-        $scope.resultMessage = 'The content has been successfully uploaded';
+        $scope.resultMessage = 'The publish transaction has been added to the queue';
         $scope.clearUI = true;
       }, console.error);
       
