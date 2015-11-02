@@ -112,8 +112,8 @@ function forceContentIntoQueue (uri) {
       data += chunk;
     });
     res.on('end', function() {
-      if (res.statusCode !== 202 || res.statusCode !== 200) {
-        defer.reject('Force update status for URI ' + uri + ': ' + res.statusCode);
+      if (res.statusCode !== 202 && res.statusCode !== 200) {
+        defer.reject('Force update failed ' + uri + ': ' + res.statusCode);
         return;
       }
       defer.resolve(res.statusCode);
