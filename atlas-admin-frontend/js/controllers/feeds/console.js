@@ -246,7 +246,7 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
         return console.warn('PID isn\'t the correct length');
       }
       var nitroUri = 'http://nitro.bbc.co.uk/programmes/' + pidValue;
-      $http.get(atlasHost + '/3.0/content.json?apiKey=cae02bc954cf40809d6d70601d3e0b88&uri=' + nitroUri + '&annotations=description,extended_description,brand_summary')
+      $http.get(atlasHost + '/3.0/content.json?apiKey=b59bff7236404ae887907961b8092b8e&uri=' + nitroUri + '&annotations=description,extended_description,brand_summary')
         .success( function (data, status) {
           var atlasres = data.contents[0];
           if (atlasres) {
