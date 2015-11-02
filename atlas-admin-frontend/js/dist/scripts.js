@@ -11029,15 +11029,17 @@ app.factory('ScrubbablesHelpers', ['$q',
           console.error('channelFilter() -> wrong type');
           return null;
       }
+      console.log(channel_id);
+      channel_id = channel_id.toLowerCase();
       for (var i=0; items.length > i; i++) {
-          var _result = _.filter(items[i].broadcasts, function(itm) {
-              return (itm.channel.id === channel_id) ? true : false;
-          });
-          if (_result.length) {
-              items[i].broadcasts = _result;
-          }else{
-              items[i] = null;
-          }
+        var _result = _.filter(items[i].broadcasts, function(itm) {
+          return (itm.channel.id === channel_id) ? true : false;
+        });
+        if (_result.length) {
+          items[i].broadcasts = _result;
+        }else{
+          items[i] = null;
+        }
       }
       return _.compact(items);
   };
@@ -13370,7 +13372,7 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
         return console.warn('PID isn\'t the correct length');
       }
       var nitroUri = 'http://nitro.bbc.co.uk/programmes/' + pidValue;
-      $http.get(atlasHost + '/3.0/content.json?apiKey=2b8d39c3ed3040aca8c30a46bd38e685&uri=' + nitroUri + '&annotations=description,extended_description,brand_summary')
+      $http.get(atlasHost + '/3.0/content.json?apiKey=643abee7104c482597bb7e98158d1d4b&uri=' + nitroUri + '&annotations=description,extended_description,brand_summary')
         .success( function (data, status) {
           var atlasres = data.contents[0];
           if (atlasres) {
