@@ -1,23 +1,23 @@
 'use strict';
-var common  = require('../../common'),
-    config  = require('../../config'),
-    User    = require('./userProvider'),
-    Q       = require('q'),
-    _       = require('lodash');
+var common  = require('../../common');
+var config  = require('../../config');
+var User    = require('./userProvider');
+var Q       = require('q');
+var _       = require('lodash');
 
-
-function Feeds() {
+function feedsProvider() {
 
     // return all feeds for this user
     var getAllFeeds = function() {
-        var defer = Q.defer(),
-            feeds = [];
+        var defer = Q.defer();
+        var feeds = [];
 
         User.groups().then(function(groups) {
             feeds = _.map(groups, function(n) {
-                if (_.isArray(n.data.feeds)) {
-                    return n.data.feeds;
-                }
+              if (! _.isArray(n.data.feeds)) {
+                return console.warn('No feed data was returned');
+              }
+              return n.data.feeds;
             });
             defer.resolve(_.compact(feeds)[0]);
         }, defer.reject);
@@ -29,4 +29,4 @@ function Feeds() {
     };
 }
 
-module.exports = Feeds();
+module.exports = feedsProvider();
