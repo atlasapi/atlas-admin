@@ -192,10 +192,29 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
     $scope.resultMessage = false;
     $scope.clearUI = false;
     $scope.atlasResult = {  };
+    $scope.uiStrings = {
+      revoke: 'Revoke',
+      upload: 'Publish'
+    };
+    
+    var trimString = function (wordCount, string) {
+      var append = '';
+      var words = string.split(' ');
+      
+      if (words.length > wordCount) {
+        append = '...';
+      }
+      var truncated = words.slice(0, wordCount).join(' ');
+      return truncated + append;
+    };
     
     var runRevoke = function (pid) {
       var defer = $q.defer();
-      Feeds.request('youview/bbc_nitro/action/revoke', 'post').then(
+      var payload = {
+        uri: 'http://nitro.bbc.co.uk/programmes/' + pid
+      };
+      
+      Feeds.request('youview/bbc_nitro/action/revoke', 'post', payload).then(
       function (data, status) {
         $scope.showSearchRes = false;
         $scope.atlasResult = {  };
@@ -207,8 +226,19 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
     };
     
     var runIngest = function (pid) {
-      console.log('ingest' + pid);
+      var defer = $q.defer();
+      var payload = {};
+      Feeds.request('forceUpdate/' + pid, 'post', payload).then(
+      function (data, status) {
+        $scope.showSearchRes = false;
+        $scope.atlasResult = {  };
+        $scope.resultMessage = 'The content has been successfully uploaded';
+        $scope.clearUI = true;
+      }, console.error);
+      
+      return defer.promise;
     };
+      
 
     
     $scope.findPid = function (pidValue) {
@@ -216,18 +246,20 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
         return console.warn('PID isn\'t the correct length');
       }
       var nitroUri = 'http://nitro.bbc.co.uk/programmes/' + pidValue;
-      $http.get(atlasHost + '/3.0/content.json?apiKey=2b8d39c3ed3040aca8c30a46bd38e685&uri=' + nitroUri + '&annotations=description,extended_description')
+      $http.get(atlasHost + '/3.0/content.json?apiKey=2b8d39c3ed3040aca8c30a46bd38e685&uri=' + nitroUri + '&annotations=description,extended_description,brand_summary')
         .success( function (data, status) {
           var atlasres = data.contents[0];
           if (atlasres) {
             $scope.showSearchRes = true;
             $scope.atlasResult.imageUrl = atlasres.image;
             $scope.atlasResult.title = atlasres.title;
+            $scope.atlasResult.brand = atlasres.container.title || '';
             $scope.atlasResult.time = 1;
-            $scope.atlasResult.description = atlasres.description;
+            $scope.atlasResult.description = trimString(60, atlasres.description);
           }
         });
     };    
+    
     
     $scope.triggerAction = function (actionName, pid) {
       if (! pid) {

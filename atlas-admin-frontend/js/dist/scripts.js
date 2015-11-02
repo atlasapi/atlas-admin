@@ -10900,116 +10900,92 @@ function($http, Authentication, atlasApiHost, $q) {
 var app = angular.module('atlasAdmin.services.feeds', []);
 
 app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
-    function($http, Authentication, atlasApiHost, $q) {
-
-    //  Used for getting an array of available feeds for this user
-    //
-    //  @returns promise
-    //
-    var getFeeds = function() {
-        var defer = $q.defer();
-        $http({
-            method: 'get',
-            url: Authentication.appendTokenToUrl(atlasApiHost+'/feeds')
-        })
-        .success(function(data, status) {
-            if (status === 200) {
-              defer.resolve(data);
-            }else{
-              defer.reject();
-            }
-        })
-        .error(function(data, status) {
-            defer.reject(status);
-        });
-        return defer.promise;
-    };
-
-    //  Used for making a request
-    //
-    //  @param feed_uri {string}
-    //  @param method {string}
-    //  @param params {object}
-    //  @returns promise<$http Response, String>
-    //
-    var request = function(feed_uri, method, params) {
-        method = method || 'get';
-        params = params || null;
-        var defer = $q.defer();
-        var request;
-
-        if (! _.isString(feed_uri)) {
-            defer.reject('Feed uri must be included as first argument');
-            return defer.promise;
-        }
-
-        request = {
-            method: method,
-            url: Authentication.appendTokenToUrl(atlasApiHost+'/feeds/'+feed_uri)
-        };
-
-        if (_.isObject(params)) {
-            request.data = params;
-        }
-
-        $http(request).success(defer.resolve);
-        return defer.promise;
+function($http, Authentication, atlasApiHost, $q) {
+  
+  
+  //  Used for getting an array of available feeds for this user
+  //
+  //  @returns promise
+  //
+  var getFeeds = function() {
+    var defer = $q.defer();
+    $http({
+      method: 'get',
+      url: Authentication.appendTokenToUrl(atlasApiHost+'/feeds')
+    })
+    .success(function(data, status) {
+      if (status === 200) {
+        defer.resolve(data);
+      }else{
+        defer.reject();
+      }
+    })
+    .error(function(data, status) {
+      defer.reject(status);
+    });
+    return defer.promise;
+  };
+  
+  
+  //  Used for making a request
+  //
+  //  @param feed_uri {string}
+  //  @param method {string}
+  //  @param params {object}
+  //  @returns promise<$http Response, String>
+  //
+  var request = function(feed_uri, method, params) {
+    method = method || 'get';
+    params = params || null;
+    var defer = $q.defer();
+    var request;
+    
+    if (! _.isString(feed_uri)) {
+      defer.reject('Feed uri must be included as first argument');
+      return defer.promise;
+    }
+    
+    request = {
+      method: method,
+      url: Authentication.appendTokenToUrl(atlasApiHost + '/feeds/' + feed_uri)
     };
     
-
-    //  Used for running actions on tasks
-    //  
-    //  @param action {string}
-    //  @param tasks {object}
-    //  @param selection {array}
-    //
-    var doAction = function(action, tasks, selection) {
-        action = action || null;
-        var defer = $q.defer();
-        var _tasks = tasks || null;
-        var _selection = selection || null; 
-        var _postdata = {};
-
-        if (selection.length) {
-            var counter = _selection.length;
-            _selection.forEach(function(item) {
-                var _selected = _.find(tasks, function(task) {
-                    return task.id === item;
-                });
-                _postdata = {
-                    uri: _selected.content_uri,
-                    type: _selected.element_type,
-                    element_id: _selected.element_id
-                };
-                request('youview/bbc_nitro/action/'+action, 'post', _postdata).then(function() {
-                    counter--;
-                    if (! counter) {
-                      defer.resolve();
-                    }
-                });
-            });
-        }else{
-            if (tasks.content_uri && tasks.element_type && tasks.element_id) {
-                _postdata = {
-                    uri: tasks.content_uri,
-                    type: tasks.element_type,
-                    element_id: tasks.element_id
-                };
-                request('youview/bbc_nitro/action/'+action, 'post', _postdata).then(function() {
-                    defer.resolve();
-                });
-            }else{
-                defer.reject();
-            }
-        }   
-        return defer.promise;
-    };
-
-    return {
-        action: doAction,
-        get: getFeeds,
-        request: request
-    };
+    if (_.isObject(params)) {
+      request.data = params;
+    }
+    
+    $http(request).success(defer.resolve);
+    return defer.promise;
+  };
+  
+  
+  //  Used for running actions on tasks
+  //  
+  //  @param action {string}
+  //  @param tasks {object}
+  //  @param selection {array}
+  //
+  var doAction = function(action, pid) {
+    var defer = $q.defer();
+    var _postdata = { uri: 'http://nitro.bbc.co.uk/programmes/' + pid };
+    
+    if (! _.isString(action) || ! _.isString(action) ) {
+      defer.reject(new Error('`action` and `pid` should be a string'));
+    }
+    
+    request('youview/bbc_nitro/action/' + action + '/' + pid, 'post', _postdata).then(
+    function() {
+      defer.resolve();
+    });
+    
+    return defer.promise;
+  };
+  
+  return {
+    action: doAction,
+    get: getFeeds,
+    request: request
+  };
 }]);
 
 var app = angular.module('atlasAdmin.services.bbcscrubbables', []);
@@ -13340,10 +13316,29 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
     $scope.resultMessage = false;
     $scope.clearUI = false;
     $scope.atlasResult = {  };
+    $scope.uiStrings = {
+      revoke: 'Revoke',
+      upload: 'Publish'
+    };
+    
+    var trimString = function (wordCount, string) {
+      var append = '';
+      var words = string.split(' ');
+      
+      if (words.length > wordCount) {
+        append = '...';
+      }
+      var truncated = words.slice(0, wordCount).join(' ');
+      return truncated + append;
+    };
     
     var runRevoke = function (pid) {
       var defer = $q.defer();
-      Feeds.request('youview/bbc_nitro/action/revoke', 'post').then(
+      var payload = {
+        uri: 'http://nitro.bbc.co.uk/programmes/' + pid
+      };
+      
+      Feeds.request('youview/bbc_nitro/action/revoke', 'post', payload).then(
       function (data, status) {
         $scope.showSearchRes = false;
         $scope.atlasResult = {  };
@@ -13355,8 +13350,19 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
     };
     
     var runIngest = function (pid) {
-      console.log('ingest' + pid);
+      var defer = $q.defer();
+      var payload = {};
+      Feeds.request('forceUpdate/' + pid, 'post', payload).then(
+      function (data, status) {
+        $scope.showSearchRes = false;
+        $scope.atlasResult = {  };
+        $scope.resultMessage = 'The content has been successfully uploaded';
+        $scope.clearUI = true;
+      }, console.error);
+      
+      return defer.promise;
     };
+      
 
     
     $scope.findPid = function (pidValue) {
@@ -13364,18 +13370,20 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
         return console.warn('PID isn\'t the correct length');
       }
       var nitroUri = 'http://nitro.bbc.co.uk/programmes/' + pidValue;
-      $http.get(atlasHost + '/3.0/content.json?apiKey=2b8d39c3ed3040aca8c30a46bd38e685&uri=' + nitroUri + '&annotations=description,extended_description')
+      $http.get(atlasHost + '/3.0/content.json?apiKey=2b8d39c3ed3040aca8c30a46bd38e685&uri=' + nitroUri + '&annotations=description,extended_description,brand_summary')
         .success( function (data, status) {
           var atlasres = data.contents[0];
           if (atlasres) {
             $scope.showSearchRes = true;
             $scope.atlasResult.imageUrl = atlasres.image;
             $scope.atlasResult.title = atlasres.title;
+            $scope.atlasResult.brand = atlasres.container.title || '';
             $scope.atlasResult.time = 1;
-            $scope.atlasResult.description = atlasres.description;
+            $scope.atlasResult.description = trimString(60, atlasres.description);
           }
         });
     };    
+    
     
     $scope.triggerAction = function (actionName, pid) {
       if (! pid) {
