@@ -122,6 +122,7 @@ function forceContentIntoQueue (uri) {
   
   updateRequest.on('error', function () {
     defer.reject('Force update failed :(');
+    res.writeHead(400);
   });
   
   updateRequest.end();
@@ -195,6 +196,7 @@ var feedsInterface = function() {
     
     action_request.on('error', function(err) {
       console.error('Failed to get a response from processing server', err.message);
+      res.writeHead(400);
       res.end();
     });
     action_request.end();
@@ -259,6 +261,7 @@ var feedsInterface = function() {
     
     action_request.on('error', function(err) {
       console.error('Failed to get a response from processing server', err.message);
+      res.writeHead(400);
       res.end();
     });
     action_request.end();

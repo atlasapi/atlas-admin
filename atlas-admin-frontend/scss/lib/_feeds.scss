@@ -343,5 +343,16 @@
   
   .statusMessage {
     text-align: center;
+    font-size: 1.4rem;
+    border-radius: 5px;
+    padding: 1rem;
+    
+    &.success {
+      background: #65d58b;
+    }
+    
+    &.error {
+      background: #e8c485;
+    }
   }
 }
