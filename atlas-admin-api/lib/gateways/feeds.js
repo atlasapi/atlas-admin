@@ -193,8 +193,8 @@ var feedsInterface = function() {
       });
     });
     
-    action_request.on('error', function() {
-      console.error('Failed to get a response from processing server');
+    action_request.on('error', function(err) {
+      console.error('Failed to get a response from processing server', err.message);
       res.end();
     });
     action_request.end();
@@ -257,9 +257,8 @@ var feedsInterface = function() {
       });
     });
     
-    action_request.on('error', function() {
-      console.log(data);
-      console.error('Failed to get a response from processing server');
+    action_request.on('error', function(err) {
+      console.error('Failed to get a response from processing server', err.message);
       res.end();
     });
     action_request.end();
