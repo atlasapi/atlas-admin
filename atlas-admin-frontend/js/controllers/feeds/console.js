@@ -189,7 +189,7 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
     $scope.actionName = modalAction;
     $scope.pidValue = '';
     $scope.showSearchRes = false;
-    $scope.resultMessage = false;
+    $scope.resultMessage = {};
     $scope.clearUI = false;
     $scope.atlasResult = {  };
     $scope.uiStrings = {
@@ -218,9 +218,14 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
       function (data, status) {
         $scope.showSearchRes = false;
         $scope.atlasResult = {  };
-        $scope.resultMessage = 'The revoke transaction has been added to the queue';
+        $scope.resultMessage.body = 'The revoke transaction has been added to the queue';
+        $scope.resultMessage.class = 'success';
         $scope.clearUI = true;
-      }, console.error);
+      }, 
+      function () {
+        $scope.resultMessage.body = 'The transaction could not be completed because of a server error';
+        $scope.resultMessage.class = 'error';
+      });
       
       return defer.promise;
     };
@@ -232,9 +237,14 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
       function (data, status) {
         $scope.showSearchRes = false;
         $scope.atlasResult = {  };
-        $scope.resultMessage = 'The publish transaction has been added to the queue';
+        $scope.resultMessage.body = 'The publish transaction has been added to the queue';
+        $scope.resultMessage.class = 'success';
         $scope.clearUI = true;
-      }, console.error);
+      }, 
+      function () {
+        $scope.resultMessage.body = 'The transaction could not be completed because of a server error';
+        $scope.resultMessage.class = 'error';
+      });
       
       return defer.promise;
     };
@@ -257,6 +267,10 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
             $scope.atlasResult.time = 1;
             $scope.atlasResult.description = trimString(60, atlasres.description);
           }
+        })
+        .error(function (data, status) {
+          $scope.resultMessage.body = 'The PID search could not be completed because of a server error';
+          $scope.resultMessage.class = 'error';
         });
     };    
     
