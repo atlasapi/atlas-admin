@@ -1,0 +1,23 @@
+{
+  "name": "atlas-admin-frontend",
+  "version": "0.0.1",
+  "homepage": "https://github.com/atlasapi/atlas-admin",
+  "authors": [
+    "Jason Howmans <jason@metabroadcast.com>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "common-style": "git@bitbucket.org:mbst/common-style.git#~0.1.11"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

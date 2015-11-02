@@ -1,0 +1,12 @@
+{
+  "browser": true,
+  "predef": [
+    "_",  /* lodash */
+    "angular",
+    "$"
+  ],
+  "esnext": true,
+  "strict": true,
+  "globalstrict": true,
+  "devel": true /* allows for console.log etc */
+}

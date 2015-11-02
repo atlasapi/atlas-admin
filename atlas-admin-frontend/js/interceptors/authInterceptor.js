@@ -21,7 +21,11 @@ app.factory('AuthenticationInterceptor', ['$q', '$location', 'atlasHost', 'atlas
         },
 
         'responseError': function(response) {
-            var _url = response.config.url;
+            var _url = _.has(response.config, 'url') ? response.config.url : null;
+            if (! _url) {
+              console.warn('Cannot find url property in response', response.config);
+              return;
+            }
             if (_url.indexOf(atlasHost) !== -1 || _url.indexOf(atlasApiHost) !== -1) {
                 if (response.status === 400) {
                     console.error('Account not authenticated to make request to: '+_url);
@@ -31,5 +35,5 @@ app.factory('AuthenticationInterceptor', ['$q', '$location', 'atlasHost', 'atlas
             }
             return response || $q.defer(response);
         } 
-    }
+    };
 }]);

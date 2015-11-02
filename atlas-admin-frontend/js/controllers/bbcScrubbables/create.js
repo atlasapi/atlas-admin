@@ -26,7 +26,6 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
 
 
   var calculateSegmentDuration = function(start, end, broadcastDuration) {
-    console.log(start, end, broadcastDuration);
     return (broadcastDuration - start) - (broadcastDuration - end);
   };
 

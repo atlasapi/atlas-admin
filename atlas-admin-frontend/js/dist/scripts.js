@@ -10029,7 +10029,11 @@ app.factory('AuthenticationInterceptor', ['$q', '$location', 'atlasHost', 'atlas
         },
 
         'responseError': function(response) {
-            var _url = response.config.url;
+            var _url = _.has(response.config, 'url') ? response.config.url : null;
+            if (! _url) {
+              console.warn('Cannot find url property in response', response.config);
+              return;
+            }
             if (_url.indexOf(atlasHost) !== -1 || _url.indexOf(atlasApiHost) !== -1) {
                 if (response.status === 400) {
                     console.error('Account not authenticated to make request to: '+_url);
@@ -10039,8 +10043,9 @@ app.factory('AuthenticationInterceptor', ['$q', '$location', 'atlasHost', 'atlas
             }
             return response || $q.defer(response);
         } 
-    }
+    };
 }]);
+
 var app = angular.module('atlasAdmin.interceptors');
 
 // the loading bar will show when there are requests still pending, but will
@@ -10895,114 +10900,92 @@ function($http, Authentication, atlasApiHost, $q) {
 var app = angular.module('atlasAdmin.services.feeds', []);
 
 app.factory('FeedsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
-    function($http, Authentication, atlasApiHost, $q) {
-
-    //  Used for getting an array of available feeds for this user
-    //
-    //  @returns promise
-    //
-    var getFeeds = function() {
-        var defer = $q.defer();
-        $http({
-            method: 'get',
-            url: Authentication.appendTokenToUrl(atlasApiHost+'/feeds')
-        })
-        .success(function(data, status) {
-            if (status === 200) {
-              defer.resolve(data)
-            }else{
-              defer.reject(err);
-            }
-        })
-        .error(function(data, status) {
-            defer.reject(status);
-        });
-        return defer.promise;
-    }
-
-    //  Used for making a request
-    //
-    //  @param feed_uri {string}
-    //  @param method {string}
-    //  @param params {object}
-    //  @returns promise
-    //
-    var request = function(feed_uri, method, params) {
-        var request;
-        var defer = $q.defer();
-        var method = method || 'get';
-        var params = params || null;
-
-        if (!_.isString(feed_uri)) {
-            defer.reject('Feed uri must be included as first argument')
-            return defer.promise;
-        }
-
-        request = {
-            method: method,
-            url: Authentication.appendTokenToUrl(atlasApiHost+'/feeds/'+feed_uri)
-        }
-
-        if (_.isObject(params)) {
-            request.data = params;
-        }
-
-        $http(request).success(defer.resolve);
-        return defer.promise;
+function($http, Authentication, atlasApiHost, $q) {
+  
+  
+  //  Used for getting an array of available feeds for this user
+  //
+  //  @returns promise
+  //
+  var getFeeds = function() {
+    var defer = $q.defer();
+    $http({
+      method: 'get',
+      url: Authentication.appendTokenToUrl(atlasApiHost+'/feeds')
+    })
+    .success(function(data, status) {
+      if (status === 200) {
+        defer.resolve(data);
+      }else{
+        defer.reject();
+      }
+    })
+    .error(function(data, status) {
+      defer.reject(status);
+    });
+    return defer.promise;
+  };
+  
+  
+  //  Used for making a request
+  //
+  //  @param feed_uri {string}
+  //  @param method {string}
+  //  @param params {object}
+  //  @returns promise<$http Response, String>
+  //
+  var request = function(feed_uri, method, params) {
+    method = method || 'get';
+    params = params || null;
+    var defer = $q.defer();
+    var request;
+    
+    if (! _.isString(feed_uri)) {
+      defer.reject('Feed uri must be included as first argument');
+      return defer.promise;
     }
     
-
-    //  Used for running actions on tasks
-    //  
-    //  @param action {string}
-    //  @param tasks {object}
-    //  @param selection {array}
-    //
-    var doAction = function(action, tasks, selection) {
-        var defer = $q.defer();
-        var action = action || null;
-        var _tasks = tasks || null;
-        var _selection = selection || null; 
-        var _postdata = {};
-
-        if (selection.length) {
-            var counter = _selection.length;
-            _selection.forEach(function(item) {
-                var _selected = _.find(tasks, function(task) {
-                    return task.id === item;
-                });
-                _postdata = {
-                    uri: _selected.content_uri,
-                    type: _selected.element_type,
-                    element_id: _selected.element_id
-                }
-                request('youview/bbc_nitro/action/'+action, 'post', _postdata).then(function() {
-                    counter--;
-                    if (!counter) defer.resolve();
-                });
-            })
-        }else{
-            if (tasks.content_uri && tasks.element_type && tasks.element_id) {
-                _postdata = {
-                    uri: tasks.content_uri,
-                    type: tasks.element_type,
-                    element_id: tasks.element_id
-                }
-                request('youview/bbc_nitro/action/'+action, 'post', _postdata).then(function() {
-                    defer.resolve();
-                });
-            }else{
-                defer.reject();
-            }
-        }   
-        return defer.promise;
+    request = {
+      method: method,
+      url: Authentication.appendTokenToUrl(atlasApiHost + '/feeds/' + feed_uri)
+    };
+    
+    if (_.isObject(params)) {
+      request.data = params;
     }
-
-    return {
-        action: doAction,
-        get: getFeeds,
-        request: request
+    
+    $http(request).success(defer.resolve);
+    return defer.promise;
+  };
+  
+  
+  //  Used for running actions on tasks
+  //  
+  //  @param action {string}
+  //  @param tasks {object}
+  //  @param selection {array}
+  //
+  var doAction = function(action, pid) {
+    var defer = $q.defer();
+    var _postdata = { uri: 'http://nitro.bbc.co.uk/programmes/' + pid };
+    
+    if (! _.isString(action) || ! _.isString(action) ) {
+      defer.reject(new Error('`action` and `pid` should be a string'));
     }
+    
+    request('youview/bbc_nitro/action/' + action + '/' + pid, 'post', _postdata).then(
+    function() {
+      defer.resolve();
+    });
+    
+    return defer.promise;
+  };
+  
+  return {
+    action: doAction,
+    get: getFeeds,
+    request: request
+  };
 }]);
 
 var app = angular.module('atlasAdmin.services.bbcscrubbables', []);
@@ -11655,7 +11638,7 @@ var app = angular.module('atlasAdmin.directives.loadContent', []);
 app.directive('loadContent', ['$document', 'FeedsService', '$q', '$sce',
     function($document, Feeds, $q, $sce) {
 
-    var _loaded = false;
+    var _loaded;
     var loadContent = function(content) {
         var defer = $q.defer();
         if (!_loaded) {
@@ -11667,7 +11650,7 @@ app.directive('loadContent', ['$document', 'FeedsService', '$q', '$sce',
             defer.reject(null);
         }
         return defer.promise;
-    }
+    };
 
     var escapeHtml = function(unsafe) {
         return unsafe
@@ -11676,7 +11659,7 @@ app.directive('loadContent', ['$document', 'FeedsService', '$q', '$sce',
              .replace(/>/g, "&gt;")
              .replace(/"/g, "&quot;")
              .replace(/'/g, "&#039;");
-    }
+    };
 
     var formatXml = function(xml) {
         var formatted = '';
@@ -11688,7 +11671,7 @@ app.directive('loadContent', ['$document', 'FeedsService', '$q', '$sce',
             if (node.match( /.+<\/\w[^>]*>$/ )) {
                 indent = 0;
             } else if (node.match( /^<\/\w/ )) {
-                if (pad != 0) {
+                if (pad !== 0) {
                     pad -= 1;
                 }
             } else if (node.match( /^<\w[^>]*[^\/]>.*$/ )) {
@@ -11704,24 +11687,25 @@ app.directive('loadContent', ['$document', 'FeedsService', '$q', '$sce',
             pad += indent;
         });
         return formatted;
-    }
+    };
 
     var controller = function($scope, element, attr) {
+        _loaded = false;
         var _content;
         var $el = $(element);
         $scope.showData = false;
 
         // convert nitro links to bbc web links
-        attr.$observe('loadContent', function(val) {
-            _content = $scope.content = attr.loadContent;
-            $scope.hrefContent = $scope.content.replace('http://nitro', 'http://www');
-        })
+        attr.$observe('loadContent', function() {
+          _content = $scope.content_uri = attr.loadContent;
+          $scope.hrefContent = $scope.content_uri.replace('http://nitro', 'http://www');
+        });
 
         // show the result of the xml query when 'load data' button is pressed
         $('.loadData', $el).on('click', function() {
             var _this = $(this);
             _this.text('Loading data...');
-            loadContent(_content).then(function(xml) {
+            loadContent(attr.loadContent).then(function(xml) {
                 var formattedXML = formatXml(xml);
                 $scope.trustedXML = $sce.trustAsHtml(formattedXML);
                 var codeNode = jQuery('.xml-data pre');
@@ -11738,17 +11722,18 @@ app.directive('loadContent', ['$document', 'FeedsService', '$q', '$sce',
                         _this.text('Hide data');
                     }
                     $scope.showData = !$scope.showData;
-                })
+                });
             });
 
-        })
-    }
+        });
+    };
 
     return {
         template: '<header><h2><a href="{{hrefContent}}" target="_blank">{{hrefContent}}</a></h2><span class="button small loadData">Show data</span></header><div ng-show="showData" class="xml-data"><pre ng-bind-html="trustedXML">{{trustedXML}}</pre></div>',
         link: controller
-    } 
+    };
 }]);
+
 var app = angular.module('atlasAdmin.directives.bbcscrubbables', []);
 
 app.directive('scrubber', ['$document', '$compile',
@@ -12327,108 +12312,111 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
 var app = angular.module('atlasAdmin.directives.bbcscrubbables');
 
 app.directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http', 'GroupsService', 'BBCScrubbablesService', 'ScrubbablesHelpers', '$location',
-    function($document, $q, $timeout, atlasHost, $http, Groups, Scrubbables, Helpers, $location) {
-
-    var controller = function($scope, $el, $attr) {
-        var $el = $($el);
-        var input_timer;
-        $scope.atlasSearch = {};
-        $scope.atlasSearch.selectedItem = {};
+function($document, $q, $timeout, atlasHost, $http, Groups, Scrubbables, Helpers, $location) {
+  
+  var controller = function($scope, $el) {
+    $el = $($el);
+    var input_timer;
+    $scope.atlasSearch = {};
+    $scope.atlasSearch.selectedItem = {};
+    $scope.atlasSearch.showAutocomplete = false;
+    
+    $scope.atlasSearch.selectAtlasItem = function(title, id) {
+      if (!_.isString(title) && !_.isString(id)) { 
+        return false;
+      }
+      $location.path('/scrubbables/'+id);
+      $scope.loading = true;
+      $scope.atlasSearch.searchquery = title;
+      $scope.atlasSearch.showAutocomplete = false;
+    };
+    
+    $scope.atlasSearch.messageOutput = function(message) {
+      $scope.atlasSearch.showMessage = (typeof message === 'string') ? true : false;
+      if ($scope.atlasSearch.showMessage) {
+        $scope.atlasSearch.message = message;
+        $scope.atlasSearch.showMessage = true;
         $scope.atlasSearch.showAutocomplete = false;
-
-        $scope.atlasSearch.selectAtlasItem = function(title, id) {
-            if (!_.isString(title) && !_.isString(id)) { 
-                return false;
-            }
-            var _result;
-            $location.path('/scrubbables/'+id);
-            $scope.loading = true;
-            $scope.atlasSearch.searchquery = title;
-            $scope.atlasSearch.showAutocomplete = false;
+      }else{
+        $scope.atlasSearch.message = '';
+        $scope.atlasSearch.showMessage = false;
+      }
+    };
+    
+    var searchRequest = function() {
+      var _query = $scope.atlasSearch.searchquery;
+      if (!_query.length) {
+        return;
+      }
+      
+      var getContentForUri = function(uri) {
+        var defer = $q.defer();
+        if (!_.isString(uri)) {
+          defer.reject(new Error('URI arg should be a string'));
+          return defer.promise;
         }
-
-        $scope.atlasSearch.messageOutput = function(message) {
-            $scope.atlasSearch.showMessage = (typeof message === 'string') ? true : false;
-            var _messagetpl;
-            if ($scope.atlasSearch.showMessage) {
-                $scope.atlasSearch.message = message;
-                $scope.atlasSearch.showMessage = true;
-                $scope.atlasSearch.showAutocomplete = false;
+        Scrubbables.content.uri($scope.searchKey, uri).then(function(item) {
+          defer.resolve(item.contents[0]);
+        });
+        return defer.promise;
+      };
+      
+      Scrubbables.search($scope.searchKey, _query).then(function(res) {
+        var broadcasts;
+        broadcasts = res.contents[0].broadcasts || null;
+        if (broadcasts) {
+          broadcasts = _.filter(res.contents[0].broadcasts, function(bcast) {
+            if (bcast.channel.id === 'cbbh') {
+              return true;
+            }
+          });
+          if (broadcasts.length) {
+            getContentForUri(res.contents[0].uri).then(
+              function(contents) {
+                $scope.atlasSearch.searchResults.push( Helpers.formatResponse(contents) );
+                $scope.atlasSearch.messageOutput(null);
+                $scope.atlasSearch.showAutocomplete = true;
+              }, console.error);
             }else{
-                $scope.atlasSearch.message = '';
-                $scope.atlasSearch.showMessage = false;
+              $scope.atlasSearch.messageOutput('No results found');
+              $scope.atlasSearch.showAutocomplete = false;
             }
+          }else{
+            $scope.atlasSearch.messageOutput('No results found');
+            $scope.atlasSearch.showAutocomplete = false;
+          }
+        }, function(err) {
+          console.error(err);
+          $scope.atlasSearch.showAutocomplete = false;
+        });
+      };
+      
+      $scope.atlasSearch.lookupAtlasItem = function() {
+        var _query = $scope.atlasSearch.searchquery;
+        $scope.atlasSearch.message = null;
+        $scope.atlasSearch.searchResults = [];
+        if (!_.isString(_query)) {
+          return;
         }
-
-        var searchRequest = function() {
-            var _query = $scope.atlasSearch.searchquery;
-            if (!_query.length) return;
-
-            var getContentForUri = function(uri) {
-                var bbcone;
-                var defer = $q.defer();
-                if (!_.isString(uri)) {
-                    defer.reject(new Error('URI arg should be a string'));
-                    return defer.promise;
-                }
-                Scrubbables.content.uri($scope.searchKey, uri).then(function(item) {
-                    defer.resolve(item.contents[0]);
-                });
-                return defer.promise;
-            }
-
-            Scrubbables.search($scope.searchKey, _query).then(function(res) {
-                var broadcasts, air_date;
-                broadcasts = res.contents[0].broadcasts || null;
-                if (broadcasts) {
-                    broadcasts = _.filter(res.contents[0].broadcasts, function(bcast) {
-                        if (bcast.channel.id === 'cbbh') return true;
-                    })
-                    if (broadcasts.length) {
-                        getContentForUri(res.contents[0].uri).then(
-                            function(contents) {
-                            $scope.atlasSearch.searchResults.push( Helpers.formatResponse(contents) );
-                            $scope.atlasSearch.messageOutput(null);
-                            $scope.atlasSearch.showAutocomplete = true;
-                        }, function(err) { console.error(err) });
-                    }else{
-                        $scope.atlasSearch.messageOutput('No results found');
-                        $scope.atlasSearch.showAutocomplete = false;
-                    }
-                }else{
-                    $scope.atlasSearch.messageOutput('No results found');
-                    $scope.atlasSearch.showAutocomplete = false;
-                }
-            }, function(err) {
-                $scope.atlasSearch.showAutocomplete = false;
-            })
+        if (!_query.length) {
+          $timeout.cancel(input_timer);
+          $scope.atlasSearch.search_results = null;
+          $scope.atlasSearch.showAutocomplete = false;
+        } else if (_query.length > 2) {
+          $scope.atlasSearch.messageOutput('Searching...');
+          $timeout.cancel(input_timer);
+          input_timer = $timeout(searchRequest, 1000);
         }
-
-        $scope.atlasSearch.lookupAtlasItem = function() {
-            var _query = $scope.atlasSearch.searchquery;
-            $scope.atlasSearch.message = null;
-            $scope.atlasSearch.searchResults = [];
-            if (!_.isString(_query)) return;
-            if (!_query.length) {
-                $timeout.cancel(input_timer);
-                $scope.atlasSearch.search_results = null;
-                $scope.atlasSearch.showAutocomplete = false;
-            } else if (_query.length > 2) {
-                $scope.atlasSearch.messageOutput('Searching...');
-                $timeout.cancel(input_timer);
-                input_timer = $timeout(searchRequest, 1000);
-            }
-        }
-
-    }
-
+      };
+    };
+    
     return {
-        restrict: 'E',
-        scope: false,
-        link: controller,
-        templateUrl: 'partials/bbcScrubbables/atlasSearch.html'
-    }
-}]);
+      restrict: 'E',
+      scope: false,
+      link: controller,
+      templateUrl: 'partials/bbcScrubbables/atlasSearch.html'
+    };
+  }]);
 
 'use strict';
 var app = angular.module('atlasAdmin.controllers.errors', []);
@@ -13123,269 +13111,333 @@ var app = angular.module('atlasAdmin.controllers.feeds', []);
 
 app.controller('CtrlFeeds', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q',
     function($scope, $rootScope, $routeParams, Feeds, $q) {
-    $scope.view_title = 'Feeds'
+    $scope.view_title = 'Feeds';
     
-    Feeds.get().then(function(data) {
-        if (!_.isEmpty(data)) {
-            $scope.feeds = data;
-        }
+    Feeds.get().then(
+    function(data) {
+      if (_.isEmpty(data)) {
+        return console.warn('No feed data returned');
+      }
+      $scope.feeds = data;
     });
-}])
+}]);
+
 'use strict';
 var app = angular.module('atlasAdmin.controllers.feeds');
 
 app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$timeout',
-    function($scope, $rootScope, $routeParams, Feeds, $q, $timeout) {
-    $scope.tasks = [];
-    $scope.error = {};
-    $scope.error.show = false;
-    $scope.view_title = 'Feeds Console';
-    $scope.statusFilter = ['accepted', 'validating', 'failed', 'quarantined', 'committing', 'committed', 'publishing', 'published'];
-    $scope.transactionFilter = ['BRAND', 'SERIES', 'ITEM', 'VERSION', 'BROADCAST', 'ONDEMAND'];
-
-    // set up ordering and search
-    $scope.table = {}; 
-    $scope.table.order = 'upload_time';
-    $scope.table.reverse = true;
-    $scope.activeFilter = '';
-    $scope.search = {};
-
-
-    // this controls the loading state of the feeds console
-    $scope.isloading = false;
-
-    // this will tell the view whether or not the action buttons are disabled
-    $scope.disableActions = true;
-
-
-    // Used for initiating filtering on a field. changes the activeFilter
-    // param and then reloads the tasks list.
-    //
-    // @param filter_on {string} value to set for activeFilter
-    //
-    var input_timer;
-    $scope.filter = function(filter_on) {
-        if (!_.isString(filter_on)) return;
-        if ($scope.search[filter_on].length > 3 || $scope.search[filter_on].length == 0) {
-            $timeout.cancel(input_timer);
-            input_timer = $timeout(function() {
-                $scope.isloading = true;
-                $scope.activeFilter = filter_on;
-                $scope.page.current = 0;
-                getTasks()
-            }, 700);
-        }
+function($scope, $rootScope, $routeParams, Feeds, $q, $timeout) {
+  $scope.tasks = [];
+  $scope.error = {};
+  $scope.error.show = false;
+  $scope.view_title = 'Feeds Console';
+  $scope.statusFilter = ['accepted', 'validating', 'failed', 'quarantined', 'committing', 'committed', 'publishing', 'published'];
+  $scope.transactionFilter = ['BRAND', 'SERIES', 'ITEM', 'VERSION', 'BROADCAST', 'ONDEMAND'];
+  
+  // set up ordering and search
+  $scope.table = {}; 
+  $scope.table.order = 'upload_time';
+  $scope.table.reverse = true;
+  $scope.activeFilter = '';
+  $scope.search = {};
+  
+  
+  // this controls the loading state of the feeds console
+  $scope.isloading = false;
+  
+  // this will tell the view whether or not the action buttons are disabled
+  $scope.disableActions = false;
+  
+  
+  // Used for initiating filtering on a field. changes the activeFilter
+  // param and then reloads the tasks list.
+  //
+  // @param filter_on {string} value to set for activeFilter
+  //
+  var input_timer;
+  $scope.filter = function(filter_on) {
+    if (! _.isString(filter_on)) {
+      return;
     }
-
-
-    // Used for controlling pagination functionality. The idea is that
-    // page.current is watched for changes, then the tasks list
-    // is reloaded from the server with new offset params 
-    $scope.page = {};
-    $scope.page.current = 0;
-    $scope.page.limit = 15;
-    $scope.page.offset = 0;
-    $scope.page.showPager = false;
-
-    $scope.$watch('page.limit', function(new_val, old_val) {
-        $scope.isloading = true;
-        $scope.page.current = 0;
-        $scope.page.showPager = ($scope.tasks.length >= $scope.page.limit) ? false : true;
-    });
-
-    $scope.$watch('page.current + page.limit', function(new_val, old_val) {
-        $scope.page.offset = $scope.page.current * $scope.page.limit;
-        getTasks()
-    });
     
-    $scope.page.next = function() {
-        if ($scope.tasks.length >= $scope.page.limit && !$scope.isloading) {
-            $scope.isloading = true;
-            ++$scope.page.current;
-            $scope.selectedTasks = [];
-            $scope.disableActions = true;
-        }
+    if ($scope.search[filter_on].length > 3 || $scope.search[filter_on].length === 0) {
+      $timeout.cancel(input_timer);
+      input_timer = $timeout(function() {
+        $scope.isloading = true;
+        $scope.activeFilter = filter_on;
+        $scope.page.current = 0;
+        getTasks();
+      }, 700);
     }
-
-    $scope.page.previous = function() {
-        if ($scope.page.current > 0 && !$scope.isloading) {
-            $scope.isloading = true;
-            --$scope.page.current;
-            $scope.selectedTasks = [];
-            $scope.disableActions = true;
-        }
+  };
+  
+  
+  // Used for controlling pagination functionality. The idea is that
+  // page.current is watched for changes, then the tasks list
+  // is reloaded from the server with new offset params 
+  $scope.page = {};
+  $scope.page.current = 0;
+  $scope.page.limit = 15;
+  $scope.page.offset = 0;
+  $scope.page.showPager = false;
+  
+  $scope.$watch('page.limit', function(new_val, old_val) {
+    $scope.isloading = true;
+    $scope.page.current = 0;
+    $scope.page.showPager = ($scope.tasks.length >= $scope.page.limit) ? false : true;
+  });
+  
+  $scope.$watch('page.current + page.limit', function(new_val, old_val) {
+    $scope.page.offset = $scope.page.current * $scope.page.limit;
+    getTasks();
+  });
+  
+  $scope.page.next = function() {
+    if ($scope.tasks.length >= $scope.page.limit && !$scope.isloading) {
+      $scope.isloading = true;
+      ++$scope.page.current;
     }
-
-
-    // The following is used for selecting individual tasks 
-    $scope.selectedTasks = [];
-    $scope.updateSelection = function(task_id) {
-        if (_.isString(task_id)) {
-            if ($scope.selectedTasks.indexOf(task_id) > -1) {
-                var _index = $scope.selectedTasks.indexOf(task_id);
-                $scope.selectedTasks.splice(_index, 1);
-            }else{
-                $scope.selectedTasks.push(task_id);
-            }
-        }
-        if ($scope.selectedTasks.length) {
-            $scope.disableActions = false;
-        }else{
-            $scope.disableActions = true;
-        }
+  };
+  
+  $scope.page.previous = function() {
+    if ($scope.page.current > 0 && !$scope.isloading) {
+      $scope.isloading = true;
+      --$scope.page.current;
     }
-
-    // For loading sets of tasks from atlas. Filters and offsets
-    // are inserted automatically based on $scope variables
-    var getTasks = function() {
-        var _filter = '';
-        if ($scope.activeFilter === 'transaction' && ! _.isEmpty($scope.search.transaction)) {
-            _filter = '&type='+$scope.search.transaction.toLowerCase();
-        }else if ($scope.activeFilter === 'uri' && ! _.isEmpty($scope.search.uri)) {
-            _filter = '&uri='+$scope.search.uri;
-        }else if ($scope.activeFilter === 'status' && ! _.isEmpty($scope.search.status)) {
-            _filter = '&status='+$scope.search.status;
-        }else if ($scope.activeFilter === 'remote_id' && ! _.isEmpty($scope.search.remote_id)){
-            _filter = '&remote_id='+$scope.search.remote_id;
-        }
-        var request_url = 'youview/bbc_nitro/tasks.json?limit='+$scope.page.limit+'&offset='+$scope.page.offset+_filter;
-        Feeds.request(request_url).then(pushTasksTable);
-    };
-
-
-    // For loading the feed statistics from atlas
-    var getStats = function() {
-        Feeds.request('youview/bbc_nitro/statistics.json').then(function(data) {
-            $scope.statistics = data.feed_stats[0];
-            $scope.statistics.uptime = calculateUptime( new Date(data.feed_stats[0].last_outage) );
-        });
-    };
-    getStats();
-
-
-    // Used for loading data into the tasks scope
-    // @param data {object} the tasks object
-    var pushTasksTable = function(data) {
-        if (_.isObject(data.error)) {
-            $scope.error.show = true;
-            $scope.error.obj = data.error;
-            return;
-        }
-        $scope.isloading = false;
-        $scope.tasks = data.tasks;
+  };
+  
+  
+  // For loading sets of tasks from atlas. Filters and offsets
+  // are inserted automatically based on $scope variables
+  var getTasks = function() {
+    var _filter = '';
+    if ($scope.activeFilter === 'transaction' && ! _.isEmpty($scope.search.transaction)) {
+      _filter = '&type='+$scope.search.transaction.toLowerCase();
+    }else if ($scope.activeFilter === 'uri' && ! _.isEmpty($scope.search.uri)) {
+      _filter = '&uri='+$scope.search.uri;
+    }else if ($scope.activeFilter === 'status' && ! _.isEmpty($scope.search.status)) {
+      _filter = '&status='+$scope.search.status;
+    }else if ($scope.activeFilter === 'remote_id' && ! _.isEmpty($scope.search.remote_id)){
+      _filter = '&remote_id='+$scope.search.remote_id;
     }
-
-
-    // Used for calculating uptime since last outage
-    // @param last_outage {date}
-    var calculateUptime = function(last_outage) {
-        var _now = new Date(),
-            _then = last_outage,
-            _delta = Math.round(Math.abs((_now.getTime() - _then.getTime()))/(24*60*60*1000));
-        return _delta.toString();
+    var request_url = 'youview/bbc_nitro/tasks.json?limit='+$scope.page.limit+'&offset='+$scope.page.offset+_filter;
+    Feeds.request(request_url).then(pushTasksTable);
+  };
+  
+  
+  // For loading the feed statistics from atlas
+  var getStats = function() {
+    Feeds.request('youview/bbc_nitro/statistics.json').then(function(data) {
+      if (! data.feed_stats) {
+        return;
+      }
+      $scope.statistics = data.feed_stats[0];
+      $scope.statistics.uptime = calculateUptime( new Date(data.feed_stats[0].last_outage) );
+    });
+  };
+  getStats();
+  
+  
+  // Used for loading data into the tasks scope
+  // @param data {object} the tasks object
+  var pushTasksTable = function(data) {
+    if (_.isObject(data.error)) {
+      $scope.error.show = true;
+      $scope.error.obj = data.error;
+      return;
     }
-}])
+    $scope.isloading = false;
+    $scope.tasks = data.tasks;
+  };
+  
+  
+  // Used for calculating uptime since last outage
+  // @param last_outage {date}
+  var calculateUptime = function(last_outage) {
+    var _now = new Date(),
+    _then = last_outage,
+    _delta = Math.round(Math.abs((_now.getTime() - _then.getTime()))/(24*60*60*1000));
+    return _delta.toString();
+  };
+}]);
 
 
 app.directive('actionModal', ['$document', '$q', '$modal',
-    function($document, $q, $modal) {
-    var controller = function($scope, el, attr) {
-        var modal = function(action) {
-            var defer = $q.defer();
-            $scope.selectedTasks = $scope.selectedTasks || [];
-            var _tasksLength = $scope.selectedTasks.length || 1;
-
-            if (!_.isString(action)) {
-                defer.reject();
-                return defer.promise;
-            }
-
-            var _content = {
-                title: 'Are you sure you want to <strong>'+action+' '+_tasksLength+'</strong> tasks?',
-                action: action.charAt(0).toUpperCase() + action.slice(1)
-            }
-
-            var _modalInstance = $modal.open({
-                template: '<h1>'+_content.title+'</h1></div><div class="feed-modal-options"><button ng-disabled="isSendingAction" ng-click="ok()">'+_content.action+'</button><button ng-click="dismiss()">Cancel</button>',
-                controller: 'CtrlFeedsAcceptModal',
-                windowClass: 'feedsAcceptModal',
-                scope: $scope,
-                resolve: { modalAction: function() { return action } }
-            });
-
-            _modalInstance.result.then(defer.resolve, defer.reject);
-            return defer.promise;
-        }
-
-        $(el).on('click', function() {
-            if ($scope.task || $scope.tasks) {
-                var action = attr.actionModal || null;
-                modal(action).then(function() {
-                    $scope.selectedTasks = [];
-                    $scope.updateSelection();
-                })
-            }
+function($document, $q, $modal) {
+  var controller = function($scope, el, attr) {
+    var modal = function(action) {
+      var defer = $q.defer();
+      
+      if (!_.isString(action)) {
+        defer.reject();
+        return defer.promise;
+      }
+      
+      var _content = {
+        title: '<strong>'+action+'</strong> task?',
+        action: action.charAt(0).toUpperCase() + action.slice(1)
+      };
+      
+      var _modalInstance = $modal.open({
+        // template: '<h1>'+_content.title+'</h1></div><div class="feed-modal-options"><button ng-disabled="isSendingAction" ng-click="ok()">'+_content.action+'</button><button ng-click="dismiss()">Cancel</button>',
+        templateUrl: 'partials/feeds/actionsModal.html',
+        controller: 'CtrlFeedsAcceptModal',
+        windowClass: 'feedsAcceptModal',
+        scope: $scope,
+        resolve: { modalAction: function() { return action; } }
+      });
+      
+      _modalInstance.result.then(defer.resolve, defer.reject);
+      return defer.promise;
+    };
+    
+    $(el).on('click', function() {
+      if ($scope.task || $scope.tasks) {
+        var action = attr.actionModal || null;
+        modal(action).then( function() {
+          
         });
-    }
+      }
+    });
+  };
+  
+  return {
+    scope: false,
+    link: controller
+  };
+}]);
 
-    return {
-        scope: false,
-        link: controller
-    }
-}])
+app.controller('CtrlFeedsAcceptModal', ['$scope', '$modalInstance', '$q', 'FeedsService', 'modalAction', '$http', 'atlasHost',
+function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
+    var pidLength = 8;
+    $scope.actionName = modalAction;
+    $scope.pidValue = '';
+    $scope.showSearchRes = false;
+    $scope.resultMessage = false;
+    $scope.clearUI = false;
+    $scope.atlasResult = {  };
+    $scope.uiStrings = {
+      revoke: 'Revoke',
+      upload: 'Publish'
+    };
+    
+    var trimString = function (wordCount, string) {
+      var append = '';
+      var words = string.split(' ');
+      
+      if (words.length > wordCount) {
+        append = '...';
+      }
+      var truncated = words.slice(0, wordCount).join(' ');
+      return truncated + append;
+    };
+    
+    var runRevoke = function (pid) {
+      var defer = $q.defer();
+      var payload = {
+        uri: 'http://nitro.bbc.co.uk/programmes/' + pid
+      };
+      
+      Feeds.request('youview/bbc_nitro/action/revoke', 'post', payload).then(
+      function (data, status) {
+        $scope.showSearchRes = false;
+        $scope.atlasResult = {  };
+        $scope.resultMessage = 'The revoke transaction has been added to the queue';
+        $scope.clearUI = true;
+      }, console.error);
+      
+      return defer.promise;
+    };
+    
+    var runIngest = function (pid) {
+      var defer = $q.defer();
+      var payload = {};
+      Feeds.request('forceUpdate/' + pid, 'post', payload).then(
+      function (data, status) {
+        $scope.showSearchRes = false;
+        $scope.atlasResult = {  };
+        $scope.resultMessage = 'The publish transaction has been added to the queue';
+        $scope.clearUI = true;
+      }, console.error);
+      
+      return defer.promise;
+    };
+      
 
-app.controller('CtrlFeedsAcceptModal', ['$scope', '$modalInstance', '$q', 'FeedsService', 'modalAction',
-    function($scope, $modalInstance, $q, Feeds, modalAction) {
-    var action = modalAction;
-    $scope.isSendingAction = false;
-
-    $scope.ok = function() {
-        var _task = $scope.tasks || $scope.task;
-        $scope.isSendingAction = true;
-        Feeds.action(action, _task, $scope.selectedTasks).then($modalInstance.close,
-        function() {
-            console.error('Problem with action request')
+    
+    $scope.findPid = function (pidValue) {
+      if (pidValue.length !== pidLength) {
+        return console.warn('PID isn\'t the correct length');
+      }
+      var nitroUri = 'http://nitro.bbc.co.uk/programmes/' + pidValue;
+      $http.get(atlasHost + '/3.0/content.json?apiKey=2b8d39c3ed3040aca8c30a46bd38e685&uri=' + nitroUri + '&annotations=description,extended_description,brand_summary')
+        .success( function (data, status) {
+          var atlasres = data.contents[0];
+          if (atlasres) {
+            $scope.showSearchRes = true;
+            $scope.atlasResult.imageUrl = atlasres.image;
+            $scope.atlasResult.title = atlasres.title;
+            $scope.atlasResult.brand = atlasres.container.title || '';
+            $scope.atlasResult.time = 1;
+            $scope.atlasResult.description = trimString(60, atlasres.description);
+          }
         });
-    }
-
+    };    
+    
+    
+    $scope.triggerAction = function (actionName, pid) {
+      if (! pid) {
+        return console.warn('cannot trigger action because there is no pid argument');
+      }
+      if (! actionName) {
+        return console.warn('cannot trigger action because there is no actionName argument');
+      }
+      switch (actionName) {
+        case 'upload': runIngest(pid); break;
+        case 'revoke': runRevoke(pid); break;
+      }
+    };
+    
     $scope.dismiss = function() {
-        $modalInstance.dismiss();
-    }
-}])
+      $modalInstance.dismiss();
+    };
+  }]);
 
+'use strict';
 var app = angular.module('atlasAdmin.controllers.feeds');
 
 app.controller('CtrlFeedsBreakdown', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modal',
-    function($scope, $rootScope, $routeParams, Feeds, $q, $modal) {
-    $scope.taskID = $routeParams.taskId;
-
-    $scope.showDetails = function() {
-        var modalInstance = $modal.open({
-            templateUrl: 'partials/feeds/statusDetailModal.html',
-            controller: 'CtrlStatusDetail',
-            scope: $scope
-        });
-        modalInstance.result.then(function() {
- 
-        });
-    }
-
-    var loadTask = function() {
-        Feeds.request('youview/bbc_nitro/tasks/'+$routeParams.taskId+'.json?annotations=remote_responses')
-            .then(function(task) {
-                var _task = task.tasks[0];
-                $scope.task = _task;
-                $scope.view_title = "Breakdown for transaction: "+_task.remote_id;
-            });
-    }
-    loadTask();
-
-}])
+function($scope, $rootScope, $routeParams, Feeds, $q, $modal) {
+  $scope.taskID = $routeParams.taskId;
+  
+  $scope.showDetails = function() {
+    var modalInstance = $modal.open({
+      templateUrl: 'partials/feeds/statusDetailModal.html',
+      controller: 'CtrlStatusDetail',
+      scope: $scope
+    });
+    modalInstance.result.then(function() {
+      
+    });
+  };
+  
+  var loadTask = function() {
+    Feeds.request('youview/bbc_nitro/tasks/'+$routeParams.taskId+'.json?annotations=remote_responses')
+    .then(function(task) {
+      var _task = task.tasks[0];
+      $scope.task = _task;
+      $scope.view_title = "Breakdown for transaction: "+_task.remote_id;
+    });
+  };
+  loadTask();
+  
+}]);
 
 app.controller('CtrlStatusDetail', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modalInstance',
-    function($scope, $rootScope, $routeParams, $q, $modalInstance) {
-        
-}])
+function($scope, $rootScope, $routeParams, $q, $modalInstance) {
+  
+}]);
+
 'use strict';
 
 // define 'applications' module to be used for application controllers
@@ -13420,7 +13472,13 @@ angular.module('atlasAdmin.controllers.applications')
           return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         };
         $http.get(Authentication.appendTokenToUrl(atlasApiHost + '/usage-list/' + dates)).then(function (response) {
-            var usageData = response.data.aggregations.apiKeys.buckets;
+            var usageData =  _.has(response, 'data') ? response.data.aggregations.apiKeys.buckets : null;
+            
+            if (! usageData) {
+              console.warn('Response data doesnt have the `data` property', response);
+              return;
+            }
+            
             _.forEach(usageData, function (d) {
                 d.readableCount = numberWithCommas(d.doc_count);
             });
@@ -14190,7 +14248,6 @@ function($scope, $rootScope, $routeParams, $q, Scrubbables, $timeout, Helpers) {
 
 
   var calculateSegmentDuration = function(start, end, broadcastDuration) {
-    console.log(start, end, broadcastDuration);
     return (broadcastDuration - start) - (broadcastDuration - end);
   };
 
@@ -14633,7 +14690,13 @@ app.controller('CtrlUsage', ['$scope', '$rootScope', 'Authentication', 'atlasApi
     };
 
     $http.get(Authentication.appendTokenToUrl(atlasApiHost + '/usage-list/' + dates)).then(function (response) {
-      var usageData = response.data.aggregations.apiKeys.buckets;
+      var usageData =  _.has(response, 'data') ? response.data.aggregations.apiKeys.buckets : null;
+      
+      if (! usageData) {
+        console.warn('Response data doesnt have the `data` property', response);
+        return;
+      }
+      
       _.forEach(usageData, function (d) {
         d.readableCount = numberWithCommas(d.doc_count);
       });
