@@ -112,7 +112,7 @@ function forceContentIntoQueue (uri) {
       data += chunk;
     });
     res.on('end', function() {
-      if (res.statusCode < 300) {
+      if (res.statusCode !== 202 && res.statusCode !== 200) {
         defer.reject('Force update failed ' + uri + ': ' + res.statusCode);
         return;
       }
@@ -164,7 +164,7 @@ var feedsInterface = function() {
   router.route('/youview/bbc_nitro/action/:action')
   .post(function(req, res) {
     if (!_.isString(req.body.uri)) {
-      res.end();
+      res.end('{}');
       return false;
     }
     var data;
@@ -189,14 +189,14 @@ var feedsInterface = function() {
       });
       
       action_res.on('end', function() {
-        res.end();
+        res.end('{}');
       });
     });
     
     action_request.on('error', function(err) {
       console.error('Failed to get a response from processing server', err.message);
       res.writeHead(400);
-      res.end();
+      res.end('{}');
     });
     action_request.end();
   });
@@ -220,8 +220,9 @@ var feedsInterface = function() {
   .post( function (req, res) {
     
     if (! req.params.pid) {
-      console.warn('Must have a pid');
-      res.end();
+      console.warn('No PID in post body');
+      res.writeHead(400);
+      res.end('{}');
     }
     
     var uri = 'http://nitro.bbc.co.uk/programmes/' + req.params.pid;
@@ -232,9 +233,6 @@ var feedsInterface = function() {
       path: '/system/bbc/nitro/update/content/' + req.params.pid,
       method: 'post'
     };
-    
-    console.log(options.hostname + options.path);
-    
     
     var action_request = http.request(options, function(action_res) {
       action_res.setEncoding('utf8');
@@ -253,7 +251,8 @@ var feedsInterface = function() {
         }, 
         function (err) {
           console.error(err);
-          res.end();
+          res.writeHead(400);
+          res.end('{}');
         });
       });
     });
@@ -261,7 +260,7 @@ var feedsInterface = function() {
     action_request.on('error', function(err) {
       console.error('Failed to get a response from processing server', err.message);
       res.writeHead(400);
-      res.end();
+      res.end('{}');
     });
     action_request.end();
   });
