@@ -1,5 +1,5 @@
 <h1>Enter the PID for the content you would like to {{uiStrings[actionName]}}</h1>
-<div class="statusMessage" ng-show="resultMessage">{{resultMessage}}</div>
+<div class="statusMessage" ng-class="resultMessage.class" ng-show="resultMessage">{{resultMessage.body}}</div>
 <section class="pid-check" ng-hide="clearUI">
   <div class="field-holder">
     <input type="text" ng-model="pidValue" required placeholder="PID">

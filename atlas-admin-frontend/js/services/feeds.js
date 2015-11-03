@@ -56,7 +56,7 @@ function($http, Authentication, atlasApiHost, $q) {
       request.data = params;
     }
     
-    $http(request).success(defer.resolve);
+    $http(request).success(defer.resolve).error(defer.reject);
     return defer.promise;
   };
   

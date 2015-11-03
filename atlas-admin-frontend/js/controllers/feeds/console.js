@@ -189,7 +189,7 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
     $scope.actionName = modalAction;
     $scope.pidValue = '';
     $scope.showSearchRes = false;
-    $scope.resultMessage = false;
+    $scope.resultMessage = {};
     $scope.clearUI = false;
     $scope.atlasResult = {  };
     $scope.uiStrings = {
@@ -218,9 +218,14 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
       function (data, status) {
         $scope.showSearchRes = false;
         $scope.atlasResult = {  };
-        $scope.resultMessage = 'The revoke transaction has been added to the queue';
+        $scope.resultMessage.body = 'The revoke transaction has been added to the queue';
+        $scope.resultMessage.class = 'success';
         $scope.clearUI = true;
-      }, console.error);
+      }, 
+      function () {
+        $scope.resultMessage.body = 'The transaction could not be completed because of a server error';
+        $scope.resultMessage.class = 'error';
+      });
       
       return defer.promise;
     };
@@ -232,9 +237,14 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
       function (data, status) {
         $scope.showSearchRes = false;
         $scope.atlasResult = {  };
-        $scope.resultMessage = 'The publish transaction has been added to the queue';
+        $scope.resultMessage.body = 'The publish transaction has been added to the queue';
+        $scope.resultMessage.class = 'success';
         $scope.clearUI = true;
-      }, console.error);
+      }, 
+      function () {
+        $scope.resultMessage.body = 'The transaction could not be completed because of a server error';
+        $scope.resultMessage.class = 'error';
+      });
       
       return defer.promise;
     };
@@ -246,7 +256,7 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
         return console.warn('PID isn\'t the correct length');
       }
       var nitroUri = 'http://nitro.bbc.co.uk/programmes/' + pidValue;
-      $http.get(atlasHost + '/3.0/content.json?apiKey=2b8d39c3ed3040aca8c30a46bd38e685&uri=' + nitroUri + '&annotations=description,extended_description,brand_summary')
+      $http.get(atlasHost + '/3.0/content.json?apiKey=cae02bc954cf40809d6d70601d3e0b88&uri=' + nitroUri + '&annotations=description,extended_description,brand_summary')
         .success( function (data, status) {
           var atlasres = data.contents[0];
           if (atlasres) {
@@ -257,6 +267,10 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
             $scope.atlasResult.time = 1;
             $scope.atlasResult.description = trimString(60, atlasres.description);
           }
+        })
+        .error(function (data, status) {
+          $scope.resultMessage.body = 'The PID search could not be completed because of a server error';
+          $scope.resultMessage.class = 'error';
         });
     };    
     
