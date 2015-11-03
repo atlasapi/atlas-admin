@@ -49,7 +49,8 @@ function($http, Authentication, atlasApiHost, $q) {
     
     request = {
       method: method,
-      url: Authentication.appendTokenToUrl(atlasApiHost + '/feeds/' + feed_uri)
+      url: Authentication.appendTokenToUrl(atlasApiHost + '/feeds/' + feed_uri),
+      dataType: 'json'
     };
     
     if (_.isObject(params)) {
@@ -61,7 +62,7 @@ function($http, Authentication, atlasApiHost, $q) {
       defer.resolve(data);
     },
     function (xhr, status) {
-      console.error('HTTP request error ', xhr.status);
+      console.error('HTTP request error ', status, xhr.status);
       defer.reject(status);
     });
     return defer.promise;

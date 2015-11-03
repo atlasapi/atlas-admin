@@ -261,7 +261,12 @@
 
 .select-row { text-align: center; }
 
+
+// Modal window for chacking and running actions on PIDS
 .feedsAcceptModal {
+  
+  .modal-body.is-busy { filter: blur(1px); }
+  
   .pid-check {
     display: block;
     width: 100%;
@@ -354,6 +359,35 @@
     &.error {
       background: #e8c485;
       margin-bottom: 2rem;
+    }
+  }
+  
+  .help-text {
+    display: block;
+    margin-top: 2rem;
+    text-align: center;
+  }
+  
+  .busy-notification {
+    position: absolute;
+    z-index: 1000;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    background: rgba(255,255,255,.6);
+    text-align: center;
+    
+    > span {  
+      position: relative;
+      display: inline-block;
+      padding: 2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: $color-purple;
+      color: white;
+      border-radius: 5px;
     }
   }
 }

@@ -191,6 +191,7 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
     $scope.showSearchRes = false;
     $scope.resultMessage = {};
     $scope.clearUI = false;
+    $scope.isBusy = false;
     $scope.atlasResult = {  };
     $scope.uiStrings = {
       revoke: 'Revoke',
@@ -213,6 +214,8 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
         uri: 'http://nitro.bbc.co.uk/programmes/' + pid
       };
       
+      $scope.isBusy = true;
+      
       Feeds.request('youview/bbc_nitro/action/revoke', 'post', payload).then(
       function (data, status) {
         $scope.showSearchRes = false;
@@ -220,16 +223,20 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
         $scope.resultMessage.body = 'The revoke transaction has been added to the queue';
         $scope.resultMessage.class = 'success';
         $scope.clearUI = true;
+        $scope.isBusy = false;
       }, 
       function () {
         $scope.resultMessage.body = 'The transaction could not be completed because of a server error';
         $scope.resultMessage.class = 'error';
+        $scope.isBusy = false;
       });
-      
     };
     
     var runIngest = function (pid) {
       var payload = {};
+      
+      $scope.isBusy = true;
+      
       Feeds.request('forceUpdate/' + pid, 'post', payload).then(
       function (data, status) {
         $scope.showSearchRes = false;
@@ -237,12 +244,13 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
         $scope.resultMessage.body = 'The publish transaction has been added to the queue';
         $scope.resultMessage.class = 'success';
         $scope.clearUI = true;
+        $scope.isBusy = false;
       }, 
       function () {
         $scope.resultMessage.body = 'The transaction could not be completed because of a server error';
         $scope.resultMessage.class = 'error';
+        $scope.isBusy = false;
       });
-      
     };
       
 
