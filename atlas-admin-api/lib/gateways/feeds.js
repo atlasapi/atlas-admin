@@ -253,8 +253,8 @@ var feedsInterface = function() {
           res.end(data);
         }, 
         function (err) {
-          res.end();
           console.error(err);
+          res.end();
         });
       });
     });

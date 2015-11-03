@@ -209,7 +209,6 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
     };
     
     var runRevoke = function (pid) {
-      var defer = $q.defer();
       var payload = {
         uri: 'http://nitro.bbc.co.uk/programmes/' + pid
       };
@@ -227,11 +226,9 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
         $scope.resultMessage.class = 'error';
       });
       
-      return defer.promise;
     };
     
     var runIngest = function (pid) {
-      var defer = $q.defer();
       var payload = {};
       Feeds.request('forceUpdate/' + pid, 'post', payload).then(
       function (data, status) {
@@ -246,7 +243,6 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
         $scope.resultMessage.class = 'error';
       });
       
-      return defer.promise;
     };
       
 

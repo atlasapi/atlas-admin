@@ -10932,7 +10932,7 @@ function($http, Authentication, atlasApiHost, $q) {
   //  @param feed_uri {string}
   //  @param method {string}
   //  @param params {object}
-  //  @returns promise<$http Response, String>
+  //  @returns promise<$httpResponse>
   //
   var request = function(feed_uri, method, params) {
     method = method || 'get';
@@ -10954,7 +10954,14 @@ function($http, Authentication, atlasApiHost, $q) {
       request.data = params;
     }
     
-    $http(request).success(defer.resolve).error(defer.reject);
+    $.ajax(request).then(
+    function (data, status, xhr) {
+      defer.resolve(data);
+    },
+    function (xhr, status) {
+      console.error('HTTP request error ', xhr.status);
+      defer.reject(status);
+    });
     return defer.promise;
   };
   
@@ -13335,7 +13342,6 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
     };
     
     var runRevoke = function (pid) {
-      var defer = $q.defer();
       var payload = {
         uri: 'http://nitro.bbc.co.uk/programmes/' + pid
       };
@@ -13353,11 +13359,9 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
         $scope.resultMessage.class = 'error';
       });
       
-      return defer.promise;
     };
     
     var runIngest = function (pid) {
-      var defer = $q.defer();
       var payload = {};
       Feeds.request('forceUpdate/' + pid, 'post', payload).then(
       function (data, status) {
@@ -13372,7 +13376,6 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
         $scope.resultMessage.class = 'error';
       });
       
-      return defer.promise;
     };
       
 

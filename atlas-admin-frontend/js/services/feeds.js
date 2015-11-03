@@ -34,7 +34,7 @@ function($http, Authentication, atlasApiHost, $q) {
   //  @param feed_uri {string}
   //  @param method {string}
   //  @param params {object}
-  //  @returns promise<$http Response, String>
+  //  @returns promise<$httpResponse>
   //
   var request = function(feed_uri, method, params) {
     method = method || 'get';
@@ -56,7 +56,14 @@ function($http, Authentication, atlasApiHost, $q) {
       request.data = params;
     }
     
-    $http(request).success(defer.resolve).error(defer.reject);
+    $.ajax(request).then(
+    function (data, status, xhr) {
+      defer.resolve(data);
+    },
+    function (xhr, status) {
+      console.error('HTTP request error ', xhr.status);
+      defer.reject(status);
+    });
     return defer.promise;
   };
   
