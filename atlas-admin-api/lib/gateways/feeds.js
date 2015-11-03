@@ -112,7 +112,7 @@ function forceContentIntoQueue (uri) {
       data += chunk;
     });
     res.on('end', function() {
-      if (res.statusCode !== 202 && res.statusCode !== 200) {
+      if (res.statusCode < 300) {
         defer.reject('Force update failed ' + uri + ': ' + res.statusCode);
         return;
       }
@@ -122,7 +122,6 @@ function forceContentIntoQueue (uri) {
   
   updateRequest.on('error', function () {
     defer.reject('Force update failed :(');
-    res.writeHead(400);
   });
   
   updateRequest.end();
@@ -253,8 +252,8 @@ var feedsInterface = function() {
           res.end(data);
         }, 
         function (err) {
-          res.end();
           console.error(err);
+          res.end();
         });
       });
     });
