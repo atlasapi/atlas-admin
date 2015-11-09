@@ -191,6 +191,7 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
     $scope.showSearchRes = false;
     $scope.resultMessage = {};
     $scope.clearUI = false;
+    $scope.isBusy = false;
     $scope.atlasResult = {  };
     $scope.uiStrings = {
       revoke: 'Revoke',
@@ -209,10 +210,11 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
     };
     
     var runRevoke = function (pid) {
-      var defer = $q.defer();
       var payload = {
         uri: 'http://nitro.bbc.co.uk/programmes/' + pid
       };
+      
+      $scope.isBusy = true;
       
       Feeds.request('youview/bbc_nitro/action/revoke', 'post', payload).then(
       function (data, status) {
@@ -221,18 +223,20 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
         $scope.resultMessage.body = 'The revoke transaction has been added to the queue';
         $scope.resultMessage.class = 'success';
         $scope.clearUI = true;
+        $scope.isBusy = false;
       }, 
       function () {
         $scope.resultMessage.body = 'The transaction could not be completed because of a server error';
         $scope.resultMessage.class = 'error';
+        $scope.isBusy = false;
       });
-      
-      return defer.promise;
     };
     
     var runIngest = function (pid) {
-      var defer = $q.defer();
       var payload = {};
+      
+      $scope.isBusy = true;
+      
       Feeds.request('forceUpdate/' + pid, 'post', payload).then(
       function (data, status) {
         $scope.showSearchRes = false;
@@ -240,13 +244,13 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
         $scope.resultMessage.body = 'The publish transaction has been added to the queue';
         $scope.resultMessage.class = 'success';
         $scope.clearUI = true;
+        $scope.isBusy = false;
       }, 
       function () {
         $scope.resultMessage.body = 'The transaction could not be completed because of a server error';
         $scope.resultMessage.class = 'error';
+        $scope.isBusy = false;
       });
-      
-      return defer.promise;
     };
       
 
@@ -256,7 +260,7 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
         return console.warn('PID isn\'t the correct length');
       }
       var nitroUri = 'http://nitro.bbc.co.uk/programmes/' + pidValue;
-      $http.get(atlasHost + '/3.0/content.json?apiKey=cae02bc954cf40809d6d70601d3e0b88&uri=' + nitroUri + '&annotations=description,extended_description,brand_summary')
+      $http.get(atlasHost + '/3.0/content.json?apiKey=643abee7104c482597bb7e98158d1d4b&uri=' + nitroUri + '&annotations=description,extended_description,brand_summary')
         .success( function (data, status) {
           var atlasres = data.contents[0];
           if (atlasres) {
