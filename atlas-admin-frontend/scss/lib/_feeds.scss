@@ -50,20 +50,28 @@
 }
 
 .feed-actions {
-    box-sizing: border-box;
-    float: right;
-    margin-top: 2.25rem;
-    padding: 1.5rem;
-    background: $color-grey;
-    border: 1px solid $color-pink;
-    border-radius: 5px;
-    
-    > button + button { margin-left: 1rem; }
+  box-sizing: border-box;
+  float: right;
+  margin-top: 2.25rem;
+  padding: 1.5rem;
+  background: $color-grey;
+  border: 1px solid $color-pink;
+  border-radius: 5px;
+  
+  > button + button { margin-left: 1rem; }
 
-    &-label {
-        display: block;
-        margin-bottom: .5rem;
-    }
+  &-label {
+    display: block;
+    margin-bottom: .5rem;
+  }
+  
+  .btn-publish {
+    background: #92E16A;
+  }
+  
+  .btn-revoke {
+    background: #F84E4E;
+  }
 }
 
 .console {
@@ -311,7 +319,7 @@
     }
     
     &.revoke > button {
-      background: #dd3e3e;
+      background: #F84E4E;
       border-color: darken(#c33939, 20%);
       color: darken(#c33939, 50%);
     }
@@ -335,5 +343,16 @@
   
   .statusMessage {
     text-align: center;
+    font-size: 1.4rem;
+    border-radius: 5px;
+    padding: 1rem;
+    
+    &.success {
+      background: #65d58b;
+    }
+    
+    &.error {
+      background: #e8c485;
+    }
   }
 }

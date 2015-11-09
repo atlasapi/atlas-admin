@@ -11,13 +11,17 @@ $color-red: #c5330b;
 $color-silver: #eee !default;
 $color-silver-dark: darken($color-silver, 10%) !default;
 
+$primary-color: #fff !default;
+$secondary-color: $color-purple !default;
+
 $primary-text-color: #333 !default;
 
 $primary-bg-color: #fff !default;
 $secondary-bg-color: $color-purple !default;
 
-$font-family: Helvetica, sans-serif !default;
-$header-font-family: Helvetica, sans-serif !default;
+$font-family: "Open Sans", sans-serif !default;
+$header-font-family: 'Josefin Slab', Helvetica, sans-serif !default;
+$secondary-header-font-family: 'Raleway', Helvetica, sans-serif !default;
 
 $base-font-size: 16px !default;
 
@@ -28,7 +32,7 @@ $h4-size: 1.5rem !default;
 $h5-size: 1rem !default;
 $h6-size: 1rem !default;
 
-$line-height: 1.5 !default;
+$base-line-height: 1.5 !default;
 
 $border-radius: 5px !default;
 
