@@ -1,0 +1,6 @@
+{
+  "esnext": true,
+  "strict": true,
+  "devel": true /* allows for console.log etc */,
+  "node": true
+}

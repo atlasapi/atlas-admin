@@ -1,110 +1,103 @@
 <div class="app-surface feedsConsole">
-    <header class="app-header">
-        <h1 class="page-title">{{view_title}}</h1>
-        <div class="breadcrumb">
-            <a class="crumb" href="#/">Atlas</a>
-            <a class="crumb" href="#/feeds/">Feeds</a>
-            <span class="crumb">BBC to YouView</span>
+  <header class="app-header">
+    <h1 class="page-title">{{view_title}}</h1>
+    <div class="breadcrumb">
+      <a class="crumb" href="#/">Atlas</a>
+      <a class="crumb" href="#/feeds/">Feeds</a>
+      <span class="crumb">BBC to YouView</span>
+    </div>
+    <div class="overall-stats">
+      <h2 class="">Overall stats</h2>
+      <div class="stats-field">
+        <span class="stats-label">Queue size</span>
+        <span class="stats-data">{{statistics.queue_size}}</span>
+      </div>
+      <div class="stats-field">
+        <span class="stats-label">Latency</span>
+        <span class="stats-data">{{statistics.latency}}</span>
+      </div>
+    </div>
+    <div class="feed-actions">
+      <span class="feed-actions-label">Actions:</span>
+      <button action-modal="upload" ng-disabled="disableActions">Publish</button>
+      <button action-modal="revoke" ng-disabled="disableActions">Revoke</button>
+    </div>
+    <div ng-show="error.show">
+      {{error.obj.message}}
+    </div>
+  </header>
+  
+  <section class="panel-full console">
+    <div class="number-of-results">
+      <label for="">Results per page:&nbsp;</label>
+      <select ng-model="page.limit" name="" id="">
+        <option value="10">10</option>
+        <option value="15">15</option>
+        <option value="30">30</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+      </select>
+    </div>
+    <div class="transactions-table">
+      <table class="table">
+        <thead>
+          <tr class="filter-bar">
+            <th>
+              <select ng-change="filter('transaction')" ng-model="search.transaction" placeholder="Filter by Transaction" class="search-cell">
+                <option ng-selected value="">Filter by transaction</option>
+                <option ng-repeat="transaction in transactionFilter" value="{{transaction}}">{{transaction}}</option>
+              </select>
+            </th>
+            <th>
+              <input placeholder="Filter by Content URI" ng-model="search.uri" ng-change="filter('uri')" class="search-cell" type="text">
+            </th>
+            <th>
+              <input placeholder="Filter by Remote ID" ng-change="filter('remote_id')" ng-model="search.remote_id" class="search-cell" type="text">
+            </th>
+            <th></th>
+            <th>
+              <select ng-change="filter('status')" ng-model="search.status" placeholder="Filter by Status" class="search-cell">
+                <option ng-selected value="">Filter by status</option>
+                <option ng-repeat="status in statusFilter" value="{{status}}">{{status}}</option>
+              </select>
+            </th>
+          </tr>
+          <tr>
+            <th class="sortable" ng-click="table.order='element_type'; table.reverse=!table.reverse">Transaction type</th>
+            <th class="sortable" ng-click="table.order='content[0]'; table.reverse=!table.reverse">Content URI</th>
+            <th class="sortable" ng-click="table.order='id'; table.reverse=!table.reverse">YouView transaction ID</th>
+            <th class="sortable" ng-click="table.order='upload_time'; table.reverse=!table.reverse">Upload time</th>
+            <th class="sortable" ng-click="table.order='status'; table.reverse=!table.reverse">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="task in tasks | orderBy:table.order:table.reverse">
+            <td><a ng-href="#/feeds/youview/{{task.id}}">{{task.element_type}}</a></td>
+            <td><a ng-href="#/feeds/youview/{{task.id}}">{{task.content_uri}}</a></td>
+            <td><a ng-href="#/feeds/youview/{{task.id}}">{{task.remote_id}}</a></td>
+            <td><a ng-href="#/feeds/youview/{{task.id}}">{{task.upload_time}}</a></td>
+            <td><a ng-href="#/feeds/youview/{{task.id}}">{{task.status}}</a></td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <div class="loading-status" ng-show="isloading">
+        <div class="line-spinner">
+          <div class="rect1"></div>
+          <div class="rect2"></div>
+          <div class="rect3"></div>
+          <div class="rect4"></div>
+          <div class="rect5"></div>
         </div>
-        <div class="overall-stats">
-            <h2 class="">Overall stats</h2>
-            <div class="stats-field">
-                <span class="stats-label">Queue size</span>
-                <span class="stats-data">{{statistics.queue_size}}</span>
-            </div>
-            <div class="stats-field">
-                <span class="stats-label">Latency</span>
-                <span class="stats-data">{{statistics.latency}}</span>
-            </div>
+      </div>
+      
+      <div class="pagination">
+        <div class="pagination-buttons" ng-show="page.showPager">
+          <span ng-hide="(page.current < 1)" ng-class="{inactive: isloading}" class="prev-page button primary" ng-click="page.previous()">Previous</span>
+          <span ng-hide="(tasks.length < page.limit)" ng-class="{inactive: isloading}" class="next-page button primary" ng-click="page.next()">Next</span>
         </div>
-        <div class="feed-actions">
-            <span class="feed-actions-label">Actions:</span>
-            <button action-modal="upload" ng-disabled="disableActions">Republish</button>
-            <button action-modal="revoke" ng-disabled="disableActions">Revoke</button>
-            <button action-modal="unrevoke" ng-disabled="disableActions">Unrevoke</button>
-            <button action-modal="delete" ng-disabled="disableActions" class="negative">Delete</button>
-        </div>
-        <div ng-show="error.show">
-            {{error.obj.message}}
-        </div>
-    </header>
-
-    <section class="panel-full console">
-        <div class="number-of-results">
-            <label for="">Results per page:&nbsp;</label>
-            <select ng-model="page.limit" name="" id="">
-                <option value="10">10</option>
-                <option value="15">15</option>
-                <option value="30">30</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-            </select>
-        </div>
-        <div class="transactions-table">
-            <table class="table">
-                <thead>
-                    <tr class="filter-bar">
-                        <th>
-                          <select ng-change="filter('transaction')" ng-model="search.transaction" placeholder="Filter by Transaction" class="search-cell">
-                              <option ng-selected value="">Filter by transaction</option>
-                              <option ng-repeat="transaction in transactionFilter" value="{{transaction}}">{{transaction}}</option>
-                          </select>
-                        </th>
-                        <th>
-                            <input placeholder="Filter by Content URI" ng-model="search.uri" ng-change="filter('uri')" class="search-cell" type="text">
-                        </th>
-                        <th>
-                            <input placeholder="Filter by Remote ID" ng-change="filter('remote_id')" ng-model="search.remote_id" class="search-cell" type="text">
-                        </th>
-                        <th></th>
-                        <th>
-                            <select ng-change="filter('status')" ng-model="search.status" placeholder="Filter by Status" class="search-cell">
-                                <option ng-selected value="">Filter by status</option>
-                                <option ng-repeat="status in statusFilter" value="{{status}}">{{status}}</option>
-                            </select>
-                        </th>
-                        <th></th>
-                    </tr>
-                    <tr>
-                        <th class="sortable" ng-click="table.order='element_type'; table.reverse=!table.reverse">Transaction type</th>
-                        <th class="sortable" ng-click="table.order='content[0]'; table.reverse=!table.reverse">Content URI</th>
-                        <th class="sortable" ng-click="table.order='id'; table.reverse=!table.reverse">YouView transaction ID</th>
-                        <th class="sortable" ng-click="table.order='upload_time'; table.reverse=!table.reverse">Upload time</th>
-                        <th class="sortable" ng-click="table.order='status'; table.reverse=!table.reverse">Status</th>
-                        <th>Select</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="task in tasks | orderBy:table.order:table.reverse">
-                        <td><a ng-href="#/feeds/youview/{{task.id}}">{{task.element_type}}</a></td>
-                        <td><a ng-href="#/feeds/youview/{{task.id}}">{{task.content_uri}}</a></td>
-                        <td><a ng-href="#/feeds/youview/{{task.id}}">{{task.remote_id}}</a></td>
-                        <td><a ng-href="#/feeds/youview/{{task.id}}">{{task.upload_time}}</a></td>
-                        <td><a ng-href="#/feeds/youview/{{task.id}}">{{task.status}}</a></td>
-                        <td class="select-row">
-                            <input type="checkbox" ng-checked="selectedTasks.indexOf(task.id) > -1" ng-click="updateSelection(task.id)">
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="loading-status" ng-show="isloading">
-                <div class="line-spinner">
-                    <div class="rect1"></div>
-                    <div class="rect2"></div>
-                    <div class="rect3"></div>
-                    <div class="rect4"></div>
-                    <div class="rect5"></div>
-                </div>
-            </div>
-
-            <div class="pagination">
-                <div class="pagination-buttons" ng-show="page.showPager">
-                    <span ng-hide="(page.current < 1)" ng-class="{inactive: isloading}" class="prev-page button primary" ng-click="page.previous()">Previous</span>
-                    <span ng-hide="(tasks.length < page.limit)" ng-class="{inactive: isloading}" class="next-page button primary" ng-click="page.next()">Next</span>
-                </div>
-                <span class="pagination-status" ng-hide="isloading">Showing results: {{page.offset+1}} to {{(page.offset+1) + (tasks.length-1)}}</span>
-            </div>
-        </div>
-    </section>
+        <span class="pagination-status" ng-hide="isloading">Showing results: {{page.offset+1}} to {{(page.offset+1) + (tasks.length-1)}}</span>
+      </div>
+    </div>
+  </section>
 </div>
