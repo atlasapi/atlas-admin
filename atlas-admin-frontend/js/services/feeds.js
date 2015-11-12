@@ -57,14 +57,8 @@ function($http, Authentication, atlasApiHost, $q) {
       request.data = params;
     }
     
-    $.ajax(request).then(
-    function (data, status, xhr) {
-      defer.resolve(data);
-    },
-    function (xhr, status) {
-      console.error('HTTP request error ', status, xhr.status);
-      defer.reject(status);
-    });
+    $http(request).success(defer.resolve).error(defer.reject);
+    
     return defer.promise;
   };
   
