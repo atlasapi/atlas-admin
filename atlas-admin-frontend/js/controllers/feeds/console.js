@@ -108,6 +108,7 @@ function($scope, $rootScope, $routeParams, Feeds, $q, $timeout) {
         return;
       }
       var stats = data.feed_stats[0];
+      $scope.statistics = {};
       $scope.statistics.queue_size = stats.queue_size;
       $scope.statistics.uptime = stats.update_latency_string;
     });
