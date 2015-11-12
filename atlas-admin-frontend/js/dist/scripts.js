@@ -13228,16 +13228,16 @@ function($scope, $rootScope, $routeParams, Feeds, $q, $timeout) {
   
   
   // For loading the feed statistics from atlas
-  var getStats = function() {
+  var getStats = (function() {
     Feeds.request('youview/bbc_nitro/statistics.json').then(function(data) {
       if (! data.feed_stats) {
         return;
       }
-      $scope.statistics = data.feed_stats[0];
-      $scope.statistics.uptime = calculateUptime( new Date(data.feed_stats[0].last_outage) );
+      var stats = data.feed_stats[0];
+      $scope.statistics.queue_size = stats.queue_size;
+      $scope.statistics.uptime = stats.update_latency_string;
     });
-  };
-  getStats();
+  })();
   
   
   // Used for loading data into the tasks scope
