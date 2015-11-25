@@ -96,8 +96,8 @@ app.config(['$httpProvider', function($httpProvider) {
 // to make url's in the $scope
 app.config(['$sceDelegateProvider', function($sceDelegateProvider) {
     $sceDelegateProvider.resourceUrlWhitelist([
-        'self',
-        'http://*.metabroadcast.com/**',
-        'https://*.metabroadcast.com/**'
-        ]);
+      'self',
+      'http://*.metabroadcast.com/**',
+      'https://*.metabroadcast.com/**'
+    ]);
 }]);
