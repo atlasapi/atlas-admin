@@ -34,7 +34,7 @@ function($http, Authentication, atlasApiHost, $q) {
   //  @param feed_uri {string}
   //  @param method {string}
   //  @param params {object}
-  //  @returns promise<$http Response, String>
+  //  @returns promise<$httpResponse>
   //
   var request = function(feed_uri, method, params) {
     method = method || 'get';
@@ -49,7 +49,8 @@ function($http, Authentication, atlasApiHost, $q) {
     
     request = {
       method: method,
-      url: Authentication.appendTokenToUrl(atlasApiHost + '/feeds/' + feed_uri)
+      url: Authentication.appendTokenToUrl(atlasApiHost + '/feeds/' + feed_uri),
+      dataType: 'json'
     };
     
     if (_.isObject(params)) {
@@ -57,6 +58,7 @@ function($http, Authentication, atlasApiHost, $q) {
     }
     
     $http(request).success(defer.resolve).error(defer.reject);
+    
     return defer.promise;
   };
   

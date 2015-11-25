@@ -10932,7 +10932,7 @@ function($http, Authentication, atlasApiHost, $q) {
   //  @param feed_uri {string}
   //  @param method {string}
   //  @param params {object}
-  //  @returns promise<$http Response, String>
+  //  @returns promise<$httpResponse>
   //
   var request = function(feed_uri, method, params) {
     method = method || 'get';
@@ -10947,7 +10947,8 @@ function($http, Authentication, atlasApiHost, $q) {
     
     request = {
       method: method,
-      url: Authentication.appendTokenToUrl(atlasApiHost + '/feeds/' + feed_uri)
+      url: Authentication.appendTokenToUrl(atlasApiHost + '/feeds/' + feed_uri),
+      dataType: 'json'
     };
     
     if (_.isObject(params)) {
@@ -10955,6 +10956,7 @@ function($http, Authentication, atlasApiHost, $q) {
     }
     
     $http(request).success(defer.resolve).error(defer.reject);
+    
     return defer.promise;
   };
   
@@ -13228,16 +13230,17 @@ function($scope, $rootScope, $routeParams, Feeds, $q, $timeout) {
   
   
   // For loading the feed statistics from atlas
-  var getStats = function() {
+  var getStats = (function() {
     Feeds.request('youview/bbc_nitro/statistics.json').then(function(data) {
       if (! data.feed_stats) {
         return;
       }
-      $scope.statistics = data.feed_stats[0];
-      $scope.statistics.uptime = calculateUptime( new Date(data.feed_stats[0].last_outage) );
+      var stats = data.feed_stats[0];
+      $scope.statistics = {};
+      $scope.statistics.queue_size = stats.queue_size;
+      $scope.statistics.uptime = stats.update_latency_string;
     });
-  };
-  getStats();
+  })();
   
   
   // Used for loading data into the tasks scope
