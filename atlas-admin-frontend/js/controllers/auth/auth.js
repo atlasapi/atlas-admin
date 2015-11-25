@@ -1,7 +1,5 @@
 'use strict';
 var app = angular.module('atlasAdmin.controllers.auth', []);
-
-// User migration code
 var userCookie = Cookies.get('iPlanetDirectoryPro');
 
 var isUserLoggedIn = function (user) {
@@ -10,7 +8,7 @@ var isUserLoggedIn = function (user) {
     headers: {
       iPlanetDirectoryPro: userCookie
     },
-    success: function (response) {
+    success: function () {
       findUserApplications(response, user);
     },
     error: function (jqXHR, textStatus, errorThrown) {
@@ -20,14 +18,19 @@ var isUserLoggedIn = function (user) {
 };
 
 var findUserApplications = function (newUserData, originalUserData) {
+  console.log('newUserData', newUserData);
   var applications = originalUserData.applications;
+  var uniqueUser = 'id=' + newUserData.dn.uid;
+  uniqueUser += ',ou=' + newUserData.dn.ou;
+  uniqueUser += ',dc=' + newUserData.dn.dc[0];
+  uniqueUser += ',dc=' + newUserData.dn.dc[1];
   applications.forEach(function (application) {
-    createGroupForApplication(application);
+    createGroupForApplication(application, uniqueUser);
   });
   // deactivateUser(user);
 };
 
-var createGroupForApplication = function (applicationId) {
+var createGroupForApplication = function (applicationId, uniqueUser) {
   $.ajax({
     method: 'POST',
     url: 'http://admin-backend-stage.metabroadcast.com/1/groups',
@@ -36,7 +39,7 @@ var createGroupForApplication = function (applicationId) {
     },
     data: {
       application_name: applicationId,
-      uniqueUser: 'id=steve@metabroadcast.com,ou=user,dc=metabroadcast,dc=com',
+      uniqueUser: uniqueUser,
       realm: '/'
     },
     success: function (response) {
