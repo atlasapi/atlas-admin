@@ -12582,66 +12582,68 @@ app.controller('ErrorController', function($scope, $rootScope, $routeParams) {
 var app = angular.module('atlasAdmin.controllers.auth', []);
 var userCookie = Cookies.get('iPlanetDirectoryPro');
 
-var isUserLoggedIn = function (user) {
-  $.ajax({
-    url: 'http://admin-backend-stage.metabroadcast.com/1/user',
-    headers: {
-      iPlanetDirectoryPro: userCookie
-    },
-    success: function () {
-      findUserApplications(response, user);
-    },
-    error: function (jqXHR, textStatus, errorThrown) {
-      console.error(textStatus, errorThrown);
-    }
-  });
-};
+var UserMigration = {
+  isUserLoggedIn: function (user) {
+    $.ajax({
+      url: 'http://admin-backend-stage.metabroadcast.com/1/user',
+      headers: {
+        iPlanetDirectoryPro: userCookie
+      },
+      success: function () {
+        UserMigration.findUserApplications(response, user);
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.error(textStatus, errorThrown);
+      }
+    });
+  },
 
-var findUserApplications = function (newUserData, originalUserData) {
-  console.log('newUserData', newUserData);
-  var applications = originalUserData.applications;
-  var uniqueUser = 'id=' + newUserData.dn.uid;
-  uniqueUser += ',ou=' + newUserData.dn.ou;
-  uniqueUser += ',dc=' + newUserData.dn.dc[0];
-  uniqueUser += ',dc=' + newUserData.dn.dc[1];
-  applications.forEach(function (application) {
-    createGroupForApplication(application, uniqueUser);
-  });
-  // deactivateUser(user);
-};
+  findUserApplications: function (newUserData, originalUserData) {
+    console.log('newUserData', newUserData);
+    var applications = originalUserData.applications;
+    var uniqueUser = 'id=' + newUserData.dn.uid;
+    uniqueUser += ',ou=' + newUserData.dn.ou;
+    uniqueUser += ',dc=' + newUserData.dn.dc[0];
+    uniqueUser += ',dc=' + newUserData.dn.dc[1];
+    applications.forEach(function (application) {
+      UserMigration.createGroupForApplication(application, uniqueUser);
+    });
+    // UserMigration.deactivateUser(user);
+  },
 
-var createGroupForApplication = function (applicationId, uniqueUser) {
-  $.ajax({
-    method: 'POST',
-    url: 'http://admin-backend-stage.metabroadcast.com/1/groups',
-    headers: {
-      iPlanetDirectoryPro: userCookie
-    },
-    data: {
-      application_name: applicationId,
-      uniqueUser: uniqueUser,
-      realm: '/'
-    },
-    success: function (response) {
-      console.log('response', response);
-    },
-    error: function (jqXHR, textStatus, errorThrown) {
-      console.error(textStatus, errorThrown);
-    }
-  });
-};
+  createGroupForApplication: function (applicationId, uniqueUser) {
+    $.ajax({
+      method: 'POST',
+      url: 'http://admin-backend-stage.metabroadcast.com/1/groups',
+      headers: {
+        iPlanetDirectoryPro: userCookie
+      },
+      data: {
+        application_name: applicationId,
+        uniqueUser: uniqueUser,
+        realm: '/'
+      },
+      success: function (response) {
+        console.log('response', response);
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.error(textStatus, errorThrown);
+      }
+    });
+  },
 
-var deactivateUser = function (user) {
-  $.ajax({
-    url: 'http://stage.atlas.metabroadcast.com/4/users/deactivate/' + user.id,
-    method: 'POST',
-    success: function (response) {
-      console.log('response');
-    },
-    error: function (jqXHR, textStatus, errorThrown) {
-      console.error(textStatus, errorThrown);
-    }
-  });
+  deactivateUser: function (user) {
+    $.ajax({
+      url: 'http://stage.atlas.metabroadcast.com/4/users/deactivate/' + user.id,
+      method: 'POST',
+      success: function (response) {
+        console.log('response');
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.error(textStatus, errorThrown);
+      }
+    });
+  }
 };
 
 app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location, Authentication, Atlas, $log, Users) {
@@ -12681,7 +12683,7 @@ app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location
             window.location.search = "";
         };
         Users.currentUser(function (user) {
-            isUserLoggedIn(user);
+            UserMigration.isUserLoggedIn(user);
             redirectToSources();
         });
     },
