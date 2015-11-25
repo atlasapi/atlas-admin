@@ -12604,7 +12604,7 @@ var findUserApplications = function (newUserData, originalUserData) {
   applications.forEach(function (application) {
     createGroupForApplication(application);
   });
-  deactivateUser(user);
+  // deactivateUser(user);
 };
 
 var createGroupForApplication = function (applicationId) {
@@ -12629,7 +12629,16 @@ var createGroupForApplication = function (applicationId) {
 };
 
 var deactivateUser = function (user) {
-  console.log('deactivateUser', user);
+  $.ajax({
+    url: 'http://stage.atlas.metabroadcast.com/4/users/deactivate/' + user.id,
+    method: 'POST',
+    success: function (response) {
+      console.log('response');
+    },
+    error: function (jqXHR, textStatus, errorThrown) {
+      console.error(textStatus, errorThrown);
+    }
+  });
 };
 
 app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location, Authentication, Atlas, $log, Users) {

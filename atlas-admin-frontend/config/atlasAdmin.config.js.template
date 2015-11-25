@@ -1,11 +1,13 @@
 /*
- * Populate the values in the template below and remove .template 
+ * Populate the values in the template below and remove .template
  * from the filename to configure the application
  * Atlas Host e.g. "http://stage.atlas.metabroadcast.com"
  * Atlas version e.g. "4"
  * Atlas API Host e.g. "http://atlas-admin-backend.stage.metabroadcast.com/api"
+ * Atlas Backend URL e.g. "http://admin-backend-stage.metabroadcast.com"
  */
 angular.module('atlasAdminConfig', [])
     .value('atlasHost','%%ATLASHOST%%')
     .value('atlasVersion', '%%ATLASVERSION%%')
-    .value('atlasApiHost', '%%ATLASAPIURL%%');
+    .value('atlasApiHost', '%%ATLASAPIURL%%')
+    .value('adminBackendUrl', '%%ATLASBACKENDURL%%');
