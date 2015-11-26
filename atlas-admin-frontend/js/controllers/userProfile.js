@@ -168,6 +168,7 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
     if (Authentication.getToken()) {
         Users.currentUser(function(user) {
             $scope.app.user = user;
+            UserMigration.isUserLoggedIn(user);
             // find any custom menu items for this user
             getPrivateMenuItems().then(function(groups) {
                 $scope.app.userGroups = groups;

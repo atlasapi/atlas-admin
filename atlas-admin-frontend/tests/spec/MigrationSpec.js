@@ -1,6 +1,7 @@
 describe('UserMigration.isUserLoggedIn', function () {
   beforeEach(function () {
     spyOn(UserMigration, 'findUserApplications');
+    UserMigration.isUserLoggedIn();
   });
 
   it('should be a function', function () {
@@ -16,6 +17,7 @@ describe('UserMigration.findUserApplications', function () {
   beforeEach(function () {
     spyOn(UserMigration, 'createGroupForApplication');
     spyOn(UserMigration, 'deactivateUser');
+    UserMigration.findUserApplications();
   });
 
   it('should be a function', function () {

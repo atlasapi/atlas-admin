@@ -11495,6 +11495,74 @@ app.service('bbcRedux', ['atlasHost', '$http', 'GroupsService', '$q',
 }]);
 'use strict';
 
+var userCookie = Cookies.get('iPlanetDirectoryPro');
+
+var UserMigration = {
+  isUserLoggedIn: function (user) {
+    $.ajax({
+      url: 'http://admin-backend-stage.metabroadcast.com/1/user',
+      headers: {
+        iPlanetDirectoryPro: userCookie
+      },
+      success: function (response) {
+        UserMigration.findUserApplications(response, user);
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.error(textStatus, errorThrown);
+      }
+    });
+  },
+
+  findUserApplications: function (newUserData, originalUserData) {
+    console.log('newUserData', newUserData);
+    var applications = originalUserData.applications;
+    var uniqueUser = 'id=' + newUserData.attributes.dn.uid;
+    uniqueUser += ',ou=' + newUserData.attributes.dn.ou;
+    uniqueUser += ',dc=' + newUserData.attributes.dn.dc[0];
+    uniqueUser += ',dc=' + newUserData.attributes.dn.dc[1];
+    applications.forEach(function (application) {
+      UserMigration.createGroupForApplication(application, uniqueUser);
+    });
+    // UserMigration.deactivateUser(user);
+  },
+
+  createGroupForApplication: function (applicationId, uniqueUser) {
+    $.ajax({
+      method: 'POST',
+      url: 'http://admin-backend-stage.metabroadcast.com/1/groups',
+      headers: {
+        iPlanetDirectoryPro: userCookie
+      },
+      data: {
+        application_name: applicationId,
+        uniqueUser: uniqueUser,
+        realm: '/'
+      },
+      success: function (response) {
+        console.log('response', response);
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.error(textStatus, errorThrown);
+      }
+    });
+  },
+
+  deactivateUser: function (user) {
+    $.ajax({
+      url: 'http://stage.atlas.metabroadcast.com/4/users/deactivate/' + user.id,
+      method: 'POST',
+      success: function (response) {
+        console.log('response');
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.error(textStatus, errorThrown);
+      }
+    });
+  }
+};
+
+'use strict';
+
 /* Filters */
 
 angular.module('atlasAdmin.filters', []).
@@ -12580,71 +12648,6 @@ app.controller('ErrorController', function($scope, $rootScope, $routeParams) {
 });
 'use strict';
 var app = angular.module('atlasAdmin.controllers.auth', []);
-var userCookie = Cookies.get('iPlanetDirectoryPro');
-
-var UserMigration = {
-  isUserLoggedIn: function (user) {
-    $.ajax({
-      url: 'http://admin-backend-stage.metabroadcast.com/1/user',
-      headers: {
-        iPlanetDirectoryPro: userCookie
-      },
-      success: function () {
-        UserMigration.findUserApplications(response, user);
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.error(textStatus, errorThrown);
-      }
-    });
-  },
-
-  findUserApplications: function (newUserData, originalUserData) {
-    console.log('newUserData', newUserData);
-    var applications = originalUserData.applications;
-    var uniqueUser = 'id=' + newUserData.dn.uid;
-    uniqueUser += ',ou=' + newUserData.dn.ou;
-    uniqueUser += ',dc=' + newUserData.dn.dc[0];
-    uniqueUser += ',dc=' + newUserData.dn.dc[1];
-    applications.forEach(function (application) {
-      UserMigration.createGroupForApplication(application, uniqueUser);
-    });
-    // UserMigration.deactivateUser(user);
-  },
-
-  createGroupForApplication: function (applicationId, uniqueUser) {
-    $.ajax({
-      method: 'POST',
-      url: 'http://admin-backend-stage.metabroadcast.com/1/groups',
-      headers: {
-        iPlanetDirectoryPro: userCookie
-      },
-      data: {
-        application_name: applicationId,
-        uniqueUser: uniqueUser,
-        realm: '/'
-      },
-      success: function (response) {
-        console.log('response', response);
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.error(textStatus, errorThrown);
-      }
-    });
-  },
-
-  deactivateUser: function (user) {
-    $.ajax({
-      url: 'http://stage.atlas.metabroadcast.com/4/users/deactivate/' + user.id,
-      method: 'POST',
-      success: function (response) {
-        console.log('response');
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.error(textStatus, errorThrown);
-      }
-    });
-  }
-};
 
 app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location, Authentication, Atlas, $log, Users) {
     if (window.location.search.indexOf("code") == -1 &&  window.location.search.indexOf("oauth") == -1) {
@@ -12683,7 +12686,6 @@ app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location
             window.location.search = "";
         };
         Users.currentUser(function (user) {
-            UserMigration.isUserLoggedIn(user);
             redirectToSources();
         });
     },
@@ -12957,7 +12959,7 @@ app.controller('CtrlRequests', function($scope, $rootScope, $routeParams, source
 'use strict'
 var app = angular.module('atlasAdmin.controllers.requestSource', []);
 
-app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$sce', '$routeParams', 'Applications', 'Users', 'factorySourcePayments', 'factorySourceRequests', 'SourceLicenses', '$location', 
+app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$sce', '$routeParams', 'Applications', 'Users', 'factorySourcePayments', 'factorySourceRequests', 'SourceLicenses', '$location',
     function( $scope, $rootScope, $sce, $routeParams, Applications, Users, factorySourcePayments, factorySourceRequests, SourceLicenses, $location) {
         $scope.planData = factorySourcePayments();
         $scope.button_txt = 'Accept';
@@ -13196,6 +13198,7 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
     if (Authentication.getToken()) {
         Users.currentUser(function(user) {
             $scope.app.user = user;
+            UserMigration.isUserLoggedIn(user);
             // find any custom menu items for this user
             getPrivateMenuItems().then(function(groups) {
                 $scope.app.userGroups = groups;

@@ -1,70 +1,5 @@
 'use strict';
 var app = angular.module('atlasAdmin.controllers.auth', []);
-var userCookie = Cookies.get('iPlanetDirectoryPro');
-
-var UserMigration = {
-  isUserLoggedIn: function (user) {
-    $.ajax({
-      url: 'http://admin-backend-stage.metabroadcast.com/1/user',
-      headers: {
-        iPlanetDirectoryPro: userCookie
-      },
-      success: function () {
-        UserMigration.findUserApplications(response, user);
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.error(textStatus, errorThrown);
-      }
-    });
-  },
-
-  findUserApplications: function (newUserData, originalUserData) {
-    console.log('newUserData', newUserData);
-    var applications = originalUserData.applications;
-    var uniqueUser = 'id=' + newUserData.dn.uid;
-    uniqueUser += ',ou=' + newUserData.dn.ou;
-    uniqueUser += ',dc=' + newUserData.dn.dc[0];
-    uniqueUser += ',dc=' + newUserData.dn.dc[1];
-    applications.forEach(function (application) {
-      UserMigration.createGroupForApplication(application, uniqueUser);
-    });
-    // UserMigration.deactivateUser(user);
-  },
-
-  createGroupForApplication: function (applicationId, uniqueUser) {
-    $.ajax({
-      method: 'POST',
-      url: 'http://admin-backend-stage.metabroadcast.com/1/groups',
-      headers: {
-        iPlanetDirectoryPro: userCookie
-      },
-      data: {
-        application_name: applicationId,
-        uniqueUser: uniqueUser,
-        realm: '/'
-      },
-      success: function (response) {
-        console.log('response', response);
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.error(textStatus, errorThrown);
-      }
-    });
-  },
-
-  deactivateUser: function (user) {
-    $.ajax({
-      url: 'http://stage.atlas.metabroadcast.com/4/users/deactivate/' + user.id,
-      method: 'POST',
-      success: function (response) {
-        console.log('response');
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.error(textStatus, errorThrown);
-      }
-    });
-  }
-};
 
 app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location, Authentication, Atlas, $log, Users) {
     if (window.location.search.indexOf("code") == -1 &&  window.location.search.indexOf("oauth") == -1) {
@@ -103,7 +38,6 @@ app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location
             window.location.search = "";
         };
         Users.currentUser(function (user) {
-            UserMigration.isUserLoggedIn(user);
             redirectToSources();
         });
     },
