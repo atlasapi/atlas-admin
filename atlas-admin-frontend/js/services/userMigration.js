@@ -19,30 +19,36 @@ var UserMigration = {
   },
 
   findUserApplications: function (newUserData, originalUserData) {
-    console.log('newUserData', newUserData);
+    var oauthToken = localStorage.getItem('auth.token');
+    var oauthProvider = localStorage.getItem('auth.provider');
+    var oauthString = '?oauth_token=' + oauthToken + '&oauth_provider=' + oauthProvider;
     var applications = originalUserData.applications;
     var uniqueUser = 'id=' + newUserData.attributes.dn.uid;
     uniqueUser += ',ou=' + newUserData.attributes.dn.ou;
     uniqueUser += ',dc=' + newUserData.attributes.dn.dc[0];
     uniqueUser += ',dc=' + newUserData.attributes.dn.dc[1];
-    applications.forEach(function (application) {
-      UserMigration.createGroupForApplication(application, uniqueUser);
+    applications.forEach(function (applicationId) {
+      $.ajax({
+        url: 'https://atlas.metabroadcast.com/4/applications/' + applicationId + '.json' + oauthString,
+        success: function (response) {
+          UserMigration.createGroupForApplication(application);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          console.error(textStatus, errorThrown);
+        }
+      });
     });
     // UserMigration.deactivateUser(user);
   },
 
-  createGroupForApplication: function (applicationId, uniqueUser) {
+  createGroupForApplication: function (application) {
     $.ajax({
       method: 'POST',
-      url: 'http://admin-backend-stage.metabroadcast.com/1/groups',
+      url: 'http://admin-backend-stage.metabroadcast.com/1/applications',
       headers: {
         iPlanetDirectoryPro: userCookie
       },
-      data: {
-        application_name: applicationId,
-        uniqueUser: uniqueUser,
-        realm: '/'
-      },
+      data: application,
       success: function (response) {
         console.log('response', response);
       },
