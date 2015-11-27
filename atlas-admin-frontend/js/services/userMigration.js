@@ -23,10 +23,6 @@ var UserMigration = {
     var oauthProvider = localStorage.getItem('auth.provider');
     var oauthString = '?oauth_token=' + oauthToken + '&oauth_provider=' + oauthProvider;
     var applications = originalUserData.applications;
-    var uniqueUser = 'id=' + newUserData.attributes.dn.uid;
-    uniqueUser += ',ou=' + newUserData.attributes.dn.ou;
-    uniqueUser += ',dc=' + newUserData.attributes.dn.dc[0];
-    uniqueUser += ',dc=' + newUserData.attributes.dn.dc[1];
     applications.forEach(function (applicationId) {
       $.ajax({
         url: 'https://atlas.metabroadcast.com/4/applications/' + applicationId + '.json' + oauthString,
