@@ -3,14 +3,18 @@
 var userCookie = Cookies.get('iPlanetDirectoryPro');
 
 var UserMigration = {
-  isUserLoggedIn: function (user) {
+  isUserLoggedIn: function (callback) {
     $.ajax({
       url: 'http://admin-backend-stage.metabroadcast.com/1/user',
       headers: {
         iPlanetDirectoryPro: userCookie
       },
       success: function (response) {
-        UserMigration.findUserApplications(response, user);
+        if (typeof(response) === 'string' && response.indexOf('exception') !== -1) {
+          callback(false);
+          return;
+        }
+        callback(response);
       },
       error: function (jqXHR, textStatus, errorThrown) {
         console.error(textStatus, errorThrown);

@@ -44,4 +44,8 @@ app.controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routePar
             $log.error(error);
         });
     };
+
+    UserMigration.isUserLoggedIn(function (response) {
+      console.log(response);
+    });
 });
