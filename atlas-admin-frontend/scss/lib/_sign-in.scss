@@ -36,12 +36,30 @@
 
 	&.twitter {
 		background: #55acee;
-		border-radius: 5px 5px 0 0;
 
 		&:hover {
 			background: darken(#55acee, 10%);
 		}
 	}
+
+  &.mbst-auth {
+    background: #306;
+    border-radius: 5px 5px 0 0;
+
+    &:hover {
+      background: darken(#306, 5%);
+    }
+
+
+    .mb-icon {
+      width: 100px;
+      height: 23px;
+      margin-left: auto;
+      margin-right: auto;
+      background: url(../img/mb-icon.png) 0 0 no-repeat;
+    }
+  }
+
 	&.github {
 		background: #333;
 		border-radius: 0;

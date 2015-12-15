@@ -1,42 +1,26 @@
 describe('UserMigration.isUserLoggedIn', function () {
   beforeEach(function () {
-    spyOn(UserMigration, 'findUserApplications');
-    UserMigration.isUserLoggedIn();
+    var successCallback = function () {
+      return true;
+    };
+    spyOn(successCallback);
+    UserMigration.isUserLoggedIn(successCallback);
   });
 
   it('should be a function', function () {
     expect((typeof UserMigration.isUserLoggedIn)).toBe('function');
   });
 
-  it('should call `findUserApplications`', function () {
-    expect(UserMigration.findUserApplications).toHaveBeenCalled();
+  it('should call `succssCallback`', function () {
+    expect(successCallback).toHaveBeenCalled();
   });
 });
 
 describe('UserMigration.findUserApplications', function () {
-  beforeEach(function () {
-    spyOn(UserMigration, 'createGroupForApplication');
-    spyOn(UserMigration, 'deactivateUser');
-    UserMigration.findUserApplications();
-  });
-
-  it('should be a function', function () {
-    expect((typeof UserMigration.findUserApplications)).toBe('function');
-  });
-
-  it('should call `createGroupForApplication`', function () {
-    expect(UserMigration.createGroupForApplication).toHaveBeenCalled();
-  });
 });
 
 describe('UserMigration.createGroupForApplication', function () {
-  it('should be a function', function () {
-    expect((typeof UserMigration.createGroupForApplication)).toBe('function');
-  });
 });
 
 describe('UserMigration.deactivateUser', function () {
-  it('should be a function', function () {
-    expect((typeof UserMigration.deactivateUser)).toBe('function');
-  });
 });

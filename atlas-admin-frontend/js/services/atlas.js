@@ -33,6 +33,19 @@ app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $
                 console.error(error);
                 return error;
             });
+
+            var loginUser = function (response) {
+              window.location.href = login_url;
+            };
+
+            UserMigration.isUserLoggedIn(function (targetUri) {
+              if (!response) {
+                return;
+              }
+
+              console.log(response);
+              loginUser(response);
+            });
         },
         getAccessToken: function(oauth_token, oauth_verifier, code) {
             var url = "/auth/" + Authentication.getProvider() + "/token.json?oauthToken=" + oauth_token

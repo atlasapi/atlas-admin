@@ -22,30 +22,28 @@ app.controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routePar
         }
     });
 
-    $rootScope.startAuth = function(provider) {
-        var uri,
-            target;
-        if ($location.absUrl().indexOf('/login/' + provider.namespace) !== -1) {
-            uri = $location.absUrl().replace("/login/" + provider.namespace,"/oauth/" + provider.namespace);
-            target = $location.absUrl().replace("/login/" + provider.namespace,"/");
-        } else {
-            uri = $location.absUrl().replace("/login", "/oauth/" + provider.namespace);
-            target = $location.absUrl().replace("/login","/");
-        }
+    $rootScope.startAuth = function (provider) {
+      var uri;
+      var target;
 
-        var callbackUrl = encodeURIComponent(uri);
-        var targetUri = encodeURIComponent(target);
+      if ($location.absUrl().indexOf('/login/' + provider.namespace) !== -1) {
+        uri = $location.absUrl().replace("/login/" + provider.namespace,"/oauth/" + provider.namespace);
+        target = $location.absUrl().replace("/login/" + provider.namespace,"/");
+      } else {
+        uri = $location.absUrl().replace("/login", "/oauth/" + provider.namespace);
+        target = $location.absUrl().replace("/login","/");
+      }
 
-        Authentication.setProvider(provider.namespace);
-        Atlas.startOauthAuthentication(provider, callbackUrl, targetUri).then(function(login_url) {
-            window.location.href = login_url;
-        }, function(error) {
-            $log.error("Error starting auth:");
-            $log.error(error);
-        });
+      var callbackUrl = encodeURIComponent(uri);
+      var targetUri = encodeURIComponent(target);
+
+      Authentication.setProvider(provider.namespace);
+      Atlas.startOauthAuthentication(provider, callbackUrl, targetUri).then(function(login_url) {
+        window.location.href = login_url;
+      }, function (error) {
+        $log.error("Error starting auth:");
+        $log.error(error);
+      });
+
     };
-
-    UserMigration.isUserLoggedIn(function (response) {
-      console.log(response);
-    });
 });

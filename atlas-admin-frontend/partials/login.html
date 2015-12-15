@@ -1,5 +1,10 @@
 <div class="auth-container">
-  <p><a href="https://users.metabroadcast.com#login?ref={{referer}}">Login with MetaBroadcast account</a></p>
+  <div class="auth-option mbst-auth">
+    <a href="https://users.metabroadcast.com#login?ref={{referer}}">
+      <i class="mb-icon"></i>
+      Login with MetaBroadcast
+    </a>
+  </div>
 	<div ng-repeat="provider in providers | orderBy:'name'" class="auth-option {{provider.icon}}">
 		<a ng-click="startAuth(provider)">
 			<i class="fa fa-{{provider.icon}}"></i> {{provider.prompt}}
