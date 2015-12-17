@@ -11495,15 +11495,11 @@ app.service('bbcRedux', ['atlasHost', '$http', 'GroupsService', '$q',
 }]);
 'use strict';
 
-var userCookie = Cookies.get('iPlanetDirectoryPro');
-
-var UserMigration = {
-  isUserLoggedIn: function (callback) {
+var userMigration = {
+  isUserLoggedIn: function (options, callback) {
     $.ajax({
-      url: 'http://admin-backend-stage.metabroadcast.com/1/user',
-      headers: {
-        iPlanetDirectoryPro: userCookie
-      },
+      url: options.url,
+      headers: options.headers,
       success: function (response) {
         if (typeof(response) === 'string' && response.indexOf('exception') !== -1) {
           callback(false);
@@ -12714,7 +12710,7 @@ app.controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routePar
     Atlas.getAuthProviders().then(function(results) {
         var providers = [];
 
-        UserMigration.isUserLoggedIn(function (response) {
+        userMigration.isUserLoggedIn(function (response) {
           if (!response) {
             return;
           }
@@ -13731,12 +13727,12 @@ angular.module('atlasAdmin.controllers.applications')
         };
         $http.get(Authentication.appendTokenToUrl(atlasApiHost + '/usage-list/' + dates)).then(function (response) {
             var usageData =  _.has(response, 'data') ? response.data.aggregations.apiKeys.buckets : null;
-            
+
             if (! usageData) {
               console.warn('Response data doesnt have the `data` property', response);
               return;
             }
-            
+
             _.forEach(usageData, function (d) {
                 d.readableCount = numberWithCommas(d.doc_count);
             });
@@ -13765,11 +13761,46 @@ angular.module('atlasAdmin.controllers.applications')
         });
     };
 
-    // retreive a list of all apps 
+    // retreive a list of all apps
     Applications.all().then(function(applications) {
-        $scope.app.applications = applications;
-        $scope.state = (applications.length) ? 'table' : 'blank';
-        getUsageData(applications);
+      var userCookie = Cookies.get('iPlanetDirectoryPro');
+
+      userMigration.isUserLoggedIn({
+        url: 'http://admin-backend-stage.metabroadcast.com/1/user',
+        headers: {
+          iPlanetDirectoryPro: userCookie
+        }
+      }, function (response) {
+        if (!response) {
+          $scope.app.applications = applications;
+          return;
+        }
+
+        if (!response.role.length) {
+          $scope.app.applications = applications;
+          return;
+        }
+
+        var openAmApplications = _.map(response.role, function (app) {
+          return {
+            created: '',
+            description: '',
+            id: '',
+            revoked: '',
+            title: '',
+            sources: {},
+            publisher: {},
+            credentials: {}
+          };
+        });
+
+        console.log('openAmApplications', openAmApplications);
+        console.log('new apps', response.role);
+        console.log('old apps', applications);
+      });
+      $scope.app.applications = applications;
+      $scope.state = (applications.length) ? 'table' : 'blank';
+      getUsageData(applications);
     });
 
     // instantiate a new modal window
@@ -13781,7 +13812,7 @@ angular.module('atlasAdmin.controllers.applications')
         });
         modalInstance.result.then(function(application) {
             // if all sources are selected, go to edit page
-            if ( 'all' === application.source ) { 
+            if ( 'all' === application.source ) {
                 $location.path('/applications/' + application.id);
             }else{
                 $scope.app.applications.push(application)

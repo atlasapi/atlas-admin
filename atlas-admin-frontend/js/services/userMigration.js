@@ -1,14 +1,10 @@
 'use strict';
 
-var userCookie = Cookies.get('iPlanetDirectoryPro');
-
-var UserMigration = {
-  isUserLoggedIn: function (callback) {
+var userMigration = {
+  isUserLoggedIn: function (options, callback) {
     $.ajax({
-      url: 'http://admin-backend-stage.metabroadcast.com/1/user',
-      headers: {
-        iPlanetDirectoryPro: userCookie
-      },
+      url: options.url,
+      headers: options.headers,
       success: function (response) {
         if (typeof(response) === 'string' && response.indexOf('exception') !== -1) {
           callback(false);

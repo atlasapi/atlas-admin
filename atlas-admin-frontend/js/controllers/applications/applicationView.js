@@ -33,12 +33,12 @@ angular.module('atlasAdmin.controllers.applications')
         };
         $http.get(Authentication.appendTokenToUrl(atlasApiHost + '/usage-list/' + dates)).then(function (response) {
             var usageData =  _.has(response, 'data') ? response.data.aggregations.apiKeys.buckets : null;
-            
+
             if (! usageData) {
               console.warn('Response data doesnt have the `data` property', response);
               return;
             }
-            
+
             _.forEach(usageData, function (d) {
                 d.readableCount = numberWithCommas(d.doc_count);
             });
@@ -67,11 +67,46 @@ angular.module('atlasAdmin.controllers.applications')
         });
     };
 
-    // retreive a list of all apps 
+    // retreive a list of all apps
     Applications.all().then(function(applications) {
-        $scope.app.applications = applications;
-        $scope.state = (applications.length) ? 'table' : 'blank';
-        getUsageData(applications);
+      var userCookie = Cookies.get('iPlanetDirectoryPro');
+
+      userMigration.isUserLoggedIn({
+        url: 'http://admin-backend-stage.metabroadcast.com/1/user',
+        headers: {
+          iPlanetDirectoryPro: userCookie
+        }
+      }, function (response) {
+        if (!response) {
+          $scope.app.applications = applications;
+          return;
+        }
+
+        if (!response.role.length) {
+          $scope.app.applications = applications;
+          return;
+        }
+
+        var openAmApplications = _.map(response.role, function (app) {
+          return {
+            created: '',
+            description: '',
+            id: '',
+            revoked: '',
+            title: '',
+            sources: {},
+            publisher: {},
+            credentials: {}
+          };
+        });
+
+        console.log('openAmApplications', openAmApplications);
+        console.log('new apps', response.role);
+        console.log('old apps', applications);
+      });
+      $scope.app.applications = applications;
+      $scope.state = (applications.length) ? 'table' : 'blank';
+      getUsageData(applications);
     });
 
     // instantiate a new modal window
@@ -83,7 +118,7 @@ angular.module('atlasAdmin.controllers.applications')
         });
         modalInstance.result.then(function(application) {
             // if all sources are selected, go to edit page
-            if ( 'all' === application.source ) { 
+            if ( 'all' === application.source ) {
                 $location.path('/applications/' + application.id);
             }else{
                 $scope.app.applications.push(application)

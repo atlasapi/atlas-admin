@@ -9,7 +9,7 @@ app.controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routePar
     Atlas.getAuthProviders().then(function(results) {
         var providers = [];
 
-        UserMigration.isUserLoggedIn(function (response) {
+        userMigration.isUserLoggedIn(function (response) {
           if (!response) {
             return;
           }
