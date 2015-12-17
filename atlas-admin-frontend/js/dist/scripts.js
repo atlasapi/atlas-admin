@@ -11503,7 +11503,6 @@ var userMigration = {
       success: function (response) {
         if (typeof(response) === 'string' && response.indexOf('exception') !== -1) {
           callback(false);
-          return;
         }
         callback(response);
       },
