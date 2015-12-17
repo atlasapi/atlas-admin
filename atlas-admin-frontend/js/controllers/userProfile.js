@@ -1,6 +1,6 @@
 'use strict';
 var app = angular.module('atlasAdmin.controllers.user', []);
-app.controller('UserProfileController', function($scope, $rootScope, $routeParams, Users, Applications, $location) {
+app.controller('UserProfileController', function($scope, $rootScope, $routeParams, Users, Applications, $location, userUrl) {
     $scope.app = {};
     $scope.app.isAdmin = false;
     $scope.app.predicate = 'created';
@@ -20,7 +20,7 @@ app.controller('UserProfileController', function($scope, $rootScope, $routeParam
 
     if ($routeParams.uid) {
         Users.get($routeParams.uid).then(function(user) {
-            $scope.app.user = user;
+          $scope.app.user = user;
             var title = 'Profile for ';
             if (user.full_name) {
                 title += user.full_name;
@@ -39,8 +39,37 @@ app.controller('UserProfileController', function($scope, $rootScope, $routeParam
         });
     } else {
         Users.currentUser(function(user) {
-            $scope.app.user = user;
+          var userCookie = Cookies.get('iPlanetDirectoryPro');
+          var options = {
+            url: userUrl,
+            headers: {
+              iPlanetDirectoryPro: userCookie
+            }
+          };
+
+          userMigration.isUserLoggedIn(options, function (response) {
+            if (!response) {
+              $scope.app.user = user;
+            }
+
+            var newUser = {
+              id: response.attributes.uid,
+              screen_name: response.attributes.sn,
+              email: response.attributes.mail,
+              applications: _.map(response.role, function (app) {
+                return app.id;
+              })
+            };
+
+            if (newUser.applications.indexOf('mbst-admin') !== -1) {
+              newUser.role = 'admin';
+            }
+
+            console.log('newUser', newUser);
+
+            $scope.app.user = newUser;
             $rootScope.view_title = 'Your profile';
+          });
         });
     }
 
@@ -76,8 +105,8 @@ app.controller('AllUsersController', function($scope, $rootScope, $routeParams, 
     $scope.app.pageSize = 10;
     $scope.app.currentPage = 1;
 });
-app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authentication', '$location', 'GroupsService', '$q',
-    function($scope, Users, $rootScope, Authentication, $location, Groups, $q) {
+app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authentication', '$location', 'GroupsService', '$q', 'userUrl',
+    function($scope, Users, $rootScope, Authentication, $location, Groups, $q, userUrl) {
     var privateItems;
     $scope.app = {};
     $scope.app.dropdown = true;
@@ -166,18 +195,45 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
     };
 
     if (Authentication.getToken()) {
-        Users.currentUser(function(user) {
+      Users.currentUser(function(user) {
+        var userCookie = Cookies.get('iPlanetDirectoryPro');
+        var options = {
+          url: userUrl,
+          headers: {
+            iPlanetDirectoryPro: userCookie
+          }
+        };
+
+        userMigration.isUserLoggedIn(options, function (response) {
+          if (!response) {
             $scope.app.user = user;
-            UserMigration.isUserLoggedIn(user);
-            // find any custom menu items for this user
-            getPrivateMenuItems().then(function(groups) {
-                $scope.app.userGroups = groups;
-                $scope.app.menu = buildMenu(user, groups);
-            },
-            function() {
-                $scope.app.menu = buildMenu(user);
-            });
+          }
+
+          var newUser = {
+            id: response.attributes.uid,
+            screen_name: response.attributes.sn,
+            email: response.attributes.mail,
+            applications: _.map(response.role, function (app) {
+              return app.id;
+            })
+          };
+
+          if (newUser.applications.indexOf('mbst-admin') !== -1) {
+            newUser.role = 'admin';
+          }
+
+          $scope.app.user = newUser;
         });
+
+        // find any custom menu items for this user
+        getPrivateMenuItems().then(function(groups) {
+          $scope.app.userGroups = groups;
+          $scope.app.menu = buildMenu(user, groups);
+        },
+        function() {
+          $scope.app.menu = buildMenu(user);
+        });
+      });
     }
 }]);
 

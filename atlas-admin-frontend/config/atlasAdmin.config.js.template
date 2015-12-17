@@ -5,9 +5,11 @@
  * Atlas version e.g. "4"
  * Atlas API Host e.g. "http://atlas-admin-backend.stage.metabroadcast.com/api"
  * Atlas Backend URL e.g. "http://admin-backend-stage.metabroadcast.com"
+ * Admin user URL e.g. "http://admin-backend-stage.metabroadcast.com/1/user"
  */
 angular.module('atlasAdminConfig', [])
     .value('atlasHost','%%ATLASHOST%%')
     .value('atlasVersion', '%%ATLASVERSION%%')
     .value('atlasApiHost', '%%ATLASAPIURL%%')
-    .value('adminBackendUrl', '%%ATLASBACKENDURL%%');
+    .value('adminBackendUrl', '%%ATLASBACKENDURL%%')
+    .value('userUrl', '%%USERURL%%');

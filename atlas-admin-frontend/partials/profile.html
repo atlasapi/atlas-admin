@@ -10,30 +10,15 @@
         <section class="profile-holder">
             <form name="userForm" role="form">
                 <div class="form-row">
-                    <label for="full_name" class="form-label required">Full name</label>
-                    <input type="text" class="form-control" id="full_name" name="full_name" placeholder="name" ng-model="app.user.full_name" ng-change="app.changed=true" ng-minlength=2 required>
-                    <span ng-show="userForm.full_name.$error.required || userForm.full_name.$error.minlength" class="form-field-helper">Please provide your name</span>
-                </div>
-                <div class="form-row">
-                    <label for="company" class="form-label">Company</label>
-                    <input type="text" class="form-control" id="company" name="company" placeholder="" ng-model="app.user.company" ng-change="app.changed=true">
-                </div>
-                <div class="form-row">
                     <label for="email" class="form-label required">Email</label>
                     <input type="email" class="form-control" id="email" name="email" placeholder="me@example.com" ng-model="app.user.email" ng-change="app.changed=true" required>
                     <span ng-show="userForm.email.$error.email || userForm.email.$error.required" class="form-field-helper">Please enter a valid email address</span>
                 </div>
-                <div class="form-row">
-                    <label for="website" class="form-label">Website URL</label>
-                    <input type="url" class="form-control" id="website" name="website" placeholder="http://example.com" ng-model="app.user.website" ng-change="app.changed=true">
-                    <span ng-show="userForm.website.$error.url" class="form-field-helper">Please enter a valid website address</span> 
-                </div>
-
                 <div class="form-row" ng-show="app.isAdmin">
                     <button type="button" class="" ng-model="app.user.role" btn-radio="'admin'">Administrator</button>
                     <button type="button" class="" ng-model="app.user.role" btn-radio="'regular'">Regular</button>
                     <button type="button" class="" ng-model="app.user.role" btn-radio="'source'">Source</button>
-                    <span ng-show="userForm.website.$error.url" class="form-field-helper">User access level (admin only)</span> 
+                    <span ng-show="userForm.website.$error.url" class="form-field-helper">User access level (admin only)</span>
                 </div>
                 <button type="button" class="btn btn-danger" ng-click="save()">Save</button>
             </form>
@@ -70,4 +55,3 @@
         </div>
     </div>
 </div>
-

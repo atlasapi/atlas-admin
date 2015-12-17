@@ -4,8 +4,8 @@
 angular.module('atlasAdmin.controllers.applications', []);
 
 angular.module('atlasAdmin.controllers.applications')
-.controller('CtrlApplications', ['$scope', '$rootScope', '$routeParams', 'Applications', '$modal', '$location', 'Atlas', 'Authentication', 'atlasApiHost', '$http',
-    function($scope, $rootScope, $routeParams, Applications, $modal, $location, Atlas, Authentication, atlasApiHost, $http) {
+.controller('CtrlApplications', ['$scope', '$rootScope', '$routeParams', 'Applications', '$modal', '$location', 'Atlas', 'Authentication', 'atlasApiHost', '$http', 'userUrl',
+    function($scope, $rootScope, $routeParams, Applications, $modal, $location, Atlas, Authentication, atlasApiHost, $http, userUrl) {
 
     $scope.view_title = 'My Applications';
     $scope.app = {};
@@ -70,13 +70,14 @@ angular.module('atlasAdmin.controllers.applications')
     // retreive a list of all apps
     Applications.all().then(function(applications) {
       var userCookie = Cookies.get('iPlanetDirectoryPro');
-
-      userMigration.isUserLoggedIn({
-        url: 'http://admin-backend-stage.metabroadcast.com/1/user',
+      var options = {
+        url: userUrl,
         headers: {
           iPlanetDirectoryPro: userCookie
         }
-      }, function (response) {
+      };
+
+      userMigration.isUserLoggedIn(options, function (response) {
         if (!response) {
           $scope.app.applications = applications;
           return;
