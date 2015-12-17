@@ -13103,6 +13103,7 @@ app.controller('UserProfileController', function($scope, $rootScope, $routeParam
               id: response.attributes.uid,
               screen_name: response.attributes.sn,
               email: response.attributes.mail,
+              openAmUser: true,
               applications: _.map(response.role, function (app) {
                 return app.id;
               })
@@ -13111,8 +13112,6 @@ app.controller('UserProfileController', function($scope, $rootScope, $routeParam
             if (newUser.applications.indexOf('mbst-admin') !== -1) {
               newUser.role = 'admin';
             }
-
-            console.log('newUser', newUser);
 
             $scope.app.user = newUser;
             $rootScope.view_title = 'Your profile';
