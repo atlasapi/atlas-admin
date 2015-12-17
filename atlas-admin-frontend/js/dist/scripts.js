@@ -10372,19 +10372,6 @@ app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $
                 console.error(error);
                 return error;
             });
-
-            var loginUser = function (response) {
-              window.location.href = login_url;
-            };
-
-            UserMigration.isUserLoggedIn(function (targetUri) {
-              if (!response) {
-                return;
-              }
-
-              console.log(response);
-              loginUser(response);
-            });
         },
         getAccessToken: function(oauth_token, oauth_verifier, code) {
             var url = "/auth/" + Authentication.getProvider() + "/token.json?oauthToken=" + oauth_token
@@ -12726,6 +12713,16 @@ app.controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routePar
     Authentication.reset();
     Atlas.getAuthProviders().then(function(results) {
         var providers = [];
+
+        UserMigration.isUserLoggedIn(function (response) {
+          if (!response) {
+            return;
+          }
+
+          console.log(response);
+          // window.location.href = '';
+        });
+
         for (var i=0; i<results.length; i++) {
             var provider = results[i];
             provider.icon = (provider.namespace === 'google')? 'google-plus' : provider.namespace;
@@ -12770,11 +12767,13 @@ app.controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routePar
 var app = angular.module('atlasAdmin.controllers.auth');
 
 app.controller('CtrlLogout', function($scope, $rootScope, $routeParams, $location, Authentication) {
-    // Ask atlas for access here 
+    // Ask atlas for access here
     $rootScope.title = "Logging out";
     Authentication.reset();
     $location.path("/login");
+    Cookies.remove('iPlanetDirectoryPro');
 });
+
 'use strict';
 var app = angular.module('atlasAdmin.controllers.sources', []);
 app.controller('CtrlSources', function($scope, $rootScope, $routeParams, Sources) {

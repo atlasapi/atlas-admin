@@ -8,6 +8,16 @@ app.controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routePar
     Authentication.reset();
     Atlas.getAuthProviders().then(function(results) {
         var providers = [];
+
+        UserMigration.isUserLoggedIn(function (response) {
+          if (!response) {
+            return;
+          }
+
+          console.log(response);
+          // window.location.href = '';
+        });
+
         for (var i=0; i<results.length; i++) {
             var provider = results[i];
             provider.icon = (provider.namespace === 'google')? 'google-plus' : provider.namespace;
