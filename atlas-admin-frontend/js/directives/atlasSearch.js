@@ -51,44 +51,21 @@ function($document, $q, $timeout, atlasHost, $http, Groups, Scrubbables, Helpers
       };
       
       Scrubbables.search($scope.searchKey, _query).then(function(res) {
-        if (! _.has(res.contents[0], 'broadcasts')) {
-          console.warn('Result content has no broadcasts');
-          return false;
-        }
-        
-        var broadcasts = res.contents[0].broadcasts || null;
+        var broadcasts;
+        broadcasts = res.contents[0].broadcasts || null;
         if (broadcasts) {
           broadcasts = _.filter(res.contents[0].broadcasts, function(bcast) {
-            var channelId = bcast.channel.id || '';
-            if (channelId.toLowerCase() === 'cbbh') {
+            if (bcast.channel.id === 'cbbh') {
               return true;
             }
           });
-          
-          // When the broadcast cant be found on the original correct channel, look
-          // inside the variations array
-          if (_.isEmpty(broadcasts)) {
-            broadcasts = _.filter(res.contents[0].broadcasts, 
-            function (bcast) {
-              if (! _.isArray(bcast.channel.parent.variations)) {
-                return false;
-              }
-              var variations = bcast.channel.parent.variations;
-              _.forEach(variations, function (variant) {
-                if (variant.id.toLowerCase() === 'cbbh') {
-                  return true;
-                }
-              });
-            });
-          }
-          
-          if (! _.isEmpty(broadcasts)) {
+          if (broadcasts.length) {
             getContentForUri(res.contents[0].uri).then(
               function(contents) {
                 $scope.atlasSearch.searchResults.push( Helpers.formatResponse(contents) );
                 $scope.atlasSearch.messageOutput(null);
                 $scope.atlasSearch.showAutocomplete = true;
-              }, function(err) { console.error(err); });
+              }, console.error);
             }else{
               $scope.atlasSearch.messageOutput('No results found');
               $scope.atlasSearch.showAutocomplete = false;
@@ -97,7 +74,8 @@ function($document, $q, $timeout, atlasHost, $http, Groups, Scrubbables, Helpers
             $scope.atlasSearch.messageOutput('No results found');
             $scope.atlasSearch.showAutocomplete = false;
           }
-        }, function() {
+        }, function(err) {
+          console.error(err);
           $scope.atlasSearch.showAutocomplete = false;
         });
       };
@@ -106,12 +84,10 @@ function($document, $q, $timeout, atlasHost, $http, Groups, Scrubbables, Helpers
         var _query = $scope.atlasSearch.searchquery;
         $scope.atlasSearch.message = null;
         $scope.atlasSearch.searchResults = [];
-        
         if (!_.isString(_query)) {
           return;
         }
-        
-        if (! _query.length) {
+        if (!_query.length) {
           $timeout.cancel(input_timer);
           $scope.atlasSearch.search_results = null;
           $scope.atlasSearch.showAutocomplete = false;
@@ -121,7 +97,6 @@ function($document, $q, $timeout, atlasHost, $http, Groups, Scrubbables, Helpers
           input_timer = $timeout(searchRequest, 1000);
         }
       };
-      
     };
     
     return {
