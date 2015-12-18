@@ -112,7 +112,7 @@ function forceContentIntoQueue (uri) {
       data += chunk;
     });
     res.on('end', function() {
-      console.log('request two', options.hostname + options.path, res.statusCode);
+      console.log('request two', res);
       if (res.statusCode !== 202 && res.statusCode !== 200) {
         defer.reject('Force update failed ' + uri + ': ' + res.statusCode);
         return;
@@ -245,7 +245,7 @@ var feedsInterface = function() {
       });
 
       action_res.on('end', function() {
-        console.log('request one', options.hostname + options.path, res.statusCode);
+        console.log('request one', action_res);
         forceContentIntoQueue(uri).then(
         function () {
           console.log('Successfully force pushed content: ' + uri);
