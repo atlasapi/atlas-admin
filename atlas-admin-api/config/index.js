@@ -9,6 +9,7 @@ module.exports = (function() {
     return {
         atlasHost: instanceConfig.atlasHost || 'stage.atlas.metabroadcast.com',
         processingHost: instanceConfig.processingHost || 'processing.stage.atlas.mbst.tv',
+        processingYouViewHost: instanceConfig.prpcessingYouViewHost || 'processing-youview.stage.atlas.mbst.tv',
 
         port: {
             http: instanceConfig.listenPort || 9000
