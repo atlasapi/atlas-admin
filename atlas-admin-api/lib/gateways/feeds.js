@@ -41,7 +41,7 @@ function proxyRequest(endpoint, request) {
   var defer           = Q.defer();
   var _endpoint       = endpoint;
   var _querystring    = { apiKey: getAPIKey() };
-  
+
   // Atlas complains when we send querystrings it doesnt understand, thus whitelist
   for (var query in request.query) {
     if ('status' === query ||
@@ -56,10 +56,10 @@ function proxyRequest(endpoint, request) {
       console.warn('I don\'t know about this querystring param = ' + query);
     }
   }
-  
+
   console.log('proxying request for: `/3.0/feeds/youview/bbc_nitro/'+_endpoint+'?'+qs.stringify(_querystring) + '`');
-  
-  Atlas.api('/3.0/feeds/youview/bbc_nitro/'+_endpoint+'?'+qs.stringify(_querystring), 'GET', 
+
+  Atlas.api('/3.0/feeds/youview/bbc_nitro/'+_endpoint+'?'+qs.stringify(_querystring), 'GET',
   function(status, data) {
     if (isJSON(data)) {
       defer.resolve(JSON.parse(data));
@@ -96,18 +96,18 @@ function forceContentIntoQueue (uri) {
     uri: uri,
     immediate: 'true'
   };
-  
+
   var data = '';
   var options = {
     hostname: config.processingHost,
     path: '/feeds/youview/bbc_nitro/upload?' + qs.stringify(querystring),
     method: 'post'
   };
-  
+
   var updateRequest = http.request(options,
   function (res) {
     res.setEncoding('utf8');
-    
+
     res.on('data', function(chunk) {
       data += chunk;
     });
@@ -119,11 +119,11 @@ function forceContentIntoQueue (uri) {
       defer.resolve(res.statusCode);
     });
   });
-  
+
   updateRequest.on('error', function () {
     defer.reject('Force update failed :(');
   });
-  
+
   updateRequest.end();
   return defer.promise;
 }
@@ -133,17 +133,17 @@ function forceContentIntoQueue (uri) {
 //
 var feedsInterface = function() {
   var router  = express.Router();
-  
+
   // Grab the feed from groups so before every request so the app uses
   // the correct api key
   router.use(loadFeeds);
-  
+
   // Return a list of feeds
   router.route('/')
   .get(function(req, res) {
     res.end(JSON.stringify(_feeds));
   });
-  
+
   // Return xml data
   router.route('/youview/bbc_nitro.xml')
   .get(function(req, res) {
@@ -157,9 +157,9 @@ var feedsInterface = function() {
       res.end(JSON.stringify(common.errors.invalid_data));
     }
   });
-  
-  
-  
+
+
+
   // Actions endpoint. actions must be sent to a processing url
   router.route('/youview/bbc_nitro/action/:action')
   .post(function(req, res) {
@@ -172,27 +172,27 @@ var feedsInterface = function() {
     var action = req.params.action || '';
     var querystring = {};
     querystring.uri = uri;
-    
+
     var request_opts = {
       hostname: config.processingHost,
       path: '/feeds/youview/bbc_nitro/'+action+'?'+qs.stringify(querystring),
       method: 'post'
     };
-    
+
     console.log(request_opts.hostname + request_opts.path);
-    
+
     var action_request = http.request(request_opts, function(action_res) {
       action_res.setEncoding('utf8');
-      
+
       action_res.on('data', function(chunk) {
         data += chunk;
       });
-      
+
       action_res.on('end', function() {
         res.end('{}');
       });
     });
-    
+
     action_request.on('error', function(err) {
       console.error('Failed to get a response from processing server', err.message);
       res.writeHead(400);
@@ -200,9 +200,9 @@ var feedsInterface = function() {
     });
     action_request.end();
   });
-  
-  
-  
+
+
+
   //  hardwired for now, catch the request to atlas so we can run
   //  auth checks before returning any data
   router.route('/youview/bbc_nitro/:endpoint')
@@ -215,40 +215,41 @@ var feedsInterface = function() {
       //  res.end(JSON.stringify(common.errors.request_error));
     });
   });
-  
+
   router.route('/forceUpdate/:pid')
   .post( function (req, res) {
-    
+    console.log('boo');
+
     if (! req.params.pid) {
       console.warn('No PID in post body');
       res.writeHead(400);
       res.end('{}');
     }
-    
+
     var uri = 'http://nitro.bbc.co.uk/programmes/' + req.params.pid;
-    
+
     var data = '';
     var options = {
       hostname: config.processingHost,
       path: '/system/bbc/nitro/update/content/' + req.params.pid,
       method: 'post'
     };
-    
+
     var action_request = http.request(options, function(action_res) {
       action_res.setEncoding('utf8');
-      
+
       console.log('publish status for PID ' + req.params.pid + ': ' + action_res.statusCode);
-      
+
       action_res.on('data', function(chunk) {
         data += chunk;
       });
-      
+
       action_res.on('end', function() {
         forceContentIntoQueue(uri).then(
         function () {
           console.log('Successfully force pushed content: ' + uri);
           res.end(data);
-        }, 
+        },
         function (err) {
           console.error(err);
           res.writeHead(400);
@@ -256,7 +257,7 @@ var feedsInterface = function() {
         });
       });
     });
-    
+
     action_request.on('error', function(err) {
       console.error('Failed to get a response from processing server', err.message);
       res.writeHead(400);
@@ -264,7 +265,7 @@ var feedsInterface = function() {
     });
     action_request.end();
   });
-  
+
   // For getting data about a particular task
   router.route('/youview/bbc_nitro/tasks/:task.json')
   .get(function(req, res) {
@@ -275,7 +276,7 @@ var feedsInterface = function() {
       // res.end(JSON.stringify(common.errors.request_error));
     });
   });
-  
+
   return router;
 };
 
