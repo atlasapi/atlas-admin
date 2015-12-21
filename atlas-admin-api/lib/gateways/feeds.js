@@ -104,8 +104,7 @@ function forceContentIntoQueue (uri) {
     method: 'post'
   };
 
-  var updateRequest = http.request(options,
-  function (res) {
+  var updateRequest = http.request(options, function (res) {
     res.setEncoding('utf8');
 
     res.on('data', function(chunk) {
@@ -113,9 +112,12 @@ function forceContentIntoQueue (uri) {
     });
     res.on('end', function() {
       if (res.statusCode !== 202 && res.statusCode !== 200) {
+        console.log('nay nay');
         defer.reject('Force update failed ' + uri + ': ' + res.statusCode);
         return;
       }
+      console.log('yay yay');
+      console.log('code', res.statusCode);
       defer.resolve(res.statusCode);
     });
   });
@@ -216,11 +218,10 @@ var feedsInterface = function() {
     });
   });
 
-  router.route('/forceUpdate/:pid')
-  .post( function (req, res) {
-    console.log('boo');
+  router.route('/forceUpdate/:pid').post(function (req, res) {
+    console.log('post request made');
 
-    if (! req.params.pid) {
+    if (!req.params.pid) {
       console.warn('No PID in post body');
       res.writeHead(400);
       res.end('{}');
@@ -230,7 +231,7 @@ var feedsInterface = function() {
 
     var data = '';
     var options = {
-      hostname: config.processingHost,
+      hostname: 'processing.owl.atlas.mbst.tv',
       path: '/system/bbc/nitro/update/content/' + req.params.pid,
       method: 'post'
     };
@@ -238,19 +239,21 @@ var feedsInterface = function() {
     var action_request = http.request(options, function(action_res) {
       action_res.setEncoding('utf8');
 
-      console.log('publish status for PID ' + req.params.pid + ': ' + action_res.statusCode);
+      // console.log('publish status for PID ' + req.params.pid + ': ' + action_res.statusCode);
 
       action_res.on('data', function(chunk) {
         data += chunk;
       });
 
       action_res.on('end', function() {
-        forceContentIntoQueue(uri).then(
-        function () {
-          console.log('Successfully force pushed content: ' + uri);
+        forceContentIntoQueue(uri).then(function () {
+          console.log('yay');
+          // console.log('Successfully force pushed content: ' + uri);
+          console.log('data', data);
           res.end(data);
         },
         function (err) {
+          console.log('nay');
           console.error(err);
           res.writeHead(400);
           res.end('{}');
