@@ -13838,20 +13838,18 @@ angular.module('atlasAdmin.controllers.applications')
 
         var openAmApplications = _.map(response.role, function (app) {
           return {
-            created: '',
-            description: '',
             id: app.id,
-            revoked: '',
-            title: app.id,
-            sources: {},
-            publisher: {},
-            credentials: {}
+            title: app.id
           };
         });
 
-        console.log('openAmApplications', openAmApplications);
-        // console.log('new apps', response.role);
-        // console.log('old apps', applications);
+        applications.forEach(function (application) {
+          openAmApplications.forEach(function (openAmApplication, index) {
+            if (application.id === openAmApplication.id) {
+              openAmApplications[index] = application;
+            }
+          });
+        });
 
         if (openAmApplications) {
           $scope.app.applications = openAmApplications;
