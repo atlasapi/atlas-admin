@@ -92,18 +92,18 @@ angular.module('atlasAdmin.controllers.applications')
           return {
             created: '',
             description: '',
-            id: '',
+            id: app.id,
             revoked: '',
-            title: '',
+            title: app.id,
             sources: {},
             publisher: {},
             credentials: {}
           };
         });
 
-        console.log('openAmApplications', openAmApplications[0]);
-        console.log('new apps', response.role[0]);
-        console.log('old apps', applications[0]);
+        console.log('openAmApplications', openAmApplications);
+        // console.log('new apps', response.role);
+        // console.log('old apps', applications);
 
         if (openAmApplications) {
           $scope.app.applications = openAmApplications;
