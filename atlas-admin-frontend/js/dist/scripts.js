@@ -13859,10 +13859,6 @@ angular.module('atlasAdmin.controllers.applications')
         $scope.state = (applications.length) ? 'table' : 'blank';
         getUsageData(applications);
       });
-
-      // $scope.app.applications = applications;
-      // $scope.state = (applications.length) ? 'table' : 'blank';
-      // getUsageData(applications);
     });
 
     // instantiate a new modal window
