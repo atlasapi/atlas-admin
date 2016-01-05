@@ -13849,13 +13849,22 @@ angular.module('atlasAdmin.controllers.applications')
           };
         });
 
-        console.log('openAmApplications', openAmApplications);
-        console.log('new apps', response.role);
-        console.log('old apps', applications);
+        console.log('openAmApplications', openAmApplications[0]);
+        console.log('new apps', response.role[0]);
+        console.log('old apps', applications[0]);
+
+        if (openAmApplications) {
+          $scope.app.applications = openAmApplications;
+        } else {
+          $scope.app.applications = applications;
+        }
+        $scope.state = (applications.length) ? 'table' : 'blank';
+        getUsageData(applications);
       });
-      $scope.app.applications = applications;
-      $scope.state = (applications.length) ? 'table' : 'blank';
-      getUsageData(applications);
+
+      // $scope.app.applications = applications;
+      // $scope.state = (applications.length) ? 'table' : 'blank';
+      // getUsageData(applications);
     });
 
     // instantiate a new modal window
