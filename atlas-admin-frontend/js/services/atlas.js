@@ -22,8 +22,20 @@ app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $
       return $http.delete(Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + url));
     },
 
+    addMbstToAuthProviders: function(providers) {
+      return providers.data.auth_providers.push({
+        authRequestUrl: '/4/auth/mbst/login',
+        icon: 'mbst',
+        namespace: 'mbst',
+        prompt: 'Sign in with MetaBroadcast'
+      });
+    },
+
     getAuthProviders: function() {
-      return $http.get(atlasHost + "/" + atlasVersion + "/auth/providers.json").then(function(results){
+      var self = this;
+
+      return $http.get(atlasHost + "/" + atlasVersion + "/auth/providers.json").then(function(results) {
+        self.addMbstToAuthProviders(results);
         return results.data.auth_providers;
       }, function(error) {
         $log.error(error);

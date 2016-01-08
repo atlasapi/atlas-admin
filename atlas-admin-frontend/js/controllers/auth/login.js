@@ -11,17 +11,10 @@ app.controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routePar
   Atlas.getAuthProviders().then(function(results) {
     var providers = [];
 
-    userMigration.isUserLoggedIn(function(response) {
-      if (!response) {
-        return;
-      }
-    });
-
-    for (var i = 0; i < results.length; i++) {
-      var provider = results[i];
+    results.forEach(function(provider) {
       provider.icon = (provider.namespace === 'google') ? 'google-plus' : provider.namespace;
       providers.push(provider);
-    }
+    });
 
     $scope.providers = providers;
 
