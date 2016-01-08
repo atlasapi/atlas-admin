@@ -10386,10 +10386,11 @@ app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $
 
     addMbstToAuthProviders: function(providers) {
       return providers.data.auth_providers.push({
-        authRequestUrl: '/4/auth/mbst/login',
+        authRequestUrl: 'https://users.metabroadcast.com#login?ref=' + window.location.href.split('?')[0],
         icon: 'mbst',
         namespace: 'mbst',
-        prompt: 'Sign in with MetaBroadcast'
+        prompt: 'Sign in with MetaBroadcast',
+        redirect: true
       });
     },
 
@@ -12782,6 +12783,10 @@ app.controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routePar
   $rootScope.startAuth = function(provider) {
     var uri;
     var target;
+
+    if (provider.redirect) {
+      window.location.href = provider.authRequestUrl;
+    }
 
     if ($location.absUrl().indexOf('/login/' + provider.namespace) !== -1) {
       uri = $location.absUrl().replace("/login/" + provider.namespace,"/oauth/" + provider.namespace);

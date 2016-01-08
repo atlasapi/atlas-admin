@@ -24,10 +24,11 @@ app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $
 
     addMbstToAuthProviders: function(providers) {
       return providers.data.auth_providers.push({
-        authRequestUrl: '/4/auth/mbst/login',
+        authRequestUrl: 'https://users.metabroadcast.com#login?ref=' + window.location.href.split('?')[0],
         icon: 'mbst',
         namespace: 'mbst',
-        prompt: 'Sign in with MetaBroadcast'
+        prompt: 'Sign in with MetaBroadcast',
+        redirect: true
       });
     },
 

@@ -31,6 +31,10 @@ app.controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routePar
     var uri;
     var target;
 
+    if (provider.redirect) {
+      window.location.href = provider.authRequestUrl;
+    }
+
     if ($location.absUrl().indexOf('/login/' + provider.namespace) !== -1) {
       uri = $location.absUrl().replace("/login/" + provider.namespace,"/oauth/" + provider.namespace);
       target = $location.absUrl().replace("/login/" + provider.namespace,"/");
