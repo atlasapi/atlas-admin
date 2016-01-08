@@ -11,7 +11,7 @@ app.controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routePar
       headers: {
         iPlanetDirectoryPro: Cookies.get('iPlanetDirectoryPro')
       }
-    }
+    };
 
     userMigration.isUserLoggedIn(options, function (response) {
       if (!response) {
@@ -22,6 +22,8 @@ app.controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routePar
 
       localStorage.setItem('auth.provider', 'mbst');
       localStorage.setItem('auth.token', Cookies.get('iPlanetDirectoryPro'));
+      localStorage.setItem('profile.complete', true);
+      localStorage.setItem('license.accepted', true);
     });
 
     return;

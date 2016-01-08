@@ -1,8 +1,42 @@
 var app = angular.module('atlasAdmin.services.users', []);
 
-app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'ProfileStatus', '$log', 'atlasApiHost', '$q', function($http, Atlas, $rootScope, Authentication, ProfileStatus, $log, atlasApiHost, $q) {
+app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'ProfileStatus', '$log', 'atlasApiHost', '$q', 'userUrl', function($http, Atlas, $rootScope, Authentication, ProfileStatus, $log, atlasApiHost, $q, userUrl) {
   return {
     currentUser: function(callback) {
+      if (Cookies.get('iPlanetDirectoryPro')) {
+        var options = {
+          url: userUrl,
+          headers: {
+            iPlanetDirectoryPro: Cookies.get('iPlanetDirectoryPro')
+          }
+        };
+
+        userMigration.isUserLoggedIn(options, function(user) {
+          if (!user) {
+            return;
+          }
+
+          var atlasUser = {
+            id: user.attributes.mail,
+            userRef: {},
+            screen_name: user.attributes.mail,
+            full_name: user.attributes.mail,
+            email: user.attributes.mail,
+            website: null,
+            profile_image: null,
+            applications: [],
+            sources: [],
+            role: '',
+            profile_complete: '',
+            license_accepted: ''
+          };
+
+          callback(atlasUser);
+        });
+
+        return;
+      }
+
       $.ajax({
         url: Atlas.getUrl('/auth/user.json'),
         success: function(result) {

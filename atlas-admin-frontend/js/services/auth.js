@@ -36,22 +36,6 @@ app.factory('Authentication', ['$rootScope', 'ProfileStatus', 'userUrl', functio
       var provider = localStorage.getItem('auth.provider');
       var token = localStorage.getItem('auth.token');
       var oauthParams = 'oauth_provider=' + provider + '&oauth_token=' + token;
-      var userCookie = Cookies.get('iPlanetDirectoryPro');
-      var options = {
-        url: userUrl,
-        headers: {
-          iPlanetDirectoryPro: userCookie
-        }
-      };
-
-      userMigration.isUserLoggedIn(options, function(response) {
-        if (!response) {
-          $rootScope.status.loggedIn = false;
-          return;
-        }
-
-        $rootScope.status.loggedIn = true;
-      });
 
       if (!token) {
         return url;

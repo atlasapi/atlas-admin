@@ -10332,22 +10332,6 @@ app.factory('Authentication', ['$rootScope', 'ProfileStatus', 'userUrl', functio
       var provider = localStorage.getItem('auth.provider');
       var token = localStorage.getItem('auth.token');
       var oauthParams = 'oauth_provider=' + provider + '&oauth_token=' + token;
-      var userCookie = Cookies.get('iPlanetDirectoryPro');
-      var options = {
-        url: userUrl,
-        headers: {
-          iPlanetDirectoryPro: userCookie
-        }
-      };
-
-      userMigration.isUserLoggedIn(options, function(response) {
-        if (!response) {
-          $rootScope.status.loggedIn = false;
-          return;
-        }
-
-        $rootScope.status.loggedIn = true;
-      });
 
       if (!token) {
         return url;
@@ -10429,9 +10413,43 @@ app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $
 
 var app = angular.module('atlasAdmin.services.users', []);
 
-app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'ProfileStatus', '$log', 'atlasApiHost', '$q', function($http, Atlas, $rootScope, Authentication, ProfileStatus, $log, atlasApiHost, $q) {
+app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'ProfileStatus', '$log', 'atlasApiHost', '$q', 'userUrl', function($http, Atlas, $rootScope, Authentication, ProfileStatus, $log, atlasApiHost, $q, userUrl) {
   return {
     currentUser: function(callback) {
+      if (Cookies.get('iPlanetDirectoryPro')) {
+        var options = {
+          url: userUrl,
+          headers: {
+            iPlanetDirectoryPro: Cookies.get('iPlanetDirectoryPro')
+          }
+        };
+
+        userMigration.isUserLoggedIn(options, function(user) {
+          if (!user) {
+            return;
+          }
+
+          var atlasUser = {
+            id: user.attributes.mail,
+            userRef: {},
+            screen_name: user.attributes.mail,
+            full_name: user.attributes.mail,
+            email: user.attributes.mail,
+            website: null,
+            profile_image: null,
+            applications: [],
+            sources: [],
+            role: '',
+            profile_complete: '',
+            license_accepted: ''
+          };
+
+          callback(atlasUser);
+        });
+
+        return;
+      }
+
       $.ajax({
         url: Atlas.getUrl('/auth/user.json'),
         success: function(result) {
@@ -12764,7 +12782,7 @@ app.controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routePar
       headers: {
         iPlanetDirectoryPro: Cookies.get('iPlanetDirectoryPro')
       }
-    }
+    };
 
     userMigration.isUserLoggedIn(options, function (response) {
       if (!response) {
@@ -12775,6 +12793,8 @@ app.controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routePar
 
       localStorage.setItem('auth.provider', 'mbst');
       localStorage.setItem('auth.token', Cookies.get('iPlanetDirectoryPro'));
+      localStorage.setItem('profile.complete', true);
+      localStorage.setItem('license.accepted', true);
     });
 
     return;
