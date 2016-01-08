@@ -2,8 +2,30 @@
 
 var app = angular.module('atlasAdmin.controllers.auth');
 
-app.controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routeParams, Atlas, atlasVersion, $location, Authentication, $log) {
+app.controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routeParams, Atlas, atlasVersion, $location, Authentication, $log, userUrl) {
   $scope.title = "Hi there, please sign in to continue";
+
+  if (Cookies.get('iPlanetDirectoryPro')) {
+    var options = {
+      url: userUrl,
+      headers: {
+        iPlanetDirectoryPro: Cookies.get('iPlanetDirectoryPro')
+      }
+    }
+
+    userMigration.isUserLoggedIn(options, function (response) {
+      if (!response) {
+        return;
+      }
+
+      Authentication.reset();
+
+      localStorage.setItem('auth.provider', 'mbst');
+      localStorage.setItem('auth.token', Cookies.get('iPlanetDirectoryPro'));
+    });
+
+    return;
+  }
 
   // Ask atlas for access here
   Authentication.reset();

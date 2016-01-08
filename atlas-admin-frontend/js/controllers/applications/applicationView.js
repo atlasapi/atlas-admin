@@ -69,11 +69,10 @@ angular.module('atlasAdmin.controllers.applications')
 
     // retreive a list of all apps
     Applications.all().then(function(applications) {
-      var userCookie = Cookies.get('iPlanetDirectoryPro');
       var options = {
         url: userUrl,
         headers: {
-          iPlanetDirectoryPro: userCookie
+          iPlanetDirectoryPro: Cookies.get('iPlanetDirectoryPro')
         }
       };
 
