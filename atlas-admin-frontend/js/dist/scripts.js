@@ -10295,208 +10295,229 @@ app.factory('ProfileCompleteInterceptor', ['ProfileStatus', '$location', '$q', '
 }]);
 
 'use strict';
+
 var app = angular.module('atlasAdmin.services.auth', []);
 
-app.factory('Authentication', ['$rootScope', 'ProfileStatus', 'userUrl',
-    function ($rootScope, ProfileStatus, userUrl) {
-    if (!$rootScope.status) {
-        $rootScope.status = {};
-    }
-    return {
-        getProvider: function () {
-            return localStorage.getItem('auth.provider');
-        },
-        setProvider: function (provider) {
-            localStorage.setItem('auth.provider', provider);
-        },
-        getToken: function () {
-            return localStorage.getItem('auth.token');
-        },
-        setToken: function (token) {
-            localStorage.setItem('auth.token', token);
-        },
-        reset: function () {
-            localStorage.removeItem('auth.provider');
-            localStorage.removeItem('auth.token');
-            localStorage.removeItem('profile.complete');
-            localStorage.removeItem('license.accepted');
-            $rootScope.status.loggedIn = false;
-        },
-        appendTokenToUrl: function (url) {
-            var provider = localStorage.getItem('auth.provider');
-            var token = localStorage.getItem('auth.token');
-            var oauthParams = 'oauth_provider=' + provider + '&oauth_token=' + token;
-            var userCookie = Cookies.get('iPlanetDirectoryPro');
-            var options = {
-              url: userUrl,
-              headers: {
-                iPlanetDirectoryPro: userCookie
-              }
-            };
+app.factory('Authentication', ['$rootScope', 'ProfileStatus', 'userUrl', function($rootScope, ProfileStatus, userUrl) {
+  if (!$rootScope.status) {
+    $rootScope.status = {};
+  }
 
-            userMigration.isUserLoggedIn(options, function (response) {
-              if (!response) {
-                $rootScope.status.loggedIn = false;
-                return;
-              }
+  return {
+    getProvider: function() {
+      return localStorage.getItem('auth.provider');
+    },
 
-              $rootScope.status.loggedIn = true;
-            });
+    setProvider: function(provider) {
+      localStorage.setItem('auth.provider', provider);
+    },
 
-            if (!token) {
-                return url;
-            }
+    getToken: function() {
+      return localStorage.getItem('auth.token');
+    },
 
-            $rootScope.status.loggedIn = true;
+    setToken: function(token) {
+      localStorage.setItem('auth.token', token);
+    },
 
-            return (url.indexOf('?') === -1) ?
-                        url + '?' + oauthParams :
-                        url + '&' + oauthParams;
+    reset: function() {
+      localStorage.removeItem('auth.provider');
+      localStorage.removeItem('auth.token');
+      localStorage.removeItem('profile.complete');
+      localStorage.removeItem('license.accepted');
+      $rootScope.status.loggedIn = false;
+    },
+
+    appendTokenToUrl: function(url) {
+      var provider = localStorage.getItem('auth.provider');
+      var token = localStorage.getItem('auth.token');
+      var oauthParams = 'oauth_provider=' + provider + '&oauth_token=' + token;
+      var userCookie = Cookies.get('iPlanetDirectoryPro');
+      var options = {
+        url: userUrl,
+        headers: {
+          iPlanetDirectoryPro: userCookie
         }
-    };
+      };
+
+      userMigration.isUserLoggedIn(options, function(response) {
+        if (!response) {
+          $rootScope.status.loggedIn = false;
+          return;
+        }
+
+        $rootScope.status.loggedIn = true;
+      });
+
+      if (!token) {
+        return url;
+      }
+
+      $rootScope.status.loggedIn = true;
+
+      return (url.indexOf('?') === -1) ? url + '?' + oauthParams : url + '&' + oauthParams;
+    }
+  };
 }]);
 
 'use strict';
+
 var app = angular.module('atlasAdmin.services.atlas', []);
 
 app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $log) {
-    return {
-        getRequest: function(url) {
-            var usersUrl = Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion +  url);
-            console.log('get-> ' + usersUrl);
-            return $http.get(usersUrl);
-        },
-        getUrl: function (url) {
-            return Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + url);
-        },
-        postRequest: function(url, data) {
-            return $http.post(Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + url), data, {withCredentials: false});
-        },
-        deleteRequest: function(url) {
-            return $http.delete(Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + url));
-        },
-        getAuthProviders: function() {
-            return $http.get(atlasHost + "/" + atlasVersion + "/auth/providers.json").then(function(results){
-                return results.data.auth_providers;
-            }, function(error) {
-                $log.error(error);
-            });
-        },
-        startOauthAuthentication: function(provider, callbackUrl, targetUri) {
-            var url = atlasHost + provider.authRequestUrl + ".json?callbackUrl=" + callbackUrl;
-            Authentication.setProvider(provider.namespace);
-            return $http.get(url).then(function(result) {
-                return result.data.oauth_request.login_url;
-            }, function(error) {
-                console.error(error);
-                return error;
-            });
-        },
-        getAccessToken: function(oauth_token, oauth_verifier, code) {
-            var url = "/auth/" + Authentication.getProvider() + "/token.json?oauthToken=" + oauth_token
-                    + "&oauthVerifier=" + oauth_verifier + "&code=" + code;
-           return $http.get(atlasHost + "/" + atlasVersion +  url);
-        },
-        startLogout: function() {
-           return $http.get(Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + "/auth/logout.json"));
-        }
-    };
+  return {
+    getRequest: function(url) {
+      var usersUrl = Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion +  url);
+      console.log('get-> ' + usersUrl);
+      return $http.get(usersUrl);
+    },
+
+    getUrl: function (url) {
+      return Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + url);
+    },
+
+    postRequest: function(url, data) {
+      return $http.post(Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + url), data, {withCredentials: false});
+    },
+
+    deleteRequest: function(url) {
+      return $http.delete(Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + url));
+    },
+
+    getAuthProviders: function() {
+      return $http.get(atlasHost + "/" + atlasVersion + "/auth/providers.json").then(function(results){
+        return results.data.auth_providers;
+      }, function(error) {
+        $log.error(error);
+      });
+    },
+
+    startOauthAuthentication: function(provider, callbackUrl, targetUri) {
+      var url = atlasHost + provider.authRequestUrl + ".json?callbackUrl=" + callbackUrl;
+      Authentication.setProvider(provider.namespace);
+      return $http.get(url).then(function(result) {
+        return result.data.oauth_request.login_url;
+      }, function(error) {
+        console.error(error);
+        return error;
+      });
+    },
+
+    getAccessToken: function(oauth_token, oauth_verifier, code) {
+      var url = "/auth/" + Authentication.getProvider() + "/token.json?oauthToken=" + oauth_token + "&oauthVerifier=" + oauth_verifier + "&code=" + code;
+      return $http.get(atlasHost + "/" + atlasVersion +  url);
+    },
+
+    startLogout: function() {
+      return $http.get(Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + "/auth/logout.json"));
+    }
+  };
 });
 
 var app = angular.module('atlasAdmin.services.users', []);
 
-app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'ProfileStatus', '$log', 'atlasApiHost', '$q',
-    function($http, Atlas, $rootScope, Authentication, ProfileStatus, $log, atlasApiHost, $q) {
-    return {
-        currentUser: function(callback) {
-            $.ajax({
-                url: Atlas.getUrl('/auth/user.json'),
-                success: function (result) {
-                    if (result.user) {
-                        if (result.user.profile_complete) {
-                            ProfileStatus.setComplete(result.user.profile_complete);
-                        }
-                        if (typeof result.user.license_accepted === 'string') {
-                            ProfileStatus.setLicenseAccepted(true);
-                        }else{
-                            ProfileStatus.setLicenseAccepted(false);
-                        }
-                        callback(result.user);
-                    }
-                },
-                error: function () {
-                    $log.error("No user");
-                    return null;
-                }
-            });
+app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'ProfileStatus', '$log', 'atlasApiHost', '$q', function($http, Atlas, $rootScope, Authentication, ProfileStatus, $log, atlasApiHost, $q) {
+  return {
+    currentUser: function(callback) {
+      $.ajax({
+        url: Atlas.getUrl('/auth/user.json'),
+        success: function(result) {
+          if (result.user) {
+            if (result.user.profile_complete) {
+              ProfileStatus.setComplete(result.user.profile_complete);
+            }
+
+            if (typeof result.user.license_accepted === 'string') {
+              ProfileStatus.setLicenseAccepted(true);
+            } else {
+              ProfileStatus.setLicenseAccepted(false);
+            }
+
+            callback(result.user);
+          }
         },
-        update: function(user, callback) {
-            ProfileStatus.setComplete(true);
-            return Atlas.postRequest("/users/" + user.id + ".json", user);
-        },
-        get: function(uid) {
-            return Atlas.getRequest('/users/' + uid + '.json').then(function(result) {
-                return result.data.user;
-            });
-        },
-        all: function() {
-            return Atlas.getRequest('/users.json').then(function(result) {
-                return result.data.users;
-            });
-        },
-        getTermsAndConditions: function() {
-            return Atlas.getRequest('/eula.json').then(function(result) {
-                if (result.status > 399) {
-                  throw 'NOT_AVAILABLE/'+result.status;
-                }
-                return result.data.license.license;
-            });
-        },
-        acceptTermsAndConditions: function(uid) {
-            return Atlas.postRequest('/users/' + uid + '/eula/accept.json', {}).then(
-                function(success) {
-                    return success;
-                },
-                function(error) {
-                    $log.error(error);
-                }
-            );
-        },
-        groups: function() {
-            var defer = $q.defer();
-            $http({
-                method: 'get',
-                url: Authentication.appendTokenToUrl(atlasApiHost+'/groups')
-            })
-            .success(defer.resolve)
-            .error(defer.reject);
-            return defer.promise;
+
+        error: function() {
+          $log.error("No user");
+
+          return null;
         }
-    };
+      });
+    },
+
+    update: function(user, callback) {
+      ProfileStatus.setComplete(true);
+
+      return Atlas.postRequest("/users/" + user.id + ".json", user);
+    },
+
+    get: function(uid) {
+      return Atlas.getRequest('/users/' + uid + '.json').then(function(result) {
+        return result.data.user;
+      });
+    },
+
+    all: function() {
+      return Atlas.getRequest('/users.json').then(function(result) {
+        return result.data.users;
+      });
+    },
+
+    getTermsAndConditions: function() {
+      return Atlas.getRequest('/eula.json').then(function(result) {
+        if (result.status > 399) {
+          throw 'NOT_AVAILABLE/'+result.status;
+        }
+
+        return result.data.license.license;
+      });
+    },
+
+    acceptTermsAndConditions: function(uid) {
+      return Atlas.postRequest('/users/' + uid + '/eula/accept.json', {}).then(function(success) {
+        return success;
+      },
+
+      function(error) {
+        $log.error(error);
+      });
+    },
+
+    groups: function() {
+      var defer = $q.defer();
+
+      $http({
+        method: 'get',
+        url: Authentication.appendTokenToUrl(atlasApiHost+'/groups')
+      }).success(defer.resolve).error(defer.reject);
+
+      return defer.promise;
+    }
+  };
 }]);
 
 app.factory('ProfileStatus', function() {
-    return {
-        getLicenseAccepted: function () {
-            if (localStorage.getItem("license.accepted")) {
-                return localStorage.getItem("license.accepted") == "true";
-            } else {
-                return null;
-            }
-        },
+  return {
+    getLicenseAccepted: function() {
+      if (localStorage.getItem("license.accepted")) {
+        return localStorage.getItem("license.accepted") == "true";
+      } else {
+        return null;
+      }
+    },
 
-        setLicenseAccepted: function (status) {
-            return localStorage.setItem("license.accepted", status ? "true" : "false");
-        },
+    setLicenseAccepted: function(status) {
+      return localStorage.setItem("license.accepted", status ? "true" : "false");
+    },
 
-        setComplete: function(status) {
-            localStorage.setItem("profile.complete", status ? "true" : "false");
-        },
+    setComplete: function(status) {
+      localStorage.setItem("profile.complete", status ? "true" : "false");
+    },
 
-        isProfileComplete: function() {
-            return localStorage.getItem("profile.complete") == "true";
-        }
-    };
+    isProfileComplete: function() {
+      return localStorage.getItem("profile.complete") == "true";
+    }
+  };
 });
 
 'use strict';
@@ -12718,63 +12739,64 @@ app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location
 });
 
 'use strict';
+
 var app = angular.module('atlasAdmin.controllers.auth');
 
 app.controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routeParams, Atlas, atlasVersion, $location, Authentication, $log) {
-    $scope.title = "Hi there, please sign in to continue";
+  $scope.title = "Hi there, please sign in to continue";
 
-    // Ask atlas for access here
-    Authentication.reset();
-    Atlas.getAuthProviders().then(function(results) {
-        var providers = [];
+  // Ask atlas for access here
+  Authentication.reset();
 
-        userMigration.isUserLoggedIn(function (response) {
-          if (!response) {
-            return;
-          }
+  Atlas.getAuthProviders().then(function(results) {
+    var providers = [];
 
-          console.log(response);
-          // window.location.href = '';
-        });
-
-        for (var i=0; i<results.length; i++) {
-            var provider = results[i];
-            provider.icon = (provider.namespace === 'google')? 'google-plus' : provider.namespace;
-            providers.push(provider);
-        }
-        $scope.providers = providers;
-        $scope.referer = window.location.href.split('#')[0];
-        if ($routeParams.providerNamespace) {
-            $rootScope.startAuth($scope.providers.filter(function (provider) {
-                return provider.namespace === $routeParams.providerNamespace;
-            })[0]);
-        }
+    userMigration.isUserLoggedIn(function(response) {
+      if (!response) {
+        return;
+      }
     });
 
-    $rootScope.startAuth = function (provider) {
-      var uri;
-      var target;
+    for (var i = 0; i < results.length; i++) {
+      var provider = results[i];
+      provider.icon = (provider.namespace === 'google') ? 'google-plus' : provider.namespace;
+      providers.push(provider);
+    }
 
-      if ($location.absUrl().indexOf('/login/' + provider.namespace) !== -1) {
-        uri = $location.absUrl().replace("/login/" + provider.namespace,"/oauth/" + provider.namespace);
-        target = $location.absUrl().replace("/login/" + provider.namespace,"/");
-      } else {
-        uri = $location.absUrl().replace("/login", "/oauth/" + provider.namespace);
-        target = $location.absUrl().replace("/login","/");
-      }
+    $scope.providers = providers;
 
-      var callbackUrl = encodeURIComponent(uri);
-      var targetUri = encodeURIComponent(target);
+    $scope.referer = window.location.href.split('#')[0];
 
-      Authentication.setProvider(provider.namespace);
-      Atlas.startOauthAuthentication(provider, callbackUrl, targetUri).then(function(login_url) {
-        window.location.href = login_url;
-      }, function (error) {
-        $log.error("Error starting auth:");
-        $log.error(error);
-      });
+    if ($routeParams.providerNamespace) {
+      $rootScope.startAuth($scope.providers.filter(function(provider) {
+        return provider.namespace === $routeParams.providerNamespace;
+      })[0]);
+    }
+  });
 
-    };
+  $rootScope.startAuth = function(provider) {
+    var uri;
+    var target;
+
+    if ($location.absUrl().indexOf('/login/' + provider.namespace) !== -1) {
+      uri = $location.absUrl().replace("/login/" + provider.namespace,"/oauth/" + provider.namespace);
+      target = $location.absUrl().replace("/login/" + provider.namespace,"/");
+    } else {
+      uri = $location.absUrl().replace("/login", "/oauth/" + provider.namespace);
+      target = $location.absUrl().replace("/login","/");
+    }
+
+    var callbackUrl = encodeURIComponent(uri);
+    var targetUri = encodeURIComponent(target);
+
+    Authentication.setProvider(provider.namespace);
+    Atlas.startOauthAuthentication(provider, callbackUrl, targetUri).then(function(login_url) {
+      window.location.href = login_url;
+    }, function(error) {
+      $log.error("Error starting auth:");
+      $log.error(error);
+    });
+  };
 });
 
 'use strict';
