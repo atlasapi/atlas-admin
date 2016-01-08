@@ -10444,6 +10444,10 @@ app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'Profile
             license_accepted: ''
           };
 
+          user.role.forEach(function(application) {
+            atlasUser.applications.push(application.id);
+          });
+
           callback(atlasUser);
         });
 
@@ -11081,31 +11085,34 @@ app.factory('factoryWishes', ['$http', 'Authentication', 'atlasApiHost', '$q',
     }
 }])
 'use strict';
+
 var app = angular.module('atlasAdmin.services.users');
 
-app.factory('GroupsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
-function($http, Authentication, atlasApiHost, $q) {
-
+app.factory('GroupsService', ['$http', 'Authentication', 'atlasApiHost', '$q', function($http, Authentication, atlasApiHost, $q) {
   //  Used for getting an array of available groups for this user
   //
   //  @returns promise
   //
   var getGroups = function() {
     var defer = $q.defer();
+    // if (Cookies.get('iPlanetDirectoryPro')) {
+    //   defer.resolve({});
+    //   return defer.promise;
+    // }
+
     $http({
       method: 'get',
       url: Authentication.appendTokenToUrl(atlasApiHost+'/user/groups')
-    })
-    .success(function(data, status) {
+    }).success(function(data, status) {
       if (status === 200) {
         defer.resolve(data)
-      }else{
+      } else {
         defer.reject(new Error('Groups endpoint responded with status: ' + status));
       }
-    })
-    .error(function(data, status) {
+    }).error(function(data, status) {
       defer.reject(status);
     });
+
     return defer.promise;
   }
 
@@ -12795,6 +12802,7 @@ app.controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routePar
       localStorage.setItem('auth.token', Cookies.get('iPlanetDirectoryPro'));
       localStorage.setItem('profile.complete', true);
       localStorage.setItem('license.accepted', true);
+      $rootScope.status.loggedIn = true;
     });
 
     return;
@@ -13179,11 +13187,10 @@ app.controller('UserProfileController', function($scope, $rootScope, $routeParam
         });
     } else {
         Users.currentUser(function(user) {
-          var userCookie = Cookies.get('iPlanetDirectoryPro');
           var options = {
             url: userUrl,
             headers: {
-              iPlanetDirectoryPro: userCookie
+              iPlanetDirectoryPro: Cookies.get('iPlanetDirectoryPro')
             }
           };
 
@@ -13335,11 +13342,10 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
 
     if (Authentication.getToken()) {
       Users.currentUser(function(user) {
-        var userCookie = Cookies.get('iPlanetDirectoryPro');
         var options = {
           url: userUrl,
           headers: {
-            iPlanetDirectoryPro: userCookie
+            iPlanetDirectoryPro: Cookies.get('iPlanetDirectoryPro')
           }
         };
 
@@ -13363,6 +13369,8 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
 
           $scope.app.user = newUser;
         });
+
+        return;
 
         // find any custom menu items for this user
         getPrivateMenuItems().then(function(groups) {

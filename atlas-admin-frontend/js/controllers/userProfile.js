@@ -39,11 +39,10 @@ app.controller('UserProfileController', function($scope, $rootScope, $routeParam
         });
     } else {
         Users.currentUser(function(user) {
-          var userCookie = Cookies.get('iPlanetDirectoryPro');
           var options = {
             url: userUrl,
             headers: {
-              iPlanetDirectoryPro: userCookie
+              iPlanetDirectoryPro: Cookies.get('iPlanetDirectoryPro')
             }
           };
 
@@ -195,11 +194,10 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
 
     if (Authentication.getToken()) {
       Users.currentUser(function(user) {
-        var userCookie = Cookies.get('iPlanetDirectoryPro');
         var options = {
           url: userUrl,
           headers: {
-            iPlanetDirectoryPro: userCookie
+            iPlanetDirectoryPro: Cookies.get('iPlanetDirectoryPro')
           }
         };
 
@@ -223,6 +221,8 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
 
           $scope.app.user = newUser;
         });
+
+        return;
 
         // find any custom menu items for this user
         getPrivateMenuItems().then(function(groups) {

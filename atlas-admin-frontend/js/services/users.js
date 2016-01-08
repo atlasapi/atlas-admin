@@ -31,6 +31,10 @@ app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'Profile
             license_accepted: ''
           };
 
+          user.role.forEach(function(application) {
+            atlasUser.applications.push(application.id);
+          });
+
           callback(atlasUser);
         });
 

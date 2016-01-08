@@ -24,6 +24,7 @@ app.controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routePar
       localStorage.setItem('auth.token', Cookies.get('iPlanetDirectoryPro'));
       localStorage.setItem('profile.complete', true);
       localStorage.setItem('license.accepted', true);
+      $rootScope.status.loggedIn = true;
     });
 
     return;
