@@ -88,7 +88,7 @@ app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'Profile
     getTermsAndConditions: function() {
       return Atlas.getRequest('/eula.json').then(function(result) {
         if (result.status > 399) {
-          throw 'NOT_AVAILABLE/'+result.status;
+          throw 'NOT_AVAILABLE/' + result.status;
         }
 
         return result.data.license.license;

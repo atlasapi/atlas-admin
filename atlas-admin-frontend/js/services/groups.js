@@ -9,10 +9,6 @@ app.factory('GroupsService', ['$http', 'Authentication', 'atlasApiHost', '$q', f
   //
   var getGroups = function() {
     var defer = $q.defer();
-    // if (Cookies.get('iPlanetDirectoryPro')) {
-    //   defer.resolve({});
-    //   return defer.promise;
-    // }
 
     $http({
       method: 'get',
@@ -28,9 +24,9 @@ app.factory('GroupsService', ['$http', 'Authentication', 'atlasApiHost', '$q', f
     });
 
     return defer.promise;
-  }
+  };
 
   return {
     get: getGroups
-  }
+  };
 }]);
