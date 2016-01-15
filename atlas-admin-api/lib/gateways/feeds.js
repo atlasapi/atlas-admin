@@ -229,9 +229,9 @@ var feedsInterface = function() {
     
     var data = '';
     var options = {
-      hostname: config.processingHost,
+      hostname: "processing.owl.atlas.mbst.tv",
       path: '/system/bbc/nitro/update/content/' + req.params.pid,
-      method: 'post'
+      method: 'POST'
     };
     
     var action_request = http.request(options, function(action_res) {
