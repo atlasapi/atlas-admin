@@ -247,6 +247,11 @@ var feedsInterface = function() {
 
       action_res.on('end', function() {
         forceContentIntoQueue(uri).then(function () {
+          if (data.length > 0) {
+            res.writeHead(500);
+            res.end('{}');
+            return;
+          }
           console.log('yay');
           // console.log('Successfully force pushed content: ' + uri);
           console.log('data', data);
