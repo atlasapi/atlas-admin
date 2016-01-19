@@ -13347,6 +13347,12 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
       
       Feeds.request('youview/bbc_nitro/action/revoke', 'post', payload).then(
       function (data, status) {
+        if (_.isObject(data)) {
+          $scope.resultMessage.body = 'The transaction could not be completed because of a server error';
+          $scope.resultMessage.class = 'error';
+          $scope.isBusy = false;
+          return;
+        }
         $scope.showSearchRes = false;
         $scope.atlasResult = {  };
         $scope.resultMessage.body = 'The revoke transaction has been added to the queue';
@@ -13368,6 +13374,12 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
       
       Feeds.request('forceUpdate/' + pid, 'post', payload).then(
       function (data, status) {
+        if (_.isObject(data)) {
+          $scope.resultMessage.body = 'The transaction could not be completed because of a server error';
+          $scope.resultMessage.class = 'error';
+          $scope.isBusy = false;
+          return;
+        }
         $scope.showSearchRes = false;
         $scope.atlasResult = {  };
         $scope.resultMessage.body = 'The publish transaction has been added to the queue';
@@ -13381,8 +13393,6 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
         $scope.isBusy = false;
       });
     };
-      
-
     
     $scope.findPid = function (pidValue) {
       if (pidValue.length !== pidLength) {
