@@ -169,6 +169,7 @@ var feedsInterface = function() {
       res.end('{}');
       return false;
     }
+
     var data;
     var uri = req.body.uri || '';
     var action = req.params.action || '';
@@ -191,7 +192,7 @@ var feedsInterface = function() {
       });
 
       action_res.on('end', function() {
-        res.end('{}');
+        res.end();
       });
     });
 
