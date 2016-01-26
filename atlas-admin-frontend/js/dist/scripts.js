@@ -13907,36 +13907,7 @@ angular.module('atlasAdmin.controllers.applications').controller('CtrlApplicatio
   $scope.app.currentPage = 1;
   $scope.isAdmin = false;
 
-  if (localStorage.getItem('openAmAuthData')) {
-    var openAmAuthData = JSON.parse(localStorage.getItem('openAmAuthData'));
-    var applications = _.map(openAmAuthData.applications, function (application) {
-      return {
-        id: application.id,
-        revoked: false,
-        title: application.id,
-        description: null,
-        created: null,
-        credentials: {
-          apiKey: null
-        },
-        sources: null
-      };
-    });
-
-    $scope.app.applications = applications;
-    $scope.state = (applications.length) ? 'table' : 'blank';
-
-    return;
-  }
-
-
-  // If not logged in with OpenAM
-  Atlas.getRequest('/auth/user.json').then(function (result) {
-    if (result.data.user.role === 'admin') {
-      $scope.isAdmin = true;
-    }
-  });
-
+  // Get logstash usage data
   var getUsageData = function (applications) {
     var TIME_PERIOD = 8;
     var dates = [];
@@ -13980,6 +13951,38 @@ angular.module('atlasAdmin.controllers.applications').controller('CtrlApplicatio
       });
     });
   };
+
+  // If logged in with OpenAM
+  if (localStorage.getItem('openAmAuthData')) {
+    var openAmAuthData = JSON.parse(localStorage.getItem('openAmAuthData'));
+    var applications = _.map(openAmAuthData.applications, function (application) {
+      return {
+        id: application.id,
+        revoked: false,
+        title: application.id,
+        description: null,
+        created: null,
+        credentials: {
+          apiKey: null
+        },
+        sources: null
+      };
+    });
+
+    $scope.app.applications = applications;
+    $scope.state = (applications.length) ? 'table' : 'blank';
+    getUsageData(applications);
+
+    return;
+  }
+
+
+  // If not logged in with OpenAM
+  Atlas.getRequest('/auth/user.json').then(function (result) {
+    if (result.data.user.role === 'admin') {
+      $scope.isAdmin = true;
+    }
+  });
 
   // retreive a list of all apps
   Applications.all().then(function (applications) {
