@@ -6,7 +6,6 @@ angular.module('atlasAdmin.controllers.applications', []);
 angular.module('atlasAdmin.controllers.applications')
 .controller('CtrlApplications', ['$scope', '$rootScope', '$routeParams', 'Applications', '$modal', '$location', 'Atlas', 'Authentication', 'atlasApiHost', '$http', 'userUrl',
     function($scope, $rootScope, $routeParams, Applications, $modal, $location, Atlas, Authentication, atlasApiHost, $http, userUrl) {
-
     $scope.view_title = 'My Applications';
     $scope.app = {};
     $scope.app.predicate = 'created';
@@ -69,6 +68,9 @@ angular.module('atlasAdmin.controllers.applications')
 
     // retreive a list of all apps
     Applications.all().then(function(applications) {
+      console.log('boo');
+      return;
+
       var options = {
         url: userUrl,
         headers: {

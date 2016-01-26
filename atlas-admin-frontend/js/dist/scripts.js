@@ -12779,80 +12779,78 @@ var app = angular.module('atlasAdmin.controllers.auth');
 app.controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routeParams, Atlas, atlasVersion, $location, Authentication, $log, userUrl) {
   $scope.title = "Hi there, please sign in to continue";
 
-  if (Cookies.get('iPlanetDirectoryPro')) {
-    var options = {
+  // Ask atlas for access here
+  Authentication.reset();
+
+  var openAmCookie = Cookies.get('iPlanetDirectoryPro');
+
+  if (openAmCookie) {
+    var authOptions = {
       url: userUrl,
       headers: {
-        iPlanetDirectoryPro: Cookies.get('iPlanetDirectoryPro')
+        iPlanetDirectoryPro: openAmCookie
       }
     };
 
-    userMigration.isUserLoggedIn(options, function (response) {
+    userMigration.isUserLoggedIn(authOptions, function (response) {
       if (!response) {
         return;
       }
 
-      Authentication.reset();
+      // TODO: if users social login hasn't been deactivated, do the migration here
 
-      localStorage.setItem('auth.provider', 'mbst');
-      localStorage.setItem('auth.token', Cookies.get('iPlanetDirectoryPro'));
-      localStorage.setItem('profile.complete', true);
-      localStorage.setItem('license.accepted', true);
-      $rootScope.status.loggedIn = true;
+      window.location.hash = '/applications';
+
+      console.log('response', response);
+    });
+  } else {
+    Atlas.getAuthProviders().then(function(results) {
+      var providers = [];
+
+      results.forEach(function(provider) {
+        provider.icon = (provider.namespace === 'google') ? 'google-plus' : provider.namespace;
+        providers.push(provider);
+      });
+
+      $scope.providers = providers;
+
+      $scope.referer = window.location.href.split('#')[0];
+
+      if ($routeParams.providerNamespace) {
+        $rootScope.startAuth($scope.providers.filter(function(provider) {
+          return provider.namespace === $routeParams.providerNamespace;
+        })[0]);
+      }
     });
 
-    return;
+    $rootScope.startAuth = function(provider) {
+      var uri;
+      var target;
+
+      if (provider.redirect) {
+        window.location.href = provider.authRequestUrl;
+      }
+
+      if ($location.absUrl().indexOf('/login/' + provider.namespace) !== -1) {
+        uri = $location.absUrl().replace("/login/" + provider.namespace,"/oauth/" + provider.namespace);
+        target = $location.absUrl().replace("/login/" + provider.namespace,"/");
+      } else {
+        uri = $location.absUrl().replace("/login", "/oauth/" + provider.namespace);
+        target = $location.absUrl().replace("/login","/");
+      }
+
+      var callbackUrl = encodeURIComponent(uri);
+      var targetUri = encodeURIComponent(target);
+
+      Authentication.setProvider(provider.namespace);
+      Atlas.startOauthAuthentication(provider, callbackUrl, targetUri).then(function(login_url) {
+        window.location.href = login_url;
+      }, function(error) {
+        $log.error("Error starting auth:");
+        $log.error(error);
+      });
+    };
   }
-
-  // Ask atlas for access here
-  Authentication.reset();
-
-  Atlas.getAuthProviders().then(function(results) {
-    var providers = [];
-
-    results.forEach(function(provider) {
-      provider.icon = (provider.namespace === 'google') ? 'google-plus' : provider.namespace;
-      providers.push(provider);
-    });
-
-    $scope.providers = providers;
-
-    $scope.referer = window.location.href.split('#')[0];
-
-    if ($routeParams.providerNamespace) {
-      $rootScope.startAuth($scope.providers.filter(function(provider) {
-        return provider.namespace === $routeParams.providerNamespace;
-      })[0]);
-    }
-  });
-
-  $rootScope.startAuth = function(provider) {
-    var uri;
-    var target;
-
-    if (provider.redirect) {
-      window.location.href = provider.authRequestUrl;
-    }
-
-    if ($location.absUrl().indexOf('/login/' + provider.namespace) !== -1) {
-      uri = $location.absUrl().replace("/login/" + provider.namespace,"/oauth/" + provider.namespace);
-      target = $location.absUrl().replace("/login/" + provider.namespace,"/");
-    } else {
-      uri = $location.absUrl().replace("/login", "/oauth/" + provider.namespace);
-      target = $location.absUrl().replace("/login","/");
-    }
-
-    var callbackUrl = encodeURIComponent(uri);
-    var targetUri = encodeURIComponent(target);
-
-    Authentication.setProvider(provider.namespace);
-    Atlas.startOauthAuthentication(provider, callbackUrl, targetUri).then(function(login_url) {
-      window.location.href = login_url;
-    }, function(error) {
-      $log.error("Error starting auth:");
-      $log.error(error);
-    });
-  };
 });
 
 'use strict';
@@ -13871,7 +13869,6 @@ angular.module('atlasAdmin.controllers.applications', []);
 angular.module('atlasAdmin.controllers.applications')
 .controller('CtrlApplications', ['$scope', '$rootScope', '$routeParams', 'Applications', '$modal', '$location', 'Atlas', 'Authentication', 'atlasApiHost', '$http', 'userUrl',
     function($scope, $rootScope, $routeParams, Applications, $modal, $location, Atlas, Authentication, atlasApiHost, $http, userUrl) {
-
     $scope.view_title = 'My Applications';
     $scope.app = {};
     $scope.app.predicate = 'created';
@@ -13934,6 +13931,9 @@ angular.module('atlasAdmin.controllers.applications')
 
     // retreive a list of all apps
     Applications.all().then(function(applications) {
+      console.log('boo');
+      return;
+
       var options = {
         url: userUrl,
         headers: {
