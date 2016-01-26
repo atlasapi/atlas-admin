@@ -57,6 +57,33 @@ angular.module('atlasAdmin.controllers.applications').controller('CtrlApplicatio
     });
   };
 
+  $scope.appSearchFilter = function(application) {
+    if (!$scope.query || $scope.query === '') {
+      return true;
+    }
+    // Search on title match or if query is over 10 chars long the api key
+    return application.title.toLowerCase().indexOf($scope.query.toLowerCase()) !== -1
+                || ($scope.query.length > 10 && application.credentials.apiKey.toLowerCase().indexOf($scope.query.toLowerCase()) !== -1);
+  };
+
+  // instantiate a new modal window
+  $scope.createApplication = function() {
+    var modalInstance = $modal.open({
+      templateUrl: 'partials/newApplicationModal.html',
+      controller: 'CreateApplicationFormModalCtrl',
+      scope: $scope
+    });
+
+    modalInstance.result.then(function(application) {
+      // if all sources are selected, go to edit page
+      if ( 'all' === application.source ) {
+        $location.path('/applications/' + application.id);
+      } else {
+        $scope.app.applications.push(application)
+      }
+    });
+  };
+
   // If logged in with OpenAM
   if (localStorage.getItem('openAmAuthData')) {
     var openAmAuthData = JSON.parse(localStorage.getItem('openAmAuthData'));
@@ -95,30 +122,4 @@ angular.module('atlasAdmin.controllers.applications').controller('CtrlApplicatio
     $scope.state = (applications.length) ? 'table' : 'blank';
     getUsageData(applications);
   });
-
-  // instantiate a new modal window
-  $scope.createApplication = function() {
-    var modalInstance = $modal.open({
-      templateUrl: 'partials/newApplicationModal.html',
-      controller: 'CreateApplicationFormModalCtrl',
-      scope: $scope
-    });
-    modalInstance.result.then(function(application) {
-      // if all sources are selected, go to edit page
-      if ( 'all' === application.source ) {
-        $location.path('/applications/' + application.id);
-      } else {
-        $scope.app.applications.push(application)
-      }
-    });
-  };
-
-  $scope.appSearchFilter = function(application) {
-    if (!$scope.query || $scope.query === '') {
-      return true;
-    }
-    // Search on title match or if query is over 10 chars long the api key
-    return application.title.toLowerCase().indexOf($scope.query.toLowerCase()) !== -1
-                || ($scope.query.length > 10 && application.credentials.apiKey.toLowerCase().indexOf($scope.query.toLowerCase()) !== -1);
-  };
 }]);
