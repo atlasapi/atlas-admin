@@ -25,9 +25,19 @@ app.controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routePar
 
       // TODO: if users social login hasn't been deactivated, do the migration here
 
-      window.location.hash = '/applications';
+      var openAmAuthData = {
+        isLoggedIn: true,
+        email: response.attributes.mail,
+        applications: response.role,
+        token: openAmCookie
+      };
+
+      localStorage.setItem('openAmAuthData', JSON.stringify(openAmAuthData));
 
       console.log('response', response);
+      console.log('openAmAuthData', openAmAuthData);
+
+      window.location.hash = '/applications';
     });
   } else {
     Atlas.getAuthProviders().then(function(results) {

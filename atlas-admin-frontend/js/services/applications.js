@@ -6,6 +6,11 @@ var app = angular.module('atlasAdmin.services.applications', []);
 app.factory('Applications', function (Atlas) {
   return {
     all: function () {
+      if (localStorage.getItem('openAmAuthData')) {
+        console.log('You are logged in');
+        return;
+      }
+
       return Atlas.getRequest('/applications.json').then(function (results) {
         return results.data.applications;
       });
