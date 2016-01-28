@@ -28,7 +28,7 @@ app.controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routePar
       var openAmAuthData = {
         isLoggedIn: true,
         email: response.attributes.mail,
-        applications: response.role,
+        groups: response.role,
         token: openAmCookie
       };
 
