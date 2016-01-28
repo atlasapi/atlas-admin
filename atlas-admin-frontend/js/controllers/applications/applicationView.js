@@ -3,7 +3,7 @@
 // define 'applications' module to be used for application controllers
 angular.module('atlasAdmin.controllers.applications', []);
 
-angular.module('atlasAdmin.controllers.applications').controller('CtrlApplications', ['$scope', '$rootScope', '$routeParams', 'Applications', '$modal', '$location', 'Atlas', 'Authentication', 'atlasApiHost', '$http', 'userUrl', function ($scope, $rootScope, $routeParams, Applications, $modal, $location, Atlas, Authentication, atlasApiHost, $http, userUrl) {
+angular.module('atlasAdmin.controllers.applications').controller('CtrlApplications', ['$scope', '$q', '$rootScope', '$routeParams', 'Applications', '$modal', '$location', 'Atlas', 'Authentication', 'atlasApiHost', '$http', 'userUrl', 'adminBackendUrl', function ($scope, $q, $rootScope, $routeParams, Applications, $modal, $location, Atlas, Authentication, atlasApiHost, $http, userUrl, adminBackendUrl) {
   $scope.view_title = 'My Applications';
   $scope.app = {};
   $scope.app.predicate = 'created';
@@ -84,26 +84,46 @@ angular.module('atlasAdmin.controllers.applications').controller('CtrlApplicatio
     });
   };
 
+  // Get OpenAM applications
+  var getApplication = function (groupId) {
+    return $q(function (resolve, reject) {
+      $.ajax({
+        url: adminBackendUrl + '/1/applications/' + groupId,
+        headers: {
+          iPlanetDirectoryPro: openAmAuthData.token
+        },
+        success: function (response) {
+          resolve(response.application);
+        },
+        error: function (jqxhr, textStatus, errorThrown) {
+          reject(errorThrown);
+        }
+      });
+    });
+  };
+
   // If logged in with OpenAM
   if (localStorage.getItem('openAmAuthData')) {
     var openAmAuthData = JSON.parse(localStorage.getItem('openAmAuthData'));
-    var applications = _.map(openAmAuthData.applications, function (application) {
-      return {
-        id: application.id,
-        revoked: false,
-        title: application.id,
-        description: null,
-        created: null,
-        credentials: {
-          apiKey: null
-        },
-        sources: null
-      };
-    });
+    var applications = [];
 
-    $scope.app.applications = applications;
-    $scope.state = (applications.length) ? 'table' : 'blank';
-    getUsageData(applications);
+    openAmAuthData.groups.forEach(function (group) {
+      getApplication(group.id).then(function (application) {
+        if (!application) {
+          return;
+        }
+
+        applications.push(application);
+
+        $scope.$eval(function () {
+          $scope.app.applications = applications;
+          $scope.state = (applications.length) ? 'table' : 'blank';
+          getUsageData(applications);
+        });
+      }, function (error) {
+        console.log('fuck', fuck);
+      });
+    });
 
     return;
   }
