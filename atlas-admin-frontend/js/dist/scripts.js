@@ -14008,6 +14008,8 @@ angular.module('atlasAdmin.controllers.applications').controller('CtrlApplicatio
           return;
         }
 
+        application.credentials = application.credentialsConfig;
+
         applications.push(application);
 
         $scope.$eval(function () {
