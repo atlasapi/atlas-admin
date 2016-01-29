@@ -1,38 +1,38 @@
 <div class="app-surface applications">
-    <header class="app-header">
-        <h1 class="page-title">{{view_title}}</h1>
-        <button type="button" class="button positive create-application" ng-click="createApplication()">Create application</button>
-    </header>
-    <section ng-show="state=='table'" class="panel-full applications-list">
-        <div class="query-filter">
-            <input type="text" aria-role="search" ng-model="query" placeholder="Filter applications" id="queryFilter">
-        </div>
-        <table class="tbl">
-            <thead>
-                <tr>
-                    <th ng-click="app.predicate='title'; app.reverse=!app.reverse;">Application</th>
-                    <th ng-click="app.predicate='credentials.apiKey'; app.reverse=!app.reverse;">API Key</th>
-                    <th ng-click="app.predicate='created'; app.reverse=!app.reverse;">Created</th>
-                    <!-- if admin, show this -->
-                    <th ng-click="app.predicate='usage.doc_count'; app.reverse=!app.reverse;" ng-show="isAdmin">API usage (past week)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="application in app.applications  | filter:appSearchFilter | orderBy:app.predicate:app.reverse  | startFrom:(app.currentPage-1)*app.pageSize  | limitTo:app.pageSize ">
-                    <td><a ng-href="#/applications/{{application.id}}">{{application.title}}</a></td>
-                    <td>{{application.credentials.apiKey}}</td>
-                    <td>{{application.created|date:'dd MMM yyyy H:mm'}}</td>
-                    <!-- if admin, show this -->
-                    <td ng-show="isAdmin">{{application.usage.readableCount}}</td>
-                </tr>
-            </tbody>
-        </table>
-    </section>
-    <div class="panel-full" ng-show="state=='table'" class="container">
-        <pagination total-items="(app.applications|filter:appSearchFilter).length" page="app.currentPage" max-size="app.pageSize" boundary-links="true"></pagination>
+  <header class="app-header">
+    <h1 class="page-title">{{view_title}}</h1>
+    <button type="button" class="button positive create-application" ng-click="createApplication()">Create application</button>
+  </header>
+  <section ng-show="state=='table'" class="panel-full applications-list">
+    <div class="query-filter">
+      <input type="text" aria-role="search" ng-model="query" placeholder="Filter applications" id="queryFilter">
     </div>
-    <section ng-show="state=='blank'" class="row blank-slate">
-        <h1 class="no-apps-message">You don't have any applications yet</h1>
-        <a ng-click="createApplication()" class="create-link">Create one</a>
-    </section>
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th ng-click="app.predicate='title'; app.reverse=!app.reverse;">Application</th>
+          <th ng-click="app.predicate='credentials.apiKey'; app.reverse=!app.reverse;">API Key</th>
+          <th ng-click="app.predicate='created'; app.reverse=!app.reverse;">Created</th>
+          <!-- if admin, show this -->
+          <th ng-click="app.predicate='usage.doc_count'; app.reverse=!app.reverse;" ng-show="isAdmin">API usage (past week)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="application in app.applications  | filter:appSearchFilter | orderBy:app.predicate:app.reverse  | startFrom:(app.currentPage-1)*app.pageSize  | limitTo:app.pageSize ">
+          <td><a ng-href="#/applications/{{application.id}}">{{application.title}}</a></td>
+          <td>{{application.credentials.apiKey}}</td>
+          <td>{{application.created|date:'dd MMM yyyy H:mm'}}</td>
+          <!-- if admin, show this -->
+          <td ng-show="isAdmin">{{application.usage.readableCount}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+  <div class="panel-full" ng-show="state=='table'" class="container">
+    <pagination total-items="(app.applications|filter:appSearchFilter).length" page="app.currentPage" max-size="app.pageSize" boundary-links="true"></pagination>
+  </div>
+  <section ng-show="state=='blank'" class="row blank-slate">
+    <h1 class="no-apps-message">You don't have any applications yet</h1>
+    <a ng-click="createApplication()" class="create-link">Create one</a>
+  </section>
 </div>

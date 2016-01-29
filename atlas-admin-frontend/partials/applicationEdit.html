@@ -1,178 +1,173 @@
 <div class="app-surface application-edit">
-    <header class="app-header">
-        <h1 class="page-title">{{view_title}}</h1>
-    </header>
-    
-    <section class="save-status" ng-show="app.changed || !successMessage">
+  <header class="app-header">
+    <h1 class="page-title">{{view_title}}</h1>
+  </header>
+
+  <section class="save-status" ng-show="app.changed || !successMessage">
+    <div class="panel-full">
+      <span class="label label-just-saying" ng-show="app.changed">Unsaved changes</span>
+      <button ng-show="!successMessage || app.changed" type="button" class="button submit" ng-click="save()">Save</button>
+    </div>
+  </section>
+
+  <section class="notifications" ng-show="successMessage || errorMessage">
+    <div class="panel-full">
+      <div ng-show="successMessage && !app.changed" class="alert alert-success">{{successMessage}}</div>
+      <div ng-show="errorMessage" class="alert">{{errorMessage}}</div>
+    </div>
+  </section>
+
+  <section class="edit-form">
+    <!-- if admin show this -->
+    <div class="api-usage-graph" id="api-usage-graph" ng-show="isAdmin">
+      <div class="api-usage-trigger button">API usage</div>
+        <div class="chart-card">
+          <div class="notifications" ng-show="errorMessage"></div>
+          <div class="graph-container">
+            <div class="graph-controls clearfix">
+              <div class="graph-control graph-control-hour" ng-class="{'selected':tabState=='hour'}" ng-click="switchTime('hour')">- 1 hour</div>
+              <div class="graph-control graph-control-day" ng-class="{'selected':tabState=='day'}" ng-click="switchTime('day')">- 24 hours</div>
+              <div class="graph-control graph-control-week" ng-class="{'selected':tabState=='week'}" ng-click="switchTime('week')">- 7 days</div>
+              <div class="graph-control graph-control-month" ng-class="{'selected':tabState=='month'}" ng-click="switchTime('month')">- 30 days</div>
+              <div class="graph-control graph-control-refresh" ng-click="reloadGraph()">Refresh</div>
+            </div>
+            <div class="usage-graph-wrapper">
+              <svg class="usage-graph" id="visualisation" width="1000" height="600"></svg>
+            </div>
+            <p class="graph-caption"></p>
+            <div class="clearfix">
+              <div class="close-usage-graph button">&times; close</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- // .api-usage-graph -->
+
+      <form name="detailsForm" class="panel-full">
+        <div class="panel-full padded edit-app-info">
+          <div class="panel-half padded-right stroke-right snug">
+            <div class="form-row">
+              <label for="appTitle">Application name</label>
+              <input type="text" class="form-control" id="appTitle" name="appTitle" placeholder="title" ng-model="app.application.title" ng-change="app.edited.meta=true" ng-minlength="3">
+            </div>
+            <div class="form-row">
+              <label for="appDescription">Application description</label>
+              <textarea id="appDescription" placeholder="description" ng-model="app.application.description" ng-change="app.edited.meta=true"></textarea>
+            </div>
+          </div>
+          <div class="panel-half padded-left snug">
+            <div class="form-row api-key-holder">
+              <label for="appApiKey">API Key</label>
+              <input type="text" class="form-control" id="appApiKey" ng-model="app.application.credentials.apiKey" ng-readonly="true">
+              <button type="button" class="button negative" ng-show="app.application.revoked === false" ng-click="revokeApplication()">Revoke key</button>
+              <button type="button" class="button positive" ng-show="app.application.revoked === true" ng-click="unRevokeApplication()">Unrevoke key</button>
+            </div>
+          </div>
+        </div>
+
         <div class="panel-full">
-            <span class="label label-just-saying" ng-show="app.changed">Unsaved changes</span>
-            <button ng-show="!successMessage || app.changed" type="button" class="button submit" ng-click="save()">Save</button>
+          <header class="panel-header">
+            <h1>Sources</h1>
+            <p>Atlas automatically matches the same programmes across different sources. With equivalence precedence turned off, we'll return all equivalent content as separate items in the response. With precedence turned on we'll merge the best data from every source into a single item, based on the order you set here.</p>
+            <p>Hint: If you have access to Press Association data, you probably want it at the top.</p>
+        </header>
+        <div class="form-row">
+          <button type="button" class="button button-success" ng-show="app.application.sources.precedence === false" ng-click="enablePrecedence()">Enable Matching</button>
+          <button type="button" class="button" ng-show="app.application.sources.precedence === true" ng-click="disablePrecedence()">Disable Matching</button>
         </div>
-    </section>
+      </div>
 
-    <section class="notifications" ng-show="successMessage || errorMessage">
-        <div class="panel-full">
-            <div ng-show="successMessage && !app.changed" class="alert alert-success">
-                {{successMessage}}
-            </div>
-            <div ng-show="errorMessage" class="alert">
-                {{errorMessage}}
-            </div>
+      <div class="panel-full enabled-sources">
+        <header class="panel-header">
+          <h2>Enabled</h2>
+          <span ng-show="app.application.sources.precedence === true">(Drag and drop sources to rearrange precedence ordering)</span>
+        </header>
+        <ul class="list-group" sortable-list>
+          <li class="list-group-item source-item-entry" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:true" orderable id="source-{{source.id}}" ng-show="app.application.sources.precedence === true">
+            <span ng-show="app.application.sources.precedence === true" class="grabby-thing"></span>
+            {{source.title}}
+            <span class="source-options">
+              <button type="button" class="button button-link" ng-click="app.disableSource(source)">Disable</button>
+              <button type="button" class="button button-link" ng-click="app.viewTerms(source)">View Terms</button>
+            </span>
+          </li>
+          <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:true" id="source-{{source.id}}" ng-show="app.application.sources.precedence === false">
+            {{source.title}}
+            <span class="source-options">
+              <button type="button" class="button button-link" ng-click="app.viewTerms(source)">View Terms</button>
+              <button type="button" class="button button-link" ng-click="app.disableSource(source)">Disable</button>
+            </span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="panel-full available-sources">
+        <header class="panel-header">
+          <h2>Available</h2>
+        </header>
+        <ul class="list-group">
+          <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:false">
+            {{source.title}}
+            <span class="source-options">
+              <button type="button" class="button button-link" ng-click="app.enableSource(source)">Enable</button>
+            </span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="panel-full requested-sources">
+        <header class="panel-header">
+          <h2>Requested</h2>
+        </header>
+        <ul class="list-group">
+          <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'requested' ">
+            {{source.title}}
+          </li>
+        </ul>
+      </div>
+
+      <div class="panel-full unavailable-sources">
+        <header class="panel-header">
+          <h2>Unavailable</h2>
+        </header>
+        <ul class="list-group">
+          <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'unavailable|enableable'">
+            {{source.title}}
+            <span class="source-options">
+              <a type="button" class="button" ng-href="#/applications/{{app.application.id}}/requestSource/{{source.id}}">Request Access</a>
+            </span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="panel-full revoked-sources">
+        <header class="panel-header">
+          <h2>Revoked</h2>
+        </header>
+        <ul class="list-group">
+          <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'revoked'">
+            {{source.title}}
+          </li>
+        </ul>
+      </div>
+
+      <div class="form-row" ng-show="app.application.sources.writes.length > 0">
+        <header class="panel-header">
+          <h1>Sources [write]</h1>
+        </header>
+        <ul class="list-group">
+          <li class="list-group-item" ng-repeat="source in app.application.sources.writes | orderBy:app.writes.predicate:app.writes.reverse">
+            {{source.name}}
+          </li>
+        </ul>
+      </div>
+
+      <div class="panel panel-default" ng-show="!successMessage || app.changed">
+        <div class="panel-body">
+          <button type="button" class="button submit" ng-click="save()" ng-disabled="!app.changed">Save</button>
+          <span class="label label-warning" ng-show="app.changed">Unsaved changes</span>
         </div>
-    </section>
-
-    <section class="edit-form">
-        
-        <!-- if admin show this -->
-        <div class="api-usage-graph" id="api-usage-graph" ng-show="isAdmin">
-            <div class="api-usage-trigger button">API usage</div>
-            <div class="chart-card">
-                <div class="notifications" ng-show="errorMessage"></div>
-                <div class="graph-container">
-                    <div class="graph-controls clearfix">
-                        <div class="graph-control graph-control-hour" ng-class="{'selected':tabState=='hour'}" ng-click="switchTime('hour')">- 1 hour</div>
-                        <div class="graph-control graph-control-day" ng-class="{'selected':tabState=='day'}" ng-click="switchTime('day')">- 24 hours</div>
-                        <div class="graph-control graph-control-week" ng-class="{'selected':tabState=='week'}" ng-click="switchTime('week')">- 7 days</div>
-                        <div class="graph-control graph-control-month" ng-class="{'selected':tabState=='month'}" ng-click="switchTime('month')">- 30 days</div>
-                        <div class="graph-control graph-control-refresh" ng-click="reloadGraph()">Refresh</div>
-                    </div>
-                    <div class="usage-graph-wrapper">
-                        <svg class="usage-graph" id="visualisation" width="1000" height="600"></svg>
-                    </div>
-                    <p class="graph-caption"></p>
-                    <div class="clearfix">
-                        <div class="close-usage-graph button">&times; close</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- // .api-usage-graph -->
-
-        <form name="detailsForm" class="panel-full">
-            <div class="panel-full padded edit-app-info">
-                <div class="panel-half padded-right stroke-right snug">
-                    <div class="form-row">
-                        <label for="appTitle">Application name</label>
-                        <input type="text" class="form-control" id="appTitle" name="appTitle" placeholder="title" ng-model="app.application.title" ng-change="app.edited.meta=true" ng-minlength="3">
-                    </div>
-                    <div class="form-row">
-                        <label for="appDescription">Application description</label>
-                        <textarea id="appDescription" placeholder="description" ng-model="app.application.description" ng-change="app.edited.meta=true"></textarea>
-                    </div>
-                </div>
-                <div class="panel-half padded-left snug">
-                    <div class="form-row api-key-holder">
-                        <label for="appApiKey">API Key</label>
-                        <input type="text" class="form-control" id="appApiKey" ng-model="app.application.credentials.apiKey" ng-readonly="true">
-                        <button type="button" class="button negative" ng-show="app.application.revoked === false" ng-click="revokeApplication()">Revoke key</button>
-                        <button type="button" class="button positive" ng-show="app.application.revoked === true" ng-click="unRevokeApplication()">Unrevoke key</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="panel-full">
-                <header class="panel-header">
-                    <h1>Sources</h1> 
-                    <p>Atlas automatically matches the same programmes across different sources. With equivalence precedence turned off, we'll return all equivalent content as separate items in the response. With precedence turned on we'll merge the best data from every source into a single item, based on the order you set here.</p>
-                    <p>Hint: If you have access to Press Association data, you probably want it at the top.</p>
-                </header>
-                <div class="form-row">
-                    <button type="button" class="button button-success" ng-show="app.application.sources.precedence === false" ng-click="enablePrecedence()">Enable Matching</button>
-                    <button type="button" class="button" ng-show="app.application.sources.precedence === true" ng-click="disablePrecedence()">Disable Matching</button>
-                </div>
-            </div>
-
-            <div class="panel-full enabled-sources">
-                <header class="panel-header">
-                    <h2>Enabled</h2> 
-                    <span ng-show="app.application.sources.precedence === true">(Drag and drop sources to rearrange precedence ordering)</span>
-                </header>
-                <ul class="list-group" sortable-list>
-                    <li class="list-group-item source-item-entry" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:true" orderable id="source-{{source.id}}" ng-show="app.application.sources.precedence === true">
-                        <span ng-show="app.application.sources.precedence === true" class="grabby-thing"></span>
-                        {{source.title}}
-                        <span class="source-options">
-                            <button type="button" class="button button-link" ng-click="app.disableSource(source)">Disable</button>
-                            <button type="button" class="button button-link" ng-click="app.viewTerms(source)">View Terms</button>
-                        </span>
-                    </li>
-                    <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:true" id="source-{{source.id}}" ng-show="app.application.sources.precedence === false">
-                        {{source.title}}
-                        <span class="source-options">
-                            <button type="button" class="button button-link" ng-click="app.viewTerms(source)">View Terms</button> 
-                            <button type="button" class="button button-link" ng-click="app.disableSource(source)">Disable</button>
-                        </span>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="panel-full available-sources">
-                <header class="panel-header">
-                    <h2>Available</h2> 
-                </header>
-                <ul class="list-group">
-                    <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:false">
-                        {{source.title}}
-                        <span class="source-options">
-                            <button type="button" class="button button-link" ng-click="app.enableSource(source)">Enable</button>
-                        </span>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="panel-full requested-sources">
-                <header class="panel-header">
-                    <h2>Requested</h2> 
-                </header>
-                <ul class="list-group">
-                    <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'requested' ">
-                        {{source.title}}
-                    </li>
-                </ul>
-            </div>
-
-            <div class="panel-full unavailable-sources">
-                <header class="panel-header">
-                    <h2>Unavailable</h2> 
-                </header>
-                <ul class="list-group">
-                    <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'unavailable|enableable'">
-                        {{source.title}}
-                        <span class="source-options">
-                            <a type="button" class="button" ng-href="#/applications/{{app.application.id}}/requestSource/{{source.id}}">Request Access</a>
-                        </span>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="panel-full revoked-sources">
-                <header class="panel-header">
-                    <h2>Revoked</h2> 
-                </header>
-                <ul class="list-group">
-                    <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'revoked'">
-                        {{source.title}}
-                    </li>
-                </ul>
-            </div>
-
-            <div class="form-row" ng-show="app.application.sources.writes.length > 0">
-                <header class="panel-header">
-                    <h1>Sources [write]</h1> 
-                </header>
-                <ul class="list-group">
-                    <li class="list-group-item" ng-repeat="source in app.application.sources.writes | orderBy:app.writes.predicate:app.writes.reverse">
-                        {{source.name}}
-                    </li>
-                </ul>
-            </div>
-
-            <div class="panel panel-default" ng-show="!successMessage || app.changed">
-                <div class="panel-body">
-                    <button type="button" class="button submit" ng-click="save()" ng-disabled="!app.changed">Save</button>
-                    <span class="label label-warning" ng-show="app.changed">Unsaved changes</span>
-                </div>
-            </div>
-        </form>
-    </section>
+      </div>
+    </form>
+  </section>
 </div>
