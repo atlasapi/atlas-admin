@@ -13979,7 +13979,8 @@ angular.module('atlasAdmin.controllers.applications').controller('CtrlApplicatio
     });
   };
 
-  // Get OpenAM applications
+  // Get OpenAM application
+  // TODO: Needs abstracting and testing
   var getApplication = function (groupId) {
     return $q(function (resolve, reject) {
       $.ajax({
@@ -14044,7 +14045,7 @@ angular.module('atlasAdmin.controllers.applications').controller('CtrlApplicatio
 'use strict';
 
 angular.module('atlasAdmin.controllers.applications')
-.controller('CtrlApplicationEdit', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Sources', 'SourceLicenses', 'Authentication', 'atlasApiHost', '$modal', '$sce', '$log', '$http', '$q', 'APIUsage', 'Atlas', '$location', function($scope, $rootScope, $routeParams, Applications, Sources, SourceLicenses, Authentication, atlasApiHost, $modal, $sce, $log, $http, $q, Usage, Atlas, $location) {
+.controller('CtrlApplicationEdit', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Sources', 'SourceLicenses', 'Authentication', 'atlasApiHost', '$modal', '$sce', '$log', '$http', '$q', 'APIUsage', 'Atlas', '$location', 'adminBackendUrl', function($scope, $rootScope, $routeParams, Applications, Sources, SourceLicenses, Authentication, atlasApiHost, $modal, $sce, $log, $http, $q, Usage, Atlas, $location, adminBackendUrl) {
   $scope.app = {};
   $scope.app.edited = {};
   $scope.app.edited = {'meta':false,'precedenceState':false,'precedenceOrder':false};
@@ -14307,9 +14308,40 @@ angular.module('atlasAdmin.controllers.applications')
     }
   });
 
+  // Get OpenAM application
+  // TODO: Needs abstracting and testing
+  var getApplication = function (applicationId) {
+    return $q(function (resolve, reject) {
+      $.ajax({
+        url: adminBackendUrl + '/1/applications/' + applicationId,
+        headers: {
+          iPlanetDirectoryPro: openAmAuthData.token
+        },
+        success: function (response) {
+          resolve(response.application);
+        },
+        error: function (jqxhr, textStatus, errorThrown) {
+          reject(errorThrown);
+        }
+      });
+    })
+  };
+
   // If logged in with OpenAM
   if (localStorage.getItem('openAmAuthData')) {
     var openAmAuthData = JSON.parse(localStorage.getItem('openAmAuthData'));
+    var applicationId = $routeParams.applicationId;
+
+    getApplication(applicationId).then(function (application) {
+      if (!application) {
+        return;
+      }
+
+      $scope.app.application = application;
+    }, function (error) {
+      throw new Error(error);
+    });
+
     return;
   }
 

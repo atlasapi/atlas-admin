@@ -84,7 +84,8 @@ angular.module('atlasAdmin.controllers.applications').controller('CtrlApplicatio
     });
   };
 
-  // Get OpenAM applications
+  // Get OpenAM application
+  // TODO: Needs abstracting and testing
   var getApplication = function (groupId) {
     return $q(function (resolve, reject) {
       $.ajax({
