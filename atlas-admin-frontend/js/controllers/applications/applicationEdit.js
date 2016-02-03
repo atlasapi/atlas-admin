@@ -293,6 +293,8 @@ angular.module('atlasAdmin.controllers.applications')
         return;
       }
 
+      application.credentials = application.credentialsConfig;
+
       $scope.app.application = application;
     }, function (error) {
       throw new Error(error);

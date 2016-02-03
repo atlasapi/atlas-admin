@@ -10,6 +10,15 @@ angular.module('atlasAdmin.controllers.applications').controller('CreateApplicat
   $scope.license = {};
   $scope.license.show = false;
 
+  // If logged in with OpenAM
+  if (localStorage.getItem('openAmAuthData')) {
+    var openAmAuthData = JSON.parse(localStorage.getItem('openAmAuthData'));
+    var newApplication = {};
+    userMigration.createGroupForApplication(newApplication);
+    return;
+  }
+
+  // If not logged in with OpenAM
   var getTerms = function (source) {
     var defer = $q.defer();
     var sourceId = null;
