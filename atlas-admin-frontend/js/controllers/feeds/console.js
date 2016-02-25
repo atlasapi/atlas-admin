@@ -9,22 +9,22 @@ function($scope, $rootScope, $routeParams, Feeds, $q, $timeout) {
   $scope.view_title = 'Feeds Console';
   $scope.statusFilter = ['accepted', 'validating', 'failed', 'quarantined', 'committing', 'committed', 'publishing', 'published'];
   $scope.transactionFilter = ['BRAND', 'SERIES', 'ITEM', 'VERSION', 'BROADCAST', 'ONDEMAND'];
-  
+
   // set up ordering and search
-  $scope.table = {}; 
+  $scope.table = {};
   $scope.table.order = 'upload_time';
   $scope.table.reverse = true;
   $scope.activeFilter = '';
   $scope.search = {};
-  
-  
+
+
   // this controls the loading state of the feeds console
   $scope.isloading = false;
-  
+
   // this will tell the view whether or not the action buttons are disabled
   $scope.disableActions = false;
-  
-  
+
+
   // Used for initiating filtering on a field. changes the activeFilter
   // param and then reloads the tasks list.
   //
@@ -35,7 +35,7 @@ function($scope, $rootScope, $routeParams, Feeds, $q, $timeout) {
     if (! _.isString(filter_on)) {
       return;
     }
-    
+
     if ($scope.search[filter_on].length > 3 || $scope.search[filter_on].length === 0) {
       $timeout.cancel(input_timer);
       input_timer = $timeout(function() {
@@ -46,43 +46,43 @@ function($scope, $rootScope, $routeParams, Feeds, $q, $timeout) {
       }, 700);
     }
   };
-  
-  
+
+
   // Used for controlling pagination functionality. The idea is that
   // page.current is watched for changes, then the tasks list
-  // is reloaded from the server with new offset params 
+  // is reloaded from the server with new offset params
   $scope.page = {};
   $scope.page.current = 0;
   $scope.page.limit = 15;
   $scope.page.offset = 0;
   $scope.page.showPager = false;
-  
+
   $scope.$watch('page.limit', function(new_val, old_val) {
     $scope.isloading = true;
     $scope.page.current = 0;
     $scope.page.showPager = ($scope.tasks.length >= $scope.page.limit) ? false : true;
   });
-  
+
   $scope.$watch('page.current + page.limit', function(new_val, old_val) {
     $scope.page.offset = $scope.page.current * $scope.page.limit;
     getTasks();
   });
-  
+
   $scope.page.next = function() {
     if ($scope.tasks.length >= $scope.page.limit && !$scope.isloading) {
       $scope.isloading = true;
       ++$scope.page.current;
     }
   };
-  
+
   $scope.page.previous = function() {
     if ($scope.page.current > 0 && !$scope.isloading) {
       $scope.isloading = true;
       --$scope.page.current;
     }
   };
-  
-  
+
+
   // For loading sets of tasks from atlas. Filters and offsets
   // are inserted automatically based on $scope variables
   var getTasks = function() {
@@ -99,8 +99,8 @@ function($scope, $rootScope, $routeParams, Feeds, $q, $timeout) {
     var request_url = 'youview/bbc_nitro/tasks.json?limit='+$scope.page.limit+'&offset='+$scope.page.offset+_filter;
     Feeds.request(request_url).then(pushTasksTable);
   };
-  
-  
+
+
   // For loading the feed statistics from atlas
   var getStats = (function() {
     Feeds.request('youview/bbc_nitro/statistics.json').then(function(data) {
@@ -113,8 +113,8 @@ function($scope, $rootScope, $routeParams, Feeds, $q, $timeout) {
       $scope.statistics.uptime = stats.update_latency_string;
     });
   })();
-  
-  
+
+
   // Used for loading data into the tasks scope
   // @param data {object} the tasks object
   var pushTasksTable = function(data) {
@@ -126,8 +126,8 @@ function($scope, $rootScope, $routeParams, Feeds, $q, $timeout) {
     $scope.isloading = false;
     $scope.tasks = data.tasks;
   };
-  
-  
+
+
   // Used for calculating uptime since last outage
   // @param last_outage {date}
   var calculateUptime = function(last_outage) {
@@ -144,17 +144,17 @@ function($document, $q, $modal) {
   var controller = function($scope, el, attr) {
     var modal = function(action) {
       var defer = $q.defer();
-      
+
       if (!_.isString(action)) {
         defer.reject();
         return defer.promise;
       }
-      
+
       var _content = {
         title: '<strong>'+action+'</strong> task?',
         action: action.charAt(0).toUpperCase() + action.slice(1)
       };
-      
+
       var _modalInstance = $modal.open({
         // template: '<h1>'+_content.title+'</h1></div><div class="feed-modal-options"><button ng-disabled="isSendingAction" ng-click="ok()">'+_content.action+'</button><button ng-click="dismiss()">Cancel</button>',
         templateUrl: 'partials/feeds/actionsModal.html',
@@ -163,21 +163,21 @@ function($document, $q, $modal) {
         scope: $scope,
         resolve: { modalAction: function() { return action; } }
       });
-      
+
       _modalInstance.result.then(defer.resolve, defer.reject);
       return defer.promise;
     };
-    
+
     $(el).on('click', function() {
       if ($scope.task || $scope.tasks) {
         var action = attr.actionModal || null;
         modal(action).then( function() {
-          
+
         });
       }
     });
   };
-  
+
   return {
     scope: false,
     link: controller
@@ -198,64 +198,74 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
       revoke: 'Revoke',
       upload: 'Publish'
     };
-    
+
     var trimString = function (wordCount, string) {
       var append = '';
       var words = string.split(' ');
-      
+
       if (words.length > wordCount) {
         append = '...';
       }
       var truncated = words.slice(0, wordCount).join(' ');
       return truncated + append;
     };
-    
+
     var runRevoke = function (pid) {
       var payload = {
         uri: 'http://nitro.bbc.co.uk/programmes/' + pid
       };
-      
+
       $scope.isBusy = true;
-      
+
       Feeds.request('youview/bbc_nitro/action/revoke', 'post', payload).then(
       function (data, status) {
+        if (_.isObject(data)) {
+          $scope.resultMessage.body = 'The transaction could not be completed because of a server error';
+          $scope.resultMessage.class = 'error';
+          $scope.isBusy = false;
+          return;
+        }
         $scope.showSearchRes = false;
         $scope.atlasResult = {  };
         $scope.resultMessage.body = 'The revoke transaction has been added to the queue';
         $scope.resultMessage.class = 'success';
         $scope.clearUI = true;
         $scope.isBusy = false;
-      }, 
+      },
       function () {
         $scope.resultMessage.body = 'The transaction could not be completed because of a server error';
         $scope.resultMessage.class = 'error';
         $scope.isBusy = false;
       });
     };
-    
+
     var runIngest = function (pid) {
       var payload = {};
-      
+
       $scope.isBusy = true;
-      
+
       Feeds.request('forceUpdate/' + pid, 'post', payload).then(
       function (data, status) {
+        if (_.isObject(data)) {
+          $scope.resultMessage.body = 'The transaction could not be completed because of a server error';
+          $scope.resultMessage.class = 'error';
+          $scope.isBusy = false;
+          return;
+        }
         $scope.showSearchRes = false;
         $scope.atlasResult = {  };
         $scope.resultMessage.body = 'The publish transaction has been added to the queue';
         $scope.resultMessage.class = 'success';
         $scope.clearUI = true;
         $scope.isBusy = false;
-      }, 
+      },
       function () {
         $scope.resultMessage.body = 'The transaction could not be completed because of a server error';
         $scope.resultMessage.class = 'error';
         $scope.isBusy = false;
       });
     };
-      
 
-    
     $scope.findPid = function (pidValue) {
       if (pidValue.length !== pidLength) {
         return console.warn('PID isn\'t the correct length');
@@ -264,8 +274,8 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
       $http.get(atlasHost + '/3.0/content.json?apiKey=cae02bc954cf40809d6d70601d3e0b88&uri=' + nitroUri + '&annotations=description,extended_description,brand_summary')
         .success( function (data, status) {
           var atlasres = data.contents[0];
+          $scope.showSearchRes = true;
           if (atlasres) {
-            $scope.showSearchRes = true;
             $scope.atlasResult.imageUrl = atlasres.image;
             $scope.atlasResult.title = atlasres.title;
             $scope.atlasResult.brand = atlasres.container.title || '';
@@ -277,9 +287,9 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
           $scope.resultMessage.body = 'The PID search could not be completed because of a server error';
           $scope.resultMessage.class = 'error';
         });
-    };    
-    
-    
+    };
+
+
     $scope.triggerAction = function (actionName, pid) {
       if (! pid) {
         return console.warn('cannot trigger action because there is no pid argument');
@@ -292,7 +302,7 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
         case 'revoke': runRevoke(pid); break;
       }
     };
-    
+
     $scope.dismiss = function() {
       $modalInstance.dismiss();
     };
