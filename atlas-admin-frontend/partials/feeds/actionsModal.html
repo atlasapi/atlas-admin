@@ -8,18 +8,18 @@
     <div class="field-holder">
       <input type="text" ng-model="pidValue" required placeholder="PID">
       <button ng-click="findPid(pidValue)">Check PID</button>
-    </div>  
+    </div>
   </section>
   <section class="search-result" ng-show="showSearchRes">
     <div class="actionBtn" ng-class="actionName"><button ng-click="triggerAction(actionName, pidValue)">{{uiStrings[actionName]}}</button></div>
     <div class="atlasresult">
-      <div class="result-img"><img ng-src="{{atlasResult.imageUrl}}"></div>
+      <div class="result-img" ng-if="atlasResult.imageUrl"><img ng-src="{{atlasResult.imageUrl}}"></div>
       <div class="result-content">
         <header>
-          <h2 class="meta-title">{{atlasResult.brand}}</h2>
-          <span class="meta-time">{{atlasResult.title}}</span>
+          <h2 class="meta-title" ng-if="atlasResult.brand">{{atlasResult.brand}}</h2>
+          <span class="meta-time" ng-if="atlasResult.title">{{atlasResult.title}}</span>
         </header>
-        <p>{{atlasResult.description}}</p>
+        <p ng-if="atlasResult.description">{{atlasResult.description}}</p>
       </div>
     </div>
   </section>
