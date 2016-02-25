@@ -273,8 +273,9 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
       var nitroUri = 'http://nitro.bbc.co.uk/programmes/' + pidValue;
       $http.get(atlasHost + '/3.0/content.json?apiKey=cae02bc954cf40809d6d70601d3e0b88&uri=' + nitroUri + '&annotations=description,extended_description,brand_summary')
         .success( function (data, status) {
-          var atlasres = data.contents[0];
           $scope.showSearchRes = true;
+          var atlasres = data.contents[0];
+          
           if (atlasres) {
             $scope.atlasResult.imageUrl = atlasres.image;
             $scope.atlasResult.title = atlasres.title;
