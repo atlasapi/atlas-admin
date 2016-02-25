@@ -275,6 +275,8 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
         .success( function (data, status) {
           var atlasres = data.contents[0];
           $scope.showSearchRes = true;
+
+          console.log('cookies');
           if (atlasres) {
             $scope.atlasResult.imageUrl = atlasres.image;
             $scope.atlasResult.title = atlasres.title;
