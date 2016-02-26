@@ -6,8 +6,9 @@ module.exports = function allowCrossDomain(req, res, next) {
         res.header('Access-Control-Allow-Origin', origin);
         res.header('Access-Control-Allow-Methods', 'OPTIONS,GET,PUT,POST,DELETE');
         res.header('Access-Control-Allow-Headers', 'Content-Type');
+        next();
     }else{
-        res.header('401');
+        // stop immediately
+        res.status(401).send({error: 'Unauthorised Origin: ' + origin});
     }
-    next();
 }
