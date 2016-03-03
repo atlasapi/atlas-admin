@@ -13718,14 +13718,6 @@ $__System.register('cf', ['5', '6', 'b6', 'bf', 'a7', 'cb', 'cc', 'ce'], functio
             var user = this.props.user;
             var product = this.props.data.product;
 
-            /*fields.push({
-              type: 'hidden',
-              value: product,
-              attrs: {
-                name: 's'
-              }
-            });*/
-
             if (user && user.attrs) {
               if (user.attrs.email) {
                 fields.push({
@@ -13768,6 +13760,18 @@ $__System.register('cf', ['5', '6', 'b6', 'bf', 'a7', 'cb', 'cc', 'ce'], functio
                 });
               }
             }
+
+            if (product) {
+              fields.push({
+                type: 'hidden',
+                value: product,
+                attrs: {
+                  name: 's'
+                }
+              });
+            }
+
+            console.log(fields);
 
             var _fields = [];
             if (fields) {
@@ -13846,9 +13850,8 @@ $__System.register('cf', ['5', '6', 'b6', 'bf', 'a7', 'cb', 'cc', 'ce'], functio
 
             reqwest(options).then((function (data) {
               if (data.success) {
-                submit.querySelector('span').innerHTML = 'Sent';
-
                 submit.classList.remove('saving');
+                submit.querySelector('span').innerHTML = 'Sent';
               }
             }).bind(this), function (error) {
               console.error(error);
@@ -15294,7 +15297,6 @@ $__System.register('fb', ['5', '6', 'f8', 'ce', 'fa'], function (_export) {
               };
 
               reqwest(options).then((function (data) {
-                console.log(data);
                 this.attrs.fullName = data.full_name;
                 this.attrs.company = data.company;
                 this.attrs.website = data.website;
