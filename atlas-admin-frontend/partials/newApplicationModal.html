@@ -28,12 +28,12 @@
                 </span>
                 <div class="terms-box" ng-show="app.showTerms">
                     <input type="checkbox" name="acceptUKTerms" id="acceptTerms" ng-model="app.acceptTerms" ng-required="app.preset=='uk'">
-                    <p>Do you agree to the <span class="link" ng-click="console.log(showTerms('PA'))" target="_blank">PA</span> and <span class="link" ng-click="showTerms('BBC')">UK Channel Lineup</span> terms and conditions? Please read carefully. - These may contain information about payments you will have to make</p> 
+                    <p>Do you agree to the <span class="link" ng-click="console.log(showTerms('PA'))" target="_blank">PA</span> and <span class="link" ng-click="showTerms('BBC')">UK Channel Lineup</span> terms and conditions? Please read carefully. - These may contain information about payments you will have to make</p>
                 </div>
                 <div class="terms-box-extended" ng-show="license.show && app.showTerms" ng-bind-html="license.html"></div>
             </div>
             <button type="submit" class="btn submit" ng-click="submit()" ng-disabled="app.wait">Create</button>
-            <button class="btn" ng-click="cancel()">Cancel</button>
+            <button class="btn cancel" ng-click="cancel()">Cancel</button>
          </form>
     </div>
-</div> 
+</div>
