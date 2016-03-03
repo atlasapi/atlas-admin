@@ -1,2 +1,2 @@
 node_modules
-protractor.login.conf.js
+tests/login/login.conf.js
