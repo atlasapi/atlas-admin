@@ -18,7 +18,7 @@ PageObject.prototype = {
    Gets the text of the current page's h1 tag
    */
   getH1: function () {
-    return element(by.tagName('h1')).getText();
+    return element(by.css('.page-title')).getText();
   },
 
   scrollDownPage: function (callBack) {
