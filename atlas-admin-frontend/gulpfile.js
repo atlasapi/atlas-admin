@@ -1,16 +1,22 @@
 'use-strict';
 
-var gulp        = require('gulp');
-var scss        = require('gulp-sass');
-var autoprefix  = require('gulp-autoprefixer');
-var concat      = require('gulp-concat');
-var uglify      = require('gulp-uglify');
-var assets      = {};
+var gulp = require('gulp');
+var scss = require('gulp-sass');
+var autoprefix = require('gulp-autoprefixer');
+var concat = require('gulp-concat');
+var uglify = require('gulp-uglify');
+var assets = {};
+var gulpProtractorAngular = require('gulp-angular-protractor');
 
 // Javascripts must be loaded in order, so hence the large array
+<<<<<<< 9b7dadfb8c0ced7cc69d670a529419b3bbb7bba4
 assets.js = [
             'node_modules/contact-us-form/dist/contact-us-form.js',
             'js/vendor/highlight.js',
+=======
+
+assets.js = ['js/vendor/highlight.js',
+>>>>>>> added gulp task to run protractor tests
             'js/vendor/lodash.js',
             'js/vendor/moment.js',
             'js/vendor/d3.min.js',
@@ -95,6 +101,20 @@ gulp.task('javascripts', function() {
     return gulp.src(assets.js)
         .pipe(concat('scripts.js'))
         .pipe(gulp.dest('js/dist'));
+});
+
+//  Tests
+gulp.task('protractor', function(callback) {
+    gulp.src(['tests/login/login.e2e.js'])
+        .pipe(gulpProtractorAngular({
+            'configFile': 'protractor.conf.js',
+            'debug': false,
+            'autoStartStopServer': true
+        }))
+        .on('error', function(e) {
+            console.log(e);
+        })
+        .on('end', callback);
 });
 
 //  Watch
