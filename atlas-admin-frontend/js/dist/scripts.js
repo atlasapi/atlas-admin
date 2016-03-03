@@ -13771,8 +13771,6 @@ $__System.register('cf', ['5', '6', 'b6', 'bf', 'a7', 'cb', 'cc', 'ce'], functio
               });
             }
 
-            console.log(fields);
-
             var _fields = [];
             if (fields) {
               fields.forEach(function (fieldData, i) {
