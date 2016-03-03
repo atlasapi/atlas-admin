@@ -1,13 +1,15 @@
 'use-strict';
 
-var gulp        = require('gulp');
-var scss        = require('gulp-sass');
-var autoprefix  = require('gulp-autoprefixer');
-var concat      = require('gulp-concat');
-var uglify      = require('gulp-uglify');
-var assets      = {};
+var gulp = require('gulp');
+var scss = require('gulp-sass');
+var autoprefix = require('gulp-autoprefixer');
+var concat = require('gulp-concat');
+var uglify = require('gulp-uglify');
+var assets = {};
+var gulpProtractorAngular = require('gulp-angular-protractor');
 
 // Javascripts must be loaded in order, so hence the large array
+
 assets.js = ['js/vendor/highlight.js',
             'js/vendor/lodash.js',
             'js/vendor/moment.js',
@@ -92,6 +94,20 @@ gulp.task('javascripts', function() {
     gulp.src(assets.js)
         .pipe(concat('scripts.js'))
         .pipe(gulp.dest('js/dist'));
+});
+
+//  Tests
+gulp.task('protractor', function(callback) {
+    gulp.src(['tests/login/login.e2e.js'])
+        .pipe(gulpProtractorAngular({
+            'configFile': 'protractor.conf.js',
+            'debug': false,
+            'autoStartStopServer': true
+        }))
+        .on('error', function(e) {
+            console.log(e);
+        })
+        .on('end', callback);
 });
 
 //  Watch
