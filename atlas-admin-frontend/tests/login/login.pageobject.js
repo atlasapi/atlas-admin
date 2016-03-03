@@ -1,12 +1,10 @@
 'use strict';
 var PageObject = require('../pageobject');
 
-var loginPageObject = function () {
-  var that = new PageObject();
-  that.get = function () {
-    browser.get('#/login');
-  };
-  return that;
+var loginPageObject = new PageObject();
+
+loginPageObject.get = function () {
+  browser.get('#/login');
 };
 
-module.exports = new loginPageObject();
+module.exports = loginPageObject;
