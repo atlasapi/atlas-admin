@@ -92,7 +92,7 @@ gulp.task('styles', function() {
 //  concatenate and compress javascripts
 //
 gulp.task('javascripts', function() {
-    gulp.src(assets.js)
+    return gulp.src(assets.js)
         .pipe(concat('scripts.js'))
         .pipe(gulp.dest('js/dist'));
 });

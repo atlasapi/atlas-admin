@@ -1,0 +1,91 @@
+@keyframes spin {
+  from {transform:rotate(0deg);}
+  to {transform:rotate(360deg);}
+}
+
+.mb-contact-form {
+  margin-bottom: 0 !important;
+  .btn {
+    overflow: hidden;
+  }
+  .btn.save {
+    float: none;
+    margin-left: 0;
+    span {
+      display: block;
+      transition: transform .3s ease;
+    }
+
+    &:before {
+      border: 3px solid rgba(255, 255, 255, 0.5);
+      border-top: 3px solid rgba(255, 255, 255, 0.8);
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: 0;
+      right: 0;
+      width: 1.1em;
+      line-height: 1.1em;
+      height: 1.1em;
+      margin: -0.75em auto 0 auto;
+      border-radius: 1em;
+      transition: top 0.3s ease;
+    }
+
+    &.saving {
+      span {
+        transform: translateY(100%);
+      }
+      &:before {
+        top: 50%;
+        animation: spin .5s linear infinite;
+      }
+    }
+  }
+
+  .mb-contact-form-field {
+    margin-top: 10px !important;
+  }
+  textarea {
+    font-size: 1.1rem;
+    margin-bottom: 0.6rem
+  }
+  .mb-contact-form-hidden {
+    margin: 0;
+  }
+  /*input.mb-contact-form-input[type=text],
+  textarea.mb-contact-form-input {
+    box-sizing: border-box;
+    width: 100%;
+    background: #efefef;
+    padding: .3rem .4rem;
+    border: 0;
+    border-radius: 5px;
+    outline: 0 none;
+  }*/
+
+  .mb-contact-form-checkbox label {
+    display: inline-block;
+  }
+  .mb-contact-form-checkbox .mb-contact-form-field-wrapper {
+    float: left;
+    margin-right: .3rem;
+  }
+
+  input:required:focus {
+    box-shadow: inset 0 0 1px rgba(255,0,0,0.5);
+  }
+
+  .float-left {
+    float: left;
+  }
+  .float-right {
+    float: right;
+  }
+  .clear-left {
+    clear: left;
+  }
+  .clear-right {
+    clear: right;
+  }
+}
