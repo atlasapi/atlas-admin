@@ -8,7 +8,9 @@ var uglify      = require('gulp-uglify');
 var assets      = {};
 
 // Javascripts must be loaded in order, so hence the large array
-assets.js = ['js/vendor/highlight.js',
+assets.js = [
+            'node_modules/contact-us-form/dist/contact-us-form.js',
+            'js/vendor/highlight.js',
             'js/vendor/lodash.js',
             'js/vendor/moment.js',
             'js/vendor/d3.min.js',
@@ -54,6 +56,7 @@ assets.js = ['js/vendor/highlight.js',
             'js/controllers/sourceRequests.js',
             'js/controllers/requestSource.js',
             'js/controllers/userProfile.js',
+            'js/controllers/contact.js',
             'js/controllers/userVideoSources.js',
             'js/controllers/userVideoSourcesYouTube.js',
             'js/controllers/feeds/feeds.js',
@@ -89,7 +92,7 @@ gulp.task('styles', function() {
 //  concatenate and compress javascripts
 //
 gulp.task('javascripts', function() {
-    gulp.src(assets.js)
+    return gulp.src(assets.js)
         .pipe(concat('scripts.js'))
         .pipe(gulp.dest('js/dist'));
 });

@@ -35,6 +35,7 @@ var app = angular.module('atlasAdmin', [
                          'atlasAdmin.controllers.requestSource',
                          'atlasAdmin.controllers.sourceRequests',
                          'atlasAdmin.controllers.user',
+                         'atlasAdmin.controllers.contact',
                          'atlasAdmin.controllers.feeds',
                          'atlasAdmin.controllers.uservideosources',
                          'atlasAdmin.controllers.uservideosources.youtube',
@@ -77,6 +78,7 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/feeds/:feedId/:taskId', {templateUrl: 'partials/feeds/breakdown.html', controller: 'CtrlFeedsBreakdown'});
     $routeProvider.when('/terms', {templateUrl: 'partials/terms.html', controller: 'UserLicenseController'});
     $routeProvider.when('/profile', {templateUrl: 'partials/profile.html', controller: 'UserProfileController'});
+    $routeProvider.when('/contact', {templateUrl: 'partials/contact.html', controller: 'ContactController'});
     $routeProvider.when('/videosource/providers', {templateUrl: 'partials/videoSourceProviders.html', controller: 'CtrlVideoSourceProviders'});
     $routeProvider.when('/videosource/config/youtube', {templateUrl: 'partials/videoSourceYouTubeConfig.html', controller: 'CtrlVideoSourceYouTubeConfig'});
     $routeProvider.when('/logout', {templateUrl: 'partials/logout.html', controller: 'CtrlLogout'});
