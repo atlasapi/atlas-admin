@@ -1,12 +1,12 @@
 'use strict';
 
-var applicationPageObject = require('./applications.pageobject.js');
-applicationPageObject.get();
+var applicationsPageObject = require('./applications.pageobject.js');
+applicationsPageObject.get();
 
 describe('E2E applications: Load', function () {
   it('should load the applications view', function () {
-    expect(applicationPageObject.getCurrentLocation()).toBe('/applications');
-    expect(applicationPageObject.getH1()).toBe('My Applications');
+    expect(applicationsPageObject.getCurrentLocation()).toBe('/applications');
+    expect(applicationsPageObject.getH1()).toBe('My Applications');
   });
 });
 
@@ -22,7 +22,7 @@ describe('E2E applications: modal', function () {
   });
 });
 
-describe('E2E applications: pagination', function () {
+describe('E2E applications: filters', function () {
   it('should return no results when a unused value is input', function () {
     element(by.id('queryFilter')).sendKeys('qwertyuioplkjhgfdsazxcvbnm');
 

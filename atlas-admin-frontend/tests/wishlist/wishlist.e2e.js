@@ -6,6 +6,7 @@ describe('E2E wishlist: Load', function () {
   beforeEach(function () {
     wishlistPageObject.get();
   });
+
   it('should load the wishlist view', function () {
     expect(wishlistPageObject.getCurrentLocation()).toBe('/wishlist');
     expect(wishlistPageObject.getH1()).toBe('Request new sources and features');

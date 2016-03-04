@@ -1,10 +1,10 @@
 'use strict';
 var PageObject = require('../pageobject');
 
-var applicationPageObject = new PageObject();
+var applicationsPageObject = new PageObject();
 
-applicationPageObject.get = function () {
+applicationsPageObject.get = function () {
   browser.get('#/applications');
 };
 
-module.exports = applicationPageObject;
+module.exports = applicationsPageObject;
