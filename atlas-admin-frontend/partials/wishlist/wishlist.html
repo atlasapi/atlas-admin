@@ -10,7 +10,7 @@
             <div ng-click="currentTab = 'features'" class="app-tab features last" ng-class="{active: currentTab=='features'}">Features</div>
         </div>
 
-        <section ng-hide="currentTab == 'features'" class="panel-full source-wishlist" ng-controller="CtrlWishlistSources">
+        <section ng-if="currentTab === 'sources'" class="panel-full source-wishlist" ng-controller="CtrlWishlistSources">
             <div class="requested-sources">
                 <header class="panel-header">
                     <h2 class="panel-title">Sources you've asked for</h2>
@@ -44,7 +44,7 @@
             </div>
         </section>
 
-        <section ng-hide="currentTab == 'sources'" class="panel-full feature-wishlist" ng-controller="CtrlWishlistFeatures">
+        <section ng-if="currentTab === 'features'" class="panel-full feature-wishlist" ng-controller="CtrlWishlistFeatures">
             <div class="unrequested-sources">
                 <header class="panel-header">
                     <h2 class="panel-title">Features in the pipeline</h2>
@@ -57,5 +57,5 @@
                 <span class="button large" ng-click="customFeatureWish()">Tell us about a feature you'd like</span>
             </div> -->
         </section>
-    </div>    
+    </div>
 </div>
