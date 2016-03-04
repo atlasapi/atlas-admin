@@ -100,15 +100,11 @@ gulp.task('javascripts', function() {
 
 //  Tests
 gulp.task('protractor', function(callback) {
-<<<<<<< HEAD
-    gulp.src(['tests/login/login.e2e.js'])
-=======
     gulp.src([
           'tests/login/login.e2e.js',
           'tests/applications/applications.e2e.js',
           'tests/wishlist/wishlist.e2e.js'
         ])
->>>>>>> 9d0ada0de1a89fe41cc8afd1a6046ef541fa279e
         .pipe(gulpProtractorAngular({
             'configFile': 'protractor.conf.js',
             'debug': false,
