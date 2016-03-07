@@ -1,14 +1,14 @@
 'use strict';
 
-var app = angular.module('atlasAdmin.controllers.wishlist');
+var app = angular.module('atlasAdmin.wishlist');
 
-app.controller('CtrlWishlistSources', ['$scope', '$rootScope', '$routeParams', 'factoryWishes', '$q', 
+app.controller('CtrlWishlistSources', ['$scope', '$rootScope', '$routeParams', 'factoryWishes', '$q',
     function ($scope, $rootScope, $routeParams, Wishes, $q) {
     var root = $rootScope;
     $scope.sources = [];
     $scope.asked = [];
 
-    // when wishlist data changes, only allow sources to be filtered 
+    // when wishlist data changes, only allow sources to be filtered
     // into the $scope
     root.$watch('wishlist', function(new_val, old_val) {
         $scope.sources = _.filter(root.wishlist, function(n) {
@@ -16,7 +16,7 @@ app.controller('CtrlWishlistSources', ['$scope', '$rootScope', '$routeParams', '
         })
     });
 
-    // when user wish data changes, only allow source wishes to be 
+    // when user wish data changes, only allow source wishes to be
     // filtered into the $scope
     root.$watch('wishes', function(new_val, old_val) {
         $scope.asked = _.filter(root.wishes, function(n) {
@@ -34,7 +34,7 @@ app.controller('CtrlWishlistSources', ['$scope', '$rootScope', '$routeParams', '
         var item = _.filter($scope.sources, function(n) {
             return n._id === item_id;
         })[0];
-        if ('object' !== typeof item) return false; 
+        if ('object' !== typeof item) return false;
         var postdata = {
             wish: item,
             reason: reason

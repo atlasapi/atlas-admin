@@ -1,5 +1,5 @@
 'use strict';
-var app = angular.module('atlasAdmin.controllers.wishlist');
+var app = angular.module('atlasAdmin.wishlist');
 
 app.controller('CtrlWishlistFeatures', ['$scope', '$rootScope', '$routeParams', 'factoryWishes', '$q', '$modal',
     function ($scope, $rootScope, $routeParams, Wishes, $q, $modal) {
@@ -27,7 +27,7 @@ app.controller('CtrlWishlistFeatures', ['$scope', '$rootScope', '$routeParams', 
         var item = _.filter($scope.features, function(n) {
             return n._id === featureId;
         })[0];
-        if ('object' !== typeof item) throw new TypeError(); 
+        if ('object' !== typeof item) throw new TypeError();
         var postdata = {
             wish: item,
             reason: reason
@@ -51,7 +51,7 @@ app.controller('CtrlWishlistFeatures', ['$scope', '$rootScope', '$routeParams', 
 }]);
 
 app.directive('featureRow', ['$document', function($document) {
-    var template = 
+    var template =
             '<td class="feature-item">'+
                 '<div class="feature-name panel-half"><h2>{{feature.title}}</h2></div>'+
                 '<div class="feature-options panel-half">'+
@@ -72,5 +72,5 @@ app.directive('featureRow', ['$document', function($document) {
 
 app.controller('customFeatureRequestModal', ['$scope', '$rootScope', '$routeParams', '$q',
     function($scope, $rootScope, $routeParams, $q) {
-        
+
 }])

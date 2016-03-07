@@ -9909,6 +9909,7 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.applications',
                         'atlasAdmin.application',
                         'atlasAdmin.requestSource',
+                        'atlasAdmin.wishlist',
                         'atlasAdmin.interceptors',
                         'atlasAdmin.filters',
                         'atlasAdmin.preloader',
@@ -9935,7 +9936,6 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.controllers.auth',
                         'atlasAdmin.controllers.atlas',
                         'atlasAdmin.controllers.errors',
-                        'atlasAdmin.controllers.wishlist',
                         'atlasAdmin.controllers.sources',
                         'atlasAdmin.controllers.epgwidget',
                         'atlasAdmin.controllers.sourceRequests',
@@ -9971,8 +9971,6 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/scrubbables/:atlasId', {templateUrl: 'partials/bbcScrubbables/create.html', controller: 'CtrlBBCScrubbables'});
 
     // application user routes
-
-    $routeProvider.when('/wishlist', {templateUrl: 'partials/wishlist/wishlist.html', controller: 'CtrlWishlist'});
     $routeProvider.when('/login', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
     $routeProvider.when('/login/:providerNamespace', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
     $routeProvider.when('/oauth/:providerNamespace', {templateUrl: 'partials/oauth.html', controller: 'CtrlOAuth', reloadOnSearch: false});
@@ -10744,6 +10742,36 @@ angular.module('atlasAdmin.requestSource')
         $scope.cancel = function() {
             $location.path('/applications/'+appId);
         }
+}]);
+
+'use strict';
+
+angular.module('atlasAdmin.wishlist', ['ngRoute'])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/wishlist', {
+      templateUrl: 'presentation/wishlist/wishlist.tpl.html',
+      controller: 'CtrlWishlist'
+    });
+  }]);
+
+'use strict';
+var app = angular.module('atlasAdmin.wishlist')
+  .controller('CtrlWishlist', ['$scope', '$rootScope', '$routeParams', 'factoryPropositions', 'factoryWishes', 'Users', '$q', 
+    function ($scope, $rootScope, $routeParams, Propositions, Wishes, Users, $q) {
+
+    // tab state (sources | features)
+    $rootScope.currentTab = 'sources';
+
+    // request wishes for current user and inject into rootScope
+    Wishes.user().then(function(data) {
+        $rootScope.wishes = data;
+    })
+
+    // request all wishlist data and inject into rootScope
+    Propositions.all().then(function(data) {
+        $rootScope.wishlist = data;
+    },
+    function(msg) { console.error(msg) });
 }]);
 
 var app = angular.module('atlasAdmin.interceptors', []);
@@ -14300,149 +14328,6 @@ function($scope, $rootScope, $routeParams, $q, $modalInstance) {
   
 }]);
 
-'use strict';
-var app = angular.module('atlasAdmin.controllers.wishlist', []);
-
-app.controller('CtrlWishlist', ['$scope', '$rootScope', '$routeParams', 'factoryPropositions', 'factoryWishes', 'Users', '$q', 
-    function ($scope, $rootScope, $routeParams, Propositions, Wishes, Users, $q) {
-
-    // tab state (sources | features)
-    $rootScope.currentTab = 'sources';
-
-    // request wishes for current user and inject into rootScope
-    Wishes.user().then(function(data) {
-        $rootScope.wishes = data;
-    })
-
-    // request all wishlist data and inject into rootScope
-    Propositions.all().then(function(data) {
-        $rootScope.wishlist = data;
-    }, 
-    function(msg) { console.error(msg) });
-}]);
-
-'use strict';
-
-var app = angular.module('atlasAdmin.controllers.wishlist');
-
-app.controller('CtrlWishlistSources', ['$scope', '$rootScope', '$routeParams', 'factoryWishes', '$q', 
-    function ($scope, $rootScope, $routeParams, Wishes, $q) {
-    var root = $rootScope;
-    $scope.sources = [];
-    $scope.asked = [];
-
-    // when wishlist data changes, only allow sources to be filtered 
-    // into the $scope
-    root.$watch('wishlist', function(new_val, old_val) {
-        $scope.sources = _.filter(root.wishlist, function(n) {
-            return n.type === 'source';
-        })
-    });
-
-    // when user wish data changes, only allow source wishes to be 
-    // filtered into the $scope
-    root.$watch('wishes', function(new_val, old_val) {
-        $scope.asked = _.filter(root.wishes, function(n) {
-            return n.wish.type === 'source';
-        })
-    });
-
-    $scope.user_has = function(item_id) {
-        var t = _.filter($scope.asked, {wish: { _id: item_id }});
-        return t.length > 0;
-    }
-
-    // create a new wish
-    $scope.make_wish = function(item_id, reason) {
-        var item = _.filter($scope.sources, function(n) {
-            return n._id === item_id;
-        })[0];
-        if ('object' !== typeof item) return false; 
-        var postdata = {
-            wish: item,
-            reason: reason
-        }
-        Wishes.create(postdata).then(function(data) {
-            $scope.asked.push(data);
-        });
-    }
-}]);
-'use strict';
-var app = angular.module('atlasAdmin.controllers.wishlist');
-
-app.controller('CtrlWishlistFeatures', ['$scope', '$rootScope', '$routeParams', 'factoryWishes', '$q', '$modal',
-    function ($scope, $rootScope, $routeParams, Wishes, $q, $modal) {
-    var root = $rootScope;
-    $scope.features = {};
-    $scope.asked = {};
-
-    root.$watch('wishlist', function(new_val, old_val) {
-        $scope.features = _.filter($rootScope.wishlist, function(n) {
-            return n.type === 'feature';
-        })
-    });
-    root.$watch('wishes', function(new_val, old_val) {
-        $scope.asked = _.filter(root.wishes, function(n) {
-            return n.wish.type === 'feature';
-        })
-    });
-
-    $scope.user_has = function(item_id) {
-        var t = _.filter($scope.asked, {wish: { _id: item_id }});
-        return t.length > 0;
-    }
-
-    $scope.make_wish = function(featureId, reason) {
-        var item = _.filter($scope.features, function(n) {
-            return n._id === featureId;
-        })[0];
-        if ('object' !== typeof item) throw new TypeError(); 
-        var postdata = {
-            wish: item,
-            reason: reason
-        }
-        Wishes.create(postdata).then(function(data) {
-            $scope.asked.push(data);
-        });
-    }
-
-    $scope.customFeatureWish = function() {
-        $scope.modal = {
-            title: 'Tell us about a feature'
-        }
-        var modalInstance = $modal.open({
-            templateUrl: 'partials/wishlist/customFeatureRequestModal.html',
-            controller: 'customFeatureRequestModal',
-            scope: $scope
-        });
-
-    };
-}]);
-
-app.directive('featureRow', ['$document', function($document) {
-    var template = 
-            '<td class="feature-item">'+
-                '<div class="feature-name panel-half"><h2>{{feature.title}}</h2></div>'+
-                '<div class="feature-options panel-half">'+
-                    '<span ng-if="!user_has(feature._id)" data-title="{{feature.title}}" input-morph="{{feature._id}}" class="button-to-input"></span>'+
-                    '<span ng-if="user_has(feature._id)" class="button medium stroke disabled">Requested</span>'+
-                '</div>'+
-                '<div class="feature-detail panel-full">'+
-                    '<div class="panel-half feature-description"><p>{{feature.feature.description}}</p></div>'+
-                    '<div class="panel-half"></div>'+
-                '</div>'+
-            '</td>';
-
-    return {
-        scope: false,
-        template: template
-    }
-}]);
-
-app.controller('customFeatureRequestModal', ['$scope', '$rootScope', '$routeParams', '$q',
-    function($scope, $rootScope, $routeParams, $q) {
-        
-}])
 var app = angular.module('atlasAdmin.controllers.bbcscrubbables', []);
 
 app.controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$q', 'BBCScrubbablesService', '$timeout', 'ScrubbablesHelpers',

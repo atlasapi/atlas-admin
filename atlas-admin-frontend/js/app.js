@@ -5,6 +5,7 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.applications',
                         'atlasAdmin.application',
                         'atlasAdmin.requestSource',
+                        'atlasAdmin.wishlist',
                         'atlasAdmin.interceptors',
                         'atlasAdmin.filters',
                         'atlasAdmin.preloader',
@@ -31,7 +32,6 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.controllers.auth',
                         'atlasAdmin.controllers.atlas',
                         'atlasAdmin.controllers.errors',
-                        'atlasAdmin.controllers.wishlist',
                         'atlasAdmin.controllers.sources',
                         'atlasAdmin.controllers.epgwidget',
                         'atlasAdmin.controllers.sourceRequests',
@@ -67,8 +67,6 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/scrubbables/:atlasId', {templateUrl: 'partials/bbcScrubbables/create.html', controller: 'CtrlBBCScrubbables'});
 
     // application user routes
-
-    $routeProvider.when('/wishlist', {templateUrl: 'partials/wishlist/wishlist.html', controller: 'CtrlWishlist'});
     $routeProvider.when('/login', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
     $routeProvider.when('/login/:providerNamespace', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
     $routeProvider.when('/oauth/:providerNamespace', {templateUrl: 'partials/oauth.html', controller: 'CtrlOAuth', reloadOnSearch: false});

@@ -26,6 +26,8 @@ assets.js = [
             'presentation/application/sourcesRequestModal/applicationSourceRequestModal.ctrl.js',
             'presentation/requestSource/requestSource.module.js',
             'presentation/requestSource/requestSource.ctrl.js',
+            'presentation/wishlist/wishlist.module.js',
+            'presentation/wishlist/wishlist.ctrl.js',
             'js/interceptors/authInterceptor.js',
             'js/interceptors/loadingInterceptor.js',
             'js/interceptors/profileCompleteInterceptor.js',
