@@ -21,9 +21,21 @@ describe('E2E wishlist manager: Tabs', function () {
   });
 });
 
-describe('E2E wishlist manager: modal', function () {
+describe('E2E wishlist manager: sources modal', function () {
   it('should load the modal', function () {
     element(by.css('.app-tab.sources')).click();
+    element(by.css('.panel-full.add')).click();
+    expect(element(by.css('.modal .modal-dialog')).isPresent()).toBeTruthy();
+  });
+  it('should close the modal when cancel is clicked', function () {
+    element(by.css('.app-modal-content button.secondary')).click();
+    expect(element(by.css('.modal .modal-dialog')).isPresent()).toBeFalsy();
+  });
+});
+
+describe('E2E wishlist manager: features modal', function () {
+  it('should load the modal', function () {
+    element(by.css('.app-tab.features')).click();
     element(by.css('.panel-full.add')).click();
     expect(element(by.css('.modal .modal-dialog')).isPresent()).toBeTruthy();
   });
