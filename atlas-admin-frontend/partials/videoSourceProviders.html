@@ -1,17 +1,19 @@
-<div class="panel panel-default">
-  <div class="panel-body">
-    <p>This page allows you to import information for videos hosted on sites such as YouTube into Atlas. When you click on a video provider below you 
-        will be prompted to log into your account on that service and authorise access for Atlas to read your videos.</p>
+<div class="app-surface">
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <p>This page allows you to import information for videos hosted on sites such as YouTube into Atlas. When you click on a video provider below you
+          will be prompted to log into your account on that service and authorise access for Atlas to read your videos.</p>
+    </div>
   </div>
-</div>
-<div>
-    <table class="table table-striped table-hover">
-    <tr ng-repeat="provider in app.providers | orderBy:'namespace'">
-        <td>
-            <button type="button" class="btn" ng-click="app.startAuth(provider)">
-                <img class="provider-logo" alt="{{provider.prompt}}" title="{{provider.prompt}}" ng-src="img/{{provider.image}}" />
-            </button>
-        </td>
-    </tr>
-    </table>
+  <div>
+      <table class="table table-striped table-hover">
+      <tr ng-repeat="provider in app.providers | orderBy:'namespace'">
+          <td>
+              <button type="button" class="btn" ng-click="app.startAuth(provider)">
+                  <img class="provider-logo" alt="{{provider.prompt}}" title="{{provider.prompt}}" ng-src="img/{{provider.image}}" />
+              </button>
+          </td>
+      </tr>
+      </table>
+  </div>
 </div>
