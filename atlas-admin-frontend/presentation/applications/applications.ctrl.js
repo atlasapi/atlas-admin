@@ -1,9 +1,6 @@
 'use strict';
 
-// define 'applications' module to be used for application controllers
-angular.module('atlasAdmin.controllers.applications', []);
-
-angular.module('atlasAdmin.controllers.applications')
+angular.module('atlasAdmin.applications')
 .controller('CtrlApplications', ['$scope', '$rootScope', '$routeParams', 'Applications', '$modal', '$location', 'Atlas', 'Authentication', 'atlasApiHost', '$http',
     function($scope, $rootScope, $routeParams, Applications, $modal, $location, Atlas, Authentication, atlasApiHost, $http) {
 
@@ -33,12 +30,12 @@ angular.module('atlasAdmin.controllers.applications')
         };
         $http.get(Authentication.appendTokenToUrl(atlasApiHost + '/usage-list/' + dates)).then(function (response) {
             var usageData =  _.has(response, 'data') ? response.data.aggregations.apiKeys.buckets : null;
-            
+
             if (! usageData) {
               console.warn('Response data doesnt have the `data` property', response);
               return;
             }
-            
+
             _.forEach(usageData, function (d) {
                 d.readableCount = numberWithCommas(d.doc_count);
             });
@@ -67,7 +64,7 @@ angular.module('atlasAdmin.controllers.applications')
         });
     };
 
-    // retreive a list of all apps 
+    // retreive a list of all apps
     Applications.all().then(function(applications) {
         $scope.app.applications = applications;
         $scope.state = (applications.length) ? 'table' : 'blank';
@@ -77,13 +74,13 @@ angular.module('atlasAdmin.controllers.applications')
     // instantiate a new modal window
     $scope.createApplication = function() {
         var modalInstance = $modal.open({
-            templateUrl: 'partials/newApplicationModal.html',
+            templateUrl: 'presentation/applications/createModal/applicationCreateModal.tpl.html',
             controller: 'CreateApplicationFormModalCtrl',
             scope: $scope
         });
         modalInstance.result.then(function(application) {
             // if all sources are selected, go to edit page
-            if ( 'all' === application.source ) { 
+            if ( 'all' === application.source ) {
                 $location.path('/applications/' + application.id);
             }else{
                 $scope.app.applications.push(application)

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('atlasAdmin.controllers.applications')
+angular.module('atlasAdmin.application')
 .controller('CtrlApplicationEdit', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Sources', 'SourceLicenses', 'Authentication', 'atlasApiHost', '$modal', '$sce', '$log', '$http', '$q', 'APIUsage', 'Atlas', '$location',
     function($scope, $rootScope, $routeParams, Applications, Sources, SourceLicenses, Authentication, atlasApiHost, $modal, $sce, $log, $http, $q, Usage, Atlas, $location) {
 
@@ -84,7 +84,7 @@ angular.module('atlasAdmin.controllers.applications')
                 right: 20,
                 bottom: 21,
                 left: 50
-            };        
+            };
             var xRange = d3.scale.ordinal()
                 .rangeRoundBands([MARGINS.left, WIDTH - MARGINS.right], 0.1)
                 .domain(barData.map(function(d) {
@@ -204,7 +204,7 @@ angular.module('atlasAdmin.controllers.applications')
                 $scope.errorMessage('Can\'t load data for the api key');
             });
         }
-    };  
+    };
 
     var loadGraphMonth = function (apiKey) {
         var _key = apiKey || '';

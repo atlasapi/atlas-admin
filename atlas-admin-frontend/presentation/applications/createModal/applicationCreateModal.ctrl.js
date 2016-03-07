@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('atlasAdmin.controllers.applications')
-.controller('CreateApplicationFormModalCtrl', ['$scope', '$q', '$sce', '$modalInstance', 'Applications', 'sourceRequests', 'SourceLicenses', '$location', 
+angular.module('atlasAdmin.applications')
+.controller('CreateApplicationFormModalCtrl', ['$scope', '$q', '$sce', '$modalInstance', 'Applications', 'sourceRequests', 'SourceLicenses', '$location',
     function($scope, $q, $sce, $modalInstance, Applications, SourceRequests, SourceLicenses, $location) {
     $scope.app.showTerms = false;
     $scope.app.acceptTerms = false;
