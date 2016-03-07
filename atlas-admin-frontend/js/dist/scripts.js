@@ -9906,51 +9906,52 @@ var t=x.length;if(t){x.sort(c);for(var e,r=1,u=x[0],i=[u];t>r;++r)e=x[r],l(e[0],
 
 // Declare app level module which depends on filters, and services
 var app = angular.module('atlasAdmin', [
-                         'atlasAdmin.interceptors',
-                         'atlasAdmin.filters',
-                         'atlasAdmin.preloader',
-                         'atlasAdmin.services.auth',
-                         'atlasAdmin.services.atlas',
-                         'atlasAdmin.services.applications',
-                         'atlasAdmin.services.sources',
-                         'atlasAdmin.services.sourceRequests',
-                         'atlasAdmin.services.sourceLicenses',
-                         'atlasAdmin.services.users',
-                         'atlasAdmin.services.uservideosources',
-                         'atlasAdmin.services.uservideosources.youtube',
-                         'atlasAdmin.services.propositions',
-                         'atlasAdmin.services.usage',
-                         'atlasAdmin.services.feeds',
-                         'atlasAdmin.services.bbcscrubbables',
-                         'atlasAdmin.directives.orderable',
-                         'atlasAdmin.directives.focus',
-                         'atlasAdmin.directives.activePath',
-                         'atlasAdmin.directives.validUsage',
-                         'atlasAdmin.directives.inputmorph',
-                         'atlasAdmin.directives.loadContent',
-                         'atlasAdmin.directives.bbcscrubbables',
-                         'atlasAdmin.controllers.auth',
-                         'atlasAdmin.controllers.atlas',
-                         'atlasAdmin.controllers.errors',
-                         'atlasAdmin.controllers.applications',
-                         'atlasAdmin.controllers.wishlist',
-                         'atlasAdmin.controllers.sources',
-                         'atlasAdmin.controllers.epgwidget',
-                         'atlasAdmin.controllers.requestSource',
-                         'atlasAdmin.controllers.sourceRequests',
-                         'atlasAdmin.controllers.user',
-                         'atlasAdmin.controllers.contact',
-                         'atlasAdmin.controllers.feeds',
-                         'atlasAdmin.controllers.uservideosources',
-                         'atlasAdmin.controllers.uservideosources.youtube',
-                         'atlasAdmin.controllers.bbcscrubbables',
-                         'atlasAdmin.controllers.admins.usage',
-                         'atlasAdmin.controllers.admins.manageSourceRequests',
-                         'atlasAdmin.controllers.admins.manageWishlist',
-                         'ui.bootstrap',
-                         'ngResource',
-                         'ngRoute',
-                         'atlasAdminConfig']);
+                        'atlasAdmin.applications',
+                        'atlasAdmin.application',
+                        'atlasAdmin.interceptors',
+                        'atlasAdmin.filters',
+                        'atlasAdmin.preloader',
+                        'atlasAdmin.services.auth',
+                        'atlasAdmin.services.atlas',
+                        'atlasAdmin.services.applications',
+                        'atlasAdmin.services.sources',
+                        'atlasAdmin.services.sourceRequests',
+                        'atlasAdmin.services.sourceLicenses',
+                        'atlasAdmin.services.users',
+                        'atlasAdmin.services.uservideosources',
+                        'atlasAdmin.services.uservideosources.youtube',
+                        'atlasAdmin.services.propositions',
+                        'atlasAdmin.services.usage',
+                        'atlasAdmin.services.feeds',
+                        'atlasAdmin.services.bbcscrubbables',
+                        'atlasAdmin.directives.orderable',
+                        'atlasAdmin.directives.focus',
+                        'atlasAdmin.directives.activePath',
+                        'atlasAdmin.directives.validUsage',
+                        'atlasAdmin.directives.inputmorph',
+                        'atlasAdmin.directives.loadContent',
+                        'atlasAdmin.directives.bbcscrubbables',
+                        'atlasAdmin.controllers.auth',
+                        'atlasAdmin.controllers.atlas',
+                        'atlasAdmin.controllers.errors',
+                        'atlasAdmin.controllers.wishlist',
+                        'atlasAdmin.controllers.sources',
+                        'atlasAdmin.controllers.epgwidget',
+                        'atlasAdmin.controllers.requestSource',
+                        'atlasAdmin.controllers.sourceRequests',
+                        'atlasAdmin.controllers.user',
+                        'atlasAdmin.controllers.contact',
+                        'atlasAdmin.controllers.feeds',
+                        'atlasAdmin.controllers.uservideosources',
+                        'atlasAdmin.controllers.uservideosources.youtube',
+                        'atlasAdmin.controllers.bbcscrubbables',
+                        'atlasAdmin.controllers.admins.usage',
+                        'atlasAdmin.controllers.admins.manageSourceRequests',
+                        'atlasAdmin.controllers.admins.manageWishlist',
+                        'ui.bootstrap',
+                        'ngResource',
+                        'ngRoute',
+                        'atlasAdminConfig']);
 
 
 app.config(['$routeProvider', function($routeProvider) {
@@ -9970,8 +9971,7 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/scrubbables/:atlasId', {templateUrl: 'partials/bbcScrubbables/create.html', controller: 'CtrlBBCScrubbables'});
 
     // application user routes
-    $routeProvider.when('/applications', {templateUrl: 'partials/applications.html', controller: 'CtrlApplications'});
-    $routeProvider.when('/applications/:applicationId', {templateUrl: 'partials/applicationEdit.html', controller: 'CtrlApplicationEdit', reloadOnSearch: false});
+
     $routeProvider.when('/applications/:applicationId/requestSource/:sourceId', {templateUrl: 'partials/requestSource.html', controller: 'CtrlRequestSource'});
     $routeProvider.when('/wishlist', {templateUrl: 'partials/wishlist/wishlist.html', controller: 'CtrlWishlist'});
     $routeProvider.when('/login', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
@@ -10006,6 +10006,664 @@ app.config(['$sceDelegateProvider', function($sceDelegateProvider) {
         'http://*.metabroadcast.com/**',
         'https://*.metabroadcast.com/**'
         ]);
+}]);
+
+'use strict';
+
+angular.module('atlasAdmin.applications', ['ngRoute'])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/applications', {
+      templateUrl: 'presentation/applications/applications.tpl.html',
+      controller: 'CtrlApplications'
+    });
+  }]);
+
+'use strict';
+
+angular.module('atlasAdmin.applications')
+.controller('CtrlApplications', ['$scope', '$rootScope', '$routeParams', 'Applications', '$modal', '$location', 'Atlas', 'Authentication', 'atlasApiHost', '$http',
+    function($scope, $rootScope, $routeParams, Applications, $modal, $location, Atlas, Authentication, atlasApiHost, $http) {
+
+    $scope.view_title = 'My Applications';
+    $scope.app = {};
+    $scope.app.predicate = 'created';
+    $scope.app.reverse = true;
+    $scope.app.pageSize = 10;
+    $scope.app.currentPage = 1;
+    $scope.isAdmin = false;
+
+    Atlas.getRequest('/auth/user.json').then(function (result) {
+        if (result.data.user.role === 'admin') {
+            $scope.isAdmin = true;
+        }
+    });
+
+    var getUsageData = function (applications) {
+        var TIME_PERIOD = 8;
+        var dates = [];
+        for (var i = 0, ii = TIME_PERIOD; i < ii; i++) {
+          dates.push('logstash-atlas-access-' + moment().subtract(i, 'days').format('YYYY.MM.DD'));
+        }
+        dates = dates.join(',');
+        var numberWithCommas = function (x) {
+          return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        };
+        $http.get(Authentication.appendTokenToUrl(atlasApiHost + '/usage-list/' + dates)).then(function (response) {
+            var usageData =  _.has(response, 'data') ? response.data.aggregations.apiKeys.buckets : null;
+
+            if (! usageData) {
+              console.warn('Response data doesnt have the `data` property', response);
+              return;
+            }
+
+            _.forEach(usageData, function (d) {
+                d.readableCount = numberWithCommas(d.doc_count);
+            });
+            applications = handleNullUsage(applications);
+            mapUsageDataToApplications(applications, usageData);
+        });
+    };
+
+    var handleNullUsage = function (applications) {
+        _.forEach(applications, function (application) {
+            application.usage = {
+                doc_count: 0,
+                readableCount: 0
+            };
+        });
+        return applications;
+    };
+
+    var mapUsageDataToApplications = function (applications, usageData) {
+        applications = _.map(applications, function (application) {
+            _.forEach(usageData, function (d) {
+                if (application.credentials.apiKey === d.key) {
+                    application.usage = d;
+                }
+            });
+        });
+    };
+
+    // retreive a list of all apps
+    Applications.all().then(function(applications) {
+        $scope.app.applications = applications;
+        $scope.state = (applications.length) ? 'table' : 'blank';
+        getUsageData(applications);
+    });
+
+    // instantiate a new modal window
+    $scope.createApplication = function() {
+        var modalInstance = $modal.open({
+            templateUrl: 'presentation/applications/createModal/applicationCreateModal.tpl.html',
+            controller: 'CreateApplicationFormModalCtrl',
+            scope: $scope
+        });
+        modalInstance.result.then(function(application) {
+            // if all sources are selected, go to edit page
+            if ( 'all' === application.source ) {
+                $location.path('/applications/' + application.id);
+            }else{
+                $scope.app.applications.push(application)
+            }
+        });
+    };
+
+    $scope.appSearchFilter = function(application) {
+        if (!$scope.query || $scope.query === '') {
+            return true;
+        }
+        // Search on title match or if query is over 10 chars long the api key
+        return application.title.toLowerCase().indexOf($scope.query.toLowerCase()) !== -1
+                || ($scope.query.length > 10 && application.credentials.apiKey.toLowerCase().indexOf($scope.query.toLowerCase()) !== -1);
+    };
+}]);
+
+'use strict';
+
+angular.module('atlasAdmin.applications')
+.controller('CreateApplicationFormModalCtrl', ['$scope', '$q', '$sce', '$modalInstance', 'Applications', 'sourceRequests', 'SourceLicenses', '$location',
+    function($scope, $q, $sce, $modalInstance, Applications, SourceRequests, SourceLicenses, $location) {
+    $scope.app.showTerms = false;
+    $scope.app.acceptTerms = false;
+    $scope.app.title = '';
+    $scope.app.url = '';
+    $scope.app.description = '';
+    $scope.app.preset = null;
+    $scope.license = {};
+    $scope.license.show = false;
+
+    var getTerms = function(source) {
+        var defer = $q.defer();
+        var sourceId = null;
+        if (source === 'PA') {
+            sourceId = 'cpc';
+        }else if (source === 'BBC') {
+            sourceId = 'cpy';
+        }
+        SourceLicenses.get(sourceId).then(function(data) {
+            if (!_.isObject(data)) {return false}
+            var license = $sce.trustAsHtml(data.license);
+            defer.resolve(license);
+        })
+        return defer.promise;
+    }
+
+    // decide whether terms should be shown for this source set
+    $scope.termsToggle = function(preset) {
+        $scope.app.showTerms = ($scope.app.preset == 'uk')
+    }
+
+    // used to show the user terms for source
+    $scope.showTerms = function(source) {
+        getTerms(source).then(function(license) {
+            $scope.license.show = true;
+            $scope.license.html = license;
+        })
+    }
+
+    $scope.submit = function() {
+        var app_title       = $scope.app.title,
+            app_url         = $scope.app.url,
+            app_description = $scope.app.description,
+            app_preset      = $scope.app.preset,
+            app_terms       = $scope.app.acceptTerms;
+
+        // save the app data
+        if (!_.isEmpty(app_title) && !_.isEmpty(app_url) && _.isString(app_preset)) {
+            if (app_preset === 'uk' && !app_terms) return;
+            Applications.create(app_title, app_description, app_url).then(function(result) {
+                if (result.data.application.id) {
+                    var appId = result.data.application.id;
+                    // enable basic sources matching on simple account
+                    if (app_preset === 'uk') {
+                        var _item, sourceOrder = [], enableSources = [];
+                        for (var source in result.data.application.sources.reads) {
+                            _item = result.data.application.sources.reads[source];
+                            if (_item.title === 'BBC' || _item.title === 'PA') {
+                                enableSources.push(_item);
+                            }
+                            sourceOrder.push(_item.id);
+                        }
+                        // send source requests for default sources
+                        _(enableSources).forEach(function(src) {
+                            SourceRequests.send(src.id, appId, app_url, '', 'personal', true);
+                        })
+                        Applications.setPrecedence(appId, sourceOrder);
+                    }else{
+                        $location.path('/applications/'+appId);
+                    }
+                    // close modal and return data tot he $scope
+                    result.data.application.source = $scope.app.sources;
+                    $modalInstance.close(result.data.application);
+                }
+            });
+        }
+    };
+
+    // cancel and close modal
+    $scope.cancel = function() {
+        $modalInstance.dismiss('cancel');
+    };
+}]);
+
+'use strict';
+
+angular.module('atlasAdmin.application', ['ngRoute'])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/applications/:applicationId', {
+      templateUrl: 'presentation/application/application.tpl.html',
+      controller: 'CtrlApplicationEdit',
+      reloadOnSearch: false
+    });
+  }]);
+
+'use strict';
+
+angular.module('atlasAdmin.application')
+.controller('CtrlApplicationEdit', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Sources', 'SourceLicenses', 'Authentication', 'atlasApiHost', '$modal', '$sce', '$log', '$http', '$q', 'APIUsage', 'Atlas', '$location',
+    function($scope, $rootScope, $routeParams, Applications, Sources, SourceLicenses, Authentication, atlasApiHost, $modal, $sce, $log, $http, $q, Usage, Atlas, $location) {
+
+    $scope.app = {};
+    $scope.app.edited = {};
+    $scope.app.edited = {'meta':false,'precedenceState':false,'precedenceOrder':false};
+    $scope.app.changed = false;
+    var leavingPageText = 'You have unsaved changes!';
+    $scope.view_title = 'Edit application';
+
+    $scope.isAdmin = false;
+
+    Atlas.getRequest('/auth/user.json').then(function (result) {
+        if (result.data.user.role === 'admin') {
+            $scope.isAdmin = true;
+        }
+    });
+
+    window.onbeforeunload = function() {
+        if ($scope.app.changed) {
+            return leavingPageText;
+        }
+    };
+
+    var showLoadingState = function () {
+        $('.usage-graph-wrapper').addClass('loading');
+        $('#visualisation').empty();
+    };
+
+    var removeLoadingState = function () {
+        $('.usage-graph-wrapper').removeClass('loading');
+    };
+
+    $scope.switchTime = function (timeRange) {
+        getApiKey(timeRange);
+    };
+
+    var getApiKey = function (timeRange) {
+        // Seems to be the only way to find out the current API key
+        Applications.get($routeParams.applicationId).then(function (application) {
+            $scope.app.application = application;
+            $scope.app.writes = {};
+            $scope.app.writes.predicate = 'name';
+            $scope.app.writes.reverse = false;
+            $scope.view_subtitle = application.title;
+            var apiKey = application.credentials.apiKey;
+            loadGraph(apiKey, timeRange);
+        });
+    };
+
+    var loadGraph = function (apiKey, timeRange) {
+        switch(timeRange) {
+            case 'hour':
+                loadGraphHour(apiKey);
+                break;
+            case 'day':
+                loadGraphDay(apiKey);
+                break;
+            case 'week':
+                loadGraphWeek(apiKey);
+                break;
+            case 'month':
+                loadGraphMonth(apiKey);
+        }
+    };
+
+    var makeGraph = function (barData) {
+        if (barData.length > 0) {
+            if ($('.no-usage-message')) {
+                $('.no-usage-message').remove();
+            }
+            barData.forEach(function (d) {
+                d.x = d.time;
+                d.y = d.count;
+            });
+            var vis = d3.select('#visualisation');
+            var WIDTH = 1000;
+            var HEIGHT = 500;
+            var MARGINS = {
+                top: 20,
+                right: 20,
+                bottom: 21,
+                left: 50
+            };
+            var xRange = d3.scale.ordinal()
+                .rangeRoundBands([MARGINS.left, WIDTH - MARGINS.right], 0.1)
+                .domain(barData.map(function(d) {
+                    return d.x;
+                }));
+            var yRange = d3.scale.linear()
+                .range([HEIGHT - MARGINS.top, MARGINS.bottom])
+                .domain([0, d3.max(barData, function(d) {
+                    return d.y;
+                })]);
+            var xAxis = d3.svg.axis()
+                .scale(xRange)
+                .tickSize(1)
+                .tickSubdivide(true);
+            var yAxis = d3.svg.axis()
+                .scale(yRange)
+                .tickSize(1)
+                .orient('left')
+                .tickSubdivide(true);
+            vis.append('svg:g')
+                .attr('class', 'x axis')
+                .attr('transform', 'translate(0,' + (HEIGHT - MARGINS.bottom) + ')')
+                .call(xAxis);
+            vis.append('svg:g')
+                .attr('class', 'y axis')
+                .attr('transform', 'translate(' + (MARGINS.left) + ',0)')
+                .call(yAxis);
+            vis.selectAll('rect')
+                .data(barData)
+                .enter()
+                .append('rect')
+                .attr('x', function (d) { // sets the x position of the bar
+                    return xRange(d.x);
+                })
+                .attr('y', function (d) { // sets the y position of the bar
+                    return yRange(d.y);
+                })
+                .attr('width', xRange.rangeBand()) // sets the width of bar
+                .attr('height', function (d) {      // sets the height of bar
+                    return ((HEIGHT - MARGINS.bottom) - yRange(d.y));
+                })
+                .attr('class', 'bar-col');
+            vis.selectAll('.x text')
+                .attr('dy', '1')
+                .attr('x', '-6');
+            vis.selectAll('.y text')
+                .attr('dy', '1')
+                .attr('x', '-6');
+        } else {
+            $('.usage-graph').before('<p class="no-usage-message">No usage in that time period</p>');
+        }
+    };
+
+    var loadGraphHour = function (apiKey) {
+        var _key = apiKey || '';
+        $location.search({usage: 'hour'});
+        if (_key.length) {
+            showLoadingState();
+            $scope.tabState = 'hour';
+            $('.graph-caption').text('API requests over the past hour');
+            Usage.hour(_key).then(function (data) {
+                data = data.facets[0].entries;
+                data.forEach(function (d) {
+                    var formattedDate = moment(d.time).format('HH:mm');
+                    d.time = formattedDate;
+                });
+                makeGraph(data);
+                removeLoadingState();
+            }, function (err) {
+                $scope.errorMessage('Can\'t load data for the api key');
+            });
+        }
+        var timeoutDuration = 300000; // 5 mins
+        var graphTimeout = setTimeout(function () {
+            $scope.reloadGraph();
+            clearTimeout(graphTimeout);
+        }, timeoutDuration);
+    };
+
+    var loadGraphDay = function (apiKey) {
+        var _key = apiKey || '';
+        $location.search({usage: 'day'});
+        if (_key.length) {
+            showLoadingState();
+            $scope.tabState = 'day';
+            $('.graph-caption').text('API requests over the past day');
+            Usage.day(_key).then(function (data) {
+                data = data.facets[0].entries;
+                data.forEach(function (d) {
+                    var formattedDate = moment(d.time).format('HH');
+                    d.time = formattedDate + ':00';
+                });
+                makeGraph(data);
+                removeLoadingState();
+            }, function (error) {
+                $scope.errorMessage('Can\'t load data for the api key');
+            });
+        }
+    };
+
+    var loadGraphWeek = function (apiKey) {
+        var _key = apiKey || '';
+        $location.search({usage: 'week'});
+        if (_key.length) {
+            showLoadingState();
+            $scope.tabState = 'week';
+            $('.graph-caption').text('API requests over the past week');
+            Usage.week(_key).then(function (data) {
+                data = data.facets[0].entries;
+                data.forEach(function (d) {
+                    var formattedDate = moment(d.time).format('Do MMMM');
+                    d.time = formattedDate;
+                });
+                makeGraph(data);
+                removeLoadingState();
+            }, function (error) {
+                $scope.errorMessage('Can\'t load data for the api key');
+            });
+        }
+    };
+
+    var loadGraphMonth = function (apiKey) {
+        var _key = apiKey || '';
+        $location.search({usage: 'month'});
+        if (_key.length) {
+            showLoadingState();
+            $scope.tabState = 'month';
+            $('.graph-caption').text('API requests over the past month');
+            Usage.month(_key).then(function (data) {
+                data = data.facets[0].entries;
+                data.forEach(function (d) {
+                    var formattedDate = moment(d.time).format('Do MMMM');
+                    d.time = formattedDate;
+                });
+                makeGraph(data);
+                removeLoadingState();
+            }, function (error) {
+                $scope.errorMessage('Can\'t load data for the api key');
+            });
+        }
+    };
+
+    var closeUsageGraph = function () {
+        $('.close-usage-graph').on('click', function () {
+            $('.chart-card').slideUp('fast');
+        });
+    };
+
+    var toggleUsageGraph = function () {
+        $('.api-usage-trigger').on('click', function () {
+            var $graphContainer = $('.chart-card');
+            if ($graphContainer.is(':visible')) {
+                $graphContainer.slideUp('fast');
+            } else {
+                if ($('.usage-graph g').length <= 0) {
+                    getApiKey('week');
+                }
+                $graphContainer.slideDown('fast');
+            }
+        });
+    };
+
+    var openGraphFromUrl = function () {
+        var timePeriod = $location.search().usage;
+        var $graphContainer = $('.chart-card');
+        if (timePeriod) {
+            if ($graphContainer.is(':hidden')) {
+                $graphContainer.slideDown('fast');
+            }
+            getApiKey(timePeriod);
+        }
+    };
+
+    $scope.reloadGraph = function () {
+        var timePeriod = $location.search().usage;
+        getApiKey(timePeriod);
+    };
+
+    toggleUsageGraph();
+    closeUsageGraph();
+    openGraphFromUrl();
+
+    $scope.$on('$locationChangeStart', function(event, next, current) {
+        if ($scope.app.changed && !confirm(leavingPageText + '\n\nAre you sure you want to leave this page?')) {
+            event.preventDefault();
+        }
+    });
+
+    Applications.get($routeParams.applicationId).then(function(application) {
+        $scope.app.application = application;
+        $scope.app.writes = {};
+        $scope.app.writes.predicate = 'name';
+        $scope.app.writes.reverse = false;
+        $scope.view_subtitle = application.title;
+    });
+
+    $scope.app.disableSource = function(source) {
+        var reads = [];
+        for (var i in $scope.app.application.sources.reads) {
+            var readEntry = $scope.app.application.sources.reads[i];
+            if (readEntry.id === source.id) {
+                readEntry.enabled = false;
+            }
+            reads.push(readEntry);
+        }
+        $scope.app.application.sources.reads = reads;
+        $scope.app.edited.meta = true;
+    };
+
+    $scope.app.enableSource = function(source) {
+        var reads = [];
+        for (var i in $scope.app.application.sources.reads) {
+            var readEntry = $scope.app.application.sources.reads[i];
+            if (readEntry.id == source.id) {
+                readEntry.enabled = true;
+            }
+            reads.push(readEntry);
+        }
+        $scope.app.application.sources.reads = reads;
+        $scope.app.edited.meta = true;
+    }
+
+    $scope.app.requestSource = function(source) {
+        $scope.app.sourceRequest = {};
+        $scope.app.license = null;
+        SourceLicenses.get(source.id).then(
+            function(data) {
+                if (data && data.license) {
+                    $scope.app.license = $sce.trustAsHtml(data.license);
+                }
+            },
+            function(error) {
+                $log.error(error);
+            }
+        );
+        $scope.app.sourceRequest.source = source;
+        $scope.app.sourceRequest.applicationId = $scope.app.application.id;
+        var modalInstance = $modal.open({
+            templateUrl: 'partials/sourceRequestModal.html',
+            controller: 'SourceRequestFormModalCtrl',
+            scope: $scope
+        });
+        modalInstance.result.then(function() {
+            Applications.get($scope.app.application.id).then(function(application) {
+                $scope.app.application = application;
+            });
+        });
+    };
+
+    $scope.enablePrecedence = function() {
+        $scope.app.application.sources.precedence = true;
+        $scope.app.edited.precedenceState = true;
+    };
+
+    $scope.disablePrecedence = function() {
+        $scope.app.application.sources.precedence = false;
+        $scope.app.edited.precedenceState = true;
+        $scope.app.edited.precedenceOrder = false;
+    };
+
+    $scope.revokeApplication = function() {
+        Applications.revokeApplication($scope.app.application).then(function(application) {
+            $scope.app.application = application;
+        });
+    };
+
+    $scope.unRevokeApplication = function() {
+        Applications.unRevokeApplication($scope.app.application).then(function(application) {
+            $scope.app.application = application;
+        });
+    };
+
+    $scope.save = function() {
+        // Decide how to perform the update based on what has changed
+        if ($scope.app.edited.meta) {
+            if (!$scope.detailsForm.appTitle.$valid) {
+                $scope.app.errorMessage = 'Application title must be at least three characters long';
+            } else {
+                Applications.update($scope.app.application).then(function() {
+                    $scope.successMessage = 'Changes saved';
+                },
+                function() {
+                    $scope.errorMessage = 'Sorry, there was an error and your changes could not be saved';
+                });
+            }
+        } else if ($scope.app.edited.precedenceState && !$scope.app.application.sources.precedence) {
+            // precedence has been disabled
+            Applications.deletePrecedence($scope.app.application.id).then(function() {
+                $scope.successMessage = 'Changes saved';
+            },
+            function() {
+                $scope.errorMessage = 'Sorry, there was an error and your changes could not be saved';
+            });
+
+        } else if ($scope.app.edited.precedenceState || $scope.app.edited.precedenceOrder) {
+            var sourceIdOrder = [];
+            for (var i in $scope.app.application.sources.reads) {
+                sourceIdOrder.push($scope.app.application.sources.reads[i].id);
+            }
+            Applications.setPrecedence($scope.app.application.id, sourceIdOrder).then(function() {
+                $scope.successMessage = 'Changes saved';
+            },
+            function() {
+                $scope.errorMessage = 'Sorry, there was an error and your changes could not be saved';
+            });
+        }
+
+        $scope.app.edited = {
+            'meta': false,
+            'precedenceState': false,
+            'precedenceOrder': false
+        };
+
+        $scope.app.changed = false;
+    };
+
+    $scope.app.viewTerms = function(source) {
+        // Source Licence is a API name and a T&Cs
+        SourceLicenses.get(source.id).then(function(data) {
+            // not all sources have licenses
+            if (data && data.license) {
+                // $scope.app.license should be templated
+                $scope.app.license = $sce.trustAsHtml(data.license);
+            }
+            else {
+                $scope.app.license = $sce.trustAsHtml('Please contact us for more details regarding access and pricing for this source.');
+            }
+        },
+        function(error) {
+            $log.error(error);
+        });
+
+        var modalInstance = $modal.open({
+            templateUrl: 'partials/viewTermsModal.html',
+            controller: 'ViewTermsCtrl',
+            scope: $scope
+        });
+    };
+
+    // listen for an event from the orderable list
+    // to tell us when it has been updated, and then
+    // run the digest
+    $scope.$on('precedenceOrder', function() {
+        $scope.app.edited.precedenceOrder = true;
+        $scope.$digest();
+    });
+
+    // deep-watch `app.edited` for changes so that we can reveal
+    // the save button when something has changed
+    $scope.$watch('app.edited', function(newVal) {
+        angular.forEach(newVal, function(val) {
+            if (val) {
+                $scope.app.changed = true;
+            }
+            return;
+        });
+    }, true);
+
+    // @TODO: if the user changes the model back to the way how it was
+    // before the UI was touched, `app.changed` should be `false`
 }]);
 
 var app = angular.module('atlasAdmin.interceptors', []);
@@ -13634,645 +14292,6 @@ function($scope, $rootScope, $routeParams, $q, $modalInstance) {
   
 }]);
 
-'use strict';
-
-// define 'applications' module to be used for application controllers
-angular.module('atlasAdmin.controllers.applications', []);
-
-angular.module('atlasAdmin.controllers.applications')
-.controller('CtrlApplications', ['$scope', '$rootScope', '$routeParams', 'Applications', '$modal', '$location', 'Atlas', 'Authentication', 'atlasApiHost', '$http',
-    function($scope, $rootScope, $routeParams, Applications, $modal, $location, Atlas, Authentication, atlasApiHost, $http) {
-
-    $scope.view_title = 'My Applications';
-    $scope.app = {};
-    $scope.app.predicate = 'created';
-    $scope.app.reverse = true;
-    $scope.app.pageSize = 10;
-    $scope.app.currentPage = 1;
-    $scope.isAdmin = false;
-
-    Atlas.getRequest('/auth/user.json').then(function (result) {
-        if (result.data.user.role === 'admin') {
-            $scope.isAdmin = true;
-        }
-    });
-
-    var getUsageData = function (applications) {
-        var TIME_PERIOD = 8;
-        var dates = [];
-        for (var i = 0, ii = TIME_PERIOD; i < ii; i++) {
-          dates.push('logstash-atlas-access-' + moment().subtract(i, 'days').format('YYYY.MM.DD'));
-        }
-        dates = dates.join(',');
-        var numberWithCommas = function (x) {
-          return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        };
-        $http.get(Authentication.appendTokenToUrl(atlasApiHost + '/usage-list/' + dates)).then(function (response) {
-            var usageData =  _.has(response, 'data') ? response.data.aggregations.apiKeys.buckets : null;
-            
-            if (! usageData) {
-              console.warn('Response data doesnt have the `data` property', response);
-              return;
-            }
-            
-            _.forEach(usageData, function (d) {
-                d.readableCount = numberWithCommas(d.doc_count);
-            });
-            applications = handleNullUsage(applications);
-            mapUsageDataToApplications(applications, usageData);
-        });
-    };
-
-    var handleNullUsage = function (applications) {
-        _.forEach(applications, function (application) {
-            application.usage = {
-                doc_count: 0,
-                readableCount: 0
-            };
-        });
-        return applications;
-    };
-
-    var mapUsageDataToApplications = function (applications, usageData) {
-        applications = _.map(applications, function (application) {
-            _.forEach(usageData, function (d) {
-                if (application.credentials.apiKey === d.key) {
-                    application.usage = d;
-                }
-            });
-        });
-    };
-
-    // retreive a list of all apps 
-    Applications.all().then(function(applications) {
-        $scope.app.applications = applications;
-        $scope.state = (applications.length) ? 'table' : 'blank';
-        getUsageData(applications);
-    });
-
-    // instantiate a new modal window
-    $scope.createApplication = function() {
-        var modalInstance = $modal.open({
-            templateUrl: 'partials/newApplicationModal.html',
-            controller: 'CreateApplicationFormModalCtrl',
-            scope: $scope
-        });
-        modalInstance.result.then(function(application) {
-            // if all sources are selected, go to edit page
-            if ( 'all' === application.source ) { 
-                $location.path('/applications/' + application.id);
-            }else{
-                $scope.app.applications.push(application)
-            }
-        });
-    };
-
-    $scope.appSearchFilter = function(application) {
-        if (!$scope.query || $scope.query === '') {
-            return true;
-        }
-        // Search on title match or if query is over 10 chars long the api key
-        return application.title.toLowerCase().indexOf($scope.query.toLowerCase()) !== -1
-                || ($scope.query.length > 10 && application.credentials.apiKey.toLowerCase().indexOf($scope.query.toLowerCase()) !== -1);
-    };
-}]);
-
-'use strict';
-
-angular.module('atlasAdmin.controllers.applications')
-.controller('CtrlApplicationEdit', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Sources', 'SourceLicenses', 'Authentication', 'atlasApiHost', '$modal', '$sce', '$log', '$http', '$q', 'APIUsage', 'Atlas', '$location',
-    function($scope, $rootScope, $routeParams, Applications, Sources, SourceLicenses, Authentication, atlasApiHost, $modal, $sce, $log, $http, $q, Usage, Atlas, $location) {
-
-    $scope.app = {};
-    $scope.app.edited = {};
-    $scope.app.edited = {'meta':false,'precedenceState':false,'precedenceOrder':false};
-    $scope.app.changed = false;
-    var leavingPageText = 'You have unsaved changes!';
-    $scope.view_title = 'Edit application';
-
-    $scope.isAdmin = false;
-
-    Atlas.getRequest('/auth/user.json').then(function (result) {
-        if (result.data.user.role === 'admin') {
-            $scope.isAdmin = true;
-        }
-    });
-
-    window.onbeforeunload = function() {
-        if ($scope.app.changed) {
-            return leavingPageText;
-        }
-    };
-
-    var showLoadingState = function () {
-        $('.usage-graph-wrapper').addClass('loading');
-        $('#visualisation').empty();
-    };
-
-    var removeLoadingState = function () {
-        $('.usage-graph-wrapper').removeClass('loading');
-    };
-
-    $scope.switchTime = function (timeRange) {
-        getApiKey(timeRange);
-    };
-
-    var getApiKey = function (timeRange) {
-        // Seems to be the only way to find out the current API key
-        Applications.get($routeParams.applicationId).then(function (application) {
-            $scope.app.application = application;
-            $scope.app.writes = {};
-            $scope.app.writes.predicate = 'name';
-            $scope.app.writes.reverse = false;
-            $scope.view_subtitle = application.title;
-            var apiKey = application.credentials.apiKey;
-            loadGraph(apiKey, timeRange);
-        });
-    };
-
-    var loadGraph = function (apiKey, timeRange) {
-        switch(timeRange) {
-            case 'hour':
-                loadGraphHour(apiKey);
-                break;
-            case 'day':
-                loadGraphDay(apiKey);
-                break;
-            case 'week':
-                loadGraphWeek(apiKey);
-                break;
-            case 'month':
-                loadGraphMonth(apiKey);
-        }
-    };
-
-    var makeGraph = function (barData) {
-        if (barData.length > 0) {
-            if ($('.no-usage-message')) {
-                $('.no-usage-message').remove();
-            }
-            barData.forEach(function (d) {
-                d.x = d.time;
-                d.y = d.count;
-            });
-            var vis = d3.select('#visualisation');
-            var WIDTH = 1000;
-            var HEIGHT = 500;
-            var MARGINS = {
-                top: 20,
-                right: 20,
-                bottom: 21,
-                left: 50
-            };        
-            var xRange = d3.scale.ordinal()
-                .rangeRoundBands([MARGINS.left, WIDTH - MARGINS.right], 0.1)
-                .domain(barData.map(function(d) {
-                    return d.x;
-                }));
-            var yRange = d3.scale.linear()
-                .range([HEIGHT - MARGINS.top, MARGINS.bottom])
-                .domain([0, d3.max(barData, function(d) {
-                    return d.y;
-                })]);
-            var xAxis = d3.svg.axis()
-                .scale(xRange)
-                .tickSize(1)
-                .tickSubdivide(true);
-            var yAxis = d3.svg.axis()
-                .scale(yRange)
-                .tickSize(1)
-                .orient('left')
-                .tickSubdivide(true);
-            vis.append('svg:g')
-                .attr('class', 'x axis')
-                .attr('transform', 'translate(0,' + (HEIGHT - MARGINS.bottom) + ')')
-                .call(xAxis);
-            vis.append('svg:g')
-                .attr('class', 'y axis')
-                .attr('transform', 'translate(' + (MARGINS.left) + ',0)')
-                .call(yAxis);
-            vis.selectAll('rect')
-                .data(barData)
-                .enter()
-                .append('rect')
-                .attr('x', function (d) { // sets the x position of the bar
-                    return xRange(d.x);
-                })
-                .attr('y', function (d) { // sets the y position of the bar
-                    return yRange(d.y);
-                })
-                .attr('width', xRange.rangeBand()) // sets the width of bar
-                .attr('height', function (d) {      // sets the height of bar
-                    return ((HEIGHT - MARGINS.bottom) - yRange(d.y));
-                })
-                .attr('class', 'bar-col');
-            vis.selectAll('.x text')
-                .attr('dy', '1')
-                .attr('x', '-6');
-            vis.selectAll('.y text')
-                .attr('dy', '1')
-                .attr('x', '-6');
-        } else {
-            $('.usage-graph').before('<p class="no-usage-message">No usage in that time period</p>');
-        }
-    };
-
-    var loadGraphHour = function (apiKey) {
-        var _key = apiKey || '';
-        $location.search({usage: 'hour'});
-        if (_key.length) {
-            showLoadingState();
-            $scope.tabState = 'hour';
-            $('.graph-caption').text('API requests over the past hour');
-            Usage.hour(_key).then(function (data) {
-                data = data.facets[0].entries;
-                data.forEach(function (d) {
-                    var formattedDate = moment(d.time).format('HH:mm');
-                    d.time = formattedDate;
-                });
-                makeGraph(data);
-                removeLoadingState();
-            }, function (err) {
-                $scope.errorMessage('Can\'t load data for the api key');
-            });
-        }
-        var timeoutDuration = 300000; // 5 mins
-        var graphTimeout = setTimeout(function () {
-            $scope.reloadGraph();
-            clearTimeout(graphTimeout);
-        }, timeoutDuration);
-    };
-
-    var loadGraphDay = function (apiKey) {
-        var _key = apiKey || '';
-        $location.search({usage: 'day'});
-        if (_key.length) {
-            showLoadingState();
-            $scope.tabState = 'day';
-            $('.graph-caption').text('API requests over the past day');
-            Usage.day(_key).then(function (data) {
-                data = data.facets[0].entries;
-                data.forEach(function (d) {
-                    var formattedDate = moment(d.time).format('HH');
-                    d.time = formattedDate + ':00';
-                });
-                makeGraph(data);
-                removeLoadingState();
-            }, function (error) {
-                $scope.errorMessage('Can\'t load data for the api key');
-            });
-        }
-    };
-
-    var loadGraphWeek = function (apiKey) {
-        var _key = apiKey || '';
-        $location.search({usage: 'week'});
-        if (_key.length) {
-            showLoadingState();
-            $scope.tabState = 'week';
-            $('.graph-caption').text('API requests over the past week');
-            Usage.week(_key).then(function (data) {
-                data = data.facets[0].entries;
-                data.forEach(function (d) {
-                    var formattedDate = moment(d.time).format('Do MMMM');
-                    d.time = formattedDate;
-                });
-                makeGraph(data);
-                removeLoadingState();
-            }, function (error) {
-                $scope.errorMessage('Can\'t load data for the api key');
-            });
-        }
-    };  
-
-    var loadGraphMonth = function (apiKey) {
-        var _key = apiKey || '';
-        $location.search({usage: 'month'});
-        if (_key.length) {
-            showLoadingState();
-            $scope.tabState = 'month';
-            $('.graph-caption').text('API requests over the past month');
-            Usage.month(_key).then(function (data) {
-                data = data.facets[0].entries;
-                data.forEach(function (d) {
-                    var formattedDate = moment(d.time).format('Do MMMM');
-                    d.time = formattedDate;
-                });
-                makeGraph(data);
-                removeLoadingState();
-            }, function (error) {
-                $scope.errorMessage('Can\'t load data for the api key');
-            });
-        }
-    };
-
-    var closeUsageGraph = function () {
-        $('.close-usage-graph').on('click', function () {
-            $('.chart-card').slideUp('fast');
-        });
-    };
-
-    var toggleUsageGraph = function () {
-        $('.api-usage-trigger').on('click', function () {
-            var $graphContainer = $('.chart-card');
-            if ($graphContainer.is(':visible')) {
-                $graphContainer.slideUp('fast');
-            } else {
-                if ($('.usage-graph g').length <= 0) {
-                    getApiKey('week');
-                }
-                $graphContainer.slideDown('fast');
-            }
-        });
-    };
-
-    var openGraphFromUrl = function () {
-        var timePeriod = $location.search().usage;
-        var $graphContainer = $('.chart-card');
-        if (timePeriod) {
-            if ($graphContainer.is(':hidden')) {
-                $graphContainer.slideDown('fast');
-            }
-            getApiKey(timePeriod);
-        }
-    };
-
-    $scope.reloadGraph = function () {
-        var timePeriod = $location.search().usage;
-        getApiKey(timePeriod);
-    };
-
-    toggleUsageGraph();
-    closeUsageGraph();
-    openGraphFromUrl();
-
-    $scope.$on('$locationChangeStart', function(event, next, current) {
-        if ($scope.app.changed && !confirm(leavingPageText + '\n\nAre you sure you want to leave this page?')) {
-            event.preventDefault();
-        }
-    });
-
-    Applications.get($routeParams.applicationId).then(function(application) {
-        $scope.app.application = application;
-        $scope.app.writes = {};
-        $scope.app.writes.predicate = 'name';
-        $scope.app.writes.reverse = false;
-        $scope.view_subtitle = application.title;
-    });
-
-    $scope.app.disableSource = function(source) {
-        var reads = [];
-        for (var i in $scope.app.application.sources.reads) {
-            var readEntry = $scope.app.application.sources.reads[i];
-            if (readEntry.id === source.id) {
-                readEntry.enabled = false;
-            }
-            reads.push(readEntry);
-        }
-        $scope.app.application.sources.reads = reads;
-        $scope.app.edited.meta = true;
-    };
-
-    $scope.app.enableSource = function(source) {
-        var reads = [];
-        for (var i in $scope.app.application.sources.reads) {
-            var readEntry = $scope.app.application.sources.reads[i];
-            if (readEntry.id == source.id) {
-                readEntry.enabled = true;
-            }
-            reads.push(readEntry);
-        }
-        $scope.app.application.sources.reads = reads;
-        $scope.app.edited.meta = true;
-    }
-
-    $scope.app.requestSource = function(source) {
-        $scope.app.sourceRequest = {};
-        $scope.app.license = null;
-        SourceLicenses.get(source.id).then(
-            function(data) {
-                if (data && data.license) {
-                    $scope.app.license = $sce.trustAsHtml(data.license);
-                }
-            },
-            function(error) {
-                $log.error(error);
-            }
-        );
-        $scope.app.sourceRequest.source = source;
-        $scope.app.sourceRequest.applicationId = $scope.app.application.id;
-        var modalInstance = $modal.open({
-            templateUrl: 'partials/sourceRequestModal.html',
-            controller: 'SourceRequestFormModalCtrl',
-            scope: $scope
-        });
-        modalInstance.result.then(function() {
-            Applications.get($scope.app.application.id).then(function(application) {
-                $scope.app.application = application;
-            });
-        });
-    };
-
-    $scope.enablePrecedence = function() {
-        $scope.app.application.sources.precedence = true;
-        $scope.app.edited.precedenceState = true;
-    };
-
-    $scope.disablePrecedence = function() {
-        $scope.app.application.sources.precedence = false;
-        $scope.app.edited.precedenceState = true;
-        $scope.app.edited.precedenceOrder = false;
-    };
-
-    $scope.revokeApplication = function() {
-        Applications.revokeApplication($scope.app.application).then(function(application) {
-            $scope.app.application = application;
-        });
-    };
-
-    $scope.unRevokeApplication = function() {
-        Applications.unRevokeApplication($scope.app.application).then(function(application) {
-            $scope.app.application = application;
-        });
-    };
-
-    $scope.save = function() {
-        // Decide how to perform the update based on what has changed
-        if ($scope.app.edited.meta) {
-            if (!$scope.detailsForm.appTitle.$valid) {
-                $scope.app.errorMessage = 'Application title must be at least three characters long';
-            } else {
-                Applications.update($scope.app.application).then(function() {
-                    $scope.successMessage = 'Changes saved';
-                },
-                function() {
-                    $scope.errorMessage = 'Sorry, there was an error and your changes could not be saved';
-                });
-            }
-        } else if ($scope.app.edited.precedenceState && !$scope.app.application.sources.precedence) {
-            // precedence has been disabled
-            Applications.deletePrecedence($scope.app.application.id).then(function() {
-                $scope.successMessage = 'Changes saved';
-            },
-            function() {
-                $scope.errorMessage = 'Sorry, there was an error and your changes could not be saved';
-            });
-
-        } else if ($scope.app.edited.precedenceState || $scope.app.edited.precedenceOrder) {
-            var sourceIdOrder = [];
-            for (var i in $scope.app.application.sources.reads) {
-                sourceIdOrder.push($scope.app.application.sources.reads[i].id);
-            }
-            Applications.setPrecedence($scope.app.application.id, sourceIdOrder).then(function() {
-                $scope.successMessage = 'Changes saved';
-            },
-            function() {
-                $scope.errorMessage = 'Sorry, there was an error and your changes could not be saved';
-            });
-        }
-
-        $scope.app.edited = {
-            'meta': false,
-            'precedenceState': false,
-            'precedenceOrder': false
-        };
-
-        $scope.app.changed = false;
-    };
-
-    $scope.app.viewTerms = function(source) {
-        // Source Licence is a API name and a T&Cs
-        SourceLicenses.get(source.id).then(function(data) {
-            // not all sources have licenses
-            if (data && data.license) {
-                // $scope.app.license should be templated
-                $scope.app.license = $sce.trustAsHtml(data.license);
-            }
-            else {
-                $scope.app.license = $sce.trustAsHtml('Please contact us for more details regarding access and pricing for this source.');
-            }
-        },
-        function(error) {
-            $log.error(error);
-        });
-
-        var modalInstance = $modal.open({
-            templateUrl: 'partials/viewTermsModal.html',
-            controller: 'ViewTermsCtrl',
-            scope: $scope
-        });
-    };
-
-    // listen for an event from the orderable list
-    // to tell us when it has been updated, and then
-    // run the digest
-    $scope.$on('precedenceOrder', function() {
-        $scope.app.edited.precedenceOrder = true;
-        $scope.$digest();
-    });
-
-    // deep-watch `app.edited` for changes so that we can reveal
-    // the save button when something has changed
-    $scope.$watch('app.edited', function(newVal) {
-        angular.forEach(newVal, function(val) {
-            if (val) {
-                $scope.app.changed = true;
-            }
-            return;
-        });
-    }, true);
-
-    // @TODO: if the user changes the model back to the way how it was
-    // before the UI was touched, `app.changed` should be `false`
-}]);
-
-'use strict';
-
-angular.module('atlasAdmin.controllers.applications')
-.controller('CreateApplicationFormModalCtrl', ['$scope', '$q', '$sce', '$modalInstance', 'Applications', 'sourceRequests', 'SourceLicenses', '$location', 
-    function($scope, $q, $sce, $modalInstance, Applications, SourceRequests, SourceLicenses, $location) {
-    $scope.app.showTerms = false;
-    $scope.app.acceptTerms = false;
-    $scope.app.title = '';
-    $scope.app.url = '';
-    $scope.app.description = '';
-    $scope.app.preset = null;
-    $scope.license = {};
-    $scope.license.show = false;
-
-    var getTerms = function(source) {
-        var defer = $q.defer();
-        var sourceId = null;
-        if (source === 'PA') {
-            sourceId = 'cpc';
-        }else if (source === 'BBC') {
-            sourceId = 'cpy';
-        }
-        SourceLicenses.get(sourceId).then(function(data) {
-            if (!_.isObject(data)) {return false}
-            var license = $sce.trustAsHtml(data.license);
-            defer.resolve(license);
-        })
-        return defer.promise;
-    }
-
-    // decide whether terms should be shown for this source set
-    $scope.termsToggle = function(preset) {
-        $scope.app.showTerms = ($scope.app.preset == 'uk')
-    }
-
-    // used to show the user terms for source
-    $scope.showTerms = function(source) {
-        getTerms(source).then(function(license) {
-            $scope.license.show = true;
-            $scope.license.html = license;
-        })
-    }
-
-    $scope.submit = function() {
-        var app_title       = $scope.app.title,
-            app_url         = $scope.app.url,
-            app_description = $scope.app.description,
-            app_preset      = $scope.app.preset,
-            app_terms       = $scope.app.acceptTerms;
-
-        // save the app data
-        if (!_.isEmpty(app_title) && !_.isEmpty(app_url) && _.isString(app_preset)) {
-            if (app_preset === 'uk' && !app_terms) return;
-            Applications.create(app_title, app_description, app_url).then(function(result) {
-                if (result.data.application.id) {
-                    var appId = result.data.application.id;
-                    // enable basic sources matching on simple account
-                    if (app_preset === 'uk') {
-                        var _item, sourceOrder = [], enableSources = [];
-                        for (var source in result.data.application.sources.reads) {
-                            _item = result.data.application.sources.reads[source];
-                            if (_item.title === 'BBC' || _item.title === 'PA') {
-                                enableSources.push(_item);
-                            }
-                            sourceOrder.push(_item.id);
-                        }
-                        // send source requests for default sources
-                        _(enableSources).forEach(function(src) {
-                            SourceRequests.send(src.id, appId, app_url, '', 'personal', true);
-                        })
-                        Applications.setPrecedence(appId, sourceOrder);
-                    }else{
-                        $location.path('/applications/'+appId);
-                    }
-                    // close modal and return data tot he $scope
-                    result.data.application.source = $scope.app.sources;
-                    $modalInstance.close(result.data.application);
-                }
-            });
-        }
-    };
-
-    // cancel and close modal
-    $scope.cancel = function() {
-        $modalInstance.dismiss('cancel');
-    };
-}]);
 'use strict';
 var app = angular.module('atlasAdmin.controllers.wishlist', []);
 
