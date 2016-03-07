@@ -5,6 +5,8 @@ var scss = require('gulp-sass');
 var autoprefix = require('gulp-autoprefixer');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
+var shell = require('gulp-shell');
+var webserver = require('gulp-webserver');
 var assets = {};
 var gulpProtractorAngular = require('gulp-angular-protractor');
 
@@ -99,12 +101,18 @@ gulp.task('javascripts', function() {
 });
 
 //  Tests
-gulp.task('protractor', function(callback) {
+gulp.task('protractor', function() {
     gulp.src([
           'tests/login/login.e2e.js',
-          //'tests/applications/applications.e2e.js',
-          'tests/application/application.e2e.js'
-          //'tests/wishlist/wishlist.e2e.js'
+          'tests/applications/applications.e2e.js',
+          'tests/application/application.e2e.js',
+          'tests/wishlist/wishlist.e2e.js',
+          'tests/epg/epg.e2e.js',
+          'tests/feeds/feeds.e2e.js',
+          'tests/sources/sources.e2e.js',
+          'tests/requests/requests.e2e.js',
+          'tests/users/users.e2e.js',
+          'tests/wishlistManager/wishlistManager.e2e.js'
         ])
         .pipe(gulpProtractorAngular({
             'configFile': 'protractor.conf.js',
@@ -113,8 +121,16 @@ gulp.task('protractor', function(callback) {
         }))
         .on('error', function(e) {
             console.log(e);
-        })
-        .on('end', callback);
+        });
+});
+
+// Server
+gulp.task('server', function() {
+  gulp.src('./')
+    .pipe(webserver({
+      port: 8080,
+      directoryListing: false
+    }));
 });
 
 //  Watch
@@ -126,7 +142,5 @@ gulp.task('watch', function() {
   gulp.watch('js/**/*.js', ['javascripts']);
 });
 
-//  Resgister the default task.
-//  to run: `$ gulp`
-//
-gulp.task('default', ['styles', 'javascripts', 'watch']);
+// Dev
+gulp.task('dev', ['styles', 'javascripts', 'watch', 'server']);
