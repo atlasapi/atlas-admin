@@ -2,7 +2,7 @@
 
 var sourcesPageObject = require('./sources.pageobject.js');
 
-describe('E2E wishlist: Load', function () {
+describe('E2E sources: Load', function () {
   beforeEach(function () {
     sourcesPageObject.get();
   });

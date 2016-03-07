@@ -2,7 +2,7 @@
 
 var requestsPageObject = require('./requests.pageobject.js');
 
-describe('E2E wishlist: Load', function () {
+describe('E2E requests: Load', function () {
   beforeEach(function () {
     requestsPageObject.get();
   });
