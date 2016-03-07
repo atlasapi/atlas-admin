@@ -10902,7 +10902,7 @@ app.controller('CtrlWishlistSources', ['$scope', '$rootScope', '$routeParams', '
 angular.module('atlasAdmin.epg', ['ngRoute'])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/epg/bt-tv', {
-      templateUrl: 'partials/epgWidget.html',
+      templateUrl: 'presentation/epg/epg.tpl.html',
       controller: 'CtrlEPGWidget'
     });
   }]);
