@@ -6,6 +6,7 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.application',
                         'atlasAdmin.requestSource',
                         'atlasAdmin.wishlist',
+                        'atlasAdmin.epg',
                         'atlasAdmin.interceptors',
                         'atlasAdmin.filters',
                         'atlasAdmin.preloader',
@@ -33,7 +34,6 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.controllers.atlas',
                         'atlasAdmin.controllers.errors',
                         'atlasAdmin.controllers.sources',
-                        'atlasAdmin.controllers.epgwidget',
                         'atlasAdmin.controllers.sourceRequests',
                         'atlasAdmin.controllers.user',
                         'atlasAdmin.controllers.contact',
@@ -62,7 +62,6 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/manage/usage', {templateUrl: 'partials/admins/usage/requests.html', controller: 'CtrlUsage'});
 
     // grouped routes
-    $routeProvider.when('/epg/bt-tv', {templateUrl: 'partials/epgWidget.html', controller: 'CtrlEPGWidget'});
     $routeProvider.when('/scrubbables', {templateUrl: 'partials/bbcScrubbables/create.html', controller: 'CtrlBBCScrubbables'});
     $routeProvider.when('/scrubbables/:atlasId', {templateUrl: 'partials/bbcScrubbables/create.html', controller: 'CtrlBBCScrubbables'});
 

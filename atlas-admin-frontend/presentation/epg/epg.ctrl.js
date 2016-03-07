@@ -1,6 +1,7 @@
-var app = angular.module('atlasAdmin.controllers.epgwidget', []);
+'use strict';
 
-app.controller('CtrlEPGWidget', ['$scope', '$rootScope', 'Users', '$routeParams', '$q', '$http', 'Authentication', 'atlasApiHost',
+angular.module('atlasAdmin.epg')
+  .controller('CtrlEPGWidget', ['$scope', '$rootScope', 'Users', '$routeParams', '$q', '$http', 'Authentication', 'atlasApiHost',
     function($scope, $rootScope, Users, $routeParams, $q, $http, Authentication, atlasApiHost) {
     var subdomain = window.location.hostname.split('.')[0],
         _env = (subdomain === 'stage' || subdomain === 'dev')? '-stage' : '';
