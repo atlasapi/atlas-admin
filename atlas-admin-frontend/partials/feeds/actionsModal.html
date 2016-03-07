@@ -6,8 +6,8 @@
   <div class="statusMessage" ng-class="resultMessage.class" ng-show="resultMessage">{{resultMessage.body}}</div>
   <section class="pid-check" ng-hide="clearUI">
     <div class="field-holder">
-      <input type="text" ng-model="pidValue" required placeholder="PID">
-      <button ng-click="findPid(pidValue)">Check PID</button>
+      <input type="text" ng-model="pidValue" required placeholder="PID" class="check-pid-field">
+      <button ng-click="findPid(pidValue)" class="check-pid">Check PID</button>
     </div>
   </section>
   <section class="search-result" ng-show="showSearchRes">

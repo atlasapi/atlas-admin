@@ -2,7 +2,7 @@
     <header class="app-header">
         <h1 class="page-title">{{view_title}}</h1>
     </header>
-    
+
     <section class="save-status" ng-show="app.changed || !successMessage">
         <div class="panel-full">
             <span class="label label-just-saying" ng-show="app.changed">Unsaved changes</span>
@@ -22,7 +22,7 @@
     </section>
 
     <section class="edit-form">
-        
+
         <!-- if admin show this -->
         <div class="api-usage-graph" id="api-usage-graph" ng-show="isAdmin">
             <div class="api-usage-trigger button">API usage</div>
@@ -72,7 +72,7 @@
 
             <div class="panel-full">
                 <header class="panel-header">
-                    <h1>Sources</h1> 
+                    <h1>Sources</h1>
                     <p>Atlas automatically matches the same programmes across different sources. With equivalence precedence turned off, we'll return all equivalent content as separate items in the response. With precedence turned on we'll merge the best data from every source into a single item, based on the order you set here.</p>
                     <p>Hint: If you have access to Press Association data, you probably want it at the top.</p>
                 </header>
@@ -84,23 +84,16 @@
 
             <div class="panel-full enabled-sources">
                 <header class="panel-header">
-                    <h2>Enabled</h2> 
+                    <h2>Enabled</h2>
                     <span ng-show="app.application.sources.precedence === true">(Drag and drop sources to rearrange precedence ordering)</span>
                 </header>
                 <ul class="list-group" sortable-list>
-                    <li class="list-group-item source-item-entry" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:true" orderable id="source-{{source.id}}" ng-show="app.application.sources.precedence === true">
+                    <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:true" ng-attr-orderable="app.application.sources.precedence" ng-class="{'source-item-entry': app.application.sources.precedence}" id="source-{{source.id}}">
                         <span ng-show="app.application.sources.precedence === true" class="grabby-thing"></span>
-                        {{source.title}}
+                        <span class="source-title">{{source.title}}</span>
                         <span class="source-options">
-                            <button type="button" class="button button-link" ng-click="app.disableSource(source)">Disable</button>
-                            <button type="button" class="button button-link" ng-click="app.viewTerms(source)">View Terms</button>
-                        </span>
-                    </li>
-                    <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:true" id="source-{{source.id}}" ng-show="app.application.sources.precedence === false">
-                        {{source.title}}
-                        <span class="source-options">
-                            <button type="button" class="button button-link" ng-click="app.viewTerms(source)">View Terms</button> 
-                            <button type="button" class="button button-link" ng-click="app.disableSource(source)">Disable</button>
+                            <button type="button" class="button button-link disable" ng-click="app.disableSource(source)">Disable</button>
+                            <button type="button" class="button button-link terms" ng-click="app.viewTerms(source)">View Terms</button>
                         </span>
                     </li>
                 </ul>
@@ -108,11 +101,11 @@
 
             <div class="panel-full available-sources">
                 <header class="panel-header">
-                    <h2>Available</h2> 
+                    <h2>Available</h2>
                 </header>
                 <ul class="list-group">
                     <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'available' | sourceEnabled:false">
-                        {{source.title}}
+                        <span class="source-title">{{source.title}}</span>
                         <span class="source-options">
                             <button type="button" class="button button-link" ng-click="app.enableSource(source)">Enable</button>
                         </span>
@@ -122,18 +115,18 @@
 
             <div class="panel-full requested-sources">
                 <header class="panel-header">
-                    <h2>Requested</h2> 
+                    <h2>Requested</h2>
                 </header>
                 <ul class="list-group">
                     <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'requested' ">
-                        {{source.title}}
+                        <span class="source-title">{{source.title}}</span>
                     </li>
                 </ul>
             </div>
 
             <div class="panel-full unavailable-sources">
                 <header class="panel-header">
-                    <h2>Unavailable</h2> 
+                    <h2>Unavailable</h2>
                 </header>
                 <ul class="list-group">
                     <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'unavailable|enableable'">
@@ -147,7 +140,7 @@
 
             <div class="panel-full revoked-sources">
                 <header class="panel-header">
-                    <h2>Revoked</h2> 
+                    <h2>Revoked</h2>
                 </header>
                 <ul class="list-group">
                     <li class="list-group-item" ng-repeat="source in app.application.sources.reads | sourceState:'revoked'">
@@ -158,7 +151,7 @@
 
             <div class="form-row" ng-show="app.application.sources.writes.length > 0">
                 <header class="panel-header">
-                    <h1>Sources [write]</h1> 
+                    <h1>Sources [write]</h1>
                 </header>
                 <ul class="list-group">
                     <li class="list-group-item" ng-repeat="source in app.application.sources.writes | orderBy:app.writes.predicate:app.writes.reverse">
