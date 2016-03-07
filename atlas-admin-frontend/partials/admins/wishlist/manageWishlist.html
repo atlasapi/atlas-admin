@@ -17,9 +17,9 @@
                 <div ng-click="currentTab = 'features'" class="app-tab features last" ng-class="{active: currentTab=='features'}">Features</div>
             </div>
         </div>
-    
+
         <!-- source wish panel -->
-        <section class="panel-full" ng-show="currentTab == 'source-requests'" ng-controller="CtrlManageWishlistSourceRequests">
+        <section class="panel-full" ng-if="currentTab == 'source-requests'" ng-controller="CtrlManageWishlistSourceRequests">
             <header class="panel-header">
                 <h2>Source requests</h2>
             </header>
@@ -36,7 +36,7 @@
         </section> <!-- end source wish panel -->
 
         <!-- feature wish panel -->
-        <section class="panel-full" ng-show="currentTab == 'feature-requests'" ng-controller="CtrlManageWishlistFeatureRequests">
+        <section class="panel-full" ng-if="currentTab == 'feature-requests'" ng-controller="CtrlManageWishlistFeatureRequests">
             <header class="panel-header">
                 <h2>Feature requests</h2>
             </header>
@@ -53,7 +53,7 @@
         </section><!-- end feature wish panel -->
 
         <!-- source wishlist items panel -->
-        <section class="panel-full" ng-show="currentTab == 'sources'" ng-controller="CtrlManageWishlistSources">
+        <section class="panel-full" ng-if="currentTab == 'sources'" ng-controller="CtrlManageWishlistSources">
             <div class="panel-full add" ng-click="newSourceItem()">+ Add new source to the wishlist</div>
             <table class="table">
                 <thead>
@@ -77,7 +77,7 @@
         </section><!-- end source wishlist items panel -->
 
         <!-- source wishlist items panel -->
-        <section class="panel-full" ng-show="currentTab == 'features'" ng-controller="CtrlManageWishlistFeatures">
+        <section class="panel-full" ng-if="currentTab == 'features'" ng-controller="CtrlManageWishlistFeatures">
             <div class="panel-full add" ng-click="newFeatureItem()">+ Add new feature to the wishlist</div>
             <table class="table">
                 <thead>
