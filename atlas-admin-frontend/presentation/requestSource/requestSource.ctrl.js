@@ -1,7 +1,6 @@
 'use strict'
-var app = angular.module('atlasAdmin.controllers.requestSource', []);
-
-app.controller('CtrlRequestSource', ['$scope', '$rootScope', '$sce', '$routeParams', 'Applications', 'Users', 'factorySourcePayments', 'factorySourceRequests', 'SourceLicenses', '$location', 
+angular.module('atlasAdmin.requestSource')
+  .controller('CtrlRequestSource', ['$scope', '$rootScope', '$sce', '$routeParams', 'Applications', 'Users', 'factorySourcePayments', 'factorySourceRequests', 'SourceLicenses', '$location',
     function( $scope, $rootScope, $sce, $routeParams, Applications, Users, factorySourcePayments, factorySourceRequests, SourceLicenses, $location) {
         $scope.planData = factorySourcePayments();
         $scope.button_txt = 'Accept';

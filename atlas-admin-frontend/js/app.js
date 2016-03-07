@@ -4,6 +4,7 @@
 var app = angular.module('atlasAdmin', [
                         'atlasAdmin.applications',
                         'atlasAdmin.application',
+                        'atlasAdmin.requestSource',
                         'atlasAdmin.interceptors',
                         'atlasAdmin.filters',
                         'atlasAdmin.preloader',
@@ -33,7 +34,6 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.controllers.wishlist',
                         'atlasAdmin.controllers.sources',
                         'atlasAdmin.controllers.epgwidget',
-                        'atlasAdmin.controllers.requestSource',
                         'atlasAdmin.controllers.sourceRequests',
                         'atlasAdmin.controllers.user',
                         'atlasAdmin.controllers.contact',

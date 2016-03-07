@@ -1,9 +1,9 @@
 'use strict';
 
-angular.module('atlasAdmin.applications', ['ngRoute'])
+angular.module('atlasAdmin.requestSource', ['ngRoute'])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/applications/:applicationId/requestSource/:sourceId', {
-      templateUrl: 'partials/requestSource.html',
+      templateUrl: 'presentation/requestSource/requestSource.tpl.html',
       controller: 'CtrlRequestSource'
     });
   }]);
