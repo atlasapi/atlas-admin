@@ -323,7 +323,7 @@ angular.module('atlasAdmin.application')
         $scope.app.sourceRequest.source = source;
         $scope.app.sourceRequest.applicationId = $scope.app.application.id;
         var modalInstance = $modal.open({
-            templateUrl: 'partials/sourceRequestModal.html',
+            templateUrl: 'presentation/applications/sourceRequestModal/sourceRequestModal.tpl.html',
             controller: 'SourceRequestFormModalCtrl',
             scope: $scope
         });

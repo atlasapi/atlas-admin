@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('atlasAdmin.applications')
-.controller('SourceRequestFormModalCtrl', ['$scope', '$modalInstance', 'Applications', 'SourceRequests', '$log',
+.controller('SourceRequestFormModalCtrls', ['$scope', '$modalInstance', 'Applications', 'SourceRequests', '$log',
     function($scope, $modalInstance, Applications, SourceRequests, $log) {
 
     $scope.item = {};
