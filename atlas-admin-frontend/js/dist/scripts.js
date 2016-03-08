@@ -9922,6 +9922,7 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.manageUsers',
                         'atlasAdmin.manageUser',
                         'atlasAdmin.manageUsage',
+                        'atlasAdmin.manageWishlist',
                         'atlasAdmin.interceptors',
                         'atlasAdmin.filters',
                         'atlasAdmin.preloader',
@@ -9953,17 +9954,13 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.controllers.contact',
                         'atlasAdmin.controllers.uservideosources',
                         'atlasAdmin.controllers.uservideosources.youtube',
-                        'atlasAdmin.controllers.admins.manageWishlist',
                         'ui.bootstrap',
                         'ngResource',
                         'ngRoute',
                         'atlasAdminConfig']);
 
 app.config(['$routeProvider', function($routeProvider) {
-    // admin only routes
-    $routeProvider.when('/manage/wishlist', {templateUrl: 'partials/admins/wishlist/manageWishlist.html', controller: 'CtrlManageWishlist'});
-
-    // application user routes
+  // application user routes
     $routeProvider.when('/login', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
     $routeProvider.when('/login/:providerNamespace', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
     $routeProvider.when('/oauth/:providerNamespace', {templateUrl: 'partials/oauth.html', controller: 'CtrlOAuth', reloadOnSearch: false});
@@ -11909,6 +11906,201 @@ angular.module('atlasAdmin.manageUsage')
     };
 
     getUsageData();
+  }]);
+
+'use strict';
+
+angular.module('atlasAdmin.manageWishlist', ['ngRoute'])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/manage/wishlist', {
+      templateUrl: 'presentation/manageWishlist/manageWishlist.tpl.html',
+      controller: 'CtrlManageWishlist'
+    });
+  }]);
+
+angular.module('atlasAdmin.manageWishlist')
+  .controller('CtrlManageWishlist', ['$scope', '$rootScope', 'factoryPropositions', 'factoryWishes',
+      function($scope, $rootScope, Propositions, Wishes) {
+      $scope.app = {};
+      $rootScope.requestsToday = {};
+      $rootScope.currentTab = 'source-requests'
+
+      Wishes.all().then(function(data, status) {
+          $rootScope.wishes = data;
+      }, function(err) { console.error(err) });
+
+      Propositions.all().then(function(data, status) {
+          $rootScope.items = data;
+      }, function(err) { console.error(err) });
+  }]);
+
+// date helpers
+var dateFromObjectId = function (objectId) {
+    return new Date(parseInt(objectId.substring(0, 8), 16) * 1000);
+};
+var yesterday = new Date(new Date().getTime() - (24 * 60 * 60 * 1000));
+
+angular.module('atlasAdmin.manageWishlist')
+  .controller('CtrlManageWishlistFeatureRequests', [ '$scope', '$rootScope',
+    function($scope, $rootScope) {
+
+    // filter out feature wishes, then pass to the $scope
+    $rootScope.$watch('wishes', function(old_val, new_val) {
+        $scope.featureWishes = _.filter($rootScope.wishes, function(n) {
+            return n.wish.type === 'feature';
+        });
+        $scope.features_by_count = _.countBy($scope.featureWishes, function(n) {
+            return n.wish.title;
+        });
+
+        // map out number of requests from today
+        $rootScope.requestsToday.features = _.map($scope.featureWishes, function(n) {
+            if (dateFromObjectId(n._id) > yesterday) return n;
+        }).length;
+    });
+  }]);
+
+app.controller('CtrlManageWishlistFeatures', ['$scope', '$rootScope', '$modal',
+    function($scope, $rootScope, $modal) {
+
+    // filter out source wishes, then pass to the $scope
+    $rootScope.$watch('items', function(old_val, new_val) {
+        $scope.features = _.filter($rootScope.items, function(n) {
+            return n.type === 'feature';
+        });
+    });
+
+    // instantiate a modal window
+    $scope.newFeatureItem = function() {
+        $scope.modal = {};
+        $scope.modal.type = 'Feature' ;
+        $scope.modal.title = "Add new feature";
+
+        var modalInstance = $modal.open({
+            templateUrl: 'presentation/manageWishlist/newWishlistItemModal/newWishlistItemModal.tpl.html',
+            controller: 'CtrlNewWishlistItemModal',
+            scope: $scope
+        })
+        .result.then(function(data) {
+            $scope.features.push(data);
+        });
+    }
+}]);
+
+'use strict';
+
+// date helpers
+var dateFromObjectId = function (objectId) {
+    return new Date(parseInt(objectId.substring(0, 8), 16) * 1000);
+};
+var yesterday = new Date(new Date().getTime() - (24 * 60 * 60 * 1000));
+
+angular.module('atlasAdmin.manageWishlist')
+  .controller('CtrlManageWishlistSourceRequests', [ '$scope', '$rootScope',
+      function($scope, $rootScope) {
+
+      // filter out source wishes, then pass to the $scope
+      $rootScope.$watch('wishes', function(old_val, new_val) {
+          $scope.sourceWishes = _.filter($rootScope.wishes, function(n) {
+              return n.wish.type === 'source';
+          });
+          $scope.sources_by_count = _.countBy($scope.sourceWishes, function(n) {
+              return n.wish.title;
+          });
+          // map out number of requests from today
+          $rootScope.requestsToday.sources = _.map($scope.sourceWishes, function(n) {
+              if (dateFromObjectId(n._id) > yesterday) return n;
+          }).length;
+      });
+  }])
+  .directive('deleteitem', ['$document', 'factoryPropositions',
+    function factory($document, Propositions) {
+    var definitionObj = {
+        link: function(scope, $el, attr) {
+            $el.on('click', function() {
+                var itemId = attr.id;
+                if ('string' === typeof itemId) {
+                    scope.$apply(function() {
+                        _.remove(scope.$parent.sources, function(n) {
+                            return n._id === itemId;
+                        });
+                    })
+                    Propositions.remove(itemId);
+                }
+            })
+        }
+    }
+    return definitionObj;
+}])
+.directive('changestatus', ['$document', 'factoryPropositions',
+    function factory($document, Propositions) {
+    var definitionObj = {
+        link: function(scope, $el, attr) {
+            $el.on('click', function() {
+                var itemId = attr.id;
+                var status = attr.changestatus;
+                var parentClassRegex = new RegExp('\\b' + 'state-' + '.+?\\b', 'g');
+                if ('string' === typeof itemId && 'string' === typeof status) {
+                    $el.parent().children().removeClass('active');
+                    $el.addClass('active');
+                    Propositions.updateStatus(itemId, status);
+                }
+            })
+        }
+    }
+    return definitionObj;
+}]);
+
+angular.module('atlasAdmin.manageWishlist')
+  .controller('CtrlManageWishlistSources', ['$scope', '$rootScope', '$modal',
+    function($scope, $rootScope, $modal) {
+
+    // filter out source wishes, then pass to the $scope
+    $rootScope.$watch('items', function(old_val, new_val) {
+        $scope.sources = _.filter($rootScope.items, function(n) {
+            return n.type === 'source';
+        });
+    });
+
+    // instantiate a modal window
+    $scope.newSourceItem = function() {
+        $scope.modal = {};
+        $scope.modal.type = 'Source' ;
+        $scope.modal.title = "Add new source";
+
+        var modalInstance = $modal.open({
+            templateUrl: 'presentation/manageWishlist/newWishlistItemModal/newWishlistItemModal.tpl.html',
+            controller: 'CtrlNewWishlistItemModal',
+            scope: $scope
+        })
+        .result.then(function(data) {
+            $scope.sources.push(data);
+        });
+    }
+  }]);
+
+angular.module('atlasAdmin.manageWishlist')
+  .controller('CtrlNewWishlistItemModal', ['$scope', '$rootScope', '$modalInstance', 'factoryPropositions',
+      function($scope, $rootScope, $modalInstance, Propositions) {
+      $scope.formdata = {};
+      $scope.formdata.status = 'not available';
+      $scope.submit = function() {
+          if ('string' !== typeof $scope.formdata.name
+              && 'string'!== typeof $scope.formdata.status) {
+              return false;
+          }
+          var data = {
+              "type": $scope.modal.type.toLowerCase(),
+              "title": $scope.formdata.name,
+              "status": $scope.formdata.status
+          }
+          Propositions.create(data).then(function(data) {
+              $modalInstance.close(data);
+          });
+      }
+      $scope.cancel = function() {
+          $modalInstance.dismiss();
+      }
   }]);
 
 var app = angular.module('atlasAdmin.interceptors', []);
@@ -14865,206 +15057,6 @@ app.controller('CtrlVideoSourceYouTubeConfig', function($scope, $rootScope, User
         });
     };
 });
-'use strict';
-var app = angular.module('atlasAdmin.controllers.admins.manageWishlist', []);
-
-// date helpers
-var dateFromObjectId = function (objectId) {
-    return new Date(parseInt(objectId.substring(0, 8), 16) * 1000);
-};
-var yesterday = new Date(new Date().getTime() - (24 * 60 * 60 * 1000));
-
-// instantiate a modal window 
-var newSourceItem = function(type) {
-    if (type !== 'source' || type !== 'feature') return false;
-    $scope.modal = {};
-    $scope.modal.type = type;
-    $scope.modal.title = "Add new source";
-    var modalInstance = $modal.open({
-        templateUrl: '/partials/admins/wishlist/newItemModal.html',
-        controller: 'CtrlNewWishlistItemModal',
-        scope: $scope
-    })
-    .result.then(function(data) {
-        $scope.sources.push(data);
-    });
-}
-
-
-app.controller('CtrlManageWishlist', ['$scope', '$rootScope', 'factoryPropositions', 'factoryWishes',
-    function($scope, $rootScope, Propositions, Wishes) {
-    $scope.app = {};
-    $rootScope.requestsToday = {};
-    $rootScope.currentTab = 'source-requests'
-
-    Wishes.all().then(function(data, status) {
-        $rootScope.wishes = data;
-    }, function(err) { console.error(err) });
-
-    Propositions.all().then(function(data, status) {
-        $rootScope.items = data;
-    }, function(err) { console.error(err) });
-}])
-
-
-app.controller('CtrlManageWishlistSourceRequests', [ '$scope', '$rootScope',
-    function($scope, $rootScope) {
-
-    // filter out source wishes, then pass to the $scope
-    $rootScope.$watch('wishes', function(old_val, new_val) {
-        $scope.sourceWishes = _.filter($rootScope.wishes, function(n) {
-            return n.wish.type === 'source';
-        });
-        $scope.sources_by_count = _.countBy($scope.sourceWishes, function(n) {
-            return n.wish.title;
-        });
-        // map out number of requests from today
-        $rootScope.requestsToday.sources = _.map($scope.sourceWishes, function(n) {
-            if (dateFromObjectId(n._id) > yesterday) return n;
-        }).length;
-    });
-}])
-
-
-app.controller('CtrlManageWishlistFeatureRequests', [ '$scope', '$rootScope',
-    function($scope, $rootScope) {
-
-    // filter out feature wishes, then pass to the $scope
-    $rootScope.$watch('wishes', function(old_val, new_val) {
-        $scope.featureWishes = _.filter($rootScope.wishes, function(n) {
-            return n.wish.type === 'feature';
-        });
-        $scope.features_by_count = _.countBy($scope.featureWishes, function(n) {
-            return n.wish.title;
-        });
-
-        // map out number of requests from today
-        $rootScope.requestsToday.features = _.map($scope.featureWishes, function(n) {
-            if (dateFromObjectId(n._id) > yesterday) return n;
-        }).length;
-    });
-}])
-
-
-app.controller('CtrlManageWishlistSources', ['$scope', '$rootScope', '$modal',
-    function($scope, $rootScope, $modal) {
-
-    // filter out source wishes, then pass to the $scope
-    $rootScope.$watch('items', function(old_val, new_val) {
-        $scope.sources = _.filter($rootScope.items, function(n) {
-            return n.type === 'source';
-        });
-    });
-
-    // instantiate a modal window 
-    $scope.newSourceItem = function() {
-        $scope.modal = {};
-        $scope.modal.type = 'Source' ;
-        $scope.modal.title = "Add new source";
-
-        var modalInstance = $modal.open({
-            templateUrl: 'partials/admins/wishlist/newItemModal.html',
-            controller: 'CtrlNewWishlistItemModal',
-            scope: $scope
-        })
-        .result.then(function(data) {
-            $scope.sources.push(data);
-        });
-    }
-}])
-
-
-app.controller('CtrlManageWishlistFeatures', ['$scope', '$rootScope', '$modal',
-    function($scope, $rootScope, $modal) {
-
-    // filter out source wishes, then pass to the $scope
-    $rootScope.$watch('items', function(old_val, new_val) {
-        $scope.features = _.filter($rootScope.items, function(n) {
-            return n.type === 'feature';
-        });
-    });
-
-    // instantiate a modal window 
-    $scope.newFeatureItem = function() {
-        $scope.modal = {};
-        $scope.modal.type = 'Feature' ;
-        $scope.modal.title = "Add new feature";
-
-        var modalInstance = $modal.open({
-            templateUrl: 'partials/admins/wishlist/newItemModal.html',
-            controller: 'CtrlNewWishlistItemModal',
-            scope: $scope
-        })
-        .result.then(function(data) {
-            $scope.features.push(data);
-        });
-    }
-}])
-
-
-app.controller('CtrlNewWishlistItemModal', ['$scope', '$rootScope', '$modalInstance', 'factoryPropositions',
-    function($scope, $rootScope, $modalInstance, Propositions) {
-    $scope.formdata = {};
-    $scope.formdata.status = 'not available';
-    $scope.submit = function() {
-        if ('string' !== typeof $scope.formdata.name
-            && 'string'!== typeof $scope.formdata.status) {
-            return false;
-        } 
-        var data = {
-            "type": $scope.modal.type.toLowerCase(),
-            "title": $scope.formdata.name,
-            "status": $scope.formdata.status
-        }
-        Propositions.create(data).then(function(data) {
-            $modalInstance.close(data);
-        });
-    }
-    $scope.cancel = function() {
-        $modalInstance.dismiss();
-    }
-}])
-
-
-app.directive('deleteitem', ['$document', 'factoryPropositions', 
-    function factory($document, Propositions) {
-    var definitionObj = {
-        link: function(scope, $el, attr) {
-            $el.on('click', function() {
-                var itemId = attr.id;
-                if ('string' === typeof itemId) {
-                    scope.$apply(function() {
-                        _.remove(scope.$parent.sources, function(n) {
-                            return n._id === itemId;
-                        });
-                    })
-                    Propositions.remove(itemId);
-                }
-            })
-        }
-    }
-    return definitionObj;
-}])
-
-
-app.directive('changestatus', ['$document', 'factoryPropositions', 
-    function factory($document, Propositions) {
-    var definitionObj = {
-        link: function(scope, $el, attr) {
-            $el.on('click', function() {
-                var itemId = attr.id;
-                var status = attr.changestatus;
-                var parentClassRegex = new RegExp('\\b' + 'state-' + '.+?\\b', 'g'); 
-                if ('string' === typeof itemId && 'string' === typeof status) {
-                    $el.parent().children().removeClass('active');
-                    $el.addClass('active');
-                    Propositions.updateStatus(itemId, status);
-                }
-            })
-        }
-    }
-    return definitionObj;
-}])
 'use strict';
 var app = angular.module('atlasAdmin.controllers.atlas', []);
 

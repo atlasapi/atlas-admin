@@ -18,6 +18,7 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.manageUsers',
                         'atlasAdmin.manageUser',
                         'atlasAdmin.manageUsage',
+                        'atlasAdmin.manageWishlist',
                         'atlasAdmin.interceptors',
                         'atlasAdmin.filters',
                         'atlasAdmin.preloader',
@@ -49,17 +50,13 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.controllers.contact',
                         'atlasAdmin.controllers.uservideosources',
                         'atlasAdmin.controllers.uservideosources.youtube',
-                        'atlasAdmin.controllers.admins.manageWishlist',
                         'ui.bootstrap',
                         'ngResource',
                         'ngRoute',
                         'atlasAdminConfig']);
 
 app.config(['$routeProvider', function($routeProvider) {
-    // admin only routes
-    $routeProvider.when('/manage/wishlist', {templateUrl: 'partials/admins/wishlist/manageWishlist.html', controller: 'CtrlManageWishlist'});
-
-    // application user routes
+  // application user routes
     $routeProvider.when('/login', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
     $routeProvider.when('/login/:providerNamespace', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
     $routeProvider.when('/oauth/:providerNamespace', {templateUrl: 'partials/oauth.html', controller: 'CtrlOAuth', reloadOnSearch: false});

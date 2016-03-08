@@ -57,6 +57,13 @@ assets.js = [
             'presentation/manageUser/manageUser.ctrl.js',
             'presentation/manageUsage/manageUsage.module.js',
             'presentation/manageUsage/manageUsage.ctrl.js',
+            'presentation/manageWishList/manageWishList.module.js',
+            'presentation/manageWishList/manageWishList.ctrl.js',
+            'presentation/manageWishList/manageWishListFeatureRequests.ctrl.js',
+            'presentation/manageWishList/manageWishListFeatures.ctrl.js',
+            'presentation/manageWishList/manageWishListSourceRequests.ctrl.js',
+            'presentation/manageWishList/manageWishListSources.ctrl.js',
+            'presentation/manageWishList/newWishlistItemModal/newWishlistItemModal.ctrl.js',
             'js/interceptors/authInterceptor.js',
             'js/interceptors/loadingInterceptor.js',
             'js/interceptors/profileCompleteInterceptor.js',
@@ -102,7 +109,6 @@ assets.js = [
             'js/controllers/feeds/console.js',
             'js/controllers/feeds/breakdown.js',
             'js/controllers/bbcScrubbables/create.js',
-            'js/controllers/admins/manageWishlist.js',
             'js/controllers/viewTerms.js'];
 
 //  Styles
