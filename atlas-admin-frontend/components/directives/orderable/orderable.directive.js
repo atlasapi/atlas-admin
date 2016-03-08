@@ -1,10 +1,7 @@
 'use strict';
 
-/* Directives */
-
-var app = angular.module('atlasAdmin.directives.orderable', []);
-
-app.directive('orderable', function () {
+angular.module('atlasAdmin.directives.orderable')
+  .directive('orderable', function () {
     return {
         link: function (scope, element) {
             // this gives us the native JS object
