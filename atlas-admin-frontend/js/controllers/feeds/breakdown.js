@@ -1,5 +1,5 @@
 'use strict';
-var app = angular.module('atlasAdmin.controllers.feeds');
+var app = angular.module('atlasAdmin.controllers.feeds', []);
 
 app.controller('CtrlFeedsBreakdown', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modal',
 function($scope, $rootScope, $routeParams, Feeds, $q, $modal) {

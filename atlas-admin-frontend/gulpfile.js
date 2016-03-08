@@ -36,6 +36,8 @@ assets.js = [
             'presentation/scrubbables/scrubbables.ctrl.js',
             'presentation/feeds/feeds.module.js',
             'presentation/feeds/feeds.ctrl.js',
+            'presentation/feed/feed.module.js',
+            'presentation/feed/feed.ctrl.js',
             'js/interceptors/authInterceptor.js',
             'js/interceptors/loadingInterceptor.js',
             'js/interceptors/profileCompleteInterceptor.js',
