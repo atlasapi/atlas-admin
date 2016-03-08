@@ -25358,7 +25358,6 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.services.usage',
                         'atlasAdmin.services.feeds',
                         'atlasAdmin.services.bbcscrubbables',
-                        'atlasAdmin.directives.focus',
                         'atlasAdmin.directives.activePath',
                         'atlasAdmin.directives.validUsage',
                         'atlasAdmin.directives.inputmorph',
@@ -25393,7 +25392,7 @@ app.config(['$sceDelegateProvider', function($sceDelegateProvider) {
 
 'use strict';
 
-angular.module('atlasAdmin.applications', ['ngRoute'])
+angular.module('atlasAdmin.applications', ['ngRoute', 'atlasAdmin.directives.focus'])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/applications', {
       templateUrl: 'presentation/applications/applications.tpl.html',
@@ -25591,7 +25590,7 @@ angular.module('atlasAdmin.applications')
 
 'use strict';
 
-angular.module('atlasAdmin.application', ['ngRoute', 'atlasAdmin.directives.orderable'])
+angular.module('atlasAdmin.application', ['ngRoute', 'atlasAdmin.directives.orderable', 'atlasAdmin.directives.focus'])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/applications/:applicationId', {
       templateUrl: 'presentation/application/application.tpl.html',
@@ -29671,23 +29670,6 @@ app.directive('preloader', ['$rootScope', function ($rootScope) {
         }
     }
 }]);
-'use strict';
-
-/* Focus on an element. Use "focus-me" as an attribute. */
-
-var app = angular.module('atlasAdmin.directives.focus', []);
-
-app.directive('focusMe', function ($timeout) {    
-    return {    
-        link: function (scope, element, attrs, model) {  
-            scope.$watch('trigger', function(value) {
-                  $timeout(function () {
-                  element[0].focus();
-                });
-            });           
-        }
-    };
-});
 'use strict';
 
 /* Highlight current menu element */

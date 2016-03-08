@@ -45,7 +45,6 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.services.usage',
                         'atlasAdmin.services.feeds',
                         'atlasAdmin.services.bbcscrubbables',
-                        'atlasAdmin.directives.focus',
                         'atlasAdmin.directives.activePath',
                         'atlasAdmin.directives.validUsage',
                         'atlasAdmin.directives.inputmorph',
