@@ -41,6 +41,7 @@ assets.js = [
             'presentation/feed/actionsModal/actionsModal.ctrl.js',
             'presentation/feedBreakdown/feedBreakdown.module.js',
             'presentation/feedBreakdown/feedBreakdown.ctrl.js',
+            'presentation/feedBreakdown/statusDetailModal/statusDetailModal.ctrl.js',
             'js/interceptors/authInterceptor.js',
             'js/interceptors/loadingInterceptor.js',
             'js/interceptors/profileCompleteInterceptor.js',

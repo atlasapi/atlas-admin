@@ -6,7 +6,7 @@ angular.module('atlasAdmin.feedBreakdown')
 
       $scope.showDetails = function() {
         var modalInstance = $modal.open({
-          templateUrl: 'partials/feeds/statusDetailModal.html',
+          templateUrl: 'presentation/feedBreakdown/statusDetailModal.tpl.html',
           controller: 'CtrlStatusDetail',
           scope: $scope
         });
@@ -24,10 +24,5 @@ angular.module('atlasAdmin.feedBreakdown')
         });
       };
       loadTask();
-
-    }])
-
-  .controller('CtrlStatusDetail', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modalInstance',
-    function($scope, $rootScope, $routeParams, $q, $modalInstance) {
 
     }]);
