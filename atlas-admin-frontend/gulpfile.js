@@ -82,6 +82,8 @@ assets.js = [
             'presentation/videoSourceConfig/videoSourceConfig.ctrl.js',
             'presentation/error/error.module.js',
             'presentation/error/error.ctrl.js',
+            'presentation/menu/menu.module.js',
+            'presentation/menu/menu.ctrl.js',
             'js/interceptors/authInterceptor.js',
             'js/interceptors/loadingInterceptor.js',
             'js/interceptors/profileCompleteInterceptor.js',

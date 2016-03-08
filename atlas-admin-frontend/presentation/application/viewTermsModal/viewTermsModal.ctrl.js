@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('atlasAdmin.application')
-.controller('CtrlApplicationEdit', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Sources', 'SourceLicenses', 'Authentication', 'atlasApiHost', '$modal', '$sce', '$log', '$http', '$q', 'APIUsage', 'Atlas', '$location',
-    function($scope, $rootScope, $routeParams, Applications, Sources, SourceLicenses, Authentication, atlasApiHost, $modal, $sce, $log, $http, $q, Usage, Atlas, $location) {
+.controller('ViewTermsCtrl', ['$scope', '$modalInstance', 'Applications', 'sourceRequests', '$log',
+    function($scope, $modalInstance, Applications, sourceRequests, $log) {
       $scope.close = function() {
           $modalInstance.dismiss();
       };

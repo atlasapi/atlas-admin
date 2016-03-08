@@ -25343,6 +25343,7 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.videoSourceProviders',
                         'atlasAdmin.videoSourceConfig',
                         'atlasAdmin.error',
+                        'atlasAdmin.menu',
                         'atlasAdmin.preloader',
                         'atlasAdmin.services.auth',
                         'atlasAdmin.services.atlas',
@@ -25365,7 +25366,6 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.directives.loadContent',
                         'atlasAdmin.directives.bbcscrubbables',
                         'atlasAdmin.controllers.sourceRequests',
-                        'atlasAdmin.controllers.user',
                         'ui.bootstrap',
                         'ngResource',
                         'ngRoute',
@@ -28032,6 +28032,115 @@ angular.module('atlasAdmin.error')
       }
   });
 
+angular.module('atlasAdmin.menu', []);
+
+'use strict';
+
+angular.module('atlasAdmin.menu')
+  .controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authentication', '$location', 'GroupsService', '$q',
+    function($scope, Users, $rootScope, Authentication, $location, Groups, $q) {
+    var privateItems;
+    $scope.app = {};
+    $scope.app.dropdown = true;
+    $scope.app.adminMenu = true;
+    $scope.app.contentMenu = true;
+    $scope.app.appsMenu = true;
+
+    $scope.app.showDropdown = function () {
+        $scope.app.dropdown = true;
+    };
+
+    $scope.app.showAdminMenu = function () {
+        $scope.app.adminMenu = true;
+    };
+
+    $scope.app.showContentMenu = function () {
+        $scope.app.contentMenu = true;
+    };
+
+    $scope.app.showAppsMenu = function () {
+        $scope.app.appsMenu = true;
+    };
+
+    $scope.app.hideDropdown = function () {
+        $scope.app.dropdown = false;
+    };
+
+    $scope.app.hideAdminMenu = function () {
+        $scope.app.adminMenu = false;
+    };
+
+    $scope.app.hideContentMenu = function () {
+        $scope.app.contentMenu = false;
+    };
+
+    $scope.app.hideAppsMenu = function () {
+        $scope.app.appsMenu = false;
+    };
+
+    var getPrivateMenuItems = function() {
+        var defer = $q.defer();
+        if (privateItems) {
+            defer.resolve(privateItems)
+            return defer.promise;
+        }
+        Groups.get().then(function(result) {
+             privateItems = result;
+             defer.resolve(privateItems);
+        })
+        return defer.promise;
+    }
+
+    var buildMenu = function(user, groups) {
+        // if profile not complete the do not show menu
+        var allMenu = [
+            // admin only
+            {path:'/manage/sources', label:'Sources', role:'admin'},
+            {path:'/manage/requests', label:'Requests', role:'admin'},
+            {path:'/manage/users', label:'Users', role:'admin'},
+            {path:'/manage/usage', label:'API Usage', role:'admin'},
+            {path:'/manage/wishlist', label:'Wishlist', role:'admin'}];
+
+        if (_.isArray(groups)) {
+            groups.forEach(function(item) {
+                if (item.name === 'BTBlackout') { allMenu.push({path: '/epg/bt-tv', label: 'EPG'}); }
+                if (item.name === 'BBC-YV-Feed') { allMenu.push({path: '/feeds', label: 'Feeds'}); }
+                if (item.name === 'BBC-Scrubbables') { allMenu.push({path: '/scrubbables', label: 'Scrubbables'}); }
+            })
+        }
+
+        // build the menu
+        var menu = [];
+        var admin_menu = [];
+        for (var i = 0; i < allMenu.length; i++) {
+            var item = allMenu[i];
+            if (!item.hasOwnProperty('role') || item.role === 'regular') {
+                menu.push(item);
+            }else if (user.role === 'admin') {
+                admin_menu.push(item);
+            }
+        }
+        return {
+            users: menu,
+            admins: admin_menu
+        }
+    };
+
+    if (Authentication.getToken()) {
+        Users.currentUser(function(user) {
+            $scope.app.user = user;
+            // find any custom menu items for this user
+            getPrivateMenuItems().then(function(groups) {
+                $scope.app.userGroups = groups;
+                $scope.app.menu = buildMenu(user, groups);
+            },
+            function() {
+                $scope.app.menu = buildMenu(user);
+            });
+        });
+    }
+}]);
+
 var app = angular.module('atlasAdmin.interceptors', []);
 
 app.factory('AuthenticationInterceptor', ['$q', '$location', 'atlasHost', 'atlasApiHost', '$window', 'Authentication',
@@ -30447,160 +30556,3 @@ function($document, $q, $timeout, atlasHost, $http, Groups, Scrubbables, Helpers
       templateUrl: 'partials/bbcScrubbables/atlasSearch.html'
     };
   }]);
-
-var app = angular.module('atlasAdmin.controllers.sourceRequests', []);
-app.controller('CtrlRequests', function($scope, $rootScope, $routeParams, sourceRequests, Applications, $q) {
-    $rootScope.title = 'Requests';
-    $scope.app = {};
-    $scope.app.predicate = 'approved';
-    $scope.app.reverse = false;
-    $scope.app.pageSize = 10;
-    $scope.app.currentPage = 1;
-    sourceRequests.all().then(function(requests) {
-        var applications = {};
-        var appRequests = [];
-        var forbidden = [];
-
-        for (var i in requests) {
-            if (!applications[requests[i].application_id] && forbidden.indexOf(requests[i].application_id) === -1) {
-                applications[requests[i].application_id] = {};
-                appRequests.push(Applications.get(requests[i].application_id));
-            }
-        }
-        // get the application details for each requests and merge data
-        $q.all(appRequests).then(function(results) {
-            for (var i in results) {
-               applications[results[i].id] = results[i];
-            }
-            for (var j in requests) {
-               requests[j].application = applications[requests[j].application_id];
-            }
-            $scope.app.requests = requests;
-        });
-    });
-
-    $scope.approveRequest = function(request) {
-        sourceRequests.approve(request.id)
-        .then(function() {
-                request.approved = true;
-            },
-            function() {
-                $scope.errorMessage = 'Sorry the request could not be approved due to an error';
-            }
-        );
-    };
-});
-'use strict';
-var app = angular.module('atlasAdmin.controllers.user', []);
-app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authentication', '$location', 'GroupsService', '$q',
-    function($scope, Users, $rootScope, Authentication, $location, Groups, $q) {
-    var privateItems;
-    $scope.app = {};
-    $scope.app.dropdown = true;
-    $scope.app.adminMenu = true;
-    $scope.app.contentMenu = true;
-    $scope.app.appsMenu = true;
-
-    $scope.app.showDropdown = function () {
-        $scope.app.dropdown = true;
-    };
-
-    $scope.app.showAdminMenu = function () {
-        $scope.app.adminMenu = true;
-    };
-
-    $scope.app.showContentMenu = function () {
-        $scope.app.contentMenu = true;
-    };
-
-    $scope.app.showAppsMenu = function () {
-        $scope.app.appsMenu = true;
-    };
-
-    $scope.app.hideDropdown = function () {
-        $scope.app.dropdown = false;
-    };
-
-    $scope.app.hideAdminMenu = function () {
-        $scope.app.adminMenu = false;
-    };
-
-    $scope.app.hideContentMenu = function () {
-        $scope.app.contentMenu = false;
-    };
-
-    $scope.app.hideAppsMenu = function () {
-        $scope.app.appsMenu = false;
-    };
-
-    var getPrivateMenuItems = function() {
-        var defer = $q.defer();
-        if (privateItems) {
-            defer.resolve(privateItems)
-            return defer.promise;
-        }
-        Groups.get().then(function(result) {
-             privateItems = result;
-             defer.resolve(privateItems);
-        })
-        return defer.promise;
-    }
-
-    var buildMenu = function(user, groups) {
-        // if profile not complete the do not show menu
-        var allMenu = [
-            // admin only
-            {path:'/manage/sources', label:'Sources', role:'admin'},
-            {path:'/manage/requests', label:'Requests', role:'admin'},
-            {path:'/manage/users', label:'Users', role:'admin'},
-            {path:'/manage/usage', label:'API Usage', role:'admin'},
-            {path:'/manage/wishlist', label:'Wishlist', role:'admin'}];
-
-        if (_.isArray(groups)) {
-            groups.forEach(function(item) {
-                if (item.name === 'BTBlackout') { allMenu.push({path: '/epg/bt-tv', label: 'EPG'}); }
-                if (item.name === 'BBC-YV-Feed') { allMenu.push({path: '/feeds', label: 'Feeds'}); }
-                if (item.name === 'BBC-Scrubbables') { allMenu.push({path: '/scrubbables', label: 'Scrubbables'}); }
-            })
-        }
-
-        // build the menu
-        var menu = [];
-        var admin_menu = [];
-        for (var i = 0; i < allMenu.length; i++) {
-            var item = allMenu[i];
-            if (!item.hasOwnProperty('role') || item.role === 'regular') {
-                menu.push(item);
-            }else if (user.role === 'admin') {
-                admin_menu.push(item);
-            }
-        }
-        return {
-            users: menu,
-            admins: admin_menu
-        }
-    };
-
-    if (Authentication.getToken()) {
-        Users.currentUser(function(user) {
-            $scope.app.user = user;
-            // find any custom menu items for this user
-            getPrivateMenuItems().then(function(groups) {
-                $scope.app.userGroups = groups;
-                $scope.app.menu = buildMenu(user, groups);
-            },
-            function() {
-                $scope.app.menu = buildMenu(user);
-            });
-        });
-    }
-}]);
-
-'use strict';
-var app = angular.module('atlasAdmin.controllers.atlas', []);
-
-function ViewTermsCtrl($scope, $modalInstance, Applications, sourceRequests, $log) {
-    $scope.close = function() {
-        $modalInstance.dismiss();
-    };
-}

@@ -1,6 +1,7 @@
 'use strict';
-var app = angular.module('atlasAdmin.controllers.user', []);
-app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authentication', '$location', 'GroupsService', '$q',
+
+angular.module('atlasAdmin.menu')
+  .controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authentication', '$location', 'GroupsService', '$q',
     function($scope, Users, $rootScope, Authentication, $location, Groups, $q) {
     var privateItems;
     $scope.app = {};
