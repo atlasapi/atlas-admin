@@ -26,6 +26,7 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.manageWishlist',
                         'atlasAdmin.terms',
                         'atlasAdmin.profile',
+                        'atlasAdmin.contact',
                         'atlasAdmin.preloader',
                         'atlasAdmin.services.auth',
                         'atlasAdmin.services.atlas',
@@ -50,7 +51,6 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.controllers.errors',
                         'atlasAdmin.controllers.sourceRequests',
                         'atlasAdmin.controllers.user',
-                        'atlasAdmin.controllers.contact',
                         'atlasAdmin.controllers.uservideosources',
                         'atlasAdmin.controllers.uservideosources.youtube',
                         'ui.bootstrap',
@@ -60,8 +60,6 @@ var app = angular.module('atlasAdmin', [
 
 app.config(['$routeProvider', function($routeProvider) {
   // application user routes
-
-    $routeProvider.when('/contact', {templateUrl: 'partials/contact.html', controller: 'ContactController'});
     $routeProvider.when('/videosource/providers', {templateUrl: 'partials/videoSourceProviders.html', controller: 'CtrlVideoSourceProviders'});
     $routeProvider.when('/videosource/config/youtube', {templateUrl: 'partials/videoSourceYouTubeConfig.html', controller: 'CtrlVideoSourceYouTubeConfig'});
     $routeProvider.when('/error', {templateUrl: 'partials/error.html', controller: 'ErrorController', reloadOnSearch: false});

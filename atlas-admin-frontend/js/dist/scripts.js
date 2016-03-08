@@ -25339,6 +25339,7 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.manageWishlist',
                         'atlasAdmin.terms',
                         'atlasAdmin.profile',
+                        'atlasAdmin.contact',
                         'atlasAdmin.preloader',
                         'atlasAdmin.services.auth',
                         'atlasAdmin.services.atlas',
@@ -25363,7 +25364,6 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.controllers.errors',
                         'atlasAdmin.controllers.sourceRequests',
                         'atlasAdmin.controllers.user',
-                        'atlasAdmin.controllers.contact',
                         'atlasAdmin.controllers.uservideosources',
                         'atlasAdmin.controllers.uservideosources.youtube',
                         'ui.bootstrap',
@@ -25373,8 +25373,6 @@ var app = angular.module('atlasAdmin', [
 
 app.config(['$routeProvider', function($routeProvider) {
   // application user routes
-
-    $routeProvider.when('/contact', {templateUrl: 'partials/contact.html', controller: 'ContactController'});
     $routeProvider.when('/videosource/providers', {templateUrl: 'partials/videoSourceProviders.html', controller: 'CtrlVideoSourceProviders'});
     $routeProvider.when('/videosource/config/youtube', {templateUrl: 'partials/videoSourceYouTubeConfig.html', controller: 'CtrlVideoSourceYouTubeConfig'});
     $routeProvider.when('/error', {templateUrl: 'partials/error.html', controller: 'ErrorController', reloadOnSearch: false});
@@ -27218,33 +27216,25 @@ angular.module('atlasAdmin.manageUser')
               });
           }
       };
+      
+      Users.get($routeParams.uid).then(function(user) {
+          $scope.app.user = user;
+          var title = 'Profile for ';
+          if (user.full_name) {
+              title += user.full_name;
+          } else {
+              title += 'user id ' + user.id;
+          }
+          $rootScope.view_title = title;
+          Users.currentUser(function(editingUser) {
+              $scope.app.isAdmin = editingUser.role === 'admin';
+              $scope.app.editingUser = editingUser.id;
 
-
-      if ($routeParams.uid) {
-          Users.get($routeParams.uid).then(function(user) {
-              $scope.app.user = user;
-              var title = 'Profile for ';
-              if (user.full_name) {
-                  title += user.full_name;
-              } else {
-                  title += 'user id ' + user.id;
+              if ($scope.app.isAdmin) {
+                  populateApplications($scope.app.user.applications);
               }
-              $rootScope.view_title = title;
-              Users.currentUser(function(editingUser) {
-                  $scope.app.isAdmin = editingUser.role === 'admin';
-                  $scope.app.editingUser = editingUser.id;
-
-                  if ($scope.app.isAdmin) {
-                      populateApplications($scope.app.user.applications);
-                  }
-              });
           });
-      } else {
-          Users.currentUser(function(user) {
-              $scope.app.user = user;
-              $rootScope.view_title = 'Your profile';
-          });
-      }
+      });
 
       $scope.save = function() {
           if ($scope.userForm.$invalid) {
@@ -27746,6 +27736,177 @@ angular.module('atlasAdmin.profile')
           });
       };
   });
+
+'use strict';
+
+angular.module('atlasAdmin.contact', ['ngRoute'])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/contact', {
+      templateUrl: 'presentation/contact/contact.tpl.html',
+      controller: 'ContactController'
+    });
+  }]);
+
+'use strict';
+angular.module('atlasAdmin.contact')
+  .controller('ContactController', ['$scope', '$rootScope', '$sce', 'Users', 'GroupsService', '$q',
+    function($scope, $rootScope, $sce, Users, Groups, $q) {
+      $rootScope.view_title = 'Contact Us';
+      var privateItems;
+
+      Users.currentUser(function (user) {
+        $scope.user = user;
+
+        var getPrivateMenuItems = function() {
+          var defer = $q.defer();
+          if (privateItems) {
+            defer.resolve(privateItems);
+            return defer.promise;
+          }
+          Groups.get().then(function(result) {
+            privateItems = result;
+            defer.resolve(privateItems);
+          });
+          return defer.promise;
+        };
+
+        getPrivateMenuItems().then(function(groups) {
+          new window.MBST.Contact('stage', {
+            product: 'atlas',
+            fields: (function () {
+              var result = [];
+
+              var subjects = [];
+
+              var tools = [];
+              if (groups.length > 0) {
+                groups.forEach(function (tool) {
+                  tools.push({
+                    name: tool.name,
+                    value: tool.name
+                  });
+                });
+              }
+
+              if (tools.length > 0) {
+                subjects.push({
+                  type: 'group',
+                  name: 'My Tools',
+                  options: tools
+                });
+              }
+
+              subjects = subjects.concat([
+                {
+                  name: 'data_access',
+                  value: 'Data Access'
+                },
+                {
+                  name: 'api_calls',
+                  value: 'API Calls'
+                },
+                {
+                  name: 'api_explorer',
+                  value: 'API Explorer'
+                },
+                {
+                  name: 'feature_request',
+                  value: 'Feature Request'
+                },
+                {
+                  name: 'usage_changes',
+                  value: 'Usage Changes'
+                },
+                {
+                  name: 'other',
+                  value: 'Other'
+                }
+              ]);
+
+              var groupsInput = [{
+                type: 'select',
+                label: 'Subject',
+                attrs: {
+                  required: 'required',
+                  name: 'subject',
+                  options: subjects
+                }
+              }];
+
+
+              var applications = [];
+              applications.push({
+                name: '',
+                value: ''
+              });
+
+              user.applications.forEach(function (application) {
+                applications.push({
+                  name: application,
+                  value: application
+                })
+              });
+
+              var applicationsInput = [{
+                type: 'select',
+                label: 'Application ID',
+                attrs: {
+                  options: applications
+                }
+              }];
+              var commonInputs = [{
+                type: 'textarea',
+                label: 'Message (500 Characters)',
+                attrs: {
+                  required: 'required',
+                  name: 'message',
+                  rows: 4,
+                  maxLength: 500
+                },
+                value: '',
+                description: 'Include URL, API Call, data source name etc.'
+              }];
+
+              if (groups.length > 0) {
+                result = result.concat(groupsInput);
+              }
+
+              if (applications.length > 0) {
+                result = result.concat(applicationsInput);
+              }
+
+              result = result.concat(commonInputs);
+
+              return result;
+            })()
+          }, function ($form) {
+            $scope.formEle = $sce.trustAsHtml('<iframe id="contactFrame" src="about:blank" style="width: 100%;' +
+              'height: 320px; border: 0 none;"></iframe>');
+            $scope.$apply();
+
+            var doc = document.getElementById('contactFrame').contentWindow.document;
+            doc.open();
+            var stylesheets = document.head.querySelectorAll('link');
+            var parent = document.createElement('body');
+            parent.classList.add('form-row');
+            parent.setAttribute('style', 'margin-bottom: 0');
+            for (var i = 0, ii = stylesheets.length; i < ii; i += 1) {
+              var sheetEle = document.createElement('link');
+              sheetEle.setAttribute('rel', 'stylesheet');
+              sheetEle.setAttribute('type', 'text/css');
+              sheetEle.setAttribute('href', stylesheets[i].href);
+
+              parent.appendChild(sheetEle);
+            }
+            parent.appendChild($form);
+            doc.appendChild(parent);
+            doc.close();
+
+          });
+        });
+      });
+    }
+  ]);
 
 var app = angular.module('atlasAdmin.interceptors', []);
 
@@ -30322,166 +30483,6 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
     }
 }]);
 
-'use strict';
-var app = angular.module('atlasAdmin.controllers.contact', []);
-app.controller('ContactController', ['$scope', '$rootScope', '$sce', 'Users', 'GroupsService', '$q',
-  function($scope, $rootScope, $sce, Users, Groups, $q) {
-    $rootScope.view_title = 'Contact Us';
-    var privateItems;
-
-    Users.currentUser(function (user) {
-      $scope.user = user;
-
-      var getPrivateMenuItems = function() {
-        var defer = $q.defer();
-        if (privateItems) {
-          defer.resolve(privateItems);
-          return defer.promise;
-        }
-        Groups.get().then(function(result) {
-          privateItems = result;
-          defer.resolve(privateItems);
-        });
-        return defer.promise;
-      };
-
-      getPrivateMenuItems().then(function(groups) {
-        new window.MBST.Contact('stage', {
-          product: 'atlas',
-          fields: (function () {
-            var result = [];
-
-            var subjects = [];
-
-            var tools = [];
-            if (groups.length > 0) {
-              groups.forEach(function (tool) {
-                tools.push({
-                  name: tool.name,
-                  value: tool.name
-                });
-              });
-            }
-
-            if (tools.length > 0) {
-              subjects.push({
-                type: 'group',
-                name: 'My Tools',
-                options: tools
-              });
-            }
-
-            subjects = subjects.concat([
-              {
-                name: 'data_access',
-                value: 'Data Access'
-              },
-              {
-                name: 'api_calls',
-                value: 'API Calls'
-              },
-              {
-                name: 'api_explorer',
-                value: 'API Explorer'
-              },
-              {
-                name: 'feature_request',
-                value: 'Feature Request'
-              },
-              {
-                name: 'usage_changes',
-                value: 'Usage Changes'
-              },
-              {
-                name: 'other',
-                value: 'Other'
-              }
-            ]);
-
-            var groupsInput = [{
-              type: 'select',
-              label: 'Subject',
-              attrs: {
-                required: 'required',
-                name: 'subject',
-                options: subjects
-              }
-            }];
-
-
-            var applications = [];
-            applications.push({
-              name: '',
-              value: ''
-            });
-
-            user.applications.forEach(function (application) {
-              applications.push({
-                name: application,
-                value: application
-              })
-            });
-
-            var applicationsInput = [{
-              type: 'select',
-              label: 'Application ID',
-              attrs: {
-                options: applications
-              }
-            }];
-            var commonInputs = [{
-              type: 'textarea',
-              label: 'Message (500 Characters)',
-              attrs: {
-                required: 'required',
-                name: 'message',
-                rows: 4,
-                maxLength: 500
-              },
-              value: '',
-              description: 'Include URL, API Call, data source name etc.'
-            }];
-
-            if (groups.length > 0) {
-              result = result.concat(groupsInput);
-            }
-
-            if (applications.length > 0) {
-              result = result.concat(applicationsInput);
-            }
-
-            result = result.concat(commonInputs);
-
-            return result;
-          })()
-        }, function ($form) {
-          $scope.formEle = $sce.trustAsHtml('<iframe id="contactFrame" src="about:blank" style="width: 100%;' +
-            'height: 320px; border: 0 none;"></iframe>');
-          $scope.$apply();
-
-          var doc = document.getElementById('contactFrame').contentWindow.document;
-          doc.open();
-          var stylesheets = document.head.querySelectorAll('link');
-          var parent = document.createElement('body');
-          parent.classList.add('form-row');
-          parent.setAttribute('style', 'margin-bottom: 0');
-          for (var i = 0, ii = stylesheets.length; i < ii; i += 1) {
-            var sheetEle = document.createElement('link');
-            sheetEle.setAttribute('rel', 'stylesheet');
-            sheetEle.setAttribute('type', 'text/css');
-            sheetEle.setAttribute('href', stylesheets[i].href);
-
-            parent.appendChild(sheetEle);
-          }
-          parent.appendChild($form);
-          doc.appendChild(parent);
-          doc.close();
-
-        });
-      });
-    });
-  }
-]);
 'use strict';
 var app = angular.module('atlasAdmin.controllers.uservideosources', []);
 
