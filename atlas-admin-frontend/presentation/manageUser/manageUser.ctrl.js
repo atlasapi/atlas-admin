@@ -15,33 +15,25 @@ angular.module('atlasAdmin.manageUser')
               });
           }
       };
+      
+      Users.get($routeParams.uid).then(function(user) {
+          $scope.app.user = user;
+          var title = 'Profile for ';
+          if (user.full_name) {
+              title += user.full_name;
+          } else {
+              title += 'user id ' + user.id;
+          }
+          $rootScope.view_title = title;
+          Users.currentUser(function(editingUser) {
+              $scope.app.isAdmin = editingUser.role === 'admin';
+              $scope.app.editingUser = editingUser.id;
 
-
-      if ($routeParams.uid) {
-          Users.get($routeParams.uid).then(function(user) {
-              $scope.app.user = user;
-              var title = 'Profile for ';
-              if (user.full_name) {
-                  title += user.full_name;
-              } else {
-                  title += 'user id ' + user.id;
+              if ($scope.app.isAdmin) {
+                  populateApplications($scope.app.user.applications);
               }
-              $rootScope.view_title = title;
-              Users.currentUser(function(editingUser) {
-                  $scope.app.isAdmin = editingUser.role === 'admin';
-                  $scope.app.editingUser = editingUser.id;
-
-                  if ($scope.app.isAdmin) {
-                      populateApplications($scope.app.user.applications);
-                  }
-              });
           });
-      } else {
-          Users.currentUser(function(user) {
-              $scope.app.user = user;
-              $rootScope.view_title = 'Your profile';
-          });
-      }
+      });
 
       $scope.save = function() {
           if ($scope.userForm.$invalid) {
