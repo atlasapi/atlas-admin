@@ -27011,7 +27011,7 @@ angular.module('atlasAdmin.manageSourcesReaders')
 
 'use strict';
 
-angular.module('atlasAdmin.manageSourcesWriters', ['ngRoute'])
+angular.module('atlasAdmin.manageSourcesWriters', ['ngRoute', 'atlasAdmin.directives.focus'])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/manage/sources/:sourceId/writers', {
       templateUrl: 'presentation/manageSourcesWriters/manageSourcesWriters.tpl.html',
@@ -28261,6 +28261,25 @@ angular.module('atlasAdmin.directives.orderable')
                 false
             );
         }
+    };
+});
+
+angular.module('atlasAdmin.directives.focus', []);
+
+'use strict';
+
+/* Focus on an element. Use "focus-me" as an attribute. */
+
+angular.module('atlasAdmin.directives.focus')
+  .directive('focusMe', function ($timeout) {
+    return {
+      link: function (scope, element, attrs, model) {
+        scope.$watch('trigger', function(value) {
+          $timeout(function () {
+            element[0].focus();
+          });
+        });
+      }
     };
 });
 
