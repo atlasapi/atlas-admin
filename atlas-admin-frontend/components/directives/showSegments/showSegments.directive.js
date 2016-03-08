@@ -1,6 +1,5 @@
-var app = angular.module('atlasAdmin.directives.bbcscrubbables');
-
-app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$http',
+angular.module('atlasAdmin.showSegments')
+  .directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$http',
     function($document, $q, $timeout, atlasHost, $http) {
 
     // For creating a new segment block to be pushed into the
@@ -86,12 +85,12 @@ app.directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$htt
           $scope.showSegments.showCreateUI = false;
           $scope.showSegments.submitted = false;
       };
-  };
+    };
 
-  return {
-      restrict: 'E',
-      scope: false,
-      link: controller,
-      templateUrl: 'partials/bbcScrubbables/episodeSegmentPartial.html'
-  };
-}]);
+    return {
+        restrict: 'E',
+        scope: false,
+        link: controller,
+        templateUrl: 'components/directives/showSegments.tpl.html'
+    };
+  }]);

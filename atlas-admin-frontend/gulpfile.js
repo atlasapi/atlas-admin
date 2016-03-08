@@ -96,6 +96,12 @@ assets.js = [
             'components/directives/inputMorph/inputMorph.directive.js',
             'components/directives/loadContent/loadContent.module.js',
             'components/directives/loadContent/loadContent.directive.js',
+            'components/directives/scrubber/scrubber.module.js',
+            'components/directives/scrubber/scrubber.directive.js',
+            'components/directives/atlasSearch/atlasSearch.module.js',
+            'components/directives/atlasSearch/atlasSearch.directive.js',
+            'components/directives/reduxVideo/reduxVideo.module.js',
+            'components/directives/reduxVideo/reduxVideo.directive.js',
 
             'js/interceptors/authInterceptor.js',
             'js/interceptors/loadingInterceptor.js',
@@ -121,8 +127,7 @@ assets.js = [
             'js/filters.js',
             'js/directives/preloader.js',
             'js/directives/scrubber.js',
-            'js/directives/showSegments.js',
-            'js/directives/atlasSearch.js'];
+            'js/directives/showSegments.js'];
 
 //  Styles
 //

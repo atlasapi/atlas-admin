@@ -1,6 +1,5 @@
-var app = angular.module('atlasAdmin.directives.bbcscrubbables', []);
-
-app.directive('scrubber', ['$document', '$compile',
+angular.module('atlasAdmin.scrubber')
+  .directive('scrubber', ['$document', '$compile',
     function($document, $compile) {
 
     var controller = function($scope, $el, $attr) {
