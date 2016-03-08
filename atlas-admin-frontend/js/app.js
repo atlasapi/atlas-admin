@@ -2,6 +2,8 @@
 
 // Declare app level module which depends on filters, and services
 var app = angular.module('atlasAdmin', [
+                        'atlasAdmin.interceptors',
+                        'atlasAdmin.filters',
                         'atlasAdmin.applications',
                         'atlasAdmin.application',
                         'atlasAdmin.requestSource',
@@ -19,8 +21,7 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.manageUser',
                         'atlasAdmin.manageUsage',
                         'atlasAdmin.manageWishlist',
-                        'atlasAdmin.interceptors',
-                        'atlasAdmin.filters',
+                        'atlasAdmin.login',
                         'atlasAdmin.preloader',
                         'atlasAdmin.services.auth',
                         'atlasAdmin.services.atlas',
@@ -57,8 +58,6 @@ var app = angular.module('atlasAdmin', [
 
 app.config(['$routeProvider', function($routeProvider) {
   // application user routes
-    $routeProvider.when('/login', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
-    $routeProvider.when('/login/:providerNamespace', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
     $routeProvider.when('/oauth/:providerNamespace', {templateUrl: 'partials/oauth.html', controller: 'CtrlOAuth', reloadOnSearch: false});
 
     $routeProvider.when('/terms', {templateUrl: 'partials/terms.html', controller: 'UserLicenseController'});

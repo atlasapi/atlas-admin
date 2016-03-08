@@ -9906,6 +9906,8 @@ var t=x.length;if(t){x.sort(c);for(var e,r=1,u=x[0],i=[u];t>r;++r)e=x[r],l(e[0],
 
 // Declare app level module which depends on filters, and services
 var app = angular.module('atlasAdmin', [
+                        'atlasAdmin.interceptors',
+                        'atlasAdmin.filters',
                         'atlasAdmin.applications',
                         'atlasAdmin.application',
                         'atlasAdmin.requestSource',
@@ -9923,8 +9925,7 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.manageUser',
                         'atlasAdmin.manageUsage',
                         'atlasAdmin.manageWishlist',
-                        'atlasAdmin.interceptors',
-                        'atlasAdmin.filters',
+                        'atlasAdmin.login',
                         'atlasAdmin.preloader',
                         'atlasAdmin.services.auth',
                         'atlasAdmin.services.atlas',
@@ -9961,8 +9962,6 @@ var app = angular.module('atlasAdmin', [
 
 app.config(['$routeProvider', function($routeProvider) {
   // application user routes
-    $routeProvider.when('/login', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
-    $routeProvider.when('/login/:providerNamespace', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
     $routeProvider.when('/oauth/:providerNamespace', {templateUrl: 'partials/oauth.html', controller: 'CtrlOAuth', reloadOnSearch: false});
 
     $routeProvider.when('/terms', {templateUrl: 'partials/terms.html', controller: 'UserLicenseController'});
@@ -10810,7 +10809,6 @@ app.controller('CtrlWishlistFeatures', ['$scope', '$rootScope', '$routeParams', 
             controller: 'customFeatureRequestModal',
             scope: $scope
         });
-
     };
 }]);
 
@@ -10880,6 +10878,12 @@ app.controller('CtrlWishlistSources', ['$scope', '$rootScope', '$routeParams', '
         });
     }
 }]);
+
+angular.module('atlasAdmin.wishlist')
+  .controller('customFeatureRequestModal', ['$scope', '$rootScope', '$routeParams', '$q',
+      function($scope, $rootScope, $routeParams, $q) {
+
+  }]);
 
 'use strict';
 
@@ -12097,6 +12101,66 @@ angular.module('atlasAdmin.manageWishlist')
           $modalInstance.dismiss();
       }
   }]);
+
+'use strict';
+
+angular.module('atlasAdmin.login', ['ngRoute'])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/login', {
+      templateUrl: 'presentation/login/login.tpl.html',
+      controller: 'CtrlLogin'
+    });
+    $routeProvider.when('/login/:providerNamespace', {
+      templateUrl: 'presentation/login/login.tpl.html',
+      controller: 'CtrlLogin'
+    });
+  }]);
+
+'use strict';
+angular.module('atlasAdmin.login')
+  .controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routeParams, Atlas, atlasVersion, $location, Authentication, $log) {
+    $scope.title = "Hi there, please sign in to continue";
+
+    // Ask atlas for access here
+    Authentication.reset();
+    Atlas.getAuthProviders().then(function(results) {
+        var providers = [];
+        for (var i=0; i<results.length; i++) {
+            var provider = results[i];
+            provider.icon = (provider.namespace === 'google')? 'google-plus' : provider.namespace;
+            providers.push(provider);
+        }
+        $scope.providers = providers;
+        if ($routeParams.providerNamespace) {
+            $rootScope.startAuth($scope.providers.filter(function (provider) {
+                return provider.namespace === $routeParams.providerNamespace;
+            })[0]);
+        }
+    });
+
+    $rootScope.startAuth = function(provider) {
+        var uri,
+            target;
+        if ($location.absUrl().indexOf('/login/' + provider.namespace) !== -1) {
+            uri = $location.absUrl().replace("/login/" + provider.namespace,"/oauth/" + provider.namespace);
+            target = $location.absUrl().replace("/login/" + provider.namespace,"/");
+        } else {
+            uri = $location.absUrl().replace("/login", "/oauth/" + provider.namespace);
+            target = $location.absUrl().replace("/login","/");
+        }
+
+        var callbackUrl = encodeURIComponent(uri);
+        var targetUri = encodeURIComponent(target);
+
+        Authentication.setProvider(provider.namespace);
+        Atlas.startOauthAuthentication(provider, callbackUrl, targetUri).then(function(login_url) {
+            window.location.href = login_url;
+        }, function(error) {
+            $log.error("Error starting auth:");
+            $log.error(error);
+        });
+    };
+  });
 
 var app = angular.module('atlasAdmin.interceptors', []);
 
@@ -14576,52 +14640,6 @@ app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location
     });
 });
 
-'use strict';
-var app = angular.module('atlasAdmin.controllers.auth');
-
-app.controller('CtrlLogin', function($scope, $rootScope, $rootElement, $routeParams, Atlas, atlasVersion, $location, Authentication, $log) {
-    $scope.title = "Hi there, please sign in to continue";
-
-    // Ask atlas for access here 
-    Authentication.reset();
-    Atlas.getAuthProviders().then(function(results) {
-        var providers = [];
-        for (var i=0; i<results.length; i++) {
-            var provider = results[i];
-            provider.icon = (provider.namespace === 'google')? 'google-plus' : provider.namespace;
-            providers.push(provider);
-        }
-        $scope.providers = providers;
-        if ($routeParams.providerNamespace) {
-            $rootScope.startAuth($scope.providers.filter(function (provider) {
-                return provider.namespace === $routeParams.providerNamespace;
-            })[0]);
-        }
-    });
-    
-    $rootScope.startAuth = function(provider) {
-        var uri,
-            target;
-        if ($location.absUrl().indexOf('/login/' + provider.namespace) !== -1) {
-            uri = $location.absUrl().replace("/login/" + provider.namespace,"/oauth/" + provider.namespace);
-            target = $location.absUrl().replace("/login/" + provider.namespace,"/");
-        } else {
-            uri = $location.absUrl().replace("/login", "/oauth/" + provider.namespace);
-            target = $location.absUrl().replace("/login","/");
-        }
-        
-        var callbackUrl = encodeURIComponent(uri);
-        var targetUri = encodeURIComponent(target);
-        
-        Authentication.setProvider(provider.namespace);
-        Atlas.startOauthAuthentication(provider, callbackUrl, targetUri).then(function(login_url) {
-            window.location.href = login_url; 
-        }, function(error) {
-            $log.error("Error starting auth:");
-            $log.error(error);   
-        });
-    };
-});
 'use strict';
 var app = angular.module('atlasAdmin.controllers.auth');
 
