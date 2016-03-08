@@ -42,11 +42,10 @@ app.controller('CtrlWishlistFeatures', ['$scope', '$rootScope', '$routeParams', 
             title: 'Tell us about a feature'
         }
         var modalInstance = $modal.open({
-            templateUrl: 'partials/wishlist/customFeatureRequestModal.html',
+            templateUrl: 'presentation/wishlist/customFeatureRequestModal/customFeatureRequestModal.tpl.html',
             controller: 'customFeatureRequestModal',
             scope: $scope
         });
-
     };
 }]);
 
@@ -69,8 +68,3 @@ app.directive('featureRow', ['$document', function($document) {
         template: template
     }
 }]);
-
-app.controller('customFeatureRequestModal', ['$scope', '$rootScope', '$routeParams', '$q',
-    function($scope, $rootScope, $routeParams, $q) {
-
-}])
