@@ -9919,6 +9919,8 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.manageSourcesReaders',
                         'atlasAdmin.manageSourcesWriters',
                         'atlasAdmin.manageRequests',
+                        'atlasAdmin.manageUsers',
+                        'atlasAdmin.manageUser',
                         'atlasAdmin.interceptors',
                         'atlasAdmin.filters',
                         'atlasAdmin.preloader',
@@ -9959,8 +9961,6 @@ var app = angular.module('atlasAdmin', [
 
 app.config(['$routeProvider', function($routeProvider) {
     // admin only routes
-    $routeProvider.when('/manage/users', {templateUrl: 'partials/admins/users.html', controller: 'AllUsersController'});
-    $routeProvider.when('/manage/users/:uid', {templateUrl: 'partials/profile.html', controller: 'UserProfileController'});
     $routeProvider.when('/manage/wishlist', {templateUrl: 'partials/admins/wishlist/manageWishlist.html', controller: 'CtrlManageWishlist'});
     $routeProvider.when('/manage/usage', {templateUrl: 'partials/admins/usage/requests.html', controller: 'CtrlUsage'});
 
@@ -11765,6 +11765,106 @@ angular.module('atlasAdmin.manageRequests')
         $scope.app.requests = data;
     });
 }]);
+
+'use strict';
+
+angular.module('atlasAdmin.manageUsers', ['ngRoute'])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/manage/users', {
+      templateUrl: 'presentation/manageUsers/manageUsers.tpl.html',
+      controller: 'AllUsersController'
+    });
+  }]);
+
+angular.module('atlasAdmin.manageUsers')
+  .controller('AllUsersController', function($scope, $rootScope, $routeParams, Users) {
+      $rootScope.view_title = 'Manage users';
+      $scope.app = {};
+      Users.all().then(function(users) {
+        $scope.app.users = users;
+      });
+      $scope.app.predicate = 'full_name';
+      $scope.app.reverse = false;
+      $scope.app.pageSize = 10;
+      $scope.app.currentPage = 1;
+  });
+
+'use strict';
+
+angular.module('atlasAdmin.manageUser', ['ngRoute'])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/manage/users/:uid', {
+      templateUrl: 'presentation/manageUser/manageUser.tpl.html',
+      controller: 'UserProfileController'
+    });
+  }]);
+
+angular.module('atlasAdmin.manageUser')
+  .controller('UserProfileController', function($scope, $rootScope, $routeParams, Users, Applications, $location) {
+      $scope.app = {};
+      $scope.app.isAdmin = false;
+      $scope.app.predicate = 'created';
+      $scope.app.reverse = true;
+      $scope.app.pageSize = 10;
+      $scope.app.currentPage = 1;
+
+      var populateApplications = function(idList) {
+          $scope.app.applications = [];
+          for (var i = 0; i < idList.length; i++) {
+              Applications.get(idList[i]).then(function(application) {
+                  $scope.app.applications.push(application);
+              });
+          }
+      };
+
+
+      if ($routeParams.uid) {
+          Users.get($routeParams.uid).then(function(user) {
+              $scope.app.user = user;
+              var title = 'Profile for ';
+              if (user.full_name) {
+                  title += user.full_name;
+              } else {
+                  title += 'user id ' + user.id;
+              }
+              $rootScope.view_title = title;
+              Users.currentUser(function(editingUser) {
+                  $scope.app.isAdmin = editingUser.role === 'admin';
+                  $scope.app.editingUser = editingUser.id;
+
+                  if ($scope.app.isAdmin) {
+                      populateApplications($scope.app.user.applications);
+                  }
+              });
+          });
+      } else {
+          Users.currentUser(function(user) {
+              $scope.app.user = user;
+              $rootScope.view_title = 'Your profile';
+          });
+      }
+
+      $scope.save = function() {
+          if ($scope.userForm.$invalid) {
+              return;
+          }
+          $scope.app.changed = false;
+          $scope.app.newUser = $scope.app.user.profile_complete === false;
+          $scope.app.user.profile_complete = true;
+          Users.update($scope.app.user).then(function() {
+              var successMessage = 'Changes saved';
+              // redirect new users to apps screen otherwise show message
+              if ($scope.app.newUser) {
+                 $location.path('/');
+              } else {
+                 $scope.successMessage = 'Changes saved';
+              }
+          },
+          function() {
+              $scope.errorMessage = 'Sorry, there was an error and your changes could not be saved';
+          });
+      };
+  });
 
 var app = angular.module('atlasAdmin.interceptors', []);
 
@@ -14343,82 +14443,6 @@ app.controller('CtrlRequests', function($scope, $rootScope, $routeParams, source
 });
 'use strict';
 var app = angular.module('atlasAdmin.controllers.user', []);
-app.controller('UserProfileController', function($scope, $rootScope, $routeParams, Users, Applications, $location) {
-    $scope.app = {};
-    $scope.app.isAdmin = false;
-    $scope.app.predicate = 'created';
-    $scope.app.reverse = true;
-    $scope.app.pageSize = 10;
-    $scope.app.currentPage = 1;
-
-    var populateApplications = function(idList) {
-        $scope.app.applications = [];
-        for (var i = 0; i < idList.length; i++) {
-            Applications.get(idList[i]).then(function(application) {
-                $scope.app.applications.push(application);
-            });
-        }
-    };
-
-
-    if ($routeParams.uid) {
-        Users.get($routeParams.uid).then(function(user) {
-            $scope.app.user = user;
-            var title = 'Profile for ';
-            if (user.full_name) {
-                title += user.full_name;
-            } else {
-                title += 'user id ' + user.id;
-            }
-            $rootScope.view_title = title;
-            Users.currentUser(function(editingUser) {
-                $scope.app.isAdmin = editingUser.role === 'admin';
-                $scope.app.editingUser = editingUser.id;
-
-                if ($scope.app.isAdmin) {
-                    populateApplications($scope.app.user.applications);
-                }
-            });
-        });
-    } else {
-        Users.currentUser(function(user) {
-            $scope.app.user = user;
-            $rootScope.view_title = 'Your profile';
-        });
-    }
-
-    $scope.save = function() {
-        if ($scope.userForm.$invalid) {
-            return;
-        }
-        $scope.app.changed = false;
-        $scope.app.newUser = $scope.app.user.profile_complete === false;
-        $scope.app.user.profile_complete = true;
-        Users.update($scope.app.user).then(function() {
-            var successMessage = 'Changes saved';
-            // redirect new users to apps screen otherwise show message
-            if ($scope.app.newUser) {
-               $location.path('/');
-            } else {
-               $scope.successMessage = 'Changes saved';
-            }
-        },
-        function() {
-            $scope.errorMessage = 'Sorry, there was an error and your changes could not be saved';
-        });
-    };
-});
-app.controller('AllUsersController', function($scope, $rootScope, $routeParams, Users) {
-    $rootScope.view_title = 'Manage users';
-    $scope.app = {};
-    Users.all().then(function(users) {
-         $scope.app.users = users;
-    });
-    $scope.app.predicate = 'full_name';
-    $scope.app.reverse = false;
-    $scope.app.pageSize = 10;
-    $scope.app.currentPage = 1;
-});
 app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authentication', '$location', 'GroupsService', '$q',
     function($scope, Users, $rootScope, Authentication, $location, Groups, $q) {
     var privateItems;
