@@ -32,6 +32,8 @@ assets.js = [
             'presentation/wishlist/wishlistSources.ctrl.js',
             'presentation/epg/epg.module.js',
             'presentation/epg/epg.ctrl.js',
+            'presentation/scrubbables/scrubbables.module.js',
+            'presentation/scrubbables/scrubbables.ctrl.js',
             'js/interceptors/authInterceptor.js',
             'js/interceptors/loadingInterceptor.js',
             'js/interceptors/profileCompleteInterceptor.js',

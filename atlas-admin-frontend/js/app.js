@@ -7,6 +7,7 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.requestSource',
                         'atlasAdmin.wishlist',
                         'atlasAdmin.epg',
+                        'atlasAdmin.scrubbables',
                         'atlasAdmin.interceptors',
                         'atlasAdmin.filters',
                         'atlasAdmin.preloader',
@@ -40,7 +41,6 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.controllers.feeds',
                         'atlasAdmin.controllers.uservideosources',
                         'atlasAdmin.controllers.uservideosources.youtube',
-                        'atlasAdmin.controllers.bbcscrubbables',
                         'atlasAdmin.controllers.admins.usage',
                         'atlasAdmin.controllers.admins.manageSourceRequests',
                         'atlasAdmin.controllers.admins.manageWishlist',
@@ -60,10 +60,6 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/manage/users/:uid', {templateUrl: 'partials/profile.html', controller: 'UserProfileController'});
     $routeProvider.when('/manage/wishlist', {templateUrl: 'partials/admins/wishlist/manageWishlist.html', controller: 'CtrlManageWishlist'});
     $routeProvider.when('/manage/usage', {templateUrl: 'partials/admins/usage/requests.html', controller: 'CtrlUsage'});
-
-    // grouped routes
-    $routeProvider.when('/scrubbables', {templateUrl: 'partials/bbcScrubbables/create.html', controller: 'CtrlBBCScrubbables'});
-    $routeProvider.when('/scrubbables/:atlasId', {templateUrl: 'partials/bbcScrubbables/create.html', controller: 'CtrlBBCScrubbables'});
 
     // application user routes
     $routeProvider.when('/login', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
