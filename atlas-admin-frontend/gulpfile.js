@@ -70,6 +70,8 @@ assets.js = [
             'presentation/logout/logout.ctrl.js',
             'presentation/auth/auth.module.js',
             'presentation/auth/auth.ctrl.js',
+            'presentation/terms/terms.module.js',
+            'presentation/terms/terms.ctrl.js',
             'js/interceptors/authInterceptor.js',
             'js/interceptors/loadingInterceptor.js',
             'js/interceptors/profileCompleteInterceptor.js',

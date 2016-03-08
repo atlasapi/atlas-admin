@@ -4,6 +4,9 @@
 var app = angular.module('atlasAdmin', [
                         'atlasAdmin.interceptors',
                         'atlasAdmin.filters',
+                        'atlasAdmin.login',
+                        'atlasAdmin.logout',
+                        'atlasAdmin.auth',
                         'atlasAdmin.applications',
                         'atlasAdmin.application',
                         'atlasAdmin.requestSource',
@@ -21,9 +24,7 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.manageUser',
                         'atlasAdmin.manageUsage',
                         'atlasAdmin.manageWishlist',
-                        'atlasAdmin.login',
-                        'atlasAdmin.logout',
-                        'atlasAdmin.auth',
+                        'atlasAdmin.terms',
                         'atlasAdmin.preloader',
                         'atlasAdmin.services.auth',
                         'atlasAdmin.services.atlas',
@@ -45,7 +46,6 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.directives.inputmorph',
                         'atlasAdmin.directives.loadContent',
                         'atlasAdmin.directives.bbcscrubbables',
-                        'atlasAdmin.controllers.atlas',
                         'atlasAdmin.controllers.errors',
                         'atlasAdmin.controllers.sourceRequests',
                         'atlasAdmin.controllers.user',
@@ -59,8 +59,6 @@ var app = angular.module('atlasAdmin', [
 
 app.config(['$routeProvider', function($routeProvider) {
   // application user routes
-
-    $routeProvider.when('/terms', {templateUrl: 'partials/terms.html', controller: 'UserLicenseController'});
     $routeProvider.when('/profile', {templateUrl: 'partials/profile.html', controller: 'UserProfileController'});
     $routeProvider.when('/contact', {templateUrl: 'partials/contact.html', controller: 'ContactController'});
     $routeProvider.when('/videosource/providers', {templateUrl: 'partials/videoSourceProviders.html', controller: 'CtrlVideoSourceProviders'});

@@ -25317,6 +25317,9 @@ var t=x.length;if(t){x.sort(c);for(var e,r=1,u=x[0],i=[u];t>r;++r)e=x[r],l(e[0],
 var app = angular.module('atlasAdmin', [
                         'atlasAdmin.interceptors',
                         'atlasAdmin.filters',
+                        'atlasAdmin.login',
+                        'atlasAdmin.logout',
+                        'atlasAdmin.auth',
                         'atlasAdmin.applications',
                         'atlasAdmin.application',
                         'atlasAdmin.requestSource',
@@ -25334,9 +25337,7 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.manageUser',
                         'atlasAdmin.manageUsage',
                         'atlasAdmin.manageWishlist',
-                        'atlasAdmin.login',
-                        'atlasAdmin.logout',
-                        'atlasAdmin.auth',
+                        'atlasAdmin.terms',
                         'atlasAdmin.preloader',
                         'atlasAdmin.services.auth',
                         'atlasAdmin.services.atlas',
@@ -25358,7 +25359,6 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.directives.inputmorph',
                         'atlasAdmin.directives.loadContent',
                         'atlasAdmin.directives.bbcscrubbables',
-                        'atlasAdmin.controllers.atlas',
                         'atlasAdmin.controllers.errors',
                         'atlasAdmin.controllers.sourceRequests',
                         'atlasAdmin.controllers.user',
@@ -25372,8 +25372,6 @@ var app = angular.module('atlasAdmin', [
 
 app.config(['$routeProvider', function($routeProvider) {
   // application user routes
-
-    $routeProvider.when('/terms', {templateUrl: 'partials/terms.html', controller: 'UserLicenseController'});
     $routeProvider.when('/profile', {templateUrl: 'partials/profile.html', controller: 'UserProfileController'});
     $routeProvider.when('/contact', {templateUrl: 'partials/contact.html', controller: 'ContactController'});
     $routeProvider.when('/videosource/providers', {templateUrl: 'partials/videoSourceProviders.html', controller: 'CtrlVideoSourceProviders'});
@@ -26029,7 +26027,7 @@ angular.module('atlasAdmin.application')
         });
 
         var modalInstance = $modal.open({
-            templateUrl: 'partials/viewTermsModal.html',
+            templateUrl: 'presentation/application/viewTermsModal.tpl.html',
             controller: 'ViewTermsCtrl',
             scope: $scope
         });
@@ -27651,6 +27649,46 @@ angular.module('atlasAdmin.auth')
         $location.hash("/login");
     });
 });
+
+'use strict';
+
+angular.module('atlasAdmin.terms', ['ngRoute'])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/terms', {
+      templateUrl: 'presentation/terms/terms.tpl.html',
+      controller: 'UserLicenseController'
+    });
+  }]);
+
+angular.module('atlasAdmin.terms')
+  .controller('UserLicenseController', function($scope, $rootScope, $routeParams, Users, $location, $window, $sce, $log, ProfileStatus) {
+      // only try to get user if logged in
+      $scope.view_title = 'Atlas Terms and Conditions'
+      $scope.app = {};
+      Users.currentUser(function(user) {
+          $scope.app.user = user;
+      });
+
+      var error = function(error) {
+          $log.error(error);
+          $window.location.href = '/#/error?type=not_available';
+      };
+
+      Users.getTermsAndConditions().then(function(license) {
+        $scope.app.license = $sce.trustAsHtml(license);
+      }, error);
+
+      $scope.app.accept = function() {
+          Users.acceptTermsAndConditions($scope.app.user.id).then(function(data) {
+              ProfileStatus.setLicenseAccepted(true);
+              $location.path('/profile');
+          }, error);
+      }
+
+      $scope.app.reject = function() {
+          $location.path('/logout');
+      };
+  });
 
 var app = angular.module('atlasAdmin.interceptors', []);
 
@@ -30226,35 +30264,6 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
         });
     }
 }]);
-
-app.controller('UserLicenseController', function($scope, $rootScope, $routeParams, Users, $location, $window, $sce, $log, ProfileStatus) {
-    // only try to get user if logged in
-    $scope.view_title = 'Atlas Terms and Conditions'
-    $scope.app = {};
-    Users.currentUser(function(user) {
-        $scope.app.user = user;
-    });
-
-    var error = function(error) {
-        $log.error(error);
-        $window.location.href = '/#/error?type=not_available';
-    };
-
-    Users.getTermsAndConditions().then(function(license) {
-      $scope.app.license = $sce.trustAsHtml(license);
-    }, error);
-
-    $scope.app.accept = function() {
-        Users.acceptTermsAndConditions($scope.app.user.id).then(function(data) {
-            ProfileStatus.setLicenseAccepted(true);
-            $location.path('/profile');
-        }, error);
-    }
-
-    $scope.app.reject = function() {
-        $location.path('/logout');
-    };
-});
 
 'use strict';
 var app = angular.module('atlasAdmin.controllers.contact', []);
