@@ -9926,6 +9926,7 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.manageUsage',
                         'atlasAdmin.manageWishlist',
                         'atlasAdmin.login',
+                        'atlasAdmin.logout',
                         'atlasAdmin.preloader',
                         'atlasAdmin.services.auth',
                         'atlasAdmin.services.atlas',
@@ -9969,7 +9970,6 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/contact', {templateUrl: 'partials/contact.html', controller: 'ContactController'});
     $routeProvider.when('/videosource/providers', {templateUrl: 'partials/videoSourceProviders.html', controller: 'CtrlVideoSourceProviders'});
     $routeProvider.when('/videosource/config/youtube', {templateUrl: 'partials/videoSourceYouTubeConfig.html', controller: 'CtrlVideoSourceYouTubeConfig'});
-    $routeProvider.when('/logout', {templateUrl: 'partials/logout.html', controller: 'CtrlLogout'});
     $routeProvider.when('/error', {templateUrl: 'partials/error.html', controller: 'ErrorController', reloadOnSearch: false});
     $routeProvider.otherwise({redirectTo: '/applications'});
 }]);
@@ -12160,6 +12160,26 @@ angular.module('atlasAdmin.login')
             $log.error(error);
         });
     };
+  });
+
+'use strict';
+
+angular.module('atlasAdmin.logout', ['ngRoute'])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/logout', {
+      templateUrl: 'presentation/logout/logout.tpl.html',
+      controller: 'CtrlLogout'
+    });
+  }]);
+
+'use strict';
+
+angular.module('atlasAdmin.logout')
+  .controller('CtrlLogout', function($scope, $rootScope, $routeParams, $location, Authentication) {
+      // Ask atlas for access here
+      $rootScope.title = "Logging out";
+      Authentication.reset();
+      $location.path("/login");
   });
 
 var app = angular.module('atlasAdmin.interceptors', []);
@@ -14640,15 +14660,6 @@ app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location
     });
 });
 
-'use strict';
-var app = angular.module('atlasAdmin.controllers.auth');
-
-app.controller('CtrlLogout', function($scope, $rootScope, $routeParams, $location, Authentication) {
-    // Ask atlas for access here 
-    $rootScope.title = "Logging out";
-    Authentication.reset();
-    $location.path("/login");
-});
 var app = angular.module('atlasAdmin.controllers.sourceRequests', []);
 app.controller('CtrlRequests', function($scope, $rootScope, $routeParams, sourceRequests, Applications, $q) {
     $rootScope.title = 'Requests';
