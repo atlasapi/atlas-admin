@@ -49,6 +49,8 @@ assets.js = [
             'presentation/manageSourcesWriters/manageSourcesWriters.module.js',
             'presentation/manageSourcesWriters/manageSourcesWriters.ctrl.js',
             'presentation/manageSourcesWriters/addWriterModal/addWriterModal.ctrl.js',
+            'presentation/manageRequests/manageRequests.module.js',
+            'presentation/manageRequests/manageRequests.ctrl.js',
             'js/interceptors/authInterceptor.js',
             'js/interceptors/loadingInterceptor.js',
             'js/interceptors/profileCompleteInterceptor.js',
@@ -96,7 +98,6 @@ assets.js = [
             'js/controllers/feeds/breakdown.js',
             'js/controllers/bbcScrubbables/create.js',
             'js/controllers/admins/manageWishlist.js',
-            'js/controllers/admins/manageSourceRequests.js',
             'js/controllers/admins/usage/requests.js',
             'js/controllers/viewTerms.js'];
 

@@ -14,6 +14,7 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.manageSources',
                         'atlasAdmin.manageSourcesReaders',
                         'atlasAdmin.manageSourcesWriters',
+                        'atlasAdmin.manageRequests',
                         'atlasAdmin.interceptors',
                         'atlasAdmin.filters',
                         'atlasAdmin.preloader',
@@ -46,7 +47,6 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.controllers.uservideosources',
                         'atlasAdmin.controllers.uservideosources.youtube',
                         'atlasAdmin.controllers.admins.usage',
-                        'atlasAdmin.controllers.admins.manageSourceRequests',
                         'atlasAdmin.controllers.admins.manageWishlist',
                         'ui.bootstrap',
                         'ngResource',
@@ -55,7 +55,6 @@ var app = angular.module('atlasAdmin', [
 
 app.config(['$routeProvider', function($routeProvider) {
     // admin only routes
-    $routeProvider.when('/manage/requests', {templateUrl: 'partials/admins/manageSourceRequests.html', controller: 'CtrlManageSourceRequests'});
     $routeProvider.when('/manage/users', {templateUrl: 'partials/admins/users.html', controller: 'AllUsersController'});
     $routeProvider.when('/manage/users/:uid', {templateUrl: 'partials/profile.html', controller: 'UserProfileController'});
     $routeProvider.when('/manage/wishlist', {templateUrl: 'partials/admins/wishlist/manageWishlist.html', controller: 'CtrlManageWishlist'});
@@ -88,8 +87,8 @@ app.config(['$httpProvider', function($httpProvider) {
 // to make url's in the $scope
 app.config(['$sceDelegateProvider', function($sceDelegateProvider) {
     $sceDelegateProvider.resourceUrlWhitelist([
-        'self',
-        'http://*.metabroadcast.com/**',
-        'https://*.metabroadcast.com/**'
-        ]);
+      'self',
+      'http://*.metabroadcast.com/**',
+      'https://*.metabroadcast.com/**'
+    ]);
 }]);

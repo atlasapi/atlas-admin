@@ -1,7 +1,6 @@
 'use strict'
-var app = angular.module('atlasAdmin.controllers.admins.manageSourceRequests', []);
-
-app.controller('CtrlManageSourceRequests', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Users', 'factorySourceRequests', '$location',
+angular.module('atlasAdmin.manageRequests')
+  .controller('CtrlManageSourceRequests', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Users', 'factorySourceRequests', '$location',
     function($scope, $rootScope, $routeParams, Applications, Users, factorySourceRequests, $location) {
     $scope.app = {};
     $scope.app.requests = {};
@@ -17,10 +16,10 @@ app.controller('CtrlManageSourceRequests', ['$scope', '$rootScope', '$routeParam
     // @param sourceId {string}  the `source.id` value from mongo
     // @param state {string}  new state of request (defaults to 'approved')
     var changeRequestState = function(appId, sourceId, state) {
-        if (!_.isString(appId) && !_.isString(sourceId)) return false;        
+        if (!_.isString(appId) && !_.isString(sourceId)) return false;
         var payload = {
             appId: appId,
-            sourceId: sourceId, 
+            sourceId: sourceId,
             new_state: state || 'approved'
         }
         factorySourceRequests.putChangeRequest(payload).then(function(status) {
@@ -41,4 +40,4 @@ app.controller('CtrlManageSourceRequests', ['$scope', '$rootScope', '$routeParam
     factorySourceRequests.getUnapprovedRequests().then(function(data) {
         $scope.app.requests = data;
     });
-}])
+}]);
