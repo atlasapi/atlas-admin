@@ -102,6 +102,10 @@ assets.js = [
             'components/directives/atlasSearch/atlasSearch.directive.js',
             'components/directives/reduxVideo/reduxVideo.module.js',
             'components/directives/reduxVideo/reduxVideo.directive.js',
+            'components/directives/showSegments/showSegments.module.js',
+            'components/directives/showSegments/showSegments.directive.js',
+            'components/directives/preloader/preloader.module.js',
+            'components/directives/preloader/preloader.directive.js',
 
             'js/interceptors/authInterceptor.js',
             'js/interceptors/loadingInterceptor.js',
@@ -124,10 +128,7 @@ assets.js = [
             'js/services/feeds.js',
             'js/services/bbcScrubbables.js',
             'js/services/bbcRedux.js',
-            'js/filters.js',
-            'js/directives/preloader.js',
-            'js/directives/scrubber.js',
-            'js/directives/showSegments.js'];
+            'js/filters.js'];
 
 //  Styles
 //

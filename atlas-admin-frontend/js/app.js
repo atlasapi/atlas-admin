@@ -2,8 +2,7 @@
 
 // Declare app level module which depends on filters, and services
 angular.module('atlasAdmin',
-  [
-    'atlasAdmin.interceptors',
+   ['atlasAdmin.interceptors',
     'atlasAdmin.filters',
     'atlasAdmin.login',
     'atlasAdmin.logout',
@@ -32,8 +31,10 @@ angular.module('atlasAdmin',
     'atlasAdmin.videoSourceConfig',
     'atlasAdmin.error',
     'atlasAdmin.menu',
+
     'atlasAdmin.preloader',
     'atlasAdmin.activePath',
+
     'atlasAdmin.services.auth',
     'atlasAdmin.services.atlas',
     'atlasAdmin.services.applications',

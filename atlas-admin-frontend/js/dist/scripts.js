@@ -25315,8 +25315,7 @@ var t=x.length;if(t){x.sort(c);for(var e,r=1,u=x[0],i=[u];t>r;++r)e=x[r],l(e[0],
 
 // Declare app level module which depends on filters, and services
 angular.module('atlasAdmin',
-  [
-    'atlasAdmin.interceptors',
+   ['atlasAdmin.interceptors',
     'atlasAdmin.filters',
     'atlasAdmin.login',
     'atlasAdmin.logout',
@@ -25345,8 +25344,10 @@ angular.module('atlasAdmin',
     'atlasAdmin.videoSourceConfig',
     'atlasAdmin.error',
     'atlasAdmin.menu',
+
     'atlasAdmin.preloader',
     'atlasAdmin.activePath',
+
     'atlasAdmin.services.auth',
     'atlasAdmin.services.atlas',
     'atlasAdmin.services.applications',
@@ -29048,7 +29049,7 @@ angular.module('atlasAdmin.atlasSearch')
           restrict: 'E',
           scope: false,
           link: controller,
-          templateUrl: 'partials/bbcScrubbables/atlasSearch.html'
+          templateUrl: 'components/directives/atlasSearch/atlasSearch.tpl.html'
         };
     }]);
 
@@ -30462,21 +30463,3 @@ angular.module('atlasAdmin.filters', []).
         return output;
     }
 });
-
-'use strict';
-var app = angular.module('atlasAdmin.preloader', []);
-
-app.directive('preloader', ['$rootScope', function ($rootScope) {
-    return {
-        restrict: 'A',
-        template: '<div class="loading-container loading" ng-cloak><span class="page-loader">Loading...</span></div>',
-        link: function($scope, $el, attr) {
-            $scope.$on('loading-started', function(ev) {
-                $el.css({'display': 'block'});
-            });
-            $scope.$on('loading-complete', function(ev) {
-                $el.css({'display': 'none'});
-            });
-        }
-    }
-}]);
