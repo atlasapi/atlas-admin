@@ -78,6 +78,8 @@ assets.js = [
             'presentation/contact/contact.ctrl.js',
             'presentation/videoSourceProviders/videoSourceProviders.module.js',
             'presentation/videoSourceProviders/videoSourceProviders.ctrl.js',
+            'presentation/videoSourceConfig/videoSourceConfig.module.js',
+            'presentation/videoSourceConfig/videoSourceConfig.ctrl.js',
             'js/interceptors/authInterceptor.js',
             'js/interceptors/loadingInterceptor.js',
             'js/interceptors/profileCompleteInterceptor.js',

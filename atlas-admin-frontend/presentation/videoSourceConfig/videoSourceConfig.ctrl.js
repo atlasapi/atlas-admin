@@ -1,9 +1,8 @@
 'use strict';
-var app = angular.module('atlasAdmin.controllers.uservideosources.youtube', []);
-
-app.controller('CtrlVideoSourceYouTubeConfig', function($scope, $rootScope, UserVideoSources, UserVideoSourcesYouTube) {
+angular.module('atlasAdmin.videoSourceConfig')
+  .controller('CtrlVideoSourceYouTubeConfig', function($scope, $rootScope, UserVideoSources, UserVideoSourcesYouTube) {
     $rootScope.title = "Configure YouTube link";
-    
+
     $scope.app = {};
     if (window.location.search != "" && window.location.search.indexOf("error=") != -1) {
         window.location.href="#/videosource/providers";
@@ -12,9 +11,9 @@ app.controller('CtrlVideoSourceYouTubeConfig', function($scope, $rootScope, User
     $scope.app.writableSources = [];
     // populate available publishers
     UserVideoSources.getAllWritableSources().then(function(writableSources) {
-       $scope.app.writableSources = writableSources; 
+       $scope.app.writableSources = writableSources;
     });
-    
+
     UserVideoSourcesYouTube.getChannels().then(function(data) {
         $scope.app.channels = [];
         for (var i in data) {
@@ -33,15 +32,15 @@ app.controller('CtrlVideoSourceYouTubeConfig', function($scope, $rootScope, User
             }
         }
     });
-    
+
     $scope.app.addChannel = function(channelId, youTubeId, source) {
         $scope.app.errorMessage = "";
         $scope.app.successMessage = "";
         if (!source) {
             $scope.app.errorMessage = "Please specify a publisher for your YouTube channel";
-            return;   
+            return;
         }
-        
+
         $scope.app.infoMessage = "Please wait...";
         UserVideoSourcesYouTube.addPublisher(youTubeId, source.id).then(function(results) {
             UserVideoSourcesYouTube.addChannel(youTubeId, channelId).then(function(results) {
