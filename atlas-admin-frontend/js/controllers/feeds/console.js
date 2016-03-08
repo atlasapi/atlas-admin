@@ -1,5 +1,5 @@
 'use strict';
-var app = angular.module('atlasAdmin.controllers.feeds');
+var app = angular.module('atlasAdmin.controllers.feeds', []);
 
 app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$timeout',
 function($scope, $rootScope, $routeParams, Feeds, $q, $timeout) {
@@ -275,7 +275,7 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
         .success( function (data, status) {
           $scope.showSearchRes = true;
           var atlasres = data.contents[0];
-          
+
           if (atlasres) {
             $scope.atlasResult.imageUrl = atlasres.image;
             $scope.atlasResult.title = atlasres.title;

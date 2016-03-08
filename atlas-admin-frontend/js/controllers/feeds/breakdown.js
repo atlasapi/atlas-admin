@@ -4,7 +4,7 @@ var app = angular.module('atlasAdmin.controllers.feeds');
 app.controller('CtrlFeedsBreakdown', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modal',
 function($scope, $rootScope, $routeParams, Feeds, $q, $modal) {
   $scope.taskID = $routeParams.taskId;
-  
+
   $scope.showDetails = function() {
     var modalInstance = $modal.open({
       templateUrl: 'partials/feeds/statusDetailModal.html',
@@ -12,10 +12,10 @@ function($scope, $rootScope, $routeParams, Feeds, $q, $modal) {
       scope: $scope
     });
     modalInstance.result.then(function() {
-      
+
     });
   };
-  
+
   var loadTask = function() {
     Feeds.request('youview/bbc_nitro/tasks/'+$routeParams.taskId+'.json?annotations=remote_responses')
     .then(function(task) {
@@ -25,10 +25,10 @@ function($scope, $rootScope, $routeParams, Feeds, $q, $modal) {
     });
   };
   loadTask();
-  
+
 }]);
 
 app.controller('CtrlStatusDetail', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modalInstance',
 function($scope, $rootScope, $routeParams, $q, $modalInstance) {
-  
+
 }]);

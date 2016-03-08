@@ -8,6 +8,7 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.wishlist',
                         'atlasAdmin.epg',
                         'atlasAdmin.scrubbables',
+                        'atlasAdmin.feeds',
                         'atlasAdmin.interceptors',
                         'atlasAdmin.filters',
                         'atlasAdmin.preloader',
@@ -65,7 +66,7 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/login', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
     $routeProvider.when('/login/:providerNamespace', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
     $routeProvider.when('/oauth/:providerNamespace', {templateUrl: 'partials/oauth.html', controller: 'CtrlOAuth', reloadOnSearch: false});
-    $routeProvider.when('/feeds', {templateUrl: 'partials/feeds/feeds.html', controller: 'CtrlFeeds'});
+
     $routeProvider.when('/feeds/:feedId', {templateUrl: 'partials/feeds/console.html', controller: 'CtrlFeedsConsole'});
     $routeProvider.when('/feeds/:feedId/:taskId', {templateUrl: 'partials/feeds/breakdown.html', controller: 'CtrlFeedsBreakdown'});
     $routeProvider.when('/terms', {templateUrl: 'partials/terms.html', controller: 'UserLicenseController'});

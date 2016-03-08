@@ -9912,6 +9912,7 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.wishlist',
                         'atlasAdmin.epg',
                         'atlasAdmin.scrubbables',
+                        'atlasAdmin.feeds',
                         'atlasAdmin.interceptors',
                         'atlasAdmin.filters',
                         'atlasAdmin.preloader',
@@ -9969,7 +9970,7 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/login', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
     $routeProvider.when('/login/:providerNamespace', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
     $routeProvider.when('/oauth/:providerNamespace', {templateUrl: 'partials/oauth.html', controller: 'CtrlOAuth', reloadOnSearch: false});
-    $routeProvider.when('/feeds', {templateUrl: 'partials/feeds/feeds.html', controller: 'CtrlFeeds'});
+
     $routeProvider.when('/feeds/:feedId', {templateUrl: 'partials/feeds/console.html', controller: 'CtrlFeedsConsole'});
     $routeProvider.when('/feeds/:feedId/:taskId', {templateUrl: 'partials/feeds/breakdown.html', controller: 'CtrlFeedsBreakdown'});
     $routeProvider.when('/terms', {templateUrl: 'partials/terms.html', controller: 'UserLicenseController'});
@@ -11151,6 +11152,31 @@ angular.module('atlasAdmin.scrubbables')
         });
       };
     }]);
+
+'use strict';
+
+angular.module('atlasAdmin.feeds', ['ngRoute'])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/feeds', {
+      templateUrl: 'presentation/feeds/feeds.tpl.html',
+      controller: 'CtrlFeeds'
+    });
+  }]);
+
+'use strict';
+angular.module('atlasAdmin.feeds')
+  .controller('CtrlFeeds', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q',
+    function($scope, $rootScope, $routeParams, Feeds, $q) {
+    $scope.view_title = 'Feeds';
+
+    Feeds.get().then(
+    function(data) {
+      if (_.isEmpty(data)) {
+        return console.warn('No feed data returned');
+      }
+      $scope.feeds = data;
+    });
+}]);
 
 var app = angular.module('atlasAdmin.interceptors', []);
 
@@ -14320,22 +14346,6 @@ app.controller('CtrlVideoSourceYouTubeConfig', function($scope, $rootScope, User
 'use strict';
 var app = angular.module('atlasAdmin.controllers.feeds', []);
 
-app.controller('CtrlFeeds', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q',
-    function($scope, $rootScope, $routeParams, Feeds, $q) {
-    $scope.view_title = 'Feeds';
-    
-    Feeds.get().then(
-    function(data) {
-      if (_.isEmpty(data)) {
-        return console.warn('No feed data returned');
-      }
-      $scope.feeds = data;
-    });
-}]);
-
-'use strict';
-var app = angular.module('atlasAdmin.controllers.feeds');
-
 app.controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$timeout',
 function($scope, $rootScope, $routeParams, Feeds, $q, $timeout) {
   $scope.tasks = [];
@@ -14610,7 +14620,7 @@ function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
         .success( function (data, status) {
           $scope.showSearchRes = true;
           var atlasres = data.contents[0];
-          
+
           if (atlasres) {
             $scope.atlasResult.imageUrl = atlasres.image;
             $scope.atlasResult.title = atlasres.title;
@@ -14650,7 +14660,7 @@ var app = angular.module('atlasAdmin.controllers.feeds');
 app.controller('CtrlFeedsBreakdown', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modal',
 function($scope, $rootScope, $routeParams, Feeds, $q, $modal) {
   $scope.taskID = $routeParams.taskId;
-  
+
   $scope.showDetails = function() {
     var modalInstance = $modal.open({
       templateUrl: 'partials/feeds/statusDetailModal.html',
@@ -14658,10 +14668,10 @@ function($scope, $rootScope, $routeParams, Feeds, $q, $modal) {
       scope: $scope
     });
     modalInstance.result.then(function() {
-      
+
     });
   };
-  
+
   var loadTask = function() {
     Feeds.request('youview/bbc_nitro/tasks/'+$routeParams.taskId+'.json?annotations=remote_responses')
     .then(function(task) {
@@ -14671,12 +14681,12 @@ function($scope, $rootScope, $routeParams, Feeds, $q, $modal) {
     });
   };
   loadTask();
-  
+
 }]);
 
 app.controller('CtrlStatusDetail', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modalInstance',
 function($scope, $rootScope, $routeParams, $q, $modalInstance) {
-  
+
 }]);
 
 'use strict';
