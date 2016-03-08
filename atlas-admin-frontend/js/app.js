@@ -29,6 +29,7 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.contact',
                         'atlasAdmin.videoSourceProviders',
                         'atlasAdmin.videoSourceConfig',
+                        'atlasAdmin.error',
                         'atlasAdmin.preloader',
                         'atlasAdmin.services.auth',
                         'atlasAdmin.services.atlas',
@@ -50,7 +51,6 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.directives.inputmorph',
                         'atlasAdmin.directives.loadContent',
                         'atlasAdmin.directives.bbcscrubbables',
-                        'atlasAdmin.controllers.errors',
                         'atlasAdmin.controllers.sourceRequests',
                         'atlasAdmin.controllers.user',
                         'ui.bootstrap',
@@ -59,8 +59,6 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdminConfig']);
 
 app.config(['$routeProvider', function($routeProvider) {
-  // application user routes
-    $routeProvider.when('/error', {templateUrl: 'partials/error.html', controller: 'ErrorController', reloadOnSearch: false});
     $routeProvider.otherwise({redirectTo: '/applications'});
 }]);
 

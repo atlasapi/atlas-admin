@@ -25342,6 +25342,7 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.contact',
                         'atlasAdmin.videoSourceProviders',
                         'atlasAdmin.videoSourceConfig',
+                        'atlasAdmin.error',
                         'atlasAdmin.preloader',
                         'atlasAdmin.services.auth',
                         'atlasAdmin.services.atlas',
@@ -25363,7 +25364,6 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.directives.inputmorph',
                         'atlasAdmin.directives.loadContent',
                         'atlasAdmin.directives.bbcscrubbables',
-                        'atlasAdmin.controllers.errors',
                         'atlasAdmin.controllers.sourceRequests',
                         'atlasAdmin.controllers.user',
                         'ui.bootstrap',
@@ -25372,8 +25372,6 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdminConfig']);
 
 app.config(['$routeProvider', function($routeProvider) {
-  // application user routes
-    $routeProvider.when('/error', {templateUrl: 'partials/error.html', controller: 'ErrorController', reloadOnSearch: false});
     $routeProvider.otherwise({redirectTo: '/applications'});
 }]);
 
@@ -28010,6 +28008,30 @@ angular.module('atlasAdmin.videoSourceConfig')
     };
 });
 
+'use strict';
+
+angular.module('atlasAdmin.error', ['ngRoute'])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/error', {
+      templateUrl: 'presentation/error/error.tpl.html',
+      controller: 'ErrorController',
+      reloadOnSearch: false
+    });
+  }]);
+
+'use strict';
+
+angular.module('atlasAdmin.error')
+  .controller('ErrorController', function($scope, $rootScope, $routeParams) {
+      $rootScope.title = "Sorry, there was a problem....";
+      $scope.alerts = [];
+      if ($routeParams.type == "forbidden") {
+          $scope.alerts.push({type:"danger", msg: "You do not have access to this resource"});
+      } else if ($routeParams.type == "not_available") {
+          $scope.alerts.push({type:"info", msg: "This service is not currently available. Please try again later."});
+      }
+  });
+
 var app = angular.module('atlasAdmin.interceptors', []);
 
 app.factory('AuthenticationInterceptor', ['$q', '$location', 'atlasHost', 'atlasApiHost', '$window', 'Authentication',
@@ -30426,17 +30448,6 @@ function($document, $q, $timeout, atlasHost, $http, Groups, Scrubbables, Helpers
     };
   }]);
 
-'use strict';
-var app = angular.module('atlasAdmin.controllers.errors', []);
-app.controller('ErrorController', function($scope, $rootScope, $routeParams) {
-    $rootScope.title = "Sorry, there was a problem....";
-    $scope.alerts = [];
-    if ($routeParams.type == "forbidden") {
-        $scope.alerts.push({type:"danger", msg: "You do not have access to this resource"});        
-    } else if ($routeParams.type == "not_available") {
-        $scope.alerts.push({type:"info", msg: "This service is not currently available. Please try again later."});        
-    } 
-});
 var app = angular.module('atlasAdmin.controllers.sourceRequests', []);
 app.controller('CtrlRequests', function($scope, $rootScope, $routeParams, sourceRequests, Applications, $q) {
     $rootScope.title = 'Requests';

@@ -80,6 +80,8 @@ assets.js = [
             'presentation/videoSourceProviders/videoSourceProviders.ctrl.js',
             'presentation/videoSourceConfig/videoSourceConfig.module.js',
             'presentation/videoSourceConfig/videoSourceConfig.ctrl.js',
+            'presentation/error/error.module.js',
+            'presentation/error/error.ctrl.js',
             'js/interceptors/authInterceptor.js',
             'js/interceptors/loadingInterceptor.js',
             'js/interceptors/profileCompleteInterceptor.js',
