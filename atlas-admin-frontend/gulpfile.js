@@ -108,6 +108,10 @@ assets.js = [
             'components/directives/preloader/preloader.directive.js',
             'components/directives/actionModal/actionModal.module.js',
             'components/directives/actionModal/actionModal.directive.js',
+            'components/directives/deleteItem/deleteItem.module.js',
+            'components/directives/deleteItem/deleteItem.directive.js',
+            'components/directives/changeStatus/changeStatus.module.js',
+            'components/directives/changeStatus/changeStatus.directive.js',
 
             'js/interceptors/authInterceptor.js',
             'js/interceptors/loadingInterceptor.js',
