@@ -52,7 +52,6 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.directives.inputmorph',
                         'atlasAdmin.directives.loadContent',
                         'atlasAdmin.directives.bbcscrubbables',
-                        'atlasAdmin.controllers.sourceRequests',
                         'ui.bootstrap',
                         'ngResource',
                         'ngRoute',
