@@ -1,6 +1,5 @@
-var app = angular.module('atlasAdmin.directives.inputmorph', []);
-
-app.directive('inputMorph', ['$document', function($document) {
+angular.module('atlasAdmin.inputMorph')
+  .directive('inputMorph', ['$document', function($document) {
     return function(scope, $el, attr) {
         var title = attr.title;
         var id = attr.inputMorph;

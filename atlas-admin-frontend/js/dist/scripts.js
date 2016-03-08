@@ -25314,80 +25314,74 @@ var t=x.length;if(t){x.sort(c);for(var e,r=1,u=x[0],i=[u];t>r;++r)e=x[r],l(e[0],
 'use strict';
 
 // Declare app level module which depends on filters, and services
-var app = angular.module('atlasAdmin', [
-                        'atlasAdmin.interceptors',
-                        'atlasAdmin.filters',
-                        'atlasAdmin.login',
-                        'atlasAdmin.logout',
-                        'atlasAdmin.auth',
-                        'atlasAdmin.applications',
-                        'atlasAdmin.application',
-                        'atlasAdmin.requestSource',
-                        'atlasAdmin.wishlist',
-                        'atlasAdmin.epg',
-                        'atlasAdmin.scrubbables',
-                        'atlasAdmin.feeds',
-                        'atlasAdmin.feed',
-                        'atlasAdmin.feedBreakdown',
-                        'atlasAdmin.manageSources',
-                        'atlasAdmin.manageSourcesReaders',
-                        'atlasAdmin.manageSourcesWriters',
-                        'atlasAdmin.manageRequests',
-                        'atlasAdmin.manageUsers',
-                        'atlasAdmin.manageUser',
-                        'atlasAdmin.manageUsage',
-                        'atlasAdmin.manageWishlist',
-                        'atlasAdmin.terms',
-                        'atlasAdmin.profile',
-                        'atlasAdmin.contact',
-                        'atlasAdmin.videoSourceProviders',
-                        'atlasAdmin.videoSourceConfig',
-                        'atlasAdmin.error',
-                        'atlasAdmin.menu',
-                        'atlasAdmin.preloader',
-                        'atlasAdmin.activePath',
-                        'atlasAdmin.services.auth',
-                        'atlasAdmin.services.atlas',
-                        'atlasAdmin.services.applications',
-                        'atlasAdmin.services.sources',
-                        'atlasAdmin.services.sourceRequests',
-                        'atlasAdmin.services.sourceLicenses',
-                        'atlasAdmin.services.users',
-                        'atlasAdmin.services.uservideosources',
-                        'atlasAdmin.services.uservideosources.youtube',
-                        'atlasAdmin.services.propositions',
-                        'atlasAdmin.services.usage',
-                        'atlasAdmin.services.feeds',
-                        'atlasAdmin.services.bbcscrubbables',
-                        'atlasAdmin.directives.inputmorph',
-                        'atlasAdmin.directives.loadContent',
-                        'atlasAdmin.directives.bbcscrubbables',
-                        'ui.bootstrap',
-                        'ngResource',
-                        'ngRoute',
-                        'atlasAdminConfig']);
+angular.module('atlasAdmin',
+  [
+    'atlasAdmin.interceptors',
+    'atlasAdmin.filters',
+    'atlasAdmin.login',
+    'atlasAdmin.logout',
+    'atlasAdmin.auth',
+    'atlasAdmin.applications',
+    'atlasAdmin.application',
+    'atlasAdmin.requestSource',
+    'atlasAdmin.wishlist',
+    'atlasAdmin.epg',
+    'atlasAdmin.scrubbables',
+    'atlasAdmin.feeds',
+    'atlasAdmin.feed',
+    'atlasAdmin.feedBreakdown',
+    'atlasAdmin.manageSources',
+    'atlasAdmin.manageSourcesReaders',
+    'atlasAdmin.manageSourcesWriters',
+    'atlasAdmin.manageRequests',
+    'atlasAdmin.manageUsers',
+    'atlasAdmin.manageUser',
+    'atlasAdmin.manageUsage',
+    'atlasAdmin.manageWishlist',
+    'atlasAdmin.terms',
+    'atlasAdmin.profile',
+    'atlasAdmin.contact',
+    'atlasAdmin.videoSourceProviders',
+    'atlasAdmin.videoSourceConfig',
+    'atlasAdmin.error',
+    'atlasAdmin.menu',
+    'atlasAdmin.preloader',
+    'atlasAdmin.activePath',
+    'atlasAdmin.services.auth',
+    'atlasAdmin.services.atlas',
+    'atlasAdmin.services.applications',
+    'atlasAdmin.services.sources',
+    'atlasAdmin.services.sourceRequests',
+    'atlasAdmin.services.sourceLicenses',
+    'atlasAdmin.services.users',
+    'atlasAdmin.services.uservideosources',
+    'atlasAdmin.services.uservideosources.youtube',
+    'atlasAdmin.services.propositions',
+    'atlasAdmin.services.usage',
+    'atlasAdmin.services.feeds',
+    'atlasAdmin.services.bbcscrubbables',
+    'atlasAdmin.directives.loadContent',
+    'atlasAdmin.directives.bbcscrubbables',
+    'ui.bootstrap',
+    'ngResource',
+    'ngRoute',
+    'atlasAdminConfig'
+  ])
+  .config(['$routeProvider', '$httpProvider', '$sceDelegateProvider', function($routeProvider, $httpProvider, $sceDelegateProvider) {
+      $routeProvider.otherwise({redirectTo: '/applications'});
 
-app.config(['$routeProvider', function($routeProvider) {
-    $routeProvider.otherwise({redirectTo: '/applications'});
-}]);
+      $httpProvider.defaults.useXDomain = true;
+      delete $httpProvider.defaults.headers.common['X-Requested-With'];
+      $httpProvider.interceptors.push('LoadingInterceptor');
+      $httpProvider.interceptors.push('AuthenticationInterceptor');
+      $httpProvider.interceptors.push('ProfileCompleteInterceptor');
 
-app.config(['$httpProvider', function($httpProvider) {
-    $httpProvider.defaults.useXDomain = true;
-    delete $httpProvider.defaults.headers.common['X-Requested-With'];
-    $httpProvider.interceptors.push('LoadingInterceptor');
-    $httpProvider.interceptors.push('AuthenticationInterceptor');
-    $httpProvider.interceptors.push('ProfileCompleteInterceptor');
-}]);
-
-// This is used for telling angular to allow transposing of strings
-// to make url's in the $scope
-app.config(['$sceDelegateProvider', function($sceDelegateProvider) {
-    $sceDelegateProvider.resourceUrlWhitelist([
-      'self',
-      'http://*.metabroadcast.com/**',
-      'https://*.metabroadcast.com/**'
-    ]);
-}]);
+      $sceDelegateProvider.resourceUrlWhitelist([
+        'self',
+        'http://*.metabroadcast.com/**',
+        'https://*.metabroadcast.com/**'
+      ]);
+  }]);
 
 'use strict';
 
@@ -26130,7 +26124,7 @@ angular.module('atlasAdmin.requestSource')
 
 'use strict';
 
-angular.module('atlasAdmin.wishlist', ['ngRoute'])
+angular.module('atlasAdmin.wishlist', ['ngRoute', 'atlasAdmin.inputMorph'])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/wishlist', {
       templateUrl: 'presentation/wishlist/wishlist.tpl.html',
@@ -28334,6 +28328,40 @@ angular.module('atlasAdmin.validUsage')
     }
 });
 
+angular.module('atlasAdmin.inputMorph', []);
+
+angular.module('atlasAdmin.inputMorph')
+  .directive('inputMorph', ['$document', function($document) {
+    return function(scope, $el, attr) {
+        var title = attr.title;
+        var id = attr.inputMorph;
+
+        // template
+        $el.html( '<span class="button-state button medium stroke">I want this</span>'+
+                      '<div class="form-state">'+
+                          '<input type="text" name="reason" class="flush-right" placeholder="Briefly, why do you want access to '+title+'?">'+
+                          '<span class="button small left-flush">ok</span>'+
+                      '</div>' );
+
+        // switch state on click
+        $('.button-state', $el).on('click', function() {
+            $('.button-to-input').removeClass('input-mode');
+            $(this).parent().addClass('input-mode');
+            $('input', this).focus();
+        })
+
+        // submit request
+        $('.form-state .button', $el).on('click', function() {
+            var reason = $('.form-state input', $el).val() || '';
+            if (reason.length > 1) {
+                scope.$parent.make_wish(id, reason);
+            }else{
+                console.error('Reason not long enough')
+            }
+        })
+    }
+}]);
+
 var app = angular.module('atlasAdmin.interceptors', []);
 
 app.factory('AuthenticationInterceptor', ['$q', '$location', 'atlasHost', 'atlasApiHost', '$window', 'Authentication',
@@ -29738,38 +29766,6 @@ app.directive('preloader', ['$rootScope', function ($rootScope) {
                 $el.css({'display': 'none'});
             });
         }
-    }
-}]);
-var app = angular.module('atlasAdmin.directives.inputmorph', []);
-
-app.directive('inputMorph', ['$document', function($document) {
-    return function(scope, $el, attr) {
-        var title = attr.title;
-        var id = attr.inputMorph;
-
-        // template
-        $el.html( '<span class="button-state button medium stroke">I want this</span>'+
-                      '<div class="form-state">'+
-                          '<input type="text" name="reason" class="flush-right" placeholder="Briefly, why do you want access to '+title+'?">'+
-                          '<span class="button small left-flush">ok</span>'+
-                      '</div>' );
-
-        // switch state on click
-        $('.button-state', $el).on('click', function() {
-            $('.button-to-input').removeClass('input-mode');
-            $(this).parent().addClass('input-mode');
-            $('input', this).focus();
-        })
-
-        // submit request
-        $('.form-state .button', $el).on('click', function() {
-            var reason = $('.form-state input', $el).val() || '';
-            if (reason.length > 1) {
-                scope.$parent.make_wish(id, reason);
-            }else{
-                console.error('Reason not long enough')
-            }
-        })
     }
 }]);
 'use strict';
