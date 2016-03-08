@@ -90,6 +90,8 @@ assets.js = [
             'components/directives/focus/focus.directive.js',
             'components/directives/activePath/activePath.module.js',
             'components/directives/activePath/activePath.directive.js',
+            'components/directives/validUsage/validUsage.module.js',
+            'components/directives/validUsage/validUsage.directive.js',
             'js/interceptors/authInterceptor.js',
             'js/interceptors/loadingInterceptor.js',
             'js/interceptors/profileCompleteInterceptor.js',
@@ -113,23 +115,11 @@ assets.js = [
             'js/services/bbcRedux.js',
             'js/filters.js',
             'js/directives/preloader.js',
-            'js/directives/validUsage.js',
             'js/directives/inputMorph.js',
             'js/directives/loadContent.js',
             'js/directives/scrubber.js',
             'js/directives/showSegments.js',
-            'js/directives/atlasSearch.js',
-            'js/controllers/errors.js',
-            'js/controllers/sources.js',
-            'js/controllers/sourceRequests.js',
-            'js/controllers/userProfile.js',
-            'js/controllers/contact.js',
-            'js/controllers/userVideoSources.js',
-            'js/controllers/userVideoSourcesYouTube.js',
-            'js/controllers/feeds/console.js',
-            'js/controllers/feeds/breakdown.js',
-            'js/controllers/bbcScrubbables/create.js',
-            'js/controllers/viewTerms.js'];
+            'js/directives/atlasSearch.js'];
 
 //  Styles
 //
