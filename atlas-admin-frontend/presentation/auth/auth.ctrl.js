@@ -1,7 +1,7 @@
 'use strict';
-var app = angular.module('atlasAdmin.controllers.auth', []);
 
-app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location, Authentication, Atlas, $log, Users) {
+angular.module('atlasAdmin.auth')
+  .controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location, Authentication, Atlas, $log, Users) {
     if (window.location.search.indexOf("code") == -1 &&  window.location.search.indexOf("oauth") == -1) {
         // search part will be empty if we have been here and cleared the oauth replies
         // In this case redirect.
@@ -11,7 +11,7 @@ app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location
 
     $rootScope.title = "Signing in...";
     Authentication.setProvider($routeParams.providerNamespace);
-    
+
     var oauth_token = "";
     var oauth_verifier = "";
     var code = "";
@@ -27,7 +27,7 @@ app.controller('CtrlOAuth', function($scope, $rootScope, $routeParams, $location
            code = parts[1];
         }
     }
-    
+
     Atlas.getAccessToken(oauth_token, oauth_verifier, code)
         .then(function(results) {
         if (!results.data.oauth_result) {

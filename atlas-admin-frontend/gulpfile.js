@@ -5,7 +5,6 @@ var scss = require('gulp-sass');
 var autoprefix = require('gulp-autoprefixer');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
-var shell = require('gulp-shell');
 var webserver = require('gulp-webserver');
 var assets = {};
 var gulpProtractorAngular = require('gulp-angular-protractor');
@@ -69,6 +68,8 @@ assets.js = [
             'presentation/login/login.ctrl.js',
             'presentation/logout/logout.module.js',
             'presentation/logout/logout.ctrl.js',
+            'presentation/auth/auth.module.js',
+            'presentation/auth/auth.ctrl.js',
             'js/interceptors/authInterceptor.js',
             'js/interceptors/loadingInterceptor.js',
             'js/interceptors/profileCompleteInterceptor.js',
@@ -102,7 +103,6 @@ assets.js = [
             'js/directives/showSegments.js',
             'js/directives/atlasSearch.js',
             'js/controllers/errors.js',
-            'js/controllers/auth/auth.js',
             'js/controllers/sources.js',
             'js/controllers/sourceRequests.js',
             'js/controllers/userProfile.js',
