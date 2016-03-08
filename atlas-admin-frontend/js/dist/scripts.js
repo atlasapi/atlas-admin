@@ -26561,7 +26561,7 @@ angular.module('atlasAdmin.feeds')
 
 'use strict';
 
-angular.module('atlasAdmin.feed', ['ngRoute'])
+angular.module('atlasAdmin.feed', ['ngRoute', 'atlasAdmin.actionModal'])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/feeds/:feedId', {
       templateUrl: 'presentation/feed/feed.tpl.html',
@@ -26684,7 +26684,6 @@ angular.module('atlasAdmin.feed')
         });
       })();
 
-
       // Used for loading data into the tasks scope
       // @param data {object} the tasks object
       var pushTasksTable = function(data) {
@@ -26697,7 +26696,6 @@ angular.module('atlasAdmin.feed')
         $scope.tasks = data.tasks;
       };
 
-
       // Used for calculating uptime since last outage
       // @param last_outage {date}
       var calculateUptime = function(last_outage) {
@@ -26705,50 +26703,6 @@ angular.module('atlasAdmin.feed')
         _then = last_outage,
         _delta = Math.round(Math.abs((_now.getTime() - _then.getTime()))/(24*60*60*1000));
         return _delta.toString();
-      };
-    }])
-  .directive('actionModal', ['$document', '$q', '$modal',
-    function($document, $q, $modal) {
-      var controller = function($scope, el, attr) {
-        var modal = function(action) {
-          var defer = $q.defer();
-
-          if (!_.isString(action)) {
-            defer.reject();
-            return defer.promise;
-          }
-
-          var _content = {
-            title: '<strong>'+action+'</strong> task?',
-            action: action.charAt(0).toUpperCase() + action.slice(1)
-          };
-
-          var _modalInstance = $modal.open({
-            // template: '<h1>'+_content.title+'</h1></div><div class="feed-modal-options"><button ng-disabled="isSendingAction" ng-click="ok()">'+_content.action+'</button><button ng-click="dismiss()">Cancel</button>',
-            templateUrl: 'presentation/feed/actionsModal/actionsModal.tpl.html',
-            controller: 'CtrlFeedsAcceptModal',
-            windowClass: 'feedsAcceptModal',
-            scope: $scope,
-            resolve: { modalAction: function() { return action; } }
-          });
-
-          _modalInstance.result.then(defer.resolve, defer.reject);
-          return defer.promise;
-        };
-
-        $(el).on('click', function() {
-          if ($scope.task || $scope.tasks) {
-            var action = attr.actionModal || null;
-            modal(action).then( function() {
-
-            });
-          }
-        });
-      };
-
-      return {
-        scope: false,
-        link: controller
       };
     }]);
 
@@ -26882,7 +26836,7 @@ angular.module('atlasAdmin.feed')
 
 'use strict';
 
-angular.module('atlasAdmin.feedBreakdown', ['ngRoute', 'atlasAdmin.loadContent'])
+angular.module('atlasAdmin.feedBreakdown', ['ngRoute', 'atlasAdmin.loadContent', 'atlasAdmin.actionModal'])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/feeds/:feedId/:taskId', {
       templateUrl: 'presentation/feedBreakdown/feedBreakdown.tpl.html',
@@ -29074,6 +29028,172 @@ angular.module('atlasAdmin.reduxVideo')
       scope: false
     }
   }]);
+
+angular.module('atlasAdmin.showSegments', []);
+
+angular.module('atlasAdmin.showSegments')
+  .directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$http',
+    function($document, $q, $timeout, atlasHost, $http) {
+
+    // For creating a new segment block to be pushed into the
+    // showSegments.segments array
+    var createSegmentObj = function(label, url, startTime, duration, id) {
+      return {
+        label: label,
+        url: url,
+        startTime: startTime,
+        endTime: startTime + duration,
+        _id: id
+      };
+    };
+
+
+    var controller = function($scope, $el, $attr) {
+      var $el = $($el);
+      $scope.showSegments = {};
+      $scope.showSegments.newItem = {};
+      $scope.showSegments.segments = [];
+      $scope.showSegments.showCreateUI = false;
+      $scope.showSegments.submitted = false;
+
+      $scope.showSegments.loadSegments = function(events) {
+        if (! _.isArray(events)) {
+          console.error('events expected to be an array');
+          return;
+        }
+        var _segment, _duration;
+        _.forEach(events, function (ev) {
+          if ( _.has(ev.segment, 'related_links') ) {
+            _.forEach(ev.segment.related_links,
+            function (link) {
+              _duration = ev.segment.duration || 0;
+              _segment = createSegmentObj(link.title,
+                                          link.url,
+                                          0,
+                                          _duration,
+                                          $scope.generateID());
+              $scope.showSegments.segments.push(_segment);
+            });
+          }
+        });
+      };
+
+      $scope.showSegments.removeItem = function(id) {
+          if (!_.isString(id)) {
+            return false;
+          }
+
+          for (var i in $scope.showSegments.segments) {
+              if ($scope.showSegments.segments[i]._id === id) {
+                  console.log(id);
+                  $scope.showSegments.segments.splice(i, 1);
+                  break;
+              }
+          }
+      };
+
+      $scope.showSegments.createUI = function() {
+          $scope.showSegments.showCreateUI = true;
+          $scope.showSegments.newItem = {};
+      };
+
+      $scope.showSegments.cancel = function() {
+          $scope.showSegments.showCreateUI = false;
+          $scope.showSegments.newItem = {};
+      };
+
+      $scope.showSegments.new = function() {
+          $scope.showSegments.submitted = true;
+          if (newSegmentForm.linkLabel.value === '' || newSegmentForm.linkUrl.value === '' ) {
+            return;
+          }
+
+          var _segment = createSegmentObj($scope.showSegments.newItem.label,
+                                          $scope.showSegments.newItem.url,
+                                          0,
+                                          $scope.broadcast.duration,
+                                          $scope.generateID());
+          $scope.showSegments.segments.push(_segment);
+          $scope.showSegments.newItem.label = $scope.showSegments.newItem.url = '';
+          $scope.showSegments.showCreateUI = false;
+          $scope.showSegments.submitted = false;
+      };
+    };
+
+    return {
+        restrict: 'E',
+        scope: false,
+        link: controller,
+        templateUrl: 'components/directives/showSegments.tpl.html'
+    };
+  }]);
+
+angular.module('atlasAdmin.preloader', []);
+
+'use strict';
+angular.module('atlasAdmin.preloader')
+  .directive('preloader', ['$rootScope', function ($rootScope) {
+    return {
+      restrict: 'A',
+      template: '<div class="loading-container loading" ng-cloak><span class="page-loader">Loading...</span></div>',
+      link: function($scope, $el, attr) {
+        $scope.$on('loading-started', function(ev) {
+          $el.css({'display': 'block'});
+        });
+        $scope.$on('loading-complete', function(ev) {
+          $el.css({'display': 'none'});
+        });
+      }
+    }
+  }]);
+
+angular.module('atlasAdmin.actionModal', []);
+
+angular.module('atlasAdmin.actionModal')
+  .directive('actionModal', ['$document', '$q', '$modal',
+    function($document, $q, $modal) {
+      var controller = function($scope, el, attr) {
+        var modal = function(action) {
+          var defer = $q.defer();
+
+          if (!_.isString(action)) {
+            defer.reject();
+            return defer.promise;
+          }
+
+          var _content = {
+            title: '<strong>'+action+'</strong> task?',
+            action: action.charAt(0).toUpperCase() + action.slice(1)
+          };
+
+          var _modalInstance = $modal.open({
+            // template: '<h1>'+_content.title+'</h1></div><div class="feed-modal-options"><button ng-disabled="isSendingAction" ng-click="ok()">'+_content.action+'</button><button ng-click="dismiss()">Cancel</button>',
+            templateUrl: 'presentation/feed/actionsModal/actionsModal.tpl.html',
+            controller: 'CtrlFeedsAcceptModal',
+            windowClass: 'feedsAcceptModal',
+            scope: $scope,
+            resolve: { modalAction: function() { return action; } }
+          });
+
+          _modalInstance.result.then(defer.resolve, defer.reject);
+          return defer.promise;
+        };
+
+        $(el).on('click', function() {
+          if ($scope.task || $scope.tasks) {
+            var action = attr.actionModal || null;
+            modal(action).then( function() {
+
+            });
+          }
+        });
+      };
+
+      return {
+        scope: false,
+        link: controller
+      };
+    }]);
 
 var app = angular.module('atlasAdmin.interceptors', []);
 

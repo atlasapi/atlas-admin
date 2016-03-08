@@ -106,6 +106,8 @@ assets.js = [
             'components/directives/showSegments/showSegments.directive.js',
             'components/directives/preloader/preloader.module.js',
             'components/directives/preloader/preloader.directive.js',
+            'components/directives/actionModal/actionModal.module.js',
+            'components/directives/actionModal/actionModal.directive.js',
 
             'js/interceptors/authInterceptor.js',
             'js/interceptors/loadingInterceptor.js',
