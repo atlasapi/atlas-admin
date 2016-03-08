@@ -9921,6 +9921,7 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.manageRequests',
                         'atlasAdmin.manageUsers',
                         'atlasAdmin.manageUser',
+                        'atlasAdmin.manageUsage',
                         'atlasAdmin.interceptors',
                         'atlasAdmin.filters',
                         'atlasAdmin.preloader',
@@ -9952,7 +9953,6 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.controllers.contact',
                         'atlasAdmin.controllers.uservideosources',
                         'atlasAdmin.controllers.uservideosources.youtube',
-                        'atlasAdmin.controllers.admins.usage',
                         'atlasAdmin.controllers.admins.manageWishlist',
                         'ui.bootstrap',
                         'ngResource',
@@ -9962,7 +9962,6 @@ var app = angular.module('atlasAdmin', [
 app.config(['$routeProvider', function($routeProvider) {
     // admin only routes
     $routeProvider.when('/manage/wishlist', {templateUrl: 'partials/admins/wishlist/manageWishlist.html', controller: 'CtrlManageWishlist'});
-    $routeProvider.when('/manage/usage', {templateUrl: 'partials/admins/usage/requests.html', controller: 'CtrlUsage'});
 
     // application user routes
     $routeProvider.when('/login', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
@@ -11865,6 +11864,52 @@ angular.module('atlasAdmin.manageUser')
           });
       };
   });
+
+'use strict';
+
+angular.module('atlasAdmin.manageUsage', ['ngRoute'])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/manage/usage', {
+      templateUrl: 'presentation/manageUsage/manageUsage.tpl.html',
+      controller: 'CtrlUsage'
+    });
+  }]);
+
+'use strict';
+
+angular.module('atlasAdmin.manageUsage')
+  .controller('CtrlUsage', ['$scope', '$rootScope', 'Authentication', 'atlasApiHost', '$http', function($scope, $rootScope, Authentication, atlasApiHost, $http) {
+    var getUsageData = function () {
+      var TIME_PERIOD = 8;
+      var dates = [];
+
+      for (var i = 0, ii = TIME_PERIOD; i < ii; i++) {
+        dates.push('logstash-atlas-access-' + moment().subtract(i, 'days').format('YYYY.MM.DD'));
+      }
+
+      dates = dates.join(',');
+
+      var numberWithCommas = function (x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      };
+
+      $http.get(Authentication.appendTokenToUrl(atlasApiHost + '/usage-list/' + dates)).then(function (response) {
+        var usageData =  _.has(response, 'data') ? response.data.aggregations.apiKeys.buckets : null;
+
+        if (! usageData) {
+          console.warn('Response data doesnt have the `data` property', response);
+          return;
+        }
+
+        _.forEach(usageData, function (d) {
+          d.readableCount = numberWithCommas(d.doc_count);
+        });
+        $scope.requests = usageData;
+      });
+    };
+
+    getUsageData();
+  }]);
 
 var app = angular.module('atlasAdmin.interceptors', []);
 
@@ -15020,43 +15065,6 @@ app.directive('changestatus', ['$document', 'factoryPropositions',
     }
     return definitionObj;
 }])
-'use strict';
-
-var app = angular.module('atlasAdmin.controllers.admins.usage', []);
-
-app.controller('CtrlUsage', ['$scope', '$rootScope', 'Authentication', 'atlasApiHost', '$http', function($scope, $rootScope, Authentication, atlasApiHost, $http) {
-  var getUsageData = function () {
-    var TIME_PERIOD = 8;
-    var dates = [];
-
-    for (var i = 0, ii = TIME_PERIOD; i < ii; i++) {
-      dates.push('logstash-atlas-access-' + moment().subtract(i, 'days').format('YYYY.MM.DD'));
-    }
-
-    dates = dates.join(',');
-
-    var numberWithCommas = function (x) {
-      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    };
-
-    $http.get(Authentication.appendTokenToUrl(atlasApiHost + '/usage-list/' + dates)).then(function (response) {
-      var usageData =  _.has(response, 'data') ? response.data.aggregations.apiKeys.buckets : null;
-      
-      if (! usageData) {
-        console.warn('Response data doesnt have the `data` property', response);
-        return;
-      }
-      
-      _.forEach(usageData, function (d) {
-        d.readableCount = numberWithCommas(d.doc_count);
-      });
-      $scope.requests = usageData;
-    });
-  };
-
-  getUsageData();
-}]);
-
 'use strict';
 var app = angular.module('atlasAdmin.controllers.atlas', []);
 

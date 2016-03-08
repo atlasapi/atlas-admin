@@ -17,6 +17,7 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.manageRequests',
                         'atlasAdmin.manageUsers',
                         'atlasAdmin.manageUser',
+                        'atlasAdmin.manageUsage',
                         'atlasAdmin.interceptors',
                         'atlasAdmin.filters',
                         'atlasAdmin.preloader',
@@ -48,7 +49,6 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.controllers.contact',
                         'atlasAdmin.controllers.uservideosources',
                         'atlasAdmin.controllers.uservideosources.youtube',
-                        'atlasAdmin.controllers.admins.usage',
                         'atlasAdmin.controllers.admins.manageWishlist',
                         'ui.bootstrap',
                         'ngResource',
@@ -58,7 +58,6 @@ var app = angular.module('atlasAdmin', [
 app.config(['$routeProvider', function($routeProvider) {
     // admin only routes
     $routeProvider.when('/manage/wishlist', {templateUrl: 'partials/admins/wishlist/manageWishlist.html', controller: 'CtrlManageWishlist'});
-    $routeProvider.when('/manage/usage', {templateUrl: 'partials/admins/usage/requests.html', controller: 'CtrlUsage'});
 
     // application user routes
     $routeProvider.when('/login', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});

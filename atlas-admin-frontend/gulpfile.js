@@ -55,6 +55,8 @@ assets.js = [
             'presentation/manageUsers/manageUsers.ctrl.js',
             'presentation/manageUser/manageUser.module.js',
             'presentation/manageUser/manageUser.ctrl.js',
+            'presentation/manageUsage/manageUsage.module.js',
+            'presentation/manageUsage/manageUsage.ctrl.js',
             'js/interceptors/authInterceptor.js',
             'js/interceptors/loadingInterceptor.js',
             'js/interceptors/profileCompleteInterceptor.js',
@@ -93,7 +95,6 @@ assets.js = [
             'js/controllers/auth/logout.js',
             'js/controllers/sources.js',
             'js/controllers/sourceRequests.js',
-            'js/controllers/requestSource.js',
             'js/controllers/userProfile.js',
             'js/controllers/contact.js',
             'js/controllers/userVideoSources.js',
@@ -102,7 +103,6 @@ assets.js = [
             'js/controllers/feeds/breakdown.js',
             'js/controllers/bbcScrubbables/create.js',
             'js/controllers/admins/manageWishlist.js',
-            'js/controllers/admins/usage/requests.js',
             'js/controllers/viewTerms.js'];
 
 //  Styles
