@@ -94,7 +94,9 @@ assets.js = [
             'components/directives/validUsage/validUsage.directive.js',
             'components/directives/inputMorph/inputMorph.module.js',
             'components/directives/inputMorph/inputMorph.directive.js',
-            
+            'components/directives/loadContent/loadContent.module.js',
+            'components/directives/loadContent/loadContent.directive.js',
+
             'js/interceptors/authInterceptor.js',
             'js/interceptors/loadingInterceptor.js',
             'js/interceptors/profileCompleteInterceptor.js',
@@ -118,7 +120,6 @@ assets.js = [
             'js/services/bbcRedux.js',
             'js/filters.js',
             'js/directives/preloader.js',
-            'js/directives/loadContent.js',
             'js/directives/scrubber.js',
             'js/directives/showSegments.js',
             'js/directives/atlasSearch.js'];
