@@ -11,6 +11,9 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.feeds',
                         'atlasAdmin.feed',
                         'atlasAdmin.feedBreakdown',
+                        'atlasAdmin.manageSources',
+                        'atlasAdmin.manageSourcesReaders',
+                        'atlasAdmin.manageSourcesWriters',
                         'atlasAdmin.interceptors',
                         'atlasAdmin.filters',
                         'atlasAdmin.preloader',
@@ -37,7 +40,6 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.controllers.auth',
                         'atlasAdmin.controllers.atlas',
                         'atlasAdmin.controllers.errors',
-                        'atlasAdmin.controllers.sources',
                         'atlasAdmin.controllers.sourceRequests',
                         'atlasAdmin.controllers.user',
                         'atlasAdmin.controllers.contact',
@@ -54,9 +56,6 @@ var app = angular.module('atlasAdmin', [
 app.config(['$routeProvider', function($routeProvider) {
     // admin only routes
     $routeProvider.when('/manage/requests', {templateUrl: 'partials/admins/manageSourceRequests.html', controller: 'CtrlManageSourceRequests'});
-    $routeProvider.when('/manage/sources', {templateUrl: 'partials/admins/sources.html', controller: 'CtrlSources'});
-    $routeProvider.when('/manage/sources/:sourceId/readers', {templateUrl: 'partials/admins/sourceReaders.html', controller: 'CtrlSourceReaders'});
-    $routeProvider.when('/manage/sources/:sourceId/writers', {templateUrl: 'partials/admins/sourceWriters.html', controller: 'CtrlSourceWriters'});
     $routeProvider.when('/manage/users', {templateUrl: 'partials/admins/users.html', controller: 'AllUsersController'});
     $routeProvider.when('/manage/users/:uid', {templateUrl: 'partials/profile.html', controller: 'UserProfileController'});
     $routeProvider.when('/manage/wishlist', {templateUrl: 'partials/admins/wishlist/manageWishlist.html', controller: 'CtrlManageWishlist'});
