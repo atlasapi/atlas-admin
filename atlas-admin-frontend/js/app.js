@@ -10,6 +10,7 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.scrubbables',
                         'atlasAdmin.feeds',
                         'atlasAdmin.feed',
+                        'atlasAdmin.feedBreakdown',
                         'atlasAdmin.interceptors',
                         'atlasAdmin.filters',
                         'atlasAdmin.preloader',
@@ -40,7 +41,6 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.controllers.sourceRequests',
                         'atlasAdmin.controllers.user',
                         'atlasAdmin.controllers.contact',
-                        'atlasAdmin.controllers.feeds',
                         'atlasAdmin.controllers.uservideosources',
                         'atlasAdmin.controllers.uservideosources.youtube',
                         'atlasAdmin.controllers.admins.usage',
@@ -50,7 +50,6 @@ var app = angular.module('atlasAdmin', [
                         'ngResource',
                         'ngRoute',
                         'atlasAdminConfig']);
-
 
 app.config(['$routeProvider', function($routeProvider) {
     // admin only routes
@@ -68,7 +67,6 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/login/:providerNamespace', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
     $routeProvider.when('/oauth/:providerNamespace', {templateUrl: 'partials/oauth.html', controller: 'CtrlOAuth', reloadOnSearch: false});
 
-    $routeProvider.when('/feeds/:feedId/:taskId', {templateUrl: 'partials/feeds/breakdown.html', controller: 'CtrlFeedsBreakdown'});
     $routeProvider.when('/terms', {templateUrl: 'partials/terms.html', controller: 'UserLicenseController'});
     $routeProvider.when('/profile', {templateUrl: 'partials/profile.html', controller: 'UserProfileController'});
     $routeProvider.when('/contact', {templateUrl: 'partials/contact.html', controller: 'ContactController'});

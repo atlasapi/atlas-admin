@@ -9914,6 +9914,7 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.scrubbables',
                         'atlasAdmin.feeds',
                         'atlasAdmin.feed',
+                        'atlasAdmin.feedBreakdown',
                         'atlasAdmin.interceptors',
                         'atlasAdmin.filters',
                         'atlasAdmin.preloader',
@@ -9944,7 +9945,6 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.controllers.sourceRequests',
                         'atlasAdmin.controllers.user',
                         'atlasAdmin.controllers.contact',
-                        'atlasAdmin.controllers.feeds',
                         'atlasAdmin.controllers.uservideosources',
                         'atlasAdmin.controllers.uservideosources.youtube',
                         'atlasAdmin.controllers.admins.usage',
@@ -9954,7 +9954,6 @@ var app = angular.module('atlasAdmin', [
                         'ngResource',
                         'ngRoute',
                         'atlasAdminConfig']);
-
 
 app.config(['$routeProvider', function($routeProvider) {
     // admin only routes
@@ -9972,7 +9971,6 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/login/:providerNamespace', {templateUrl: 'partials/login.html', controller: 'CtrlLogin'});
     $routeProvider.when('/oauth/:providerNamespace', {templateUrl: 'partials/oauth.html', controller: 'CtrlOAuth', reloadOnSearch: false});
 
-    $routeProvider.when('/feeds/:feedId/:taskId', {templateUrl: 'partials/feeds/breakdown.html', controller: 'CtrlFeedsBreakdown'});
     $routeProvider.when('/terms', {templateUrl: 'partials/terms.html', controller: 'UserLicenseController'});
     $routeProvider.when('/profile', {templateUrl: 'partials/profile.html', controller: 'UserProfileController'});
     $routeProvider.when('/contact', {templateUrl: 'partials/contact.html', controller: 'ContactController'});
@@ -11344,7 +11342,7 @@ angular.module('atlasAdmin.feed')
 
           var _modalInstance = $modal.open({
             // template: '<h1>'+_content.title+'</h1></div><div class="feed-modal-options"><button ng-disabled="isSendingAction" ng-click="ok()">'+_content.action+'</button><button ng-click="dismiss()">Cancel</button>',
-            templateUrl: 'partials/feeds/actionsModal.html',
+            templateUrl: 'presentation/feed/actionsModal/actionsModal.tpl.html',
             controller: 'CtrlFeedsAcceptModal',
             windowClass: 'feedsAcceptModal',
             scope: $scope,
@@ -11369,130 +11367,178 @@ angular.module('atlasAdmin.feed')
         scope: false,
         link: controller
       };
-    }])
-.controller('CtrlFeedsAcceptModal', ['$scope', '$modalInstance', '$q', 'FeedsService', 'modalAction', '$http', 'atlasHost',
-  function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
-      var pidLength = 8;
-      $scope.actionName = modalAction;
-      $scope.pidValue = '';
-      $scope.showSearchRes = false;
-      $scope.resultMessage = {};
-      $scope.clearUI = false;
-      $scope.isBusy = false;
-      $scope.atlasResult = {  };
-      $scope.uiStrings = {
-        revoke: 'Revoke',
-        upload: 'Publish'
-      };
+    }]);
 
-      var trimString = function (wordCount, string) {
-        var append = '';
-        var words = string.split(' ');
+'use strict';
 
-        if (words.length > wordCount) {
-          append = '...';
-        }
-        var truncated = words.slice(0, wordCount).join(' ');
-        return truncated + append;
-      };
-
-      var runRevoke = function (pid) {
-        var payload = {
-          uri: 'http://nitro.bbc.co.uk/programmes/' + pid
+angular.module('atlasAdmin.feed')
+  .controller('CtrlFeedsAcceptModal', ['$scope', '$modalInstance', '$q', 'FeedsService', 'modalAction', '$http', 'atlasHost',
+    function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
+        var pidLength = 8;
+        $scope.actionName = modalAction;
+        $scope.pidValue = '';
+        $scope.showSearchRes = false;
+        $scope.resultMessage = {};
+        $scope.clearUI = false;
+        $scope.isBusy = false;
+        $scope.atlasResult = {  };
+        $scope.uiStrings = {
+          revoke: 'Revoke',
+          upload: 'Publish'
         };
 
-        $scope.isBusy = true;
+        var trimString = function (wordCount, string) {
+          var append = '';
+          var words = string.split(' ');
 
-        Feeds.request('youview/bbc_nitro/action/revoke', 'post', payload).then(
-        function (data, status) {
-          if (_.isObject(data)) {
-            $scope.resultMessage.body = 'The transaction could not be completed because of a server error';
-            $scope.resultMessage.class = 'error';
-            $scope.isBusy = false;
-            return;
+          if (words.length > wordCount) {
+            append = '...';
           }
-          $scope.showSearchRes = false;
-          $scope.atlasResult = {  };
-          $scope.resultMessage.body = 'The revoke transaction has been added to the queue';
-          $scope.resultMessage.class = 'success';
-          $scope.clearUI = true;
-          $scope.isBusy = false;
-        },
-        function () {
-          $scope.resultMessage.body = 'The transaction could not be completed because of a server error';
-          $scope.resultMessage.class = 'error';
-          $scope.isBusy = false;
-        });
-      };
+          var truncated = words.slice(0, wordCount).join(' ');
+          return truncated + append;
+        };
 
-      var runIngest = function (pid) {
-        var payload = {};
+        var runRevoke = function (pid) {
+          var payload = {
+            uri: 'http://nitro.bbc.co.uk/programmes/' + pid
+          };
 
-        $scope.isBusy = true;
+          $scope.isBusy = true;
 
-        Feeds.request('forceUpdate/' + pid, 'post', payload).then(
-        function (data, status) {
-          if (_.isObject(data)) {
-            $scope.resultMessage.body = 'The transaction could not be completed because of a server error';
-            $scope.resultMessage.class = 'error';
-            $scope.isBusy = false;
-            return;
-          }
-          $scope.showSearchRes = false;
-          $scope.atlasResult = {  };
-          $scope.resultMessage.body = 'The publish transaction has been added to the queue';
-          $scope.resultMessage.class = 'success';
-          $scope.clearUI = true;
-          $scope.isBusy = false;
-        },
-        function () {
-          $scope.resultMessage.body = 'The transaction could not be completed because of a server error';
-          $scope.resultMessage.class = 'error';
-          $scope.isBusy = false;
-        });
-      };
-
-      $scope.findPid = function (pidValue) {
-        if (pidValue.length !== pidLength) {
-          return console.warn('PID isn\'t the correct length');
-        }
-        var nitroUri = 'http://nitro.bbc.co.uk/programmes/' + pidValue;
-        $http.get(atlasHost + '/3.0/content.json?apiKey=cae02bc954cf40809d6d70601d3e0b88&uri=' + nitroUri + '&annotations=description,extended_description,brand_summary')
-          .success( function (data, status) {
-            $scope.showSearchRes = true;
-            var atlasres = data.contents[0];
-
-            if (atlasres) {
-              $scope.atlasResult.imageUrl = atlasres.image;
-              $scope.atlasResult.title = atlasres.title;
-              $scope.atlasResult.brand = atlasres.container.title || '';
-              $scope.atlasResult.time = 1;
-              $scope.atlasResult.description = trimString(60, atlasres.description);
+          Feeds.request('youview/bbc_nitro/action/revoke', 'post', payload).then(
+          function (data, status) {
+            if (_.isObject(data)) {
+              $scope.resultMessage.body = 'The transaction could not be completed because of a server error';
+              $scope.resultMessage.class = 'error';
+              $scope.isBusy = false;
+              return;
             }
-          })
-          .error(function (data, status) {
-            $scope.resultMessage.body = 'The PID search could not be completed because of a server error';
+            $scope.showSearchRes = false;
+            $scope.atlasResult = {  };
+            $scope.resultMessage.body = 'The revoke transaction has been added to the queue';
+            $scope.resultMessage.class = 'success';
+            $scope.clearUI = true;
+            $scope.isBusy = false;
+          },
+          function () {
+            $scope.resultMessage.body = 'The transaction could not be completed because of a server error';
             $scope.resultMessage.class = 'error';
+            $scope.isBusy = false;
           });
-      };
+        };
+
+        var runIngest = function (pid) {
+          var payload = {};
+
+          $scope.isBusy = true;
+
+          Feeds.request('forceUpdate/' + pid, 'post', payload).then(
+          function (data, status) {
+            if (_.isObject(data)) {
+              $scope.resultMessage.body = 'The transaction could not be completed because of a server error';
+              $scope.resultMessage.class = 'error';
+              $scope.isBusy = false;
+              return;
+            }
+            $scope.showSearchRes = false;
+            $scope.atlasResult = {  };
+            $scope.resultMessage.body = 'The publish transaction has been added to the queue';
+            $scope.resultMessage.class = 'success';
+            $scope.clearUI = true;
+            $scope.isBusy = false;
+          },
+          function () {
+            $scope.resultMessage.body = 'The transaction could not be completed because of a server error';
+            $scope.resultMessage.class = 'error';
+            $scope.isBusy = false;
+          });
+        };
+
+        $scope.findPid = function (pidValue) {
+          if (pidValue.length !== pidLength) {
+            return console.warn('PID isn\'t the correct length');
+          }
+          var nitroUri = 'http://nitro.bbc.co.uk/programmes/' + pidValue;
+          $http.get(atlasHost + '/3.0/content.json?apiKey=cae02bc954cf40809d6d70601d3e0b88&uri=' + nitroUri + '&annotations=description,extended_description,brand_summary')
+            .success( function (data, status) {
+              $scope.showSearchRes = true;
+              var atlasres = data.contents[0];
+
+              if (atlasres) {
+                $scope.atlasResult.imageUrl = atlasres.image;
+                $scope.atlasResult.title = atlasres.title;
+                $scope.atlasResult.brand = atlasres.container.title || '';
+                $scope.atlasResult.time = 1;
+                $scope.atlasResult.description = trimString(60, atlasres.description);
+              }
+            })
+            .error(function (data, status) {
+              $scope.resultMessage.body = 'The PID search could not be completed because of a server error';
+              $scope.resultMessage.class = 'error';
+            });
+        };
 
 
-      $scope.triggerAction = function (actionName, pid) {
-        if (! pid) {
-          return console.warn('cannot trigger action because there is no pid argument');
-        }
-        if (! actionName) {
-          return console.warn('cannot trigger action because there is no actionName argument');
-        }
-        switch (actionName) {
-          case 'upload': runIngest(pid); break;
-          case 'revoke': runRevoke(pid); break;
-        }
+        $scope.triggerAction = function (actionName, pid) {
+          if (! pid) {
+            return console.warn('cannot trigger action because there is no pid argument');
+          }
+          if (! actionName) {
+            return console.warn('cannot trigger action because there is no actionName argument');
+          }
+          switch (actionName) {
+            case 'upload': runIngest(pid); break;
+            case 'revoke': runRevoke(pid); break;
+          }
+        };
+
+        $scope.dismiss = function() {
+          $modalInstance.dismiss();
+        };
+      }]);
+
+'use strict';
+
+angular.module('atlasAdmin.feedBreakdown', ['ngRoute'])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/feeds/:feedId/:taskId', {
+      templateUrl: 'presentation/feedBreakdown/feedBreakdown.tpl.html',
+      controller: 'CtrlFeedsBreakdown'
+    });
+  }]);
+
+'use strict';
+angular.module('atlasAdmin.feedBreakdown')
+  .controller('CtrlFeedsBreakdown', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modal',
+    function($scope, $rootScope, $routeParams, Feeds, $q, $modal) {
+      $scope.taskID = $routeParams.taskId;
+
+      $scope.showDetails = function() {
+        var modalInstance = $modal.open({
+          templateUrl: 'partials/feeds/statusDetailModal.html',
+          controller: 'CtrlStatusDetail',
+          scope: $scope
+        });
+        modalInstance.result.then(function() {
+
+        });
       };
 
-      $scope.dismiss = function() {
-        $modalInstance.dismiss();
+      var loadTask = function() {
+        Feeds.request('youview/bbc_nitro/tasks/'+$routeParams.taskId+'.json?annotations=remote_responses')
+        .then(function(task) {
+          var _task = task.tasks[0];
+          $scope.task = _task;
+          $scope.view_title = "Breakdown for transaction: "+_task.remote_id;
+        });
       };
+      loadTask();
+
+    }])
+
+  .controller('CtrlStatusDetail', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modalInstance',
+    function($scope, $rootScope, $routeParams, $q, $modalInstance) {
+
     }]);
 
 var app = angular.module('atlasAdmin.interceptors', []);
@@ -14660,41 +14706,6 @@ app.controller('CtrlVideoSourceYouTubeConfig', function($scope, $rootScope, User
         });
     };
 });
-'use strict';
-var app = angular.module('atlasAdmin.controllers.feeds', []);
-
-app.controller('CtrlFeedsBreakdown', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modal',
-function($scope, $rootScope, $routeParams, Feeds, $q, $modal) {
-  $scope.taskID = $routeParams.taskId;
-
-  $scope.showDetails = function() {
-    var modalInstance = $modal.open({
-      templateUrl: 'partials/feeds/statusDetailModal.html',
-      controller: 'CtrlStatusDetail',
-      scope: $scope
-    });
-    modalInstance.result.then(function() {
-
-    });
-  };
-
-  var loadTask = function() {
-    Feeds.request('youview/bbc_nitro/tasks/'+$routeParams.taskId+'.json?annotations=remote_responses')
-    .then(function(task) {
-      var _task = task.tasks[0];
-      $scope.task = _task;
-      $scope.view_title = "Breakdown for transaction: "+_task.remote_id;
-    });
-  };
-  loadTask();
-
-}]);
-
-app.controller('CtrlStatusDetail', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modalInstance',
-function($scope, $rootScope, $routeParams, $q, $modalInstance) {
-
-}]);
-
 'use strict';
 var app = angular.module('atlasAdmin.controllers.admins.manageWishlist', []);
 
