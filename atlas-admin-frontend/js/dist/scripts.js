@@ -25345,6 +25345,7 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.error',
                         'atlasAdmin.menu',
                         'atlasAdmin.preloader',
+                        'atlasAdmin.activePath',
                         'atlasAdmin.services.auth',
                         'atlasAdmin.services.atlas',
                         'atlasAdmin.services.applications',
@@ -25358,7 +25359,6 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.services.usage',
                         'atlasAdmin.services.feeds',
                         'atlasAdmin.services.bbcscrubbables',
-                        'atlasAdmin.directives.activePath',
                         'atlasAdmin.directives.validUsage',
                         'atlasAdmin.directives.inputmorph',
                         'atlasAdmin.directives.loadContent',
@@ -25392,7 +25392,7 @@ app.config(['$sceDelegateProvider', function($sceDelegateProvider) {
 
 'use strict';
 
-angular.module('atlasAdmin.applications', ['ngRoute', 'atlasAdmin.directives.focus'])
+angular.module('atlasAdmin.applications', ['ngRoute', 'atlasAdmin.focus'])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/applications', {
       templateUrl: 'presentation/applications/applications.tpl.html',
@@ -25590,7 +25590,7 @@ angular.module('atlasAdmin.applications')
 
 'use strict';
 
-angular.module('atlasAdmin.application', ['ngRoute', 'atlasAdmin.directives.orderable', 'atlasAdmin.directives.focus'])
+angular.module('atlasAdmin.application', ['ngRoute', 'atlasAdmin.orderable', 'atlasAdmin.focus'])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/applications/:applicationId', {
       templateUrl: 'presentation/application/application.tpl.html',
@@ -27011,7 +27011,7 @@ angular.module('atlasAdmin.manageSourcesReaders')
 
 'use strict';
 
-angular.module('atlasAdmin.manageSourcesWriters', ['ngRoute', 'atlasAdmin.directives.focus'])
+angular.module('atlasAdmin.manageSourcesWriters', ['ngRoute', 'atlasAdmin.focus'])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/manage/sources/:sourceId/writers', {
       templateUrl: 'presentation/manageSourcesWriters/manageSourcesWriters.tpl.html',
@@ -28138,11 +28138,11 @@ angular.module('atlasAdmin.menu')
     }
 }]);
 
-angular.module('atlasAdmin.directives.orderable', []);
+angular.module('atlasAdmin.orderable', []);
 
 'use strict';
 
-angular.module('atlasAdmin.directives.orderable')
+angular.module('atlasAdmin.orderable')
   .directive('orderable', function () {
     return {
         link: function (scope, element) {
@@ -28264,13 +28264,13 @@ angular.module('atlasAdmin.directives.orderable')
     };
 });
 
-angular.module('atlasAdmin.directives.focus', []);
+angular.module('atlasAdmin.focus', []);
 
 'use strict';
 
 /* Focus on an element. Use "focus-me" as an attribute. */
 
-angular.module('atlasAdmin.directives.focus')
+angular.module('atlasAdmin.focus')
   .directive('focusMe', function ($timeout) {
     return {
       link: function (scope, element, attrs, model) {
@@ -28282,6 +28282,42 @@ angular.module('atlasAdmin.directives.focus')
       }
     };
 });
+
+angular.module('atlasAdmin.activePath', []);
+
+'use strict';
+
+/* Highlight current menu element */
+/* Thanks to http://stackoverflow.com/questions/12592472/how-to-highlight-a-current-menu-item-in-angularjs */
+angular.module('atlasAdmin.activePath')
+  .directive('activePath', ['$location', 'ProfileStatus', function(location, ProfileStatus) {
+    return {
+      restrict: 'A',
+      link: function(scope, element, attrs, controller) {
+        var activeClass = attrs.activePath;
+        var path = attrs.ngHref;
+        if (path.substring(0,1) == "#") {
+           path = path.substring(1);
+        }
+        scope.location = location;
+        scope.$watch('location.path()', function(currentPath) {
+            // hide menu if profile not complete
+            if (ProfileStatus.isProfileComplete()) {
+                element.removeClass('hide');
+            } else {
+                element.addClass('hide');
+            }
+
+            // highlight active item
+            if (path == currentPath.substring(0, path.length)) {
+                element.addClass(activeClass);
+            } else {
+                element.removeClass(activeClass);
+            }
+        });
+      }
+    };
+}]);
 
 var app = angular.module('atlasAdmin.interceptors', []);
 
@@ -29688,40 +29724,6 @@ app.directive('preloader', ['$rootScope', function ($rootScope) {
             });
         }
     }
-}]);
-'use strict';
-
-/* Highlight current menu element */
-/* Thanks to http://stackoverflow.com/questions/12592472/how-to-highlight-a-current-menu-item-in-angularjs */
-var app = angular.module('atlasAdmin.directives.activePath', []);
-
-app.directive('activePath', ['$location', 'ProfileStatus', function(location, ProfileStatus) {
-    return {
-      restrict: 'A',
-      link: function(scope, element, attrs, controller) {
-        var activeClass = attrs.activePath;
-        var path = attrs.ngHref;
-        if (path.substring(0,1) == "#") {
-           path = path.substring(1);   
-        }
-        scope.location = location;
-        scope.$watch('location.path()', function(currentPath) {
-            // hide menu if profile not complete
-            if (ProfileStatus.isProfileComplete()) {
-                element.removeClass('hide');
-            } else {
-                element.addClass('hide');
-            }
-            
-            // highlight active item
-            if (path == currentPath.substring(0, path.length)) {
-                element.addClass(activeClass);
-            } else {
-                element.removeClass(activeClass);
-            }
-        });
-      }
-    };
 }]);
 'use strict';
 

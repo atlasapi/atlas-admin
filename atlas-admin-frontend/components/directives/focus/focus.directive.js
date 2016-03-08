@@ -2,7 +2,7 @@
 
 /* Focus on an element. Use "focus-me" as an attribute. */
 
-angular.module('atlasAdmin.directives.focus')
+angular.module('atlasAdmin.focus')
   .directive('focusMe', function ($timeout) {
     return {
       link: function (scope, element, attrs, model) {
