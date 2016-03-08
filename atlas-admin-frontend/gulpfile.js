@@ -76,6 +76,8 @@ assets.js = [
             'presentation/profile/profile.ctrl.js',
             'presentation/contact/contact.module.js',
             'presentation/contact/contact.ctrl.js',
+            'presentation/videoSourceProviders/videoSourceProviders.module.js',
+            'presentation/videoSourceProviders/videoSourceProviders.ctrl.js',
             'js/interceptors/authInterceptor.js',
             'js/interceptors/loadingInterceptor.js',
             'js/interceptors/profileCompleteInterceptor.js',

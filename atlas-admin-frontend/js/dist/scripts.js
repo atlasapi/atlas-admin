@@ -25340,6 +25340,7 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.terms',
                         'atlasAdmin.profile',
                         'atlasAdmin.contact',
+                        'atlasAdmin.videoSourceProviders',
                         'atlasAdmin.preloader',
                         'atlasAdmin.services.auth',
                         'atlasAdmin.services.atlas',
@@ -25364,7 +25365,6 @@ var app = angular.module('atlasAdmin', [
                         'atlasAdmin.controllers.errors',
                         'atlasAdmin.controllers.sourceRequests',
                         'atlasAdmin.controllers.user',
-                        'atlasAdmin.controllers.uservideosources',
                         'atlasAdmin.controllers.uservideosources.youtube',
                         'ui.bootstrap',
                         'ngResource',
@@ -25373,7 +25373,7 @@ var app = angular.module('atlasAdmin', [
 
 app.config(['$routeProvider', function($routeProvider) {
   // application user routes
-    $routeProvider.when('/videosource/providers', {templateUrl: 'partials/videoSourceProviders.html', controller: 'CtrlVideoSourceProviders'});
+
     $routeProvider.when('/videosource/config/youtube', {templateUrl: 'partials/videoSourceYouTubeConfig.html', controller: 'CtrlVideoSourceYouTubeConfig'});
     $routeProvider.when('/error', {templateUrl: 'partials/error.html', controller: 'ErrorController', reloadOnSearch: false});
     $routeProvider.otherwise({redirectTo: '/applications'});
@@ -27907,6 +27907,38 @@ angular.module('atlasAdmin.contact')
       });
     }
   ]);
+
+'use strict';
+
+angular.module('atlasAdmin.videoSourceProviders', ['ngRoute'])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/videosource/providers', {
+      templateUrl: 'presentation/videoSourceProviders/videoSourceProviders.tpl.html',
+      controller: 'CtrlVideoSourceProviders'
+    });
+  }]);
+
+'use strict';
+angular.module('atlasAdmin.videoSourceProviders')
+  .controller('CtrlVideoSourceProviders', function($scope, $rootScope, $location, UserVideoSources) {
+      $rootScope.title = "Select video source provider";
+      $scope.app = {};
+      $scope.app.providers = [];
+      if (window.location.search != "") {
+          window.location.search = "";
+      }
+      UserVideoSources.allProviders().then(function(providers) {
+          $scope.app.providers = providers;
+      });
+
+      $scope.app.startAuth = function(provider) {
+          var callbackUrl = $location.absUrl().replace("/providers","/config/" + provider.namespace);
+          UserVideoSources.getOAuthLogin(provider.authRequestUrl, callbackUrl).then(function(data) {
+              // Redirect to remote service login screen
+              window.location.href = data.login_url;
+          });
+      };
+  });
 
 var app = angular.module('atlasAdmin.interceptors', []);
 
@@ -30483,28 +30515,6 @@ app.controller('UserMenuController', ['$scope', 'Users', '$rootScope', 'Authenti
     }
 }]);
 
-'use strict';
-var app = angular.module('atlasAdmin.controllers.uservideosources', []);
-
-app.controller('CtrlVideoSourceProviders', function($scope, $rootScope, $location, UserVideoSources) {
-    $rootScope.title = "Select video source provider";
-    $scope.app = {};
-    $scope.app.providers = [];
-    if (window.location.search != "") {
-        window.location.search = "";
-    }
-    UserVideoSources.allProviders().then(function(providers) {
-        $scope.app.providers = providers;
-    });
-    
-    $scope.app.startAuth = function(provider) {
-        var callbackUrl = $location.absUrl().replace("/providers","/config/" + provider.namespace);
-        UserVideoSources.getOAuthLogin(provider.authRequestUrl, callbackUrl).then(function(data) {
-            // Redirect to remote service login screen
-            window.location.href = data.login_url;
-        });
-    };
-});
 'use strict';
 var app = angular.module('atlasAdmin.controllers.uservideosources.youtube', []);
 
