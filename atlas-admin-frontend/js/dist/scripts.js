@@ -28554,28 +28554,28 @@ app.controller('ContactController', ['$scope', '$rootScope', '$sce', 'Users', 'G
 
             subjects = subjects.concat([
               {
-                name: 'data_access',
-                value: 'Data Access'
+                name: 'Data Access',
+                value: 'data_access'
               },
               {
-                name: 'api_calls',
-                value: 'API Calls'
+                name: 'API Calls',
+                value: 'api_calls'
               },
               {
-                name: 'api_explorer',
-                value: 'API Explorer'
+                name: 'API Explorer',
+                value: 'api_explorer'
               },
               {
-                name: 'feature_request',
-                value: 'Feature Request'
+                name: 'Feature Request',
+                value: 'feature_request'
               },
               {
-                name: 'usage_changes',
-                value: 'Usage Changes'
+                name: 'Usage Changes',
+                value: 'usage_changes'
               },
               {
-                name: 'other',
-                value: 'Other'
+                name: 'Other',
+                value: 'other'
               }
             ]);
 
