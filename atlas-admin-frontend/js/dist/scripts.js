@@ -28538,7 +28538,7 @@ app.controller('ContactController', ['$scope', '$rootScope', '$sce', 'Users', 'G
 
       getPrivateMenuItems().then(addGroups).then(addApplications).then(function(items) {
         new window.MBST.Contact('stage', {
-          product: '',
+          product: 'atlas',
           fields: (function () {
             var result = [];
 
