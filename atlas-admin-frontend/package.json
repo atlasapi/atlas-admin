@@ -4,7 +4,7 @@
   "description": "",
   "main": "gulpfile.js",
   "dependencies": {
-    "contact-us-form": "git+ssh://git@bitbucket.org/mbst/contact-us-form.git#1.2.11",
+    "contact-us-form": "git+ssh://git@bitbucket.org/mbst/contact-us-form.git#1.2.14",
     "gulp-shell": "^0.5.2"
   },
   "devDependencies": {
