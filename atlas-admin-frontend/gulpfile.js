@@ -161,7 +161,8 @@ assets.js = [
             'components/interceptors/profileComplete/profileComplete.module.js',
             'components/interceptors/profileComplete/profileComplete.interceptor.js',
 
-            'js/filters.js'];
+            'components/filters/filters.module.js',
+            'components/filters/filters.js'];
 
 //  Styles
 //

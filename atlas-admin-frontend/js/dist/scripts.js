@@ -40357,9 +40357,13 @@ angular.module('atlasAdmin.interceptors.profileComplete')
 
 'use strict';
 
+angular.module('atlasAdmin.filters', []);
+
+'use strict';
+
 /* Filters */
 
-angular.module('atlasAdmin.filters', []).
+angular.module('atlasAdmin.filters').
   filter('interpolate', ['version', function(version) {
     return function(text) {
       return String(text).replace(/\%VERSION\%/mg, version);
