@@ -1,4 +1,4 @@
-var app = angular.module('atlasAdmin.services.users', []);
+var app = angular.module('atlasAdmin.services.users', ['atlasAdmin.atlas']);
 
 app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'ProfileStatus', '$log', 'atlasApiHost', '$q',
     function($http, Atlas, $rootScope, Authentication, ProfileStatus, $log, atlasApiHost, $q) {

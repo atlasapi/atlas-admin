@@ -1,7 +1,6 @@
 'use strict';
-var app = angular.module('atlasAdmin.services.atlas', []);
-
-app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $log) {
+angular.module('atlasAdmin.atlas')
+  .factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $log) {
     return {
         getRequest: function(url) {
             var usersUrl = Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion +  url);
@@ -43,4 +42,4 @@ app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $
            return $http.get(Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + "/auth/logout.json"));
         }
     };
-});
+  });

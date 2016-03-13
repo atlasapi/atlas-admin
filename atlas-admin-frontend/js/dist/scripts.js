@@ -25349,7 +25349,6 @@ angular.module('atlasAdmin',
     'atlasAdmin.activePath',
 
     'atlasAdmin.auth',
-    'atlasAdmin.services.atlas',
     'atlasAdmin.services.applications',
     'atlasAdmin.services.sources',
     'atlasAdmin.services.sourceRequests',
@@ -25384,7 +25383,7 @@ angular.module('atlasAdmin',
 
 'use strict';
 
-angular.module('atlasAdmin.applications', ['ngRoute', 'atlasAdmin.focus'])
+angular.module('atlasAdmin.applications', ['ngRoute', 'atlasAdmin.focus', 'atlasAdmin.atlas'])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/applications', {
       templateUrl: 'presentation/applications/applications.tpl.html',
@@ -25582,7 +25581,7 @@ angular.module('atlasAdmin.applications')
 
 'use strict';
 
-angular.module('atlasAdmin.application', ['ngRoute', 'atlasAdmin.orderable', 'atlasAdmin.focus', 'atlasAdmin.validUsage'])
+angular.module('atlasAdmin.application', ['ngRoute', 'atlasAdmin.orderable', 'atlasAdmin.focus', 'atlasAdmin.validUsage', 'atlasAdmin.atlas'])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/applications/:applicationId', {
       templateUrl: 'presentation/application/application.tpl.html',
@@ -29249,6 +29248,55 @@ angular.module('atlasAdmin.auth')
       };
   }]);
 
+'use strict';
+angular.module('atlasAdmin.atlas', []);
+
+'use strict';
+angular.module('atlasAdmin.atlas')
+  .factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $log) {
+    return {
+        getRequest: function(url) {
+            var usersUrl = Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion +  url);
+            console.log('get-> ' + usersUrl);
+            return $http.get(usersUrl);
+        },
+        getUrl: function (url) {
+            return Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + url);
+        },
+        postRequest: function(url, data) {
+            return $http.post(Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + url), data, {withCredentials: false});
+        },
+        deleteRequest: function(url) {
+            return $http.delete(Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + url));
+        },
+        getAuthProviders: function() {
+            return $http.get(atlasHost + "/" + atlasVersion + "/auth/providers.json").then(function(results){
+                return results.data.auth_providers;
+            }, function(error) {
+                $log.error(error);
+            });
+        },
+        startOauthAuthentication: function(provider, callbackUrl, targetUri) {
+            var url = atlasHost + provider.authRequestUrl + ".json?callbackUrl=" + callbackUrl;
+            Authentication.setProvider(provider.namespace);
+            return $http.get(url).then(function(result) {
+                return result.data.oauth_request.login_url;
+            }, function(error) {
+                console.error(error);
+                return error;
+            });
+        },
+        getAccessToken: function(oauth_token, oauth_verifier, code) {
+            var url = "/auth/" + Authentication.getProvider() + "/token.json?oauthToken=" + oauth_token
+                    + "&oauthVerifier=" + oauth_verifier + "&code=" + code;
+           return $http.get(atlasHost + "/" + atlasVersion +  url);
+        },
+        startLogout: function() {
+           return $http.get(Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + "/auth/logout.json"));
+        }
+    };
+  });
+
 var app = angular.module('atlasAdmin.interceptors', []);
 
 app.factory('AuthenticationInterceptor', ['$q', '$location', 'atlasHost', 'atlasApiHost', '$window', 'Authentication',
@@ -29391,54 +29439,7 @@ app.factory('ProfileCompleteInterceptor', ['ProfileStatus', '$location', '$q', '
     }
 }]);
 
-'use strict';
-var app = angular.module('atlasAdmin.services.atlas', []);
-
-app.factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $log) {
-    return {
-        getRequest: function(url) {
-            var usersUrl = Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion +  url);
-            console.log('get-> ' + usersUrl);
-            return $http.get(usersUrl);
-        },
-        getUrl: function (url) {
-            return Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + url);
-        },
-        postRequest: function(url, data) {
-            return $http.post(Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + url), data, {withCredentials: false});
-        },
-        deleteRequest: function(url) {
-            return $http.delete(Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + url));
-        },
-        getAuthProviders: function() {
-            return $http.get(atlasHost + "/" + atlasVersion + "/auth/providers.json").then(function(results){
-                return results.data.auth_providers;
-            }, function(error) {
-                $log.error(error);
-            });
-        },
-        startOauthAuthentication: function(provider, callbackUrl, targetUri) {
-            var url = atlasHost + provider.authRequestUrl + ".json?callbackUrl=" + callbackUrl;
-            Authentication.setProvider(provider.namespace);
-            return $http.get(url).then(function(result) {
-                return result.data.oauth_request.login_url;
-            }, function(error) {
-                console.error(error);
-                return error;
-            });
-        },
-        getAccessToken: function(oauth_token, oauth_verifier, code) {
-            var url = "/auth/" + Authentication.getProvider() + "/token.json?oauthToken=" + oauth_token
-                    + "&oauthVerifier=" + oauth_verifier + "&code=" + code;
-           return $http.get(atlasHost + "/" + atlasVersion +  url);
-        },
-        startLogout: function() {
-           return $http.get(Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + "/auth/logout.json"));
-        }
-    };
-});
-
-var app = angular.module('atlasAdmin.services.users', []);
+var app = angular.module('atlasAdmin.services.users', ['atlasAdmin.atlas']);
 
 app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'ProfileStatus', '$log', 'atlasApiHost', '$q',
     function($http, Atlas, $rootScope, Authentication, ProfileStatus, $log, atlasApiHost, $q) {
