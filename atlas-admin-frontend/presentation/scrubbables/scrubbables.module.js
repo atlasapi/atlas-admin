@@ -1,6 +1,10 @@
 'use strict';
 
-angular.module('atlasAdmin.scrubbables', ['ngRoute', 'atlasAdmin.directives.scrubber', 'atlasAdmin.directives.atlasSearch'])
+angular.module('atlasAdmin.scrubbables', [
+    'ngRoute',
+    'atlasAdmin.directives.scrubber',
+    'atlasAdmin.directives.atlasSearch'
+  ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/scrubbables', {
       templateUrl: 'presentation/scrubbables/create.tpl.html',
