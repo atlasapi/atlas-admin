@@ -1,6 +1,6 @@
 'use strict';
 angular.module('atlasAdmin.videoSourceConfig')
-  .controller('CtrlVideoSourceYouTubeConfig', function($scope, $rootScope, UserVideoSources, UserVideoSourcesYouTube) {
+  .controller('CtrlVideoSourceYouTubeConfig', function($scope, $rootScope, UserVideoSources) {
     $rootScope.title = "Configure YouTube link";
 
     $scope.app = {};
@@ -14,7 +14,7 @@ angular.module('atlasAdmin.videoSourceConfig')
        $scope.app.writableSources = writableSources;
     });
 
-    UserVideoSourcesYouTube.getChannels().then(function(data) {
+    UserVideoSources.getChannels().then(function(data) {
         $scope.app.channels = [];
         for (var i in data) {
             var youTubeId = data[i].id;
@@ -42,8 +42,8 @@ angular.module('atlasAdmin.videoSourceConfig')
         }
 
         $scope.app.infoMessage = "Please wait...";
-        UserVideoSourcesYouTube.addPublisher(youTubeId, source.id).then(function(results) {
-            UserVideoSourcesYouTube.addChannel(youTubeId, channelId).then(function(results) {
+        UserVideoSources.addPublisher(youTubeId, source.id).then(function(results) {
+            UserVideoSources.addChannel(youTubeId, channelId).then(function(results) {
                 $scope.app.infoMessage = "";
                 $scope.app.successMessage = "Success! Your YouTube channel has been added.";
             },

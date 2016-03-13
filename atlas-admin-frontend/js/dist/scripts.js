@@ -25349,8 +25349,6 @@ angular.module('atlasAdmin',
     'atlasAdmin.directives.activePath',
 
     'atlasAdmin.services.auth',
-    'atlasAdmin.services.uservideosources',
-    'atlasAdmin.services.uservideosources.youtube',
     'atlasAdmin.services.propositions',
     'atlasAdmin.services.usage',
     'atlasAdmin.services.feeds',
@@ -27849,7 +27847,10 @@ angular.module('atlasAdmin.contact')
 
 'use strict';
 
-angular.module('atlasAdmin.videoSourceProviders', ['ngRoute'])
+angular.module('atlasAdmin.videoSourceProviders', [
+    'ngRoute',
+    'atlasAdmin.services.uservideosources'
+  ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/videosource/providers', {
       templateUrl: 'presentation/videoSourceProviders/videoSourceProviders.tpl.html',
@@ -27881,7 +27882,10 @@ angular.module('atlasAdmin.videoSourceProviders')
 
 'use strict';
 
-angular.module('atlasAdmin.videoSourceConfig', ['ngRoute'])
+angular.module('atlasAdmin.videoSourceConfig', [
+    'ngRoute',
+    'atlasAdmin.services.uservideosources'
+  ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/videosource/config/youtube', {
       templateUrl: 'presentation/videoSourceConfig/videoSourceConfig.tpl.html',
@@ -27891,7 +27895,7 @@ angular.module('atlasAdmin.videoSourceConfig', ['ngRoute'])
 
 'use strict';
 angular.module('atlasAdmin.videoSourceConfig')
-  .controller('CtrlVideoSourceYouTubeConfig', function($scope, $rootScope, UserVideoSources, UserVideoSourcesYouTube) {
+  .controller('CtrlVideoSourceYouTubeConfig', function($scope, $rootScope, UserVideoSources) {
     $rootScope.title = "Configure YouTube link";
 
     $scope.app = {};
@@ -27905,7 +27909,7 @@ angular.module('atlasAdmin.videoSourceConfig')
        $scope.app.writableSources = writableSources;
     });
 
-    UserVideoSourcesYouTube.getChannels().then(function(data) {
+    UserVideoSources.getChannels().then(function(data) {
         $scope.app.channels = [];
         for (var i in data) {
             var youTubeId = data[i].id;
@@ -27933,8 +27937,8 @@ angular.module('atlasAdmin.videoSourceConfig')
         }
 
         $scope.app.infoMessage = "Please wait...";
-        UserVideoSourcesYouTube.addPublisher(youTubeId, source.id).then(function(results) {
-            UserVideoSourcesYouTube.addChannel(youTubeId, channelId).then(function(results) {
+        UserVideoSources.addPublisher(youTubeId, source.id).then(function(results) {
+            UserVideoSources.addChannel(youTubeId, channelId).then(function(results) {
                 $scope.app.infoMessage = "";
                 $scope.app.successMessage = "Success! Your YouTube channel has been added.";
             },
@@ -29660,6 +29664,52 @@ angular.module('atlasAdmin.services.profileStatus')
     };
   });
 
+'use strict';
+
+angular.module('atlasAdmin.services.uservideosources', []);
+
+'use strict';
+angular.module('atlasAdmin.services.uservideosources')
+  .factory('UserVideoSources', ['Atlas', 'atlasVersion', 'Applications',
+    function (Atlas, atlasVersion, Applications) {
+      return {
+        allProviders: function() {
+            return Atlas.getRequest('/videosource/providers.json').then(function (results) {
+                return results.data.link_providers});
+        },
+        getOAuthLogin: function(authUrl, callbackUrl) {
+            var url = authUrl.replace("/" + atlasVersion, "") + ".json?redirectUri=" + encodeURIComponent(callbackUrl);
+            return Atlas.getRequest(url).then(function (results) {
+                return results.data.oauth_request});
+        },
+        getAllWritableSources: function() {
+             return Applications.all().then(function(applications) {
+                 // Extract writable sources from apps that give user write permission
+                 var writable = {};
+                 for (var i in applications) {
+                     for (var j in applications[i].sources.writes) {
+                         var source = applications[i].sources.writes[j];
+                         writable[source.id] = source;
+                     }
+                 }
+                 return writable;
+             });
+        },
+        getChannels: function() {
+            return Atlas.getRequest('/videosource/youtube/channels.json').then(function (results) {
+                return results.data.user});
+        },
+        addPublisher: function(youTubeId, sourceId) {
+            var url = '/videosource/youtube/' + youTubeId + '/source/add/' + sourceId + '.json';
+            return Atlas.postRequest(url, {});
+        },
+        addChannel: function(youTubeId, channelId) {
+            var url = '/videosource/youtube/' + youTubeId + '/channels/add/' + channelId + '.json';
+            return Atlas.postRequest(url, {});
+        }
+      }
+    }]);
+
 var app = angular.module('atlasAdmin.interceptors', ['atlasAdmin.services.profileStatus']);
 
 app.factory('AuthenticationInterceptor', ['$q', '$location', 'atlasHost', 'atlasApiHost', '$window', 'Authentication',
@@ -29802,51 +29852,6 @@ app.factory('ProfileCompleteInterceptor', ['ProfileStatus', '$location', '$q', '
     }
 }]);
 
-var app = angular.module('atlasAdmin.services.uservideosources', []);
-app.factory('UserVideoSources', function (Atlas, atlasVersion, Applications) {
-    return {
-        allProviders: function() {
-            return Atlas.getRequest('/videosource/providers.json').then(function (results) {
-                return results.data.link_providers});
-        },
-        getOAuthLogin: function(authUrl, callbackUrl) {
-            var url = authUrl.replace("/" + atlasVersion, "") + ".json?redirectUri=" + encodeURIComponent(callbackUrl);
-            return Atlas.getRequest(url).then(function (results) {
-                return results.data.oauth_request});
-        },
-        getAllWritableSources: function() {
-             return Applications.all().then(function(applications) {
-                 // Extract writable sources from apps that give user write permission
-                 var writable = {};
-                 for (var i in applications) {
-                     for (var j in applications[i].sources.writes) {
-                         var source = applications[i].sources.writes[j];
-                         writable[source.id] = source;
-                     }
-                 }
-                 return writable;
-             });
-        },
-    }
-});
-var app = angular.module('atlasAdmin.services.uservideosources.youtube', []);
-
-app.factory('UserVideoSourcesYouTube', function (Atlas) {
-    return {
-        getChannels: function() {
-            return Atlas.getRequest('/videosource/youtube/channels.json').then(function (results) {
-                return results.data.user});
-        },
-        addPublisher: function(youTubeId, sourceId) {
-            var url = '/videosource/youtube/' + youTubeId + '/source/add/' + sourceId + '.json';
-            return Atlas.postRequest(url, {});
-        },
-        addChannel: function(youTubeId, channelId) {
-            var url = '/videosource/youtube/' + youTubeId + '/channels/add/' + channelId + '.json';
-            return Atlas.postRequest(url, {});
-        }
-    }
-});
 'use strict';
 
 var app = angular.module('atlasAdmin.services.propositions', []);

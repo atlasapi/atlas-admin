@@ -36,8 +36,6 @@ angular.module('atlasAdmin',
     'atlasAdmin.directives.activePath',
 
     'atlasAdmin.services.auth',
-    'atlasAdmin.services.uservideosources',
-    'atlasAdmin.services.uservideosources.youtube',
     'atlasAdmin.services.propositions',
     'atlasAdmin.services.usage',
     'atlasAdmin.services.feeds',
