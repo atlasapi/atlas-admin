@@ -1,6 +1,7 @@
-var app = angular.module('atlasAdmin.interceptors', ['atlasAdmin.services.profileStatus']);
+'use strict';
 
-app.factory('AuthenticationInterceptor', ['$q', '$location', 'atlasHost', 'atlasApiHost', '$window', 'Authentication',
+angular.module('atlasAdmin.interceptors.auth')
+  .factory('AuthenticationInterceptor', ['$q', '$location', 'atlasHost', 'atlasApiHost', '$window', 'Authentication',
     function($q, $location, atlasHost, atlasApiHost, $window, Auth) {
     return {
         'request': function(config) {
