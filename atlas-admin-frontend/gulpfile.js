@@ -113,11 +113,13 @@ assets.js = [
             'components/directives/deleteItem/deleteItem.directive.js',
             'components/directives/changeStatus/changeStatus.module.js',
             'components/directives/changeStatus/changeStatus.directive.js',
-            
+
             'components/services/auth/auth.module.js',
             'components/services/auth/auth.service.js',
             'components/services/atlas/atlas.module.js',
             'components/services/atlas/atlas.service.js',
+            'components/services/applications/applications.module.js',
+            'components/services/applications/applications.service.js',
 
             'js/interceptors/authInterceptor.js',
             'js/interceptors/loadingInterceptor.js',

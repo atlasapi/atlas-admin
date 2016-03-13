@@ -1,3 +1,3 @@
 'use strict';
 
-angular.module('atlasAdmin.auth', []);
+angular.module('atlasAdmin.services.auth', []);

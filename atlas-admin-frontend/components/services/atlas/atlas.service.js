@@ -1,5 +1,5 @@
 'use strict';
-angular.module('atlasAdmin.atlas')
+angular.module('atlasAdmin.services.atlas')
   .factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $log) {
     return {
         getRequest: function(url) {

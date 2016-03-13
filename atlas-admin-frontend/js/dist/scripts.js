@@ -25348,8 +25348,7 @@ angular.module('atlasAdmin',
     'atlasAdmin.preloader',
     'atlasAdmin.activePath',
 
-    'atlasAdmin.auth',
-    'atlasAdmin.services.applications',
+    'atlasAdmin.services.auth',
     'atlasAdmin.services.sources',
     'atlasAdmin.services.sourceRequests',
     'atlasAdmin.services.sourceLicenses',
@@ -25383,7 +25382,7 @@ angular.module('atlasAdmin',
 
 'use strict';
 
-angular.module('atlasAdmin.applications', ['ngRoute', 'atlasAdmin.focus', 'atlasAdmin.atlas'])
+angular.module('atlasAdmin.applications', ['ngRoute', 'atlasAdmin.focus', 'atlasAdmin.services.atlas', 'atlasAdmin.services.applications'])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/applications', {
       templateUrl: 'presentation/applications/applications.tpl.html',
@@ -25581,7 +25580,7 @@ angular.module('atlasAdmin.applications')
 
 'use strict';
 
-angular.module('atlasAdmin.application', ['ngRoute', 'atlasAdmin.orderable', 'atlasAdmin.focus', 'atlasAdmin.validUsage', 'atlasAdmin.atlas'])
+angular.module('atlasAdmin.application', ['ngRoute', 'atlasAdmin.orderable', 'atlasAdmin.focus', 'atlasAdmin.validUsage', 'atlasAdmin.services.atlas', 'atlasAdmin.services.applications'])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/applications/:applicationId', {
       templateUrl: 'presentation/application/application.tpl.html',
@@ -26041,7 +26040,7 @@ angular.module('atlasAdmin.application')
 
 'use strict';
 
-angular.module('atlasAdmin.requestSource', ['ngRoute'])
+angular.module('atlasAdmin.requestSource', ['ngRoute', 'atlasAdmin.services.applications'])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/applications/:applicationId/requestSource/:sourceId', {
       templateUrl: 'presentation/requestSource/requestSource.tpl.html',
@@ -27052,7 +27051,7 @@ angular.module('atlasAdmin.manageSourcesWriters')
 
 'use strict';
 
-angular.module('atlasAdmin.manageRequests', ['ngRoute'])
+angular.module('atlasAdmin.manageRequests', ['ngRoute', 'atlasAdmin.services.applications'])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/manage/requests', {
       templateUrl: 'presentation/manageRequests/manageRequests.tpl.html',
@@ -29204,10 +29203,10 @@ angular.module('atlasAdmin.changeStatus')
 
 'use strict';
 
-angular.module('atlasAdmin.auth', []);
+angular.module('atlasAdmin.services.auth', []);
 
 'use strict';
-angular.module('atlasAdmin.auth')
+angular.module('atlasAdmin.services.auth')
   .factory('Authentication', ['$rootScope', 'ProfileStatus',
       function ($rootScope, ProfileStatus) {
       if (!$rootScope.status) {
@@ -29249,10 +29248,10 @@ angular.module('atlasAdmin.auth')
   }]);
 
 'use strict';
-angular.module('atlasAdmin.atlas', []);
+angular.module('atlasAdmin.services.atlas', []);
 
 'use strict';
-angular.module('atlasAdmin.atlas')
+angular.module('atlasAdmin.services.atlas')
   .factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $log) {
     return {
         getRequest: function(url) {
@@ -29296,6 +29295,64 @@ angular.module('atlasAdmin.atlas')
         }
     };
   });
+
+'use strict';
+angular.module('atlasAdmin.services.applications', []);
+
+'use strict';
+
+angular.module('atlasAdmin.services.applications')
+  .factory('Applications', function (Atlas) {
+    return {
+        all: function () {
+            return Atlas.getRequest('/applications.json').then(function (results) {
+                return results.data.applications;
+            });
+        },
+        get: function(applicationId) {
+            return Atlas.getRequest('/applications/' + applicationId + '.json').then(function (results) {
+                return results.data.application;
+            });
+        },
+        create: function(title, description, url) {
+            var data = {
+                'title': title,
+                'description': description,
+                //'url': url,
+                'publisher': {
+                    'key': 'metabroadcast.com',
+                    'name': 'MetaBroadcast',
+                    'country': 'ALL'
+                }
+            }
+            return Atlas.postRequest('/applications.json', data);
+        },
+        update: function(data, callback) {
+            return Atlas.postRequest('/applications.json', data);
+        },
+        setPrecedence: function(applicationId, sourceIdOrder) {
+            var url = '/applications/' + applicationId + '/precedence';
+            var data = { 'ordering': sourceIdOrder };
+            return Atlas.postRequest(url, data);
+        },
+        deletePrecedence:  function(applicationId) {
+            var url = '/applications/' + applicationId + '/precedence';
+            return Atlas.deleteRequest(url);
+        },
+        revokeApplication: function(data) {
+            data.revoked = true;
+            return Atlas.postRequest('/applications.json', data).then(function (results) {
+                return results.data.data;
+            });
+        },
+        unRevokeApplication: function(application) {
+            application.revoked = false;
+            return Atlas.postRequest('/applications.json', application).then(function (results) {
+                return results.data.application;
+            });
+        }
+    };
+ });
 
 var app = angular.module('atlasAdmin.interceptors', []);
 
@@ -29439,7 +29496,7 @@ app.factory('ProfileCompleteInterceptor', ['ProfileStatus', '$location', '$q', '
     }
 }]);
 
-var app = angular.module('atlasAdmin.services.users', ['atlasAdmin.atlas']);
+var app = angular.module('atlasAdmin.services.users', ['atlasAdmin.services.atlas']);
 
 app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'ProfileStatus', '$log', 'atlasApiHost', '$q',
     function($http, Atlas, $rootScope, Authentication, ProfileStatus, $log, atlasApiHost, $q) {
@@ -29534,63 +29591,6 @@ app.factory('ProfileStatus', function() {
         }
     };
 });
-
-'use strict';
-
-/* Services */
-var app = angular.module('atlasAdmin.services.applications', []);
-
-app.factory('Applications', function (Atlas) {
-    return {
-        all: function () {
-            return Atlas.getRequest('/applications.json').then(function (results) {
-                return results.data.applications;
-            });
-        },
-        get: function(applicationId) {
-            return Atlas.getRequest('/applications/' + applicationId + '.json').then(function (results) {
-                return results.data.application;
-            });
-        },
-        create: function(title, description, url) {
-            var data = {
-                'title': title,
-                'description': description,
-                //'url': url,
-                'publisher': {
-                    'key': 'metabroadcast.com',
-                    'name': 'MetaBroadcast',
-                    'country': 'ALL'
-                }
-            }
-            return Atlas.postRequest('/applications.json', data);
-        },
-        update: function(data, callback) {
-            return Atlas.postRequest('/applications.json', data);
-        },
-        setPrecedence: function(applicationId, sourceIdOrder) {
-            var url = '/applications/' + applicationId + '/precedence';
-            var data = { 'ordering': sourceIdOrder };
-            return Atlas.postRequest(url, data);
-        },
-        deletePrecedence:  function(applicationId) {
-            var url = '/applications/' + applicationId + '/precedence';
-            return Atlas.deleteRequest(url);
-        },
-        revokeApplication: function(data) {
-            data.revoked = true;
-            return Atlas.postRequest('/applications.json', data).then(function (results) {
-                return results.data.data;
-            });
-        },
-        unRevokeApplication: function(application) {
-            application.revoked = false;
-            return Atlas.postRequest('/applications.json', application).then(function (results) {
-                return results.data.application;
-            });
-        }
-    };
- });
 
 'use strict';
 

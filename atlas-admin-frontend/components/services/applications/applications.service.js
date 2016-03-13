@@ -1,9 +1,7 @@
 'use strict';
 
-/* Services */
-var app = angular.module('atlasAdmin.services.applications', []);
-
-app.factory('Applications', function (Atlas) {
+angular.module('atlasAdmin.services.applications')
+  .factory('Applications', function (Atlas) {
     return {
         all: function () {
             return Atlas.getRequest('/applications.json').then(function (results) {

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('atlasAdmin.manageRequests', ['ngRoute'])
+angular.module('atlasAdmin.manageRequests', ['ngRoute', 'atlasAdmin.services.applications'])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/manage/requests', {
       templateUrl: 'presentation/manageRequests/manageRequests.tpl.html',
