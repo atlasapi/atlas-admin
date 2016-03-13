@@ -13,8 +13,8 @@ var gulpProtractorAngular = require('gulp-angular-protractor');
 assets.js = [
             'node_modules/contact-us-form/dist/contact-us-form.js',
             'js/vendor/highlight.js',
-            'js/vendor/lodash.js',
-            'js/vendor/moment.js',
+            'node_modules/lodash/lodash.js',
+            'node_modules/moment/moment.js',
             'node_modules/d3/d3.min.js',
             'js/app.js',
 
