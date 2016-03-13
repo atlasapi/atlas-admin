@@ -1,13 +1,12 @@
 'use strict';
 
-var app = angular.module('atlasAdmin.services.propositions', []);
-
-app.factory('factoryPropositions', ['$http', 'Authentication', 'atlasApiHost', '$q', 
+angular.module('atlasAdmin.services.propositions')
+  .factory('factoryPropositions', ['$http', 'Authentication', 'atlasApiHost', '$q',
     function($http, Authentication, atlasApiHost, $q) {
     var endpoint = atlasApiHost + '/propositions';
 
     //  Get all propositions
-    // 
+    //
     //  @returns promise
     var all = function() {
         var defer = $q.defer();

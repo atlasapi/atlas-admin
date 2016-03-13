@@ -3,7 +3,8 @@
 angular.module('atlasAdmin.manageWishlist', [
     'ngRoute',
     'atlasAdmin.directives.deleteItem',
-    'atlasAdmin.directives.changeStatus'
+    'atlasAdmin.directives.changeStatus',
+    'atlasAdmin.services.propositions'
   ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/manage/wishlist', {

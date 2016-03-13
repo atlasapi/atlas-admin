@@ -36,7 +36,6 @@ angular.module('atlasAdmin',
     'atlasAdmin.directives.activePath',
 
     'atlasAdmin.services.auth',
-    'atlasAdmin.services.propositions',
     'atlasAdmin.services.usage',
     'atlasAdmin.services.feeds',
     'atlasAdmin.services.bbcscrubbables',
