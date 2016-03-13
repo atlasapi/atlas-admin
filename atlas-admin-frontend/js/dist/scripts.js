@@ -25348,7 +25348,7 @@ angular.module('atlasAdmin',
     'atlasAdmin.preloader',
     'atlasAdmin.activePath',
 
-    'atlasAdmin.services.auth',
+    'atlasAdmin.auth',
     'atlasAdmin.services.atlas',
     'atlasAdmin.services.applications',
     'atlasAdmin.services.sources',
@@ -29203,6 +29203,52 @@ angular.module('atlasAdmin.changeStatus')
       return definitionObj;
   }]);
 
+'use strict';
+
+angular.module('atlasAdmin.auth', []);
+
+'use strict';
+angular.module('atlasAdmin.auth')
+  .factory('Authentication', ['$rootScope', 'ProfileStatus',
+      function ($rootScope, ProfileStatus) {
+      if (!$rootScope.status) {
+          $rootScope.status = {};
+      }
+      return {
+          getProvider: function () {
+              return localStorage.getItem('auth.provider');
+          },
+          setProvider: function (provider) {
+              localStorage.setItem('auth.provider', provider);
+          },
+          getToken: function () {
+              return localStorage.getItem('auth.token');
+          },
+          setToken: function (token) {
+              localStorage.setItem('auth.token', token);
+          },
+          reset: function () {
+              localStorage.removeItem('auth.provider');
+              localStorage.removeItem('auth.token');
+              localStorage.removeItem('profile.complete');
+              localStorage.removeItem('license.accepted');
+              $rootScope.status.loggedIn = false;
+          },
+          appendTokenToUrl: function (url) {
+              var provider = localStorage.getItem('auth.provider');
+              var token = localStorage.getItem('auth.token');
+              var oauthParams = 'oauth_provider=' + provider + '&oauth_token=' + token;
+              if (!token) {
+                  return url;
+              }
+              $rootScope.status.loggedIn = true;
+              return (url.indexOf('?') === -1) ?
+                          url + '?' + oauthParams :
+                          url + '&' + oauthParams;
+          }
+      };
+  }]);
+
 var app = angular.module('atlasAdmin.interceptors', []);
 
 app.factory('AuthenticationInterceptor', ['$q', '$location', 'atlasHost', 'atlasApiHost', '$window', 'Authentication',
@@ -29345,48 +29391,6 @@ app.factory('ProfileCompleteInterceptor', ['ProfileStatus', '$location', '$q', '
     }
 }]);
 
-'use strict';
-var app = angular.module('atlasAdmin.services.auth', []);
-
-app.factory('Authentication', ['$rootScope', 'ProfileStatus',
-    function ($rootScope, ProfileStatus) {
-    if (!$rootScope.status) {
-        $rootScope.status = {};
-    }
-    return {
-        getProvider: function () {
-            return localStorage.getItem('auth.provider');
-        },
-        setProvider: function (provider) {
-            localStorage.setItem('auth.provider', provider);
-        },
-        getToken: function () {
-            return localStorage.getItem('auth.token');
-        },
-        setToken: function (token) {
-            localStorage.setItem('auth.token', token);
-        },
-        reset: function () {
-            localStorage.removeItem('auth.provider');
-            localStorage.removeItem('auth.token');
-            localStorage.removeItem('profile.complete');
-            localStorage.removeItem('license.accepted');
-            $rootScope.status.loggedIn = false;
-        },
-        appendTokenToUrl: function (url) {
-            var provider = localStorage.getItem('auth.provider');
-            var token = localStorage.getItem('auth.token');
-            var oauthParams = 'oauth_provider=' + provider + '&oauth_token=' + token;
-            if (!token) {
-                return url;
-            }
-            $rootScope.status.loggedIn = true;
-            return (url.indexOf('?') === -1) ?
-                        url + '?' + oauthParams :
-                        url + '&' + oauthParams;
-        }
-    };
-}]);
 'use strict';
 var app = angular.module('atlasAdmin.services.atlas', []);
 

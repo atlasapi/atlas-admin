@@ -1,5 +1,5 @@
 'use strict';
-angular.module('atlasAdmin.services.auth')
+angular.module('atlasAdmin.auth')
   .factory('Authentication', ['$rootScope', 'ProfileStatus',
       function ($rootScope, ProfileStatus) {
       if (!$rootScope.status) {
