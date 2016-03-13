@@ -1,6 +1,6 @@
 'use strict';
 var app = angular.module('atlasAdmin.wishlist')
-  .controller('CtrlWishlist', ['$scope', '$rootScope', '$routeParams', 'factoryPropositions', 'factoryWishes', 'Users', '$q', 
+  .controller('CtrlWishlist', ['$scope', '$rootScope', '$routeParams', 'factoryPropositions', 'Wishes', 'Users', '$q', 
     function ($scope, $rootScope, $routeParams, Propositions, Wishes, Users, $q) {
 
     // tab state (sources | features)

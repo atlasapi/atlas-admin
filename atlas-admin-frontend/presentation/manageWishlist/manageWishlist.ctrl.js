@@ -1,5 +1,5 @@
 angular.module('atlasAdmin.manageWishlist')
-  .controller('CtrlManageWishlist', ['$scope', '$rootScope', 'factoryPropositions', 'factoryWishes',
+  .controller('CtrlManageWishlist', ['$scope', '$rootScope', 'factoryPropositions', 'Wishes',
       function($scope, $rootScope, Propositions, Wishes) {
       $scope.app = {};
       $rootScope.requestsToday = {};

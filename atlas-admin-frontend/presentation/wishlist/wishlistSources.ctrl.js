@@ -2,7 +2,7 @@
 
 var app = angular.module('atlasAdmin.wishlist');
 
-app.controller('CtrlWishlistSources', ['$scope', '$rootScope', '$routeParams', 'factoryWishes', '$q',
+app.controller('CtrlWishlistSources', ['$scope', '$rootScope', '$routeParams', 'Wishes', '$q',
     function ($scope, $rootScope, $routeParams, Wishes, $q) {
     var root = $rootScope;
     $scope.sources = [];

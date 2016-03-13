@@ -1,7 +1,7 @@
 'use strict';
 var app = angular.module('atlasAdmin.wishlist');
 
-app.controller('CtrlWishlistFeatures', ['$scope', '$rootScope', '$routeParams', 'factoryWishes', '$q', '$modal',
+app.controller('CtrlWishlistFeatures', ['$scope', '$rootScope', '$routeParams', 'Wishes', '$q', '$modal',
     function ($scope, $rootScope, $routeParams, Wishes, $q, $modal) {
     var root = $rootScope;
     $scope.features = {};

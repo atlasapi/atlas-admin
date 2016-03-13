@@ -4,7 +4,8 @@ angular.module('atlasAdmin.wishlist', [
     'ngRoute',
     'atlasAdmin.directives.inputMorph',
     'atlasAdmin.services.users',
-    'atlasAdmin.services.propositions'
+    'atlasAdmin.services.propositions',
+    'atlasAdmin.services.wishes'
   ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/wishlist', {

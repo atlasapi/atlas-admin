@@ -1,8 +1,7 @@
 'use strict';
 
-var app = angular.module('atlasAdmin.services.propositions');
-
-app.factory('factoryWishes', ['$http', 'Authentication', 'atlasApiHost', '$q', 
+angular.module('atlasAdmin.services.wishes')
+  .factory('Wishes', ['$http', 'Authentication', 'atlasApiHost', '$q',
     function($http, Authentication, atlasApiHost, $q) {
 
     var endpoint = atlasApiHost + '/wishes';
