@@ -34966,8 +34966,7 @@ if(t==e.dx){for((r||s>e.dy)&&(s=e.dy);++i<a;)u=n[i],u.x=o,u.y=c,u.dy=s,o+=u.dx=M
 
 // Declare app level module which depends on filters, and services
 angular.module('atlasAdmin',
-   [
-    'atlasAdmin.filters',
+   ['atlasAdmin.filters',
     'atlasAdmin.login',
     'atlasAdmin.logout',
     'atlasAdmin.auth',
@@ -35003,7 +35002,7 @@ angular.module('atlasAdmin',
 
     'atlasAdmin.interceptors.auth',
     'atlasAdmin.interceptors.loading',
-    'atlasAdmin.interceptors.ProfileComplete',
+    'atlasAdmin.interceptors.profileComplete',
 
     'ui.bootstrap',
     'ngResource',
@@ -40202,6 +40201,159 @@ angular.module('atlasAdmin.services.wishes')
         user: getUserWishes
     }
 }])
+
+'use strict';
+angular.module('atlasAdmin.interceptors.auth', []);
+
+'use strict';
+
+angular.module('atlasAdmin.interceptors.auth')
+  .factory('AuthenticationInterceptor', ['$q', '$location', 'atlasHost', 'atlasApiHost', '$window', 'Authentication',
+    function($q, $location, atlasHost, atlasApiHost, $window, Auth) {
+    return {
+        'request': function(config) {
+            var _url = config.url;
+            if (_url.indexOf('partials') !== -1 ||
+                _url.indexOf('/login') !== -1 ||
+                _url.indexOf('/logout') !== -1 ||
+                _url.indexOf('/auth/') !== -1) {
+                return config || $q.defer(config);
+            }
+            var _provider = Auth.getProvider() || null;
+            var _token = Auth.getToken() || null;
+            if (!_token || !_provider) {
+                console.log('Token and provider aren\'t present in localstorage');
+                $location.path('/login');
+            }
+            return config || $q.defer(config);
+        },
+
+        'responseError': function(response) {
+            var _url = _.has(response.config, 'url') ? response.config.url : null;
+            if (! _url) {
+              console.warn('Cannot find url property in response', response.config);
+              return;
+            }
+            if (_url.indexOf(atlasHost) !== -1 || _url.indexOf(atlasApiHost) !== -1) {
+                if (response.status === 400) {
+                    console.error('Account not authenticated to make request to: '+_url);
+                }else if (response.status === 403) {
+                    console.error('You do not have access to the resource ' + _url);
+                }
+            }
+            return response || $q.defer(response);
+        }
+    };
+}]);
+
+'use strict';
+
+angular.module('atlasAdmin.interceptors.loading', []);
+
+'use strict';
+
+angular.module('atlasAdmin.interceptors.loading')
+  .factory('LoadingInterceptor', ['$q', '$rootScope', '$injector', '$timeout', '$location',
+        function($q, $rootScope, $injector, $timeout, $location) {
+        var requests = 0;
+        var loadTimer;
+        var restrictedLocations = ['scrubbables'];
+
+        if (!$rootScope.show) {
+            $rootScope.show = {};
+        }
+
+        var restricted = function() {
+            var _path = $location.path();
+            for (var i in restrictedLocations) {
+                if (_path.indexOf(restrictedLocations[i]) !== -1) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        var startLoading = function() {
+            var _loggedin = $rootScope.status.loggedIn || false;
+            if (requests > 1 && _loggedin && !restricted()) {
+                $timeout.cancel(loadTimer);
+                $rootScope.show.cloak = true;
+                loadTimer = $timeout(function() {
+                    $rootScope.show.load = true;
+                    $rootScope.$broadcast('loading-started');
+                }, 400);
+            }
+        }
+
+        var endLoading = function() {
+            $timeout.cancel(loadTimer);
+            $rootScope.$broadcast('loading-complete');
+            $rootScope.show.load = false;
+            $rootScope.show.cloak = false;
+        }
+
+        // precautionary incase the loading process is
+        // still running from the last page
+        endLoading();
+        $rootScope.show.cloak = true;
+
+        return {
+            'request': function(config) {
+                requests++;
+                startLoading();
+                return config || $q.when(config);
+            },
+            'response': function(response) {
+                requests = (requests > 0)? --requests : 0;
+                if (!requests) endLoading();
+                return response || $q.when(response);
+            }
+        };
+    }]);
+
+'use strict';
+
+angular.module('atlasAdmin.interceptors.profileComplete', [
+  'atlasAdmin.services.profileStatus'
+]);
+
+'use strict';
+
+angular.module('atlasAdmin.interceptors.profileComplete')
+  .factory('ProfileCompleteInterceptor', ['ProfileStatus', '$location', '$q', '$rootScope', 'Authentication',
+    function (ProfileStatus, $location, $q, $rootScope, Auth) {
+    return {
+        'request': function(config) {
+            var _url = config.url;
+            var _provider = Auth.getProvider() || null;
+            var _token = Auth.getToken() || null;
+
+            // some paths are just for use by the application; we don't want
+            // those to be included in redirects etc
+            var allowedRoute = function () {
+                return (_url.indexOf('/auth') === -1 &&
+                        _url.indexOf('/logout') === -1 &&
+                        _url.indexOf('/login') === -1 &&
+                        _url.indexOf('/profile') === -1);
+            }
+
+            if (_provider && _token) {
+                if (!ProfileStatus.isProfileComplete() &&
+                    allowedRoute()) {
+                        $location.path('/profile');
+                }
+                if (ProfileStatus.getLicenseAccepted() === false &&
+                    allowedRoute()) {
+                    $location.path('/terms');
+                }
+            }
+            return config || $q.reject(config);
+        },
+        'response': function(response) {
+            return response || $q.reject(response);
+        }
+    }
+}]);
 
 'use strict';
 

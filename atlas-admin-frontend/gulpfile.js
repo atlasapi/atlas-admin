@@ -155,12 +155,12 @@ assets.js = [
             'components/services/wishes/wishes.service.js',
 
             'components/interceptors/auth/auth.module.js',
-            'components/interceptors/auth/auth.service.js',
+            'components/interceptors/auth/auth.interceptor.js',
             'components/interceptors/loading/loading.module.js',
-            'components/interceptors/loading/loading.service.js',
+            'components/interceptors/loading/loading.interceptor.js',
             'components/interceptors/profileComplete/profileComplete.module.js',
-            'components/interceptors/profileComplete/profileComplete.service.js',
-            
+            'components/interceptors/profileComplete/profileComplete.interceptor.js',
+
             'js/filters.js'];
 
 //  Styles

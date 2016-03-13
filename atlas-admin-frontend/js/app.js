@@ -2,8 +2,7 @@
 
 // Declare app level module which depends on filters, and services
 angular.module('atlasAdmin',
-   [
-    'atlasAdmin.filters',
+   ['atlasAdmin.filters',
     'atlasAdmin.login',
     'atlasAdmin.logout',
     'atlasAdmin.auth',
@@ -39,7 +38,7 @@ angular.module('atlasAdmin',
 
     'atlasAdmin.interceptors.auth',
     'atlasAdmin.interceptors.loading',
-    'atlasAdmin.interceptors.ProfileComplete',
+    'atlasAdmin.interceptors.profileComplete',
 
     'ui.bootstrap',
     'ngResource',
