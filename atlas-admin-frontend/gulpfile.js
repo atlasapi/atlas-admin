@@ -137,11 +137,12 @@ assets.js = [
             'components/services/userVideoSources/userVideoSources.service.js',
             'components/services/propositions/propositions.module.js',
             'components/services/propositions/propositions.service.js',
+            'components/services/apiUsage/apiUsage.module.js',
+            'components/services/apiUsage/apiUsage.service.js',
 
             'js/interceptors/authInterceptor.js',
             'js/interceptors/loadingInterceptor.js',
             'js/interceptors/profileCompleteInterceptor.js',
-            'js/services/api-usage.js',
             'js/services/wishes.js',
             'js/services/groups.js',
             'js/services/feeds.js',

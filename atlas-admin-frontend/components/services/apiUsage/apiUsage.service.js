@@ -1,7 +1,7 @@
 'use strict';
-var app = angular.module('atlasAdmin.services.usage', []);
 
-app.factory('APIUsage', ['$http', 'Authentication', 'atlasApiHost', '$q',
+angular.module('atlasAdmin.services.apiUsage')
+  .factory('APIUsage', ['$http', 'Authentication', 'atlasApiHost', '$q',
     function($http, Authentication, atlasApiHost, $q) {
     var _endpoint = atlasApiHost + '/usage';
 
@@ -22,7 +22,7 @@ app.factory('APIUsage', ['$http', 'Authentication', 'atlasApiHost', '$q',
             method: 'get',
             url: Authentication.appendTokenToUrl(endpoint)
         })
-        .success(function(data, status) { 
+        .success(function(data, status) {
             if (status === 200) {
                 defer.resolve(data);
             }else{
@@ -42,7 +42,7 @@ app.factory('APIUsage', ['$http', 'Authentication', 'atlasApiHost', '$q',
             method: 'get',
             url: Authentication.appendTokenToUrl(endpoint)
         })
-        .success(function(data, status) { 
+        .success(function(data, status) {
             if (status === 200) {
                 defer.resolve(data);
             }else{
@@ -62,7 +62,7 @@ app.factory('APIUsage', ['$http', 'Authentication', 'atlasApiHost', '$q',
             method: 'get',
             url: Authentication.appendTokenToUrl(endpoint)
         })
-        .success(function(data, status) { 
+        .success(function(data, status) {
             if (status === 200) {
                 defer.resolve(data);
             }else{
@@ -82,7 +82,7 @@ app.factory('APIUsage', ['$http', 'Authentication', 'atlasApiHost', '$q',
             method: 'get',
             url: Authentication.appendTokenToUrl(endpoint)
         })
-        .success(function(data, status) { 
+        .success(function(data, status) {
             if (status === 200) {
                 defer.resolve(data);
             }else{
