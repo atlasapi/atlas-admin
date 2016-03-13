@@ -15,7 +15,7 @@ assets.js = [
             'js/vendor/highlight.js',
             'js/vendor/lodash.js',
             'js/vendor/moment.js',
-            'js/vendor/d3.min.js',
+            'node_modules/d3/d3.min.js',
             'js/app.js',
 
             'presentation/applications/applications.module.js',
