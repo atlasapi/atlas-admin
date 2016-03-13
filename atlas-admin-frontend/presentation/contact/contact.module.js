@@ -2,7 +2,8 @@
 
 angular.module('atlasAdmin.contact', [
     'ngRoute',
-    'atlasAdmin.services.users'
+    'atlasAdmin.services.users',
+    'atlasAdmin.services.groups'
   ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/contact', {

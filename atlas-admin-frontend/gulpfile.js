@@ -145,12 +145,13 @@ assets.js = [
             'components/services/bbcRedux/bbcRedux.service.js',
             'components/services/scrubbableHelpers/scrubbableHelpers.module.js',
             'components/services/scrubbableHelpers/scrubbableHelpers.service.js',
+            'components/services/groups/groups.module.js',
+            'components/services/groups/groups.service.js',
 
             'js/interceptors/authInterceptor.js',
             'js/interceptors/loadingInterceptor.js',
             'js/interceptors/profileCompleteInterceptor.js',
             'js/services/wishes.js',
-            'js/services/groups.js',
             'js/services/bbcScrubbables.js',
             'js/services/bbcRedux.js',
             'js/filters.js'];
