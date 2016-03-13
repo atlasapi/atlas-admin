@@ -25349,7 +25349,6 @@ angular.module('atlasAdmin',
     'atlasAdmin.directives.activePath',
 
     'atlasAdmin.services.auth',
-    'atlasAdmin.services.sources',
     'atlasAdmin.services.sourceRequests',
     'atlasAdmin.services.sourceLicenses',
     'atlasAdmin.services.users',
@@ -25580,7 +25579,15 @@ angular.module('atlasAdmin.applications')
 
 'use strict';
 
-angular.module('atlasAdmin.application', ['ngRoute', 'atlasAdmin.directives.orderable', 'atlasAdmin.directives.focus', 'atlasAdmin.directives.validUsage', 'atlasAdmin.services.atlas', 'atlasAdmin.services.applications'])
+angular.module('atlasAdmin.application', [
+    'ngRoute',
+    'atlasAdmin.directives.orderable',
+    'atlasAdmin.directives.focus',
+    'atlasAdmin.directives.validUsage',
+    'atlasAdmin.services.atlas',
+    'atlasAdmin.services.applications',
+    'atlasAdmin.services.sources'
+  ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/applications/:applicationId', {
       templateUrl: 'presentation/application/application.tpl.html',
@@ -27243,7 +27250,11 @@ angular.module('atlasAdmin.manageUsage')
 
 'use strict';
 
-angular.module('atlasAdmin.manageWishlist', ['ngRoute', 'atlasAdmin.directives.deleteItem', 'atlasAdmin.directives.changeStatus'])
+angular.module('atlasAdmin.manageWishlist', [
+    'ngRoute',
+    'atlasAdmin.directives.deleteItem',
+    'atlasAdmin.directives.changeStatus'
+  ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/manage/wishlist', {
       templateUrl: 'presentation/manageWishlist/manageWishlist.tpl.html',
@@ -29354,6 +29365,33 @@ angular.module('atlasAdmin.services.applications')
     };
  });
 
+'use strict';
+
+angular.module('atlasAdmin.services.sources', []);
+
+'use strict';
+
+angular.module('atlasAdmin.services.sources')
+  .factory('Sources', function (Atlas, Applications, $log) {
+    return {
+        all: function () {
+             return Atlas.getRequest('/sources.json').then(function(result) {return result.data.sources;});
+        },
+        get: function (sourceId) {
+             return Atlas.getRequest('/sources/' + sourceId + '.json').then(function(result) {return result.data.source;});
+        },
+        changeAppState: function(sourceId, appId, state, callback) {
+            var data = {};
+            var url = "/sources/" + sourceId + "/applications/readers/" + appId + "/state?state="+ state;
+            Atlas.postRequest(url, data, {withCredentials: false}).success(callback).error(function(error) {$log.error(error)});
+        },
+        addWriter: function(sourceId, appId, callback) {
+            var url = "/sources/" + sourceId + "/applications?id=" + appId + "&permission=write";
+            Atlas.postRequest(url, {}, {withCredentials: false}).success(callback);
+        }
+    }
+  });
+
 var app = angular.module('atlasAdmin.interceptors', []);
 
 app.factory('AuthenticationInterceptor', ['$q', '$location', 'atlasHost', 'atlasApiHost', '$window', 'Authentication',
@@ -29592,28 +29630,6 @@ app.factory('ProfileStatus', function() {
     };
 });
 
-'use strict';
-
-var app = angular.module('atlasAdmin.services.sources', []);
-app.factory('Sources', function (Atlas, Applications, $log) {
-    return {
-        all: function () {
-             return Atlas.getRequest('/sources.json').then(function(result) {return result.data.sources;});
-        },
-        get: function (sourceId) {
-             return Atlas.getRequest('/sources/' + sourceId + '.json').then(function(result) {return result.data.source;});
-        },
-        changeAppState: function(sourceId, appId, state, callback) {
-            var data = {};
-            var url = "/sources/" + sourceId + "/applications/readers/" + appId + "/state?state="+ state;
-            Atlas.postRequest(url, data, {withCredentials: false}).success(callback).error(function(error) {$log.error(error)});
-        },
-        addWriter: function(sourceId, appId, callback) {
-            var url = "/sources/" + sourceId + "/applications?id=" + appId + "&permission=write";
-            Atlas.postRequest(url, {}, {withCredentials: false}).success(callback);
-        }
-    }
- });
 var app = angular.module('atlasAdmin.services.sourceRequests', []);
 
 app.factory('sourceRequests', function (Atlas, Users) {

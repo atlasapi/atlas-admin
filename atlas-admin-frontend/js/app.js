@@ -36,7 +36,6 @@ angular.module('atlasAdmin',
     'atlasAdmin.directives.activePath',
 
     'atlasAdmin.services.auth',
-    'atlasAdmin.services.sources',
     'atlasAdmin.services.sourceRequests',
     'atlasAdmin.services.sourceLicenses',
     'atlasAdmin.services.users',

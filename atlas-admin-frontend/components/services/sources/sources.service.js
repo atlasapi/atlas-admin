@@ -1,7 +1,7 @@
 'use strict';
 
-var app = angular.module('atlasAdmin.services.sources', []);
-app.factory('Sources', function (Atlas, Applications, $log) {
+angular.module('atlasAdmin.services.sources')
+  .factory('Sources', function (Atlas, Applications, $log) {
     return {
         all: function () {
              return Atlas.getRequest('/sources.json').then(function(result) {return result.data.sources;});
@@ -19,4 +19,4 @@ app.factory('Sources', function (Atlas, Applications, $log) {
             Atlas.postRequest(url, {}, {withCredentials: false}).success(callback);
         }
     }
- });
+  });

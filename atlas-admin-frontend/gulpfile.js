@@ -120,6 +120,8 @@ assets.js = [
             'components/services/atlas/atlas.service.js',
             'components/services/applications/applications.module.js',
             'components/services/applications/applications.service.js',
+            'components/services/sources/sources.module.js',
+            'components/services/sources/sources.service.js',
 
             'js/interceptors/authInterceptor.js',
             'js/interceptors/loadingInterceptor.js',
@@ -128,7 +130,6 @@ assets.js = [
             'js/services/atlas.js',
             'js/services/users.js',
             'js/services/applications.js',
-            'js/services/sources.js',
             'js/services/sourceRequests/sourceRequests.js',
             'js/services/sourceRequests/factorySourceRequests.js',
             'js/services/sourceRequests/factorySourcePayments.js',
