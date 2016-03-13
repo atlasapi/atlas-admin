@@ -3,7 +3,8 @@
 angular.module('atlasAdmin.scrubbables', [
     'ngRoute',
     'atlasAdmin.directives.scrubber',
-    'atlasAdmin.directives.atlasSearch'
+    'atlasAdmin.directives.atlasSearch',
+    'atlasAdmin.services.scrubbables'
   ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/scrubbables', {
