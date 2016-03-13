@@ -139,13 +139,14 @@ assets.js = [
             'components/services/propositions/propositions.service.js',
             'components/services/apiUsage/apiUsage.module.js',
             'components/services/apiUsage/apiUsage.service.js',
+            'components/services/feeds/feeds.module.js',
+            'components/services/feeds/feeds.service.js',
 
             'js/interceptors/authInterceptor.js',
             'js/interceptors/loadingInterceptor.js',
             'js/interceptors/profileCompleteInterceptor.js',
             'js/services/wishes.js',
             'js/services/groups.js',
-            'js/services/feeds.js',
             'js/services/bbcScrubbables.js',
             'js/services/bbcRedux.js',
             'js/filters.js'];
