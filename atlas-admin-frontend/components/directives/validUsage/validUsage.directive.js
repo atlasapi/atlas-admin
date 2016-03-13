@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('atlasAdmin.validUsage')
+angular.module('atlasAdmin.directives.validUsage')
   .directive('validUsage', function () {
     return {
       require: 'ngModel',

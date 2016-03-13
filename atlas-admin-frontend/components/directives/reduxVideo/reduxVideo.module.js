@@ -1,1 +1,1 @@
-angular.module('atlasAdmin.reduxVideo', []);
+angular.module('atlasAdmin.directives.reduxVideo', []);

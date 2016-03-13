@@ -1,4 +1,4 @@
-angular.module('atlasAdmin.scrubber')
+angular.module('atlasAdmin.directives.scrubber')
   .directive('scrubber', ['$document', '$compile',
     function($document, $compile) {
 

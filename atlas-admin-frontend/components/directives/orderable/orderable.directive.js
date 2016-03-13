@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('atlasAdmin.orderable')
+angular.module('atlasAdmin.directives.orderable')
   .directive('orderable', function () {
     return {
         link: function (scope, element) {

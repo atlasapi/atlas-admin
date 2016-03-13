@@ -1,1 +1,1 @@
-angular.module('atlasAdmin.validUsage', []);
+angular.module('atlasAdmin.directives.validUsage', []);

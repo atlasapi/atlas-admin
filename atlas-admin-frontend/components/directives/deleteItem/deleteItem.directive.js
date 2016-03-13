@@ -1,4 +1,4 @@
-angular.module('atlasAdmin.deleteItem')
+angular.module('atlasAdmin.directives.deleteItem')
   .directive('deleteitem', ['$document', 'factoryPropositions',
     function factory($document, Propositions) {
     var definitionObj = {

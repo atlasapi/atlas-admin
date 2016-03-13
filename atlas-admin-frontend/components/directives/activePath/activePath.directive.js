@@ -2,7 +2,7 @@
 
 /* Highlight current menu element */
 /* Thanks to http://stackoverflow.com/questions/12592472/how-to-highlight-a-current-menu-item-in-angularjs */
-angular.module('atlasAdmin.activePath')
+angular.module('atlasAdmin.directives.activePath')
   .directive('activePath', ['$location', 'ProfileStatus', function(location, ProfileStatus) {
     return {
       restrict: 'A',

@@ -1,4 +1,4 @@
-angular.module('atlasAdmin.showSegments')
+angular.module('atlasAdmin.directives.showSegments')
   .directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$http',
     function($document, $q, $timeout, atlasHost, $http) {
 

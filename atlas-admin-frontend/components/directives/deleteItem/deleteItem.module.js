@@ -1,1 +1,1 @@
-angular.module('atlasAdmin.deleteItem', []);
+angular.module('atlasAdmin.directives.deleteItem', []);

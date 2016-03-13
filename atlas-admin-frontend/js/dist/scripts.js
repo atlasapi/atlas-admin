@@ -25345,8 +25345,8 @@ angular.module('atlasAdmin',
     'atlasAdmin.error',
     'atlasAdmin.menu',
 
-    'atlasAdmin.preloader',
-    'atlasAdmin.activePath',
+    'atlasAdmin.directives.preloader',
+    'atlasAdmin.directives.activePath',
 
     'atlasAdmin.services.auth',
     'atlasAdmin.services.sources',
@@ -25382,7 +25382,7 @@ angular.module('atlasAdmin',
 
 'use strict';
 
-angular.module('atlasAdmin.applications', ['ngRoute', 'atlasAdmin.focus', 'atlasAdmin.services.atlas', 'atlasAdmin.services.applications'])
+angular.module('atlasAdmin.applications', ['ngRoute', 'atlasAdmin.directives.focus', 'atlasAdmin.services.atlas', 'atlasAdmin.services.applications'])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/applications', {
       templateUrl: 'presentation/applications/applications.tpl.html',
@@ -25580,7 +25580,7 @@ angular.module('atlasAdmin.applications')
 
 'use strict';
 
-angular.module('atlasAdmin.application', ['ngRoute', 'atlasAdmin.orderable', 'atlasAdmin.focus', 'atlasAdmin.validUsage', 'atlasAdmin.services.atlas', 'atlasAdmin.services.applications'])
+angular.module('atlasAdmin.application', ['ngRoute', 'atlasAdmin.directives.orderable', 'atlasAdmin.directives.focus', 'atlasAdmin.directives.validUsage', 'atlasAdmin.services.atlas', 'atlasAdmin.services.applications'])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/applications/:applicationId', {
       templateUrl: 'presentation/application/application.tpl.html',
@@ -26121,7 +26121,7 @@ angular.module('atlasAdmin.requestSource')
 
 'use strict';
 
-angular.module('atlasAdmin.wishlist', ['ngRoute', 'atlasAdmin.inputMorph'])
+angular.module('atlasAdmin.wishlist', ['ngRoute', 'atlasAdmin.directives.inputMorph'])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/wishlist', {
       templateUrl: 'presentation/wishlist/wishlist.tpl.html',
@@ -26313,7 +26313,7 @@ angular.module('atlasAdmin.epg')
 
 'use strict';
 
-angular.module('atlasAdmin.scrubbables', ['ngRoute', 'atlasAdmin.scrubber', 'atlasAdmin.atlasSearch'])
+angular.module('atlasAdmin.scrubbables', ['ngRoute', 'atlasAdmin.directives.scrubber', 'atlasAdmin.directives.atlasSearch'])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/scrubbables', {
       templateUrl: 'presentation/scrubbables/create.tpl.html',
@@ -26559,7 +26559,7 @@ angular.module('atlasAdmin.feeds')
 
 'use strict';
 
-angular.module('atlasAdmin.feed', ['ngRoute', 'atlasAdmin.actionModal'])
+angular.module('atlasAdmin.feed', ['ngRoute', 'atlasAdmin.directives.actionModal'])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/feeds/:feedId', {
       templateUrl: 'presentation/feed/feed.tpl.html',
@@ -26834,7 +26834,7 @@ angular.module('atlasAdmin.feed')
 
 'use strict';
 
-angular.module('atlasAdmin.feedBreakdown', ['ngRoute', 'atlasAdmin.loadContent', 'atlasAdmin.actionModal'])
+angular.module('atlasAdmin.feedBreakdown', ['ngRoute', 'atlasAdmin.directives.loadContent', 'atlasAdmin.directives.actionModal'])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/feeds/:feedId/:taskId', {
       templateUrl: 'presentation/feedBreakdown/feedBreakdown.tpl.html',
@@ -26955,7 +26955,7 @@ angular.module('atlasAdmin.manageSourcesReaders')
 
 'use strict';
 
-angular.module('atlasAdmin.manageSourcesWriters', ['ngRoute', 'atlasAdmin.focus'])
+angular.module('atlasAdmin.manageSourcesWriters', ['ngRoute', 'atlasAdmin.directives.focus'])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/manage/sources/:sourceId/writers', {
       templateUrl: 'presentation/manageSourcesWriters/manageSourcesWriters.tpl.html',
@@ -27243,7 +27243,7 @@ angular.module('atlasAdmin.manageUsage')
 
 'use strict';
 
-angular.module('atlasAdmin.manageWishlist', ['ngRoute', 'atlasAdmin.deleteItem', 'atlasAdmin.changeStatus'])
+angular.module('atlasAdmin.manageWishlist', ['ngRoute', 'atlasAdmin.directives.deleteItem', 'atlasAdmin.directives.changeStatus'])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/manage/wishlist', {
       templateUrl: 'presentation/manageWishlist/manageWishlist.tpl.html',
@@ -28045,11 +28045,11 @@ angular.module('atlasAdmin.menu')
     }
 }]);
 
-angular.module('atlasAdmin.orderable', []);
+angular.module('atlasAdmin.directives.orderable', []);
 
 'use strict';
 
-angular.module('atlasAdmin.orderable')
+angular.module('atlasAdmin.directives.orderable')
   .directive('orderable', function () {
     return {
         link: function (scope, element) {
@@ -28171,13 +28171,13 @@ angular.module('atlasAdmin.orderable')
     };
 });
 
-angular.module('atlasAdmin.focus', []);
+angular.module('atlasAdmin.directives.focus', []);
 
 'use strict';
 
 /* Focus on an element. Use "focus-me" as an attribute. */
 
-angular.module('atlasAdmin.focus')
+angular.module('atlasAdmin.directives.focus')
   .directive('focusMe', function ($timeout) {
     return {
       link: function (scope, element, attrs, model) {
@@ -28190,13 +28190,13 @@ angular.module('atlasAdmin.focus')
     };
 });
 
-angular.module('atlasAdmin.activePath', []);
+angular.module('atlasAdmin.directives.activePath', []);
 
 'use strict';
 
 /* Highlight current menu element */
 /* Thanks to http://stackoverflow.com/questions/12592472/how-to-highlight-a-current-menu-item-in-angularjs */
-angular.module('atlasAdmin.activePath')
+angular.module('atlasAdmin.directives.activePath')
   .directive('activePath', ['$location', 'ProfileStatus', function(location, ProfileStatus) {
     return {
       restrict: 'A',
@@ -28226,11 +28226,11 @@ angular.module('atlasAdmin.activePath')
     };
 }]);
 
-angular.module('atlasAdmin.validUsage', []);
+angular.module('atlasAdmin.directives.validUsage', []);
 
 'use strict';
 
-angular.module('atlasAdmin.validUsage')
+angular.module('atlasAdmin.directives.validUsage')
   .directive('validUsage', function () {
     return {
       require: 'ngModel',
@@ -28242,9 +28242,9 @@ angular.module('atlasAdmin.validUsage')
     }
 });
 
-angular.module('atlasAdmin.inputMorph', []);
+angular.module('atlasAdmin.directives.inputMorph', []);
 
-angular.module('atlasAdmin.inputMorph')
+angular.module('atlasAdmin.directives.inputMorph')
   .directive('inputMorph', ['$document', function($document) {
     return function(scope, $el, attr) {
         var title = attr.title;
@@ -28276,11 +28276,11 @@ angular.module('atlasAdmin.inputMorph')
     }
 }]);
 
-angular.module('atlasAdmin.loadContent', []);
+angular.module('atlasAdmin.directives.loadContent', []);
 
 'use strict';
 
-angular.module('atlasAdmin.loadContent')
+angular.module('atlasAdmin.directives.loadContent')
   .directive('loadContent', ['$document', 'FeedsService', '$q', '$sce',
     function($document, Feeds, $q, $sce) {
 
@@ -28380,9 +28380,9 @@ angular.module('atlasAdmin.loadContent')
     };
 }]);
 
-angular.module('atlasAdmin.scrubber', []);
+angular.module('atlasAdmin.directives.scrubber', []);
 
-angular.module('atlasAdmin.scrubber')
+angular.module('atlasAdmin.directives.scrubber')
   .directive('scrubber', ['$document', '$compile',
     function($document, $compile) {
 
@@ -28858,9 +28858,9 @@ angular.module('atlasAdmin.scrubber')
     };
 }]);
 
-var app = angular.module('atlasAdmin.atlasSearch', []);
+var app = angular.module('atlasAdmin.directives.atlasSearch', []);
 
-angular.module('atlasAdmin.atlasSearch')
+angular.module('atlasAdmin.directives.atlasSearch')
   .directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http', 'GroupsService', 'BBCScrubbablesService', 'ScrubbablesHelpers', '$location',
     function($document, $q, $timeout, atlasHost, $http, Groups, Scrubbables, Helpers, $location) {
 
@@ -28968,9 +28968,9 @@ angular.module('atlasAdmin.atlasSearch')
         };
     }]);
 
-angular.module('atlasAdmin.reduxVideo', []);
+angular.module('atlasAdmin.directives.reduxVideo', []);
 
-angular.module('atlasAdmin.reduxVideo')
+angular.module('atlasAdmin.directives.reduxVideo')
   .directive('reduxVideo', ['$document', 'GroupsService', '$q', '$http', 'bbcRedux',
     function($document, Groups, $q, $http, bbcRedux) {
 
@@ -28990,9 +28990,9 @@ angular.module('atlasAdmin.reduxVideo')
     }
   }]);
 
-angular.module('atlasAdmin.showSegments', []);
+angular.module('atlasAdmin.directives.showSegments', []);
 
-angular.module('atlasAdmin.showSegments')
+angular.module('atlasAdmin.directives.showSegments')
   .directive('showSegments', ['$document', '$q', '$timeout', 'atlasHost', '$http',
     function($document, $q, $timeout, atlasHost, $http) {
 
@@ -29089,10 +29089,10 @@ angular.module('atlasAdmin.showSegments')
     };
   }]);
 
-angular.module('atlasAdmin.preloader', []);
+angular.module('atlasAdmin.directives.preloader', []);
 
 'use strict';
-angular.module('atlasAdmin.preloader')
+angular.module('atlasAdmin.directives.preloader')
   .directive('preloader', ['$rootScope', function ($rootScope) {
     return {
       restrict: 'A',
@@ -29108,9 +29108,9 @@ angular.module('atlasAdmin.preloader')
     }
   }]);
 
-angular.module('atlasAdmin.actionModal', []);
+angular.module('atlasAdmin.directives.actionModal', []);
 
-angular.module('atlasAdmin.actionModal')
+angular.module('atlasAdmin.directives.actionModal')
   .directive('actionModal', ['$document', '$q', '$modal',
     function($document, $q, $modal) {
       var controller = function($scope, el, attr) {
@@ -29156,9 +29156,9 @@ angular.module('atlasAdmin.actionModal')
       };
     }]);
 
-angular.module('atlasAdmin.deleteItem', []);
+angular.module('atlasAdmin.directives.deleteItem', []);
 
-angular.module('atlasAdmin.deleteItem')
+angular.module('atlasAdmin.directives.deleteItem')
   .directive('deleteitem', ['$document', 'factoryPropositions',
     function factory($document, Propositions) {
     var definitionObj = {
@@ -29179,9 +29179,9 @@ angular.module('atlasAdmin.deleteItem')
     return definitionObj;
   }])
 
-angular.module('atlasAdmin.changeStatus', []);
+angular.module('atlasAdmin.directives.changeStatus', []);
 
-angular.module('atlasAdmin.changeStatus')
+angular.module('atlasAdmin.directives.changeStatus')
   .directive('changestatus', ['$document', 'factoryPropositions',
       function factory($document, Propositions) {
       var definitionObj = {

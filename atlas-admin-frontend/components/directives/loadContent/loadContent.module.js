@@ -1,1 +1,1 @@
-angular.module('atlasAdmin.loadContent', []);
+angular.module('atlasAdmin.directives.loadContent', []);

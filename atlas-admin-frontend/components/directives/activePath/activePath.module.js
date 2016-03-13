@@ -1,1 +1,1 @@
-angular.module('atlasAdmin.activePath', []);
+angular.module('atlasAdmin.directives.activePath', []);

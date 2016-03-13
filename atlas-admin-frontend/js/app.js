@@ -32,8 +32,8 @@ angular.module('atlasAdmin',
     'atlasAdmin.error',
     'atlasAdmin.menu',
 
-    'atlasAdmin.preloader',
-    'atlasAdmin.activePath',
+    'atlasAdmin.directives.preloader',
+    'atlasAdmin.directives.activePath',
 
     'atlasAdmin.services.auth',
     'atlasAdmin.services.sources',

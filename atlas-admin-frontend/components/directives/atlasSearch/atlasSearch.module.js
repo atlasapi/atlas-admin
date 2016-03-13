@@ -1,1 +1,1 @@
-var app = angular.module('atlasAdmin.atlasSearch', []);
+var app = angular.module('atlasAdmin.directives.atlasSearch', []);

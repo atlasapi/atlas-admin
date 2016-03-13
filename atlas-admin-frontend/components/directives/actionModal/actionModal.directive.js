@@ -1,4 +1,4 @@
-angular.module('atlasAdmin.actionModal')
+angular.module('atlasAdmin.directives.actionModal')
   .directive('actionModal', ['$document', '$q', '$modal',
     function($document, $q, $modal) {
       var controller = function($scope, el, attr) {

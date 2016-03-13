@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('atlasAdmin.loadContent')
+angular.module('atlasAdmin.directives.loadContent')
   .directive('loadContent', ['$document', 'FeedsService', '$q', '$sce',
     function($document, Feeds, $q, $sce) {
 

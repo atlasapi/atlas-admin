@@ -1,1 +1,1 @@
-angular.module('atlasAdmin.focus', []);
+angular.module('atlasAdmin.directives.focus', []);

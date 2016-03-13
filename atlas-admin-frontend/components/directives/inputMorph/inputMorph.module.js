@@ -1,1 +1,1 @@
-angular.module('atlasAdmin.inputMorph', []);
+angular.module('atlasAdmin.directives.inputMorph', []);

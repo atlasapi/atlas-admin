@@ -1,1 +1,1 @@
-angular.module('atlasAdmin.changeStatus', []);
+angular.module('atlasAdmin.directives.changeStatus', []);

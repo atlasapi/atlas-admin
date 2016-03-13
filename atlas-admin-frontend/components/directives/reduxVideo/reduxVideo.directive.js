@@ -1,4 +1,4 @@
-angular.module('atlasAdmin.reduxVideo')
+angular.module('atlasAdmin.directives.reduxVideo')
   .directive('reduxVideo', ['$document', 'GroupsService', '$q', '$http', 'bbcRedux',
     function($document, Groups, $q, $http, bbcRedux) {
 

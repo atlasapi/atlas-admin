@@ -1,1 +1,1 @@
-angular.module('atlasAdmin.scrubber', []);
+angular.module('atlasAdmin.directives.scrubber', []);

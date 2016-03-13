@@ -1,1 +1,1 @@
-angular.module('atlasAdmin.showSegments', []);
+angular.module('atlasAdmin.directives.showSegments', []);

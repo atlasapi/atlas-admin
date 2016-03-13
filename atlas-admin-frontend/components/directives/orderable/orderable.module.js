@@ -1,1 +1,1 @@
-angular.module('atlasAdmin.orderable', []);
+angular.module('atlasAdmin.directives.orderable', []);

@@ -1,4 +1,4 @@
-angular.module('atlasAdmin.changeStatus')
+angular.module('atlasAdmin.directives.changeStatus')
   .directive('changestatus', ['$document', 'factoryPropositions',
       function factory($document, Propositions) {
       var definitionObj = {

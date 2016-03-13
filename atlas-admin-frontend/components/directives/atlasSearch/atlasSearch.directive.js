@@ -1,4 +1,4 @@
-angular.module('atlasAdmin.atlasSearch')
+angular.module('atlasAdmin.directives.atlasSearch')
   .directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http', 'GroupsService', 'BBCScrubbablesService', 'ScrubbablesHelpers', '$location',
     function($document, $q, $timeout, atlasHost, $http, Groups, Scrubbables, Helpers, $location) {
 

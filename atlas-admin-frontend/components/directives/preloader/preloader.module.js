@@ -1,1 +1,1 @@
-angular.module('atlasAdmin.preloader', []);
+angular.module('atlasAdmin.directives.preloader', []);

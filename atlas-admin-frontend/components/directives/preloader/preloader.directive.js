@@ -1,5 +1,5 @@
 'use strict';
-angular.module('atlasAdmin.preloader')
+angular.module('atlasAdmin.directives.preloader')
   .directive('preloader', ['$rootScope', function ($rootScope) {
     return {
       restrict: 'A',
