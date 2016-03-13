@@ -1,1 +1,3 @@
-angular.module('atlasAdmin.menu', []);
+angular.module('atlasAdmin.menu', [
+  'atlasAdmin.services.users'
+]);

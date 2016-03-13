@@ -25349,7 +25349,6 @@ angular.module('atlasAdmin',
     'atlasAdmin.directives.activePath',
 
     'atlasAdmin.services.auth',
-    'atlasAdmin.services.users',
     'atlasAdmin.services.uservideosources',
     'atlasAdmin.services.uservideosources.youtube',
     'atlasAdmin.services.propositions',
@@ -26059,7 +26058,8 @@ angular.module('atlasAdmin.requestSource', [
     'atlasAdmin.services.applications',
     'atlasAdmin.services.payments',
     'atlasAdmin.services.sourceRequests',
-    'atlasAdmin.services.sourceLicenses'
+    'atlasAdmin.services.sourceLicenses',
+    'atlasAdmin.services.users'
   ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/applications/:applicationId/requestSource/:sourceId', {
@@ -26141,7 +26141,11 @@ angular.module('atlasAdmin.requestSource')
 
 'use strict';
 
-angular.module('atlasAdmin.wishlist', ['ngRoute', 'atlasAdmin.directives.inputMorph'])
+angular.module('atlasAdmin.wishlist', [
+    'ngRoute',
+    'atlasAdmin.directives.inputMorph',
+    'atlasAdmin.services.users'
+  ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/wishlist', {
       templateUrl: 'presentation/wishlist/wishlist.tpl.html',
@@ -26295,7 +26299,10 @@ angular.module('atlasAdmin.wishlist')
 
 'use strict';
 
-angular.module('atlasAdmin.epg', ['ngRoute'])
+angular.module('atlasAdmin.epg', [
+    'ngRoute',
+    'atlasAdmin.services.users'
+  ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/epg/bt-tv', {
       templateUrl: 'presentation/epg/epg.tpl.html',
@@ -27074,7 +27081,8 @@ angular.module('atlasAdmin.manageSourcesWriters')
 angular.module('atlasAdmin.manageRequests', [
     'ngRoute',
     'atlasAdmin.services.applications',
-    'atlasAdmin.services.sourceRequests'
+    'atlasAdmin.services.sourceRequests',
+    'atlasAdmin.services.users'
   ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/manage/requests', {
@@ -27667,7 +27675,10 @@ angular.module('atlasAdmin.profile')
 
 'use strict';
 
-angular.module('atlasAdmin.contact', ['ngRoute'])
+angular.module('atlasAdmin.contact', [
+    'ngRoute',
+    'atlasAdmin.services.users'
+  ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/contact', {
       templateUrl: 'presentation/contact/contact.tpl.html',
@@ -27964,7 +27975,9 @@ angular.module('atlasAdmin.error')
       }
   });
 
-angular.module('atlasAdmin.menu', []);
+angular.module('atlasAdmin.menu', [
+  'atlasAdmin.services.users'
+]);
 
 'use strict';
 
@@ -28218,7 +28231,7 @@ angular.module('atlasAdmin.directives.focus')
     };
 });
 
-angular.module('atlasAdmin.directives.activePath', []);
+angular.module('atlasAdmin.directives.activePath', ['atlasAdmin.services.profileStatus']);
 
 'use strict';
 
@@ -29231,7 +29244,7 @@ angular.module('atlasAdmin.directives.changeStatus')
 
 'use strict';
 
-angular.module('atlasAdmin.services.auth', []);
+angular.module('atlasAdmin.services.auth', ['atlasAdmin.services.profileStatus']);
 
 'use strict';
 angular.module('atlasAdmin.services.auth')
@@ -29438,7 +29451,7 @@ angular.module('atlasAdmin.services.payments')
       return plans;
   });
 
-angular.module('atlasAdmin.services.sourceRequests', []);
+angular.module('atlasAdmin.services.sourceRequests', ['atlasAdmin.services.users']);
 
 'use strict';
 
@@ -29518,7 +29531,136 @@ angular.module('atlasAdmin.services.sourceLicenses')
       }
   });
 
-var app = angular.module('atlasAdmin.interceptors', []);
+angular.module('atlasAdmin.services.users', [
+  'atlasAdmin.services.atlas',
+  'atlasAdmin.services.profileStatus'
+]);
+
+angular.module('atlasAdmin.services.users')
+  .factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'ProfileStatus', '$log', 'atlasApiHost', '$q',
+      function($http, Atlas, $rootScope, Authentication, ProfileStatus, $log, atlasApiHost, $q) {
+      return {
+          currentUser: function(callback) {
+              $.ajax({
+                  url: Atlas.getUrl('/auth/user.json'),
+                  success: function (result) {
+                      if (result.user) {
+                          if (result.user.profile_complete) {
+                              ProfileStatus.setComplete(result.user.profile_complete);
+                          }
+                          if (typeof result.user.license_accepted === 'string') {
+                              ProfileStatus.setLicenseAccepted(true);
+                          }else{
+                              ProfileStatus.setLicenseAccepted(false);
+                          }
+                          callback(result.user);
+                      }
+                  },
+                  error: function () {
+                      $log.error("No user");
+                      return null;
+                  }
+              });
+          },
+          update: function(user, callback) {
+              ProfileStatus.setComplete(true);
+              return Atlas.postRequest("/users/" + user.id + ".json", user);
+          },
+          get: function(uid) {
+              return Atlas.getRequest('/users/' + uid + '.json').then(function(result) {
+                  return result.data.user;
+              });
+          },
+          all: function() {
+              return Atlas.getRequest('/users.json').then(function(result) {
+                  return result.data.users;
+              });
+          },
+          getTermsAndConditions: function() {
+              return Atlas.getRequest('/eula.json').then(function(result) {
+                  if (result.status > 399) {
+                    throw 'NOT_AVAILABLE/'+result.status;
+                  }
+                  return result.data.license.license;
+              });
+          },
+          acceptTermsAndConditions: function(uid) {
+              return Atlas.postRequest('/users/' + uid + '/eula/accept.json', {}).then(
+                  function(success) {
+                      return success;
+                  },
+                  function(error) {
+                      $log.error(error);
+                  }
+              );
+          },
+          groups: function() {
+              var defer = $q.defer();
+              $http({
+                  method: 'get',
+                  url: Authentication.appendTokenToUrl(atlasApiHost+'/groups')
+              })
+              .success(defer.resolve)
+              .error(defer.reject);
+              return defer.promise;
+          }
+      };
+  }])
+
+  .factory('ProfileStatus', function() {
+    return {
+        getLicenseAccepted: function () {
+            if (localStorage.getItem("license.accepted")) {
+                return localStorage.getItem("license.accepted") == "true";
+            } else {
+                return null;
+            }
+        },
+
+        setLicenseAccepted: function (status) {
+            return localStorage.setItem("license.accepted", status ? "true" : "false");
+        },
+
+        setComplete: function(status) {
+            localStorage.setItem("profile.complete", status ? "true" : "false");
+        },
+
+        isProfileComplete: function() {
+            return localStorage.getItem("profile.complete") == "true";
+        }
+    };
+});
+
+'use strict';
+
+angular.module('atlasAdmin.services.profileStatus', []);
+
+angular.module('atlasAdmin.services.profileStatus')
+  .factory('ProfileStatus', function() {
+    return {
+        getLicenseAccepted: function () {
+            if (localStorage.getItem("license.accepted")) {
+                return localStorage.getItem("license.accepted") == "true";
+            } else {
+                return null;
+            }
+        },
+
+        setLicenseAccepted: function (status) {
+            return localStorage.setItem("license.accepted", status ? "true" : "false");
+        },
+
+        setComplete: function(status) {
+            localStorage.setItem("profile.complete", status ? "true" : "false");
+        },
+
+        isProfileComplete: function() {
+            return localStorage.getItem("profile.complete") == "true";
+        }
+    };
+  });
+
+var app = angular.module('atlasAdmin.interceptors', ['atlasAdmin.services.profileStatus']);
 
 app.factory('AuthenticationInterceptor', ['$q', '$location', 'atlasHost', 'atlasApiHost', '$window', 'Authentication',
     function($q, $location, atlasHost, atlasApiHost, $window, Auth) {
@@ -29554,7 +29696,7 @@ app.factory('AuthenticationInterceptor', ['$q', '$location', 'atlasHost', 'atlas
                 }
             }
             return response || $q.defer(response);
-        } 
+        }
     };
 }]);
 
@@ -29659,102 +29801,6 @@ app.factory('ProfileCompleteInterceptor', ['ProfileStatus', '$location', '$q', '
         }
     }
 }]);
-
-var app = angular.module('atlasAdmin.services.users', ['atlasAdmin.services.atlas']);
-
-app.factory('Users', ['$http', 'Atlas', '$rootScope', 'Authentication', 'ProfileStatus', '$log', 'atlasApiHost', '$q',
-    function($http, Atlas, $rootScope, Authentication, ProfileStatus, $log, atlasApiHost, $q) {
-    return {
-        currentUser: function(callback) {
-            $.ajax({
-                url: Atlas.getUrl('/auth/user.json'),
-                success: function (result) {
-                    if (result.user) {
-                        if (result.user.profile_complete) {
-                            ProfileStatus.setComplete(result.user.profile_complete);
-                        }
-                        if (typeof result.user.license_accepted === 'string') {
-                            ProfileStatus.setLicenseAccepted(true);
-                        }else{
-                            ProfileStatus.setLicenseAccepted(false);
-                        }
-                        callback(result.user);
-                    }
-                },
-                error: function () {
-                    $log.error("No user");
-                    return null;
-                }
-            });
-        },
-        update: function(user, callback) {
-            ProfileStatus.setComplete(true);
-            return Atlas.postRequest("/users/" + user.id + ".json", user);
-        },
-        get: function(uid) {
-            return Atlas.getRequest('/users/' + uid + '.json').then(function(result) {
-                return result.data.user;
-            });
-        },
-        all: function() {
-            return Atlas.getRequest('/users.json').then(function(result) {
-                return result.data.users;
-            });
-        },
-        getTermsAndConditions: function() {
-            return Atlas.getRequest('/eula.json').then(function(result) {
-                if (result.status > 399) {
-                  throw 'NOT_AVAILABLE/'+result.status;
-                }
-                return result.data.license.license;
-            });
-        },
-        acceptTermsAndConditions: function(uid) {
-            return Atlas.postRequest('/users/' + uid + '/eula/accept.json', {}).then(
-                function(success) {
-                    return success;
-                },
-                function(error) {
-                    $log.error(error);
-                }
-            );
-        },
-        groups: function() {
-            var defer = $q.defer();
-            $http({
-                method: 'get',
-                url: Authentication.appendTokenToUrl(atlasApiHost+'/groups')
-            })
-            .success(defer.resolve)
-            .error(defer.reject);
-            return defer.promise;
-        }
-    };
-}]);
-
-app.factory('ProfileStatus', function() {
-    return {
-        getLicenseAccepted: function () {
-            if (localStorage.getItem("license.accepted")) {
-                return localStorage.getItem("license.accepted") == "true";
-            } else {
-                return null;
-            }
-        },
-
-        setLicenseAccepted: function (status) {
-            return localStorage.setItem("license.accepted", status ? "true" : "false");
-        },
-
-        setComplete: function(status) {
-            localStorage.setItem("profile.complete", status ? "true" : "false");
-        },
-
-        isProfileComplete: function() {
-            return localStorage.getItem("profile.complete") == "true";
-        }
-    };
-});
 
 var app = angular.module('atlasAdmin.services.uservideosources', []);
 app.factory('UserVideoSources', function (Atlas, atlasVersion, Applications) {

@@ -5,7 +5,8 @@ angular.module('atlasAdmin.requestSource', [
     'atlasAdmin.services.applications',
     'atlasAdmin.services.payments',
     'atlasAdmin.services.sourceRequests',
-    'atlasAdmin.services.sourceLicenses'
+    'atlasAdmin.services.sourceLicenses',
+    'atlasAdmin.services.users'
   ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/applications/:applicationId/requestSource/:sourceId', {

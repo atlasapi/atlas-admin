@@ -1,1 +1,1 @@
-angular.module('atlasAdmin.services.sourceRequests', []);
+angular.module('atlasAdmin.services.sourceRequests', ['atlasAdmin.services.users']);

@@ -1,4 +1,4 @@
-var app = angular.module('atlasAdmin.interceptors', []);
+var app = angular.module('atlasAdmin.interceptors', ['atlasAdmin.services.profileStatus']);
 
 app.factory('AuthenticationInterceptor', ['$q', '$location', 'atlasHost', 'atlasApiHost', '$window', 'Authentication',
     function($q, $location, atlasHost, atlasApiHost, $window, Auth) {
@@ -34,6 +34,6 @@ app.factory('AuthenticationInterceptor', ['$q', '$location', 'atlasHost', 'atlas
                 }
             }
             return response || $q.defer(response);
-        } 
+        }
     };
 }]);

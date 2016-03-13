@@ -17,7 +17,7 @@ assets.js = [
             'js/vendor/moment.js',
             'js/vendor/d3.min.js',
             'js/app.js',
-            
+
             'presentation/applications/applications.module.js',
             'presentation/applications/applications.ctrl.js',
             'presentation/applications/createModal/applicationCreateModal.ctrl.js',
@@ -129,11 +129,14 @@ assets.js = [
             'components/services/sourceRequests/sourceRequests.service.js',
             'components/services/sourceLicenses/sourceLicenses.module.js',
             'components/services/sourceLicenses/sourceLicenses.service.js',
+            'components/services/users/users.module.js',
+            'components/services/users/users.service.js',
+            'components/services/profileStatus/profileStatus.module.js',
+            'components/services/profileStatus/profileStatus.service.js',
 
             'js/interceptors/authInterceptor.js',
             'js/interceptors/loadingInterceptor.js',
             'js/interceptors/profileCompleteInterceptor.js',
-            'js/services/users.js',
             'js/services/userVideoSources.js',
             'js/services/userVideoSourcesYouTube.js',
             'js/services/propositions.js',
