@@ -141,6 +141,8 @@ assets.js = [
             'components/services/apiUsage/apiUsage.service.js',
             'components/services/feeds/feeds.module.js',
             'components/services/feeds/feeds.service.js',
+            'components/services/bbcRedux/bbcRedux.module.js',
+            'components/services/bbcRedux/bbcRedux.service.js',
 
             'js/interceptors/authInterceptor.js',
             'js/interceptors/loadingInterceptor.js',

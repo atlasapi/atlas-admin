@@ -1,6 +1,7 @@
-var app = angular.module('atlasAdmin.services.bbcscrubbables');
+'use strict';
 
-app.service('bbcRedux', ['atlasHost', '$http', 'GroupsService', '$q',
+angular.module('atlasAdmin.services.bbcRedux')
+  .service('bbcRedux', ['atlasHost', '$http', 'GroupsService', '$q',
     function(atlasHost, $http, Groups, $q) {
 
     var getAuthDetails = function() {
@@ -32,5 +33,5 @@ app.service('bbcRedux', ['atlasHost', '$http', 'GroupsService', '$q',
 
     return {
         getToken: getToken
-    }    
+    }
 }]);
