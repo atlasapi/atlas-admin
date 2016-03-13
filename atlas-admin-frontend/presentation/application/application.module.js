@@ -7,7 +7,8 @@ angular.module('atlasAdmin.application', [
     'atlasAdmin.directives.validUsage',
     'atlasAdmin.services.atlas',
     'atlasAdmin.services.applications',
-    'atlasAdmin.services.sources'
+    'atlasAdmin.services.sources',
+    'atlasAdmin.services.sourceRequests'
   ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/applications/:applicationId', {

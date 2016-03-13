@@ -25349,7 +25349,6 @@ angular.module('atlasAdmin',
     'atlasAdmin.directives.activePath',
 
     'atlasAdmin.services.auth',
-    'atlasAdmin.services.sourceRequests',
     'atlasAdmin.services.sourceLicenses',
     'atlasAdmin.services.users',
     'atlasAdmin.services.uservideosources',
@@ -25381,7 +25380,13 @@ angular.module('atlasAdmin',
 
 'use strict';
 
-angular.module('atlasAdmin.applications', ['ngRoute', 'atlasAdmin.directives.focus', 'atlasAdmin.services.atlas', 'atlasAdmin.services.applications'])
+angular.module('atlasAdmin.applications', [
+    'ngRoute',
+    'atlasAdmin.directives.focus',
+    'atlasAdmin.services.atlas',
+    'atlasAdmin.services.applications',
+    'atlasAdmin.services.sourceRequests'
+  ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/applications', {
       templateUrl: 'presentation/applications/applications.tpl.html',
@@ -25586,7 +25591,8 @@ angular.module('atlasAdmin.application', [
     'atlasAdmin.directives.validUsage',
     'atlasAdmin.services.atlas',
     'atlasAdmin.services.applications',
-    'atlasAdmin.services.sources'
+    'atlasAdmin.services.sources',
+    'atlasAdmin.services.sourceRequests'
   ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/applications/:applicationId', {
@@ -26050,7 +26056,8 @@ angular.module('atlasAdmin.application')
 angular.module('atlasAdmin.requestSource', [
     'ngRoute',
     'atlasAdmin.services.applications',
-    'atlasAdmin.services.payments'
+    'atlasAdmin.services.payments',
+    'atlasAdmin.services.sourceRequests'
   ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/applications/:applicationId/requestSource/:sourceId', {
@@ -26061,8 +26068,8 @@ angular.module('atlasAdmin.requestSource', [
 
 'use strict';
 angular.module('atlasAdmin.requestSource')
-  .controller('CtrlRequestSource', ['$scope', '$rootScope', '$sce', '$routeParams', 'Applications', 'Users', 'Payments', 'factorySourceRequests', 'SourceLicenses', '$location',
-    function( $scope, $rootScope, $sce, $routeParams, Applications, Users, Payments, factorySourceRequests, SourceLicenses, $location) {
+  .controller('CtrlRequestSource', ['$scope', '$rootScope', '$sce', '$routeParams', 'Applications', 'Users', 'Payments', 'sourceRequests', 'SourceLicenses', '$location',
+    function( $scope, $rootScope, $sce, $routeParams, Applications, Users, Payments, sourceRequests, SourceLicenses, $location) {
         $scope.planData = Payments();
         $scope.button_txt = 'Accept';
         $scope.app = {};
@@ -26118,7 +26125,7 @@ angular.module('atlasAdmin.requestSource')
                 reason: $scope.reason,
                 state: 'not approved'
             }
-            factorySourceRequests.postRequest(payload).then(function(status) {
+            sourceRequests.postRequest(payload).then(function(status) {
                 if (status === 200)
                     $location.path('/applications/'+appId);
             });
@@ -27062,7 +27069,11 @@ angular.module('atlasAdmin.manageSourcesWriters')
 
 'use strict';
 
-angular.module('atlasAdmin.manageRequests', ['ngRoute', 'atlasAdmin.services.applications'])
+angular.module('atlasAdmin.manageRequests', [
+    'ngRoute',
+    'atlasAdmin.services.applications',
+    'atlasAdmin.services.sourceRequests'
+  ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/manage/requests', {
       templateUrl: 'presentation/manageRequests/manageRequests.tpl.html',
@@ -27072,8 +27083,8 @@ angular.module('atlasAdmin.manageRequests', ['ngRoute', 'atlasAdmin.services.app
 
 'use strict'
 angular.module('atlasAdmin.manageRequests')
-  .controller('CtrlManageSourceRequests', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Users', 'factorySourceRequests', '$location',
-    function($scope, $rootScope, $routeParams, Applications, Users, factorySourceRequests, $location) {
+  .controller('CtrlManageSourceRequests', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Users', 'sourceRequests', '$location',
+    function($scope, $rootScope, $routeParams, Applications, Users, sourceRequests, $location) {
     $scope.app = {};
     $scope.app.requests = {};
 
@@ -27094,7 +27105,7 @@ angular.module('atlasAdmin.manageRequests')
             sourceId: sourceId,
             new_state: state || 'approved'
         }
-        factorySourceRequests.putChangeRequest(payload).then(function(status) {
+        sourceRequests.putChangeRequest(payload).then(function(status) {
             if (status.ok && status.n === 1) {
                 _.remove($scope.app.requests, function(n) {
                     return ((n.app.id === appId) && (n.source.id === sourceId));
@@ -27109,7 +27120,7 @@ angular.module('atlasAdmin.manageRequests')
     }
 
     // pull request data from the api and push result into the $scope
-    factorySourceRequests.getUnapprovedRequests().then(function(data) {
+    sourceRequests.getUnapprovedRequests().then(function(data) {
         $scope.app.requests = data;
     });
 }]);
@@ -29425,6 +29436,71 @@ angular.module('atlasAdmin.services.payments')
       return plans;
   });
 
+angular.module('atlasAdmin.services.sourceRequests', []);
+
+'use strict';
+
+angular.module('atlasAdmin.services.sourceRequests')
+  .factory('sourceRequests', ['$http', 'Authentication', 'atlasApiHost', 'Atlas', 'Users', '$q',
+    function ($http, Authentication, atlasApiHost, Atlas, Users, $q) {
+      var endpoint = atlasApiHost + '/requests';
+
+      return {
+          all: function() {
+              return Atlas.getRequest('/requests.json').then(function (results) {
+                  return results.data.source_requests});
+          },
+          send: function(sourceId, applicationId, applicationUrl, reason, usageType, licenseAccepted) {
+              var url = "/sources/" + sourceId + "/requests?"
+                   + "appId=" + applicationId
+                   + "&appUrl=" + encodeURIComponent(applicationUrl)
+                   + "&reason=" + encodeURIComponent(reason)
+                   + "&usageType=" + usageType
+                   + "&licenseAccepted=" + licenseAccepted;
+              return Atlas.postRequest(url, {});
+          },
+          approve: function(requestId) {
+              var url = '/requests/' + requestId + '/approve';
+              return Atlas.postRequest(url, {});
+          },
+          postRequest: function(data) {
+              var defer = $q.defer();
+              $http({
+                  method: 'post',
+                  url: Authentication.appendTokenToUrl(endpoint),
+                  data: data
+              })
+              .success(function(data, status) {
+                  defer.resolve(status);
+              })
+              return defer.promise;
+          },
+          getUnapprovedRequests: function() {
+              var defer = $q.defer();
+              $http({
+                  method: 'get',
+                  url: Authentication.appendTokenToUrl(endpoint)
+              })
+              .success(function(data) {
+                  defer.resolve(data)
+              })
+              return defer.promise;
+          },
+          putChangeRequest: function(data) {
+              var defer = $q.defer();
+              $http({
+                  method: 'put',
+                  url: Authentication.appendTokenToUrl(endpoint),
+                  data: data
+              })
+              .success(function(status) {
+                  defer.resolve(status);
+              });
+              return defer.promise;
+          }
+        }
+    }]);
+
 var app = angular.module('atlasAdmin.interceptors', []);
 
 app.factory('AuthenticationInterceptor', ['$q', '$location', 'atlasHost', 'atlasApiHost', '$window', 'Authentication',
@@ -29662,92 +29738,6 @@ app.factory('ProfileStatus', function() {
         }
     };
 });
-
-var app = angular.module('atlasAdmin.services.sourceRequests', []);
-
-app.factory('sourceRequests', function (Atlas, Users) {
-    return {
-        all: function() {
-            return Atlas.getRequest('/requests.json').then(function (results) {
-                return results.data.source_requests});
-        },
-        send: function(sourceId, applicationId, applicationUrl, reason, usageType, licenseAccepted) {
-            var url = "/sources/" + sourceId + "/requests?" 
-                 + "appId=" + applicationId
-                 + "&appUrl=" + encodeURIComponent(applicationUrl)
-                 + "&reason=" + encodeURIComponent(reason)
-                 + "&usageType=" + usageType 
-                 + "&licenseAccepted=" + licenseAccepted;
-            return Atlas.postRequest(url, {});
-        },
-        approve: function(requestId) {
-            var url = '/requests/' + requestId + '/approve';
-            return Atlas.postRequest(url, {});
-        }
-    }
-});
-'use strict'
-var app = angular.module('atlasAdmin.services.sourceRequests');
-
-app.factory('factorySourceRequests', ['$http', 'Authentication', 'atlasApiHost', '$q', 
-    function($http, Authentication, atlasApiHost, $q) {
-
-    var endpoint = atlasApiHost + '/requests';
-
-    // use POST to send source request data to the server
-    //
-    // @returns thenable promise {number} status code from server (eg. 200 is ok)
-    var postRequest = function(data) {
-        var defer = $q.defer();
-        $http({
-            method: 'post',
-            url: Authentication.appendTokenToUrl(endpoint),
-            data: data
-        })
-        .success(function(data, status) {
-            defer.resolve(status);
-        })
-        return defer.promise;
-    }
-
-    // use GET to ask the server for all unapproved source requests
-    //
-    // @returns thenable promise {object} 
-    var getUnapprovedRequests = function() {
-        var defer = $q.defer();
-        $http({
-            method: 'get',
-            url: Authentication.appendTokenToUrl(endpoint)
-        })
-        .success(function(data) {
-            defer.resolve(data)
-        })
-        return defer.promise;
-    }
-
-    // use PUT to update a source request
-    //
-    // @returns thenable promise {object}
-    var putChangeRequest = function(data) {
-        var defer = $q.defer();
-        $http({
-            method: 'put',
-            url: Authentication.appendTokenToUrl(endpoint),
-            data: data
-        })
-        .success(function(status) {
-            defer.resolve(status);
-        });
-        return defer.promise;
-    }
-    
-    // expose REST interface
-    return {
-        postRequest: postRequest,
-        getUnapprovedRequests: getUnapprovedRequests,
-        putChangeRequest: putChangeRequest
-    };
-}]);
 
 var app = angular.module('atlasAdmin.services.sourceLicenses', []);
 app.factory('SourceLicenses', function (Atlas, Users) {

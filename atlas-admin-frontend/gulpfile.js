@@ -124,6 +124,8 @@ assets.js = [
             'components/services/sources/sources.service.js',
             'components/services/payments/payments.module.js',
             'components/services/payments/payments.service.js',
+            'components/services/sourceRequests/sourceRequests.module.js',
+            'components/services/sourceRequests/sourceRequests.service.js',
 
             'js/interceptors/authInterceptor.js',
             'js/interceptors/loadingInterceptor.js',
@@ -132,8 +134,6 @@ assets.js = [
             'js/services/atlas.js',
             'js/services/users.js',
             'js/services/applications.js',
-            'js/services/sourceRequests/sourceRequests.js',
-            'js/services/sourceRequests/factorySourceRequests.js',
             'js/services/sourceLicenses.js',
             'js/services/userVideoSources.js',
             'js/services/userVideoSourcesYouTube.js',

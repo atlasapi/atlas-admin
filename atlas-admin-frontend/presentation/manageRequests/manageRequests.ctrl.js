@@ -1,7 +1,7 @@
 'use strict'
 angular.module('atlasAdmin.manageRequests')
-  .controller('CtrlManageSourceRequests', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Users', 'factorySourceRequests', '$location',
-    function($scope, $rootScope, $routeParams, Applications, Users, factorySourceRequests, $location) {
+  .controller('CtrlManageSourceRequests', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Users', 'sourceRequests', '$location',
+    function($scope, $rootScope, $routeParams, Applications, Users, sourceRequests, $location) {
     $scope.app = {};
     $scope.app.requests = {};
 
@@ -22,7 +22,7 @@ angular.module('atlasAdmin.manageRequests')
             sourceId: sourceId,
             new_state: state || 'approved'
         }
-        factorySourceRequests.putChangeRequest(payload).then(function(status) {
+        sourceRequests.putChangeRequest(payload).then(function(status) {
             if (status.ok && status.n === 1) {
                 _.remove($scope.app.requests, function(n) {
                     return ((n.app.id === appId) && (n.source.id === sourceId));
@@ -37,7 +37,7 @@ angular.module('atlasAdmin.manageRequests')
     }
 
     // pull request data from the api and push result into the $scope
-    factorySourceRequests.getUnapprovedRequests().then(function(data) {
+    sourceRequests.getUnapprovedRequests().then(function(data) {
         $scope.app.requests = data;
     });
 }]);

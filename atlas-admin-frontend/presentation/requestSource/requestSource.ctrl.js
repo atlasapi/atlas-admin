@@ -1,7 +1,7 @@
 'use strict';
 angular.module('atlasAdmin.requestSource')
-  .controller('CtrlRequestSource', ['$scope', '$rootScope', '$sce', '$routeParams', 'Applications', 'Users', 'Payments', 'factorySourceRequests', 'SourceLicenses', '$location',
-    function( $scope, $rootScope, $sce, $routeParams, Applications, Users, Payments, factorySourceRequests, SourceLicenses, $location) {
+  .controller('CtrlRequestSource', ['$scope', '$rootScope', '$sce', '$routeParams', 'Applications', 'Users', 'Payments', 'sourceRequests', 'SourceLicenses', '$location',
+    function( $scope, $rootScope, $sce, $routeParams, Applications, Users, Payments, sourceRequests, SourceLicenses, $location) {
         $scope.planData = Payments();
         $scope.button_txt = 'Accept';
         $scope.app = {};
@@ -57,7 +57,7 @@ angular.module('atlasAdmin.requestSource')
                 reason: $scope.reason,
                 state: 'not approved'
             }
-            factorySourceRequests.postRequest(payload).then(function(status) {
+            sourceRequests.postRequest(payload).then(function(status) {
                 if (status === 200)
                     $location.path('/applications/'+appId);
             });
