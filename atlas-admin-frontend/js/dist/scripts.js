@@ -40205,68 +40205,6 @@ angular.module('atlasAdmin.services.wishes')
 
 var app = angular.module('atlasAdmin.interceptors');
 
-// the loading bar will show when there are requests still pending, but will
-// be delayed slighty so we dont see the loader flashing up for pages that
-// load quickly. This also gives the illusion of faster page loads
-app.factory('LoadingInterceptor', ['$q', '$rootScope', '$injector', '$timeout', '$location',
-        function($q, $rootScope, $injector, $timeout, $location) {
-        var requests = 0;
-        var loadTimer;
-        var restrictedLocations = ['scrubbables'];
-
-        if (!$rootScope.show) {
-            $rootScope.show = {};
-        }
-
-        var restricted = function() {
-            var _path = $location.path();
-            for (var i in restrictedLocations) {
-                if (_path.indexOf(restrictedLocations[i]) !== -1) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        var startLoading = function() {
-            var _loggedin = $rootScope.status.loggedIn || false;
-            if (requests > 1 && _loggedin && !restricted()) {
-                $timeout.cancel(loadTimer);
-                $rootScope.show.cloak = true;
-                loadTimer = $timeout(function() {
-                    $rootScope.show.load = true;
-                    $rootScope.$broadcast('loading-started');
-                }, 400);
-            }
-        }
-
-        var endLoading = function() {
-            $timeout.cancel(loadTimer);
-            $rootScope.$broadcast('loading-complete');
-            $rootScope.show.load = false;
-            $rootScope.show.cloak = false;
-        }
-
-        // precautionary incase the loading process is 
-        // still running from the last page
-        endLoading();
-        $rootScope.show.cloak = true;
-
-        return {
-            'request': function(config) {
-                requests++;
-                startLoading();
-                return config || $q.when(config);
-            },
-            'response': function(response) {
-                requests = (requests > 0)? --requests : 0;
-                if (!requests) endLoading();
-                return response || $q.when(response);
-            }
-        };
-    }]);
-var app = angular.module('atlasAdmin.interceptors');
-
 // For making sure the user's profile is complete. if it isn't, the request should
 // be forwarded to the /profile page so the user can fill out missing details. Also
 // does the same for whether /terms have been accepted

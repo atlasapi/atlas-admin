@@ -1,9 +1,7 @@
-var app = angular.module('atlasAdmin.interceptors');
+'use strict';
 
-// the loading bar will show when there are requests still pending, but will
-// be delayed slighty so we dont see the loader flashing up for pages that
-// load quickly. This also gives the illusion of faster page loads
-app.factory('LoadingInterceptor', ['$q', '$rootScope', '$injector', '$timeout', '$location',
+angular.module('atlasAdmin.interceptors.loading')
+  .factory('LoadingInterceptor', ['$q', '$rootScope', '$injector', '$timeout', '$location',
         function($q, $rootScope, $injector, $timeout, $location) {
         var requests = 0;
         var loadTimer;
@@ -42,7 +40,7 @@ app.factory('LoadingInterceptor', ['$q', '$rootScope', '$injector', '$timeout', 
             $rootScope.show.cloak = false;
         }
 
-        // precautionary incase the loading process is 
+        // precautionary incase the loading process is
         // still running from the last page
         endLoading();
         $rootScope.show.cloak = true;
