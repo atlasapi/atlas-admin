@@ -12,7 +12,7 @@ var gulpProtractorAngular = require('gulp-angular-protractor');
 // Javascripts must be loaded in order, so hence the large array
 assets.js = [
             'node_modules/contact-us-form/dist/contact-us-form.js',
-            'js/vendor/highlight.js',
+            'node_modules/highlight.js/lib/highlight.js',
             'node_modules/lodash/lodash.js',
             'node_modules/moment/moment.js',
             'node_modules/d3/d3.min.js',
