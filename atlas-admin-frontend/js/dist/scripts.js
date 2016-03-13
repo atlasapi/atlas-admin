@@ -25349,7 +25349,6 @@ angular.module('atlasAdmin',
     'atlasAdmin.directives.activePath',
 
     'atlasAdmin.services.auth',
-    'atlasAdmin.services.sourceLicenses',
     'atlasAdmin.services.users',
     'atlasAdmin.services.uservideosources',
     'atlasAdmin.services.uservideosources.youtube',
@@ -25385,7 +25384,8 @@ angular.module('atlasAdmin.applications', [
     'atlasAdmin.directives.focus',
     'atlasAdmin.services.atlas',
     'atlasAdmin.services.applications',
-    'atlasAdmin.services.sourceRequests'
+    'atlasAdmin.services.sourceRequests',
+    'atlasAdmin.services.sourceLicenses'
   ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/applications', {
@@ -25592,7 +25592,8 @@ angular.module('atlasAdmin.application', [
     'atlasAdmin.services.atlas',
     'atlasAdmin.services.applications',
     'atlasAdmin.services.sources',
-    'atlasAdmin.services.sourceRequests'
+    'atlasAdmin.services.sourceRequests',
+    'atlasAdmin.services.sourceLicenses'
   ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/applications/:applicationId', {
@@ -26057,7 +26058,8 @@ angular.module('atlasAdmin.requestSource', [
     'ngRoute',
     'atlasAdmin.services.applications',
     'atlasAdmin.services.payments',
-    'atlasAdmin.services.sourceRequests'
+    'atlasAdmin.services.sourceRequests',
+    'atlasAdmin.services.sourceLicenses'
   ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/applications/:applicationId/requestSource/:sourceId', {
@@ -29501,6 +29503,21 @@ angular.module('atlasAdmin.services.sourceRequests')
         }
     }]);
 
+'use strict';
+angular.module('atlasAdmin.services.sourceLicenses', []);
+
+angular.module('atlasAdmin.services.sourceLicenses')
+  .factory('SourceLicenses', function (Atlas, Users) {
+      return {
+          get: function(sourceId) {
+            return Atlas.getRequest('/source_licenses/' + sourceId + '.json').then(
+            function (results) {
+              return results.data.source_license
+            });
+          }
+      }
+  });
+
 var app = angular.module('atlasAdmin.interceptors', []);
 
 app.factory('AuthenticationInterceptor', ['$q', '$location', 'atlasHost', 'atlasApiHost', '$window', 'Authentication',
@@ -29737,18 +29754,6 @@ app.factory('ProfileStatus', function() {
             return localStorage.getItem("profile.complete") == "true";
         }
     };
-});
-
-var app = angular.module('atlasAdmin.services.sourceLicenses', []);
-app.factory('SourceLicenses', function (Atlas, Users) {
-    return {
-        get: function(sourceId) {
-          return Atlas.getRequest('/source_licenses/' + sourceId + '.json').then(
-          function (results) {
-            return results.data.source_license
-          });
-        }
-    }
 });
 
 var app = angular.module('atlasAdmin.services.uservideosources', []);
