@@ -18,6 +18,8 @@ assets.js = [
             'node_modules/d3/d3.min.js',
             'js/app.js',
 
+
+
             'presentation/applications/applications.module.js',
             'presentation/applications/applications.ctrl.js',
             'presentation/applications/createModal/applicationCreateModal.ctrl.js',
@@ -152,12 +154,13 @@ assets.js = [
             'components/services/wishes/wishes.module.js',
             'components/services/wishes/wishes.service.js',
 
-            'js/interceptors/authInterceptor.js',
-            'js/interceptors/loadingInterceptor.js',
-            'js/interceptors/profileCompleteInterceptor.js',
-            'js/services/wishes.js',
-            'js/services/bbcScrubbables.js',
-            'js/services/bbcRedux.js',
+            'components/interceptors/auth/auth.module.js',
+            'components/interceptors/auth/auth.service.js',
+            'components/interceptors/loading/loading.module.js',
+            'components/interceptors/loading/loading.service.js',
+            'components/interceptors/profileComplete/profileComplete.module.js',
+            'components/interceptors/profileComplete/profileComplete.service.js',
+            
             'js/filters.js'];
 
 //  Styles

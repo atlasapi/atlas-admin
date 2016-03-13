@@ -1,9 +1,7 @@
-var app = angular.module('atlasAdmin.interceptors');
+'use strict';
 
-// For making sure the user's profile is complete. if it isn't, the request should
-// be forwarded to the /profile page so the user can fill out missing details. Also
-// does the same for whether /terms have been accepted
-app.factory('ProfileCompleteInterceptor', ['ProfileStatus', '$location', '$q', '$rootScope', 'Authentication',
+angular.module('atlasAdmin.interceptors.profileComplete')
+  .factory('ProfileCompleteInterceptor', ['ProfileStatus', '$location', '$q', '$rootScope', 'Authentication',
     function (ProfileStatus, $location, $q, $rootScope, Auth) {
     return {
         'request': function(config) {
