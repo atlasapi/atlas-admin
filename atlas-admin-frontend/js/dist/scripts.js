@@ -26047,7 +26047,11 @@ angular.module('atlasAdmin.application')
 
 'use strict';
 
-angular.module('atlasAdmin.requestSource', ['ngRoute', 'atlasAdmin.services.applications'])
+angular.module('atlasAdmin.requestSource', [
+    'ngRoute',
+    'atlasAdmin.services.applications',
+    'atlasAdmin.services.payments'
+  ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/applications/:applicationId/requestSource/:sourceId', {
       templateUrl: 'presentation/requestSource/requestSource.tpl.html',
@@ -26057,9 +26061,9 @@ angular.module('atlasAdmin.requestSource', ['ngRoute', 'atlasAdmin.services.appl
 
 'use strict';
 angular.module('atlasAdmin.requestSource')
-  .controller('CtrlRequestSource', ['$scope', '$rootScope', '$sce', '$routeParams', 'Applications', 'Users', 'factorySourcePayments', 'factorySourceRequests', 'SourceLicenses', '$location',
-    function( $scope, $rootScope, $sce, $routeParams, Applications, Users, factorySourcePayments, factorySourceRequests, SourceLicenses, $location) {
-        $scope.planData = factorySourcePayments();
+  .controller('CtrlRequestSource', ['$scope', '$rootScope', '$sce', '$routeParams', 'Applications', 'Users', 'Payments', 'factorySourceRequests', 'SourceLicenses', '$location',
+    function( $scope, $rootScope, $sce, $routeParams, Applications, Users, Payments, factorySourceRequests, SourceLicenses, $location) {
+        $scope.planData = Payments();
         $scope.button_txt = 'Accept';
         $scope.app = {};
         $scope.plan = 0;
@@ -29392,6 +29396,35 @@ angular.module('atlasAdmin.services.sources')
     }
   });
 
+'use strict';
+angular.module('atlasAdmin.services.payments', []);
+
+'use strict';
+
+angular.module('atlasAdmin.services.payments')
+  .factory('Payments', function() {
+      var plans = function() {
+          return [{
+              users: '1 to 10',
+              price: 'Free'
+          },
+          {
+              users: '11 to 1000',
+              price: 95
+          },
+          {
+              users: '1,001 to 10,000',
+              price: 245
+          },
+          {
+              users: '10,001 to 50,000',
+              price: 995
+          }];
+      }
+
+      return plans;
+  });
+
 var app = angular.module('atlasAdmin.interceptors', []);
 
 app.factory('AuthenticationInterceptor', ['$q', '$location', 'atlasHost', 'atlasApiHost', '$window', 'Authentication',
@@ -29716,30 +29749,6 @@ app.factory('factorySourceRequests', ['$http', 'Authentication', 'atlasApiHost',
     };
 }]);
 
-var app = angular.module('atlasAdmin.services.sourceRequests');
-
-app.factory('factorySourcePayments', function() {
-    var plans = function() {
-        return [{
-            users: '1 to 10',
-            price: 'Free'
-        },
-        {
-            users: '11 to 1000',
-            price: 95
-        },
-        {
-            users: '1,001 to 10,000',
-            price: 245
-        },
-        {
-            users: '10,001 to 50,000',
-            price: 995
-        }];
-    }
-
-    return plans;
-});
 var app = angular.module('atlasAdmin.services.sourceLicenses', []);
 app.factory('SourceLicenses', function (Atlas, Users) {
     return {
