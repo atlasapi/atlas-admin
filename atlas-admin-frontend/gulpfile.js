@@ -84,6 +84,7 @@ assets.js = [
             'presentation/error/error.ctrl.js',
             'presentation/menu/menu.module.js',
             'presentation/menu/menu.ctrl.js',
+
             'components/directives/orderable/orderable.module.js',
             'components/directives/orderable/orderable.directive.js',
             'components/directives/focus/focus.module.js',
@@ -112,7 +113,9 @@ assets.js = [
             'components/directives/deleteItem/deleteItem.directive.js',
             'components/directives/changeStatus/changeStatus.module.js',
             'components/directives/changeStatus/changeStatus.directive.js',
-
+            'components/services/auth/auth.module.js',
+            'components/services/auth/auth.service.js',
+            
             'js/interceptors/authInterceptor.js',
             'js/interceptors/loadingInterceptor.js',
             'js/interceptors/profileCompleteInterceptor.js',

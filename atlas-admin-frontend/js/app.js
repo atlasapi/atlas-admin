@@ -35,7 +35,7 @@ angular.module('atlasAdmin',
     'atlasAdmin.preloader',
     'atlasAdmin.activePath',
 
-    'atlasAdmin.services.auth',
+    'atlasAdmin.auth',
     'atlasAdmin.services.atlas',
     'atlasAdmin.services.applications',
     'atlasAdmin.services.sources',
