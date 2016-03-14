@@ -52,7 +52,8 @@ gulp.task('protractor', function() {
           // 'tests/requests/requests.e2e.js',
           // 'tests/users/users.e2e.js',
           // 'tests/wishlistManager/wishlistManager.e2e.js',
-          'tests/terms/terms.e2e.js'
+          // 'tests/terms/terms.e2e.js',
+          'tests/contact/contact.e2e.js'
         ])
         .pipe(gulpProtractorAngular({
             'configFile': 'protractor.conf.js',
