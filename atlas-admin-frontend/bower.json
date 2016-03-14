@@ -11,7 +11,7 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "common-style": "git@bitbucket.org:mbst/common-style.git#~0.1.11"
+    "common-style": "git@bitbucket.org:mbst/common-style.git#~1.2.11"
   },
   "ignore": [
     "**/.*",

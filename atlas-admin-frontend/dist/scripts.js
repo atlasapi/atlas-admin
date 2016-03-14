@@ -130,6 +130,20 @@ angular.module('atlasAdmin.epg', [
 
 'use strict';
 
+angular.module('atlasAdmin.feed', [
+    'ngRoute',
+    'atlasAdmin.directives.actionModal',
+    'atlasAdmin.services.feeds'
+  ])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/feeds/:feedId', {
+      templateUrl: 'app/presentation/feed/feed.tpl.html',
+      controller: 'CtrlFeedsConsole'
+    });
+  }]);
+
+'use strict';
+
 angular.module('atlasAdmin.error', ['ngRoute'])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/error', {
@@ -151,20 +165,6 @@ angular.module('atlasAdmin.feedBreakdown', [
     $routeProvider.when('/feeds/:feedId/:taskId', {
       templateUrl: 'app/presentation/feedBreakdown/feedBreakdown.tpl.html',
       controller: 'CtrlFeedsBreakdown'
-    });
-  }]);
-
-'use strict';
-
-angular.module('atlasAdmin.feed', [
-    'ngRoute',
-    'atlasAdmin.directives.actionModal',
-    'atlasAdmin.services.feeds'
-  ])
-  .config(['$routeProvider', function ($routeProvider) {
-    $routeProvider.when('/feeds/:feedId', {
-      templateUrl: 'app/presentation/feed/feed.tpl.html',
-      controller: 'CtrlFeedsConsole'
     });
   }]);
 
@@ -313,6 +313,23 @@ angular.module('atlasAdmin.profile', ['ngRoute'])
 
 'use strict';
 
+angular.module('atlasAdmin.requestSource', [
+    'ngRoute',
+    'atlasAdmin.services.applications',
+    'atlasAdmin.services.payments',
+    'atlasAdmin.services.sourceRequests',
+    'atlasAdmin.services.sourceLicenses',
+    'atlasAdmin.services.users'
+  ])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/applications/:applicationId/requestSource/:sourceId', {
+      templateUrl: 'app/presentation/requestSource/requestSource.tpl.html',
+      controller: 'CtrlRequestSource'
+    });
+  }]);
+
+'use strict';
+
 angular.module('atlasAdmin.scrubbables', [
     'ngRoute',
     'atlasAdmin.directives.scrubber',
@@ -342,18 +359,14 @@ angular.module('atlasAdmin.terms', ['ngRoute'])
 
 'use strict';
 
-angular.module('atlasAdmin.requestSource', [
+angular.module('atlasAdmin.videoSourceConfig', [
     'ngRoute',
-    'atlasAdmin.services.applications',
-    'atlasAdmin.services.payments',
-    'atlasAdmin.services.sourceRequests',
-    'atlasAdmin.services.sourceLicenses',
-    'atlasAdmin.services.users'
+    'atlasAdmin.services.uservideosources'
   ])
   .config(['$routeProvider', function ($routeProvider) {
-    $routeProvider.when('/applications/:applicationId/requestSource/:sourceId', {
-      templateUrl: 'app/presentation/requestSource/requestSource.tpl.html',
-      controller: 'CtrlRequestSource'
+    $routeProvider.when('/videosource/config/youtube', {
+      templateUrl: 'app/presentation/videoSourceConfig/videoSourceConfig.tpl.html',
+      controller: 'CtrlVideoSourceYouTubeConfig'
     });
   }]);
 
@@ -367,19 +380,6 @@ angular.module('atlasAdmin.videoSourceProviders', [
     $routeProvider.when('/videosource/providers', {
       templateUrl: 'app/presentation/videoSourceProviders/videoSourceProviders.tpl.html',
       controller: 'CtrlVideoSourceProviders'
-    });
-  }]);
-
-'use strict';
-
-angular.module('atlasAdmin.videoSourceConfig', [
-    'ngRoute',
-    'atlasAdmin.services.uservideosources'
-  ])
-  .config(['$routeProvider', function ($routeProvider) {
-    $routeProvider.when('/videosource/config/youtube', {
-      templateUrl: 'app/presentation/videoSourceConfig/videoSourceConfig.tpl.html',
-      controller: 'CtrlVideoSourceYouTubeConfig'
     });
   }]);
 
@@ -401,13 +401,13 @@ angular.module('atlasAdmin.wishlist', [
 
 angular.module('atlasAdmin.directives.actionModal', []);
 
-angular.module('atlasAdmin.directives.activePath', ['atlasAdmin.services.profileStatus']);
-
 var app = angular.module('atlasAdmin.directives.atlasSearch', [
   'atlasAdmin.services.scrubbableHelpers',
   'atlasAdmin.services.scrubbables',
   'atlasAdmin.services.groups'
 ]);
+
+angular.module('atlasAdmin.directives.activePath', ['atlasAdmin.services.profileStatus']);
 
 angular.module('atlasAdmin.directives.changeStatus', [
   'atlasAdmin.services.propositions'
@@ -496,13 +496,13 @@ angular.module('atlasAdmin.services.propositions', []);
 angular.module('atlasAdmin.services.scrubbableHelpers', []);
 
 'use strict';
-angular.module('atlasAdmin.services.sourceLicenses', []);
-
-'use strict';
 
 angular.module('atlasAdmin.services.scrubbables', [
   'atlasAdmin.services.groups'
 ]);
+
+'use strict';
+angular.module('atlasAdmin.services.sourceLicenses', []);
 
 angular.module('atlasAdmin.services.sourceRequests', ['atlasAdmin.services.users']);
 
@@ -1403,48 +1403,6 @@ angular.module('atlasAdmin.epg')
 }]);
 
 'use strict';
-
-angular.module('atlasAdmin.error')
-  .controller('ErrorController', function($scope, $rootScope, $routeParams) {
-      $rootScope.title = "Sorry, there was a problem....";
-      $scope.alerts = [];
-      if ($routeParams.type == "forbidden") {
-          $scope.alerts.push({type:"danger", msg: "You do not have access to this resource"});
-      } else if ($routeParams.type == "not_available") {
-          $scope.alerts.push({type:"info", msg: "This service is not currently available. Please try again later."});
-      }
-  });
-
-'use strict';
-angular.module('atlasAdmin.feedBreakdown')
-  .controller('CtrlFeedsBreakdown', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modal',
-    function($scope, $rootScope, $routeParams, Feeds, $q, $modal) {
-      $scope.taskID = $routeParams.taskId;
-
-      $scope.showDetails = function() {
-        var modalInstance = $modal.open({
-          templateUrl: 'app/presentation/feedBreakdown/statusDetailModal/statusDetailModal.tpl.html',
-          controller: 'CtrlStatusDetail',
-          scope: $scope
-        });
-        modalInstance.result.then(function() {
-
-        });
-      };
-
-      var loadTask = function() {
-        Feeds.request('youview/bbc_nitro/tasks/'+$routeParams.taskId+'.json?annotations=remote_responses')
-        .then(function(task) {
-          var _task = task.tasks[0];
-          $scope.task = _task;
-          $scope.view_title = "Breakdown for transaction: "+_task.remote_id;
-        });
-      };
-      loadTask();
-
-    }]);
-
-'use strict';
 angular.module('atlasAdmin.feed')
   .controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$timeout',
     function($scope, $rootScope, $routeParams, Feeds, $q, $timeout) {
@@ -1579,6 +1537,48 @@ angular.module('atlasAdmin.feed')
         _delta = Math.round(Math.abs((_now.getTime() - _then.getTime()))/(24*60*60*1000));
         return _delta.toString();
       };
+    }]);
+
+'use strict';
+
+angular.module('atlasAdmin.error')
+  .controller('ErrorController', function($scope, $rootScope, $routeParams) {
+      $rootScope.title = "Sorry, there was a problem....";
+      $scope.alerts = [];
+      if ($routeParams.type == "forbidden") {
+          $scope.alerts.push({type:"danger", msg: "You do not have access to this resource"});
+      } else if ($routeParams.type == "not_available") {
+          $scope.alerts.push({type:"info", msg: "This service is not currently available. Please try again later."});
+      }
+  });
+
+'use strict';
+angular.module('atlasAdmin.feedBreakdown')
+  .controller('CtrlFeedsBreakdown', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modal',
+    function($scope, $rootScope, $routeParams, Feeds, $q, $modal) {
+      $scope.taskID = $routeParams.taskId;
+
+      $scope.showDetails = function() {
+        var modalInstance = $modal.open({
+          templateUrl: 'app/presentation/feedBreakdown/statusDetailModal/statusDetailModal.tpl.html',
+          controller: 'CtrlStatusDetail',
+          scope: $scope
+        });
+        modalInstance.result.then(function() {
+
+        });
+      };
+
+      var loadTask = function() {
+        Feeds.request('youview/bbc_nitro/tasks/'+$routeParams.taskId+'.json?annotations=remote_responses')
+        .then(function(task) {
+          var _task = task.tasks[0];
+          $scope.task = _task;
+          $scope.view_title = "Breakdown for transaction: "+_task.remote_id;
+        });
+      };
+      loadTask();
+
     }]);
 
 'use strict';
@@ -2193,6 +2193,77 @@ angular.module('atlasAdmin.profile')
   });
 
 'use strict';
+angular.module('atlasAdmin.requestSource')
+  .controller('CtrlRequestSource', ['$scope', '$rootScope', '$sce', '$routeParams', 'Applications', 'Users', 'Payments', 'sourceRequests', 'SourceLicenses', '$location',
+    function( $scope, $rootScope, $sce, $routeParams, Applications, Users, Payments, sourceRequests, SourceLicenses, $location) {
+        $scope.planData = Payments();
+        $scope.button_txt = 'Accept';
+        $scope.app = {};
+        $scope.plan = 0;
+        $scope.source = {};
+        $scope.user = {};
+
+        $scope.isNumber = function (value) {
+          return angular.isNumber(value);
+        };
+
+        // used for referencing url params
+        var appId    = $routeParams.applicationId,
+            sourceId = $routeParams.sourceId;
+
+        var getTerms = function(sourceId, callback) {
+            SourceLicenses.get(sourceId).then(function(data) {
+                callback(data);
+            }, function(err) { callback(null); })
+        }
+
+        // use provider to get source data, then pass result to $scope
+        Applications.get(appId).then(function(app) {
+            var sources = app.sources.reads;
+            var source = _.find(sources, function(src) {
+                return src.id === sourceId;
+            });
+            $scope.source = source;
+            $scope.app = app;
+            getTerms(source.id, function(terms) {
+                $scope.source.terms = _.isObject(terms)? $sce.trustAsHtml(terms.license) : null;
+            })
+        })
+
+        // use provider to get user data, then pass result to $scope
+        Users.currentUser(function(user) {
+            $scope.user = user;
+        });
+
+        // when user switches between payment methods, update the model
+        $scope.changeOfPlan = function(index) {
+            $scope.plan = index;
+        }
+
+        // construct post payload, then send to the provider
+        $scope.send = function() {
+            $scope.button_txt = 'Sending...';
+            var payload = {
+                user: $scope.user,
+                app: $scope.app,
+                plan: $scope.planData[$scope.plan],
+                source: $scope.source,
+                reason: $scope.reason,
+                state: 'not approved'
+            }
+            sourceRequests.postRequest(payload).then(function(status) {
+                if (status === 200)
+                    $location.path('/applications/'+appId);
+            });
+        };
+
+        // on cancel, change location to application screen
+        $scope.cancel = function() {
+            $location.path('/applications/'+appId);
+        }
+}]);
+
+'use strict';
 
 angular.module('atlasAdmin.scrubbables')
   .controller('CtrlBBCScrubbables', ['$scope', '$rootScope', '$routeParams', '$q', 'BBCScrubbablesService', '$timeout', 'ScrubbablesHelpers',
@@ -2430,99 +2501,6 @@ angular.module('atlasAdmin.terms')
   });
 
 'use strict';
-angular.module('atlasAdmin.requestSource')
-  .controller('CtrlRequestSource', ['$scope', '$rootScope', '$sce', '$routeParams', 'Applications', 'Users', 'Payments', 'sourceRequests', 'SourceLicenses', '$location',
-    function( $scope, $rootScope, $sce, $routeParams, Applications, Users, Payments, sourceRequests, SourceLicenses, $location) {
-        $scope.planData = Payments();
-        $scope.button_txt = 'Accept';
-        $scope.app = {};
-        $scope.plan = 0;
-        $scope.source = {};
-        $scope.user = {};
-
-        $scope.isNumber = function (value) {
-          return angular.isNumber(value);
-        };
-
-        // used for referencing url params
-        var appId    = $routeParams.applicationId,
-            sourceId = $routeParams.sourceId;
-
-        var getTerms = function(sourceId, callback) {
-            SourceLicenses.get(sourceId).then(function(data) {
-                callback(data);
-            }, function(err) { callback(null); })
-        }
-
-        // use provider to get source data, then pass result to $scope
-        Applications.get(appId).then(function(app) {
-            var sources = app.sources.reads;
-            var source = _.find(sources, function(src) {
-                return src.id === sourceId;
-            });
-            $scope.source = source;
-            $scope.app = app;
-            getTerms(source.id, function(terms) {
-                $scope.source.terms = _.isObject(terms)? $sce.trustAsHtml(terms.license) : null;
-            })
-        })
-
-        // use provider to get user data, then pass result to $scope
-        Users.currentUser(function(user) {
-            $scope.user = user;
-        });
-
-        // when user switches between payment methods, update the model
-        $scope.changeOfPlan = function(index) {
-            $scope.plan = index;
-        }
-
-        // construct post payload, then send to the provider
-        $scope.send = function() {
-            $scope.button_txt = 'Sending...';
-            var payload = {
-                user: $scope.user,
-                app: $scope.app,
-                plan: $scope.planData[$scope.plan],
-                source: $scope.source,
-                reason: $scope.reason,
-                state: 'not approved'
-            }
-            sourceRequests.postRequest(payload).then(function(status) {
-                if (status === 200)
-                    $location.path('/applications/'+appId);
-            });
-        };
-
-        // on cancel, change location to application screen
-        $scope.cancel = function() {
-            $location.path('/applications/'+appId);
-        }
-}]);
-
-'use strict';
-angular.module('atlasAdmin.videoSourceProviders')
-  .controller('CtrlVideoSourceProviders', function($scope, $rootScope, $location, UserVideoSources) {
-      $rootScope.title = "Select video source provider";
-      $scope.app = {};
-      $scope.app.providers = [];
-      if (window.location.search != "") {
-          window.location.search = "";
-      }
-      UserVideoSources.allProviders().then(function(providers) {
-          $scope.app.providers = providers;
-      });
-
-      $scope.app.startAuth = function(provider) {
-          var callbackUrl = $location.absUrl().replace("/providers","/config/" + provider.namespace);
-          UserVideoSources.getOAuthLogin(provider.authRequestUrl, callbackUrl).then(function(data) {
-              // Redirect to remote service login screen
-              window.location.href = data.login_url;
-          });
-      };
-  });
-
-'use strict';
 angular.module('atlasAdmin.videoSourceConfig')
   .controller('CtrlVideoSourceYouTubeConfig', function($scope, $rootScope, UserVideoSources) {
     $rootScope.title = "Configure YouTube link";
@@ -2583,6 +2561,28 @@ angular.module('atlasAdmin.videoSourceConfig')
         });
     };
 });
+
+'use strict';
+angular.module('atlasAdmin.videoSourceProviders')
+  .controller('CtrlVideoSourceProviders', function($scope, $rootScope, $location, UserVideoSources) {
+      $rootScope.title = "Select video source provider";
+      $scope.app = {};
+      $scope.app.providers = [];
+      if (window.location.search != "") {
+          window.location.search = "";
+      }
+      UserVideoSources.allProviders().then(function(providers) {
+          $scope.app.providers = providers;
+      });
+
+      $scope.app.startAuth = function(provider) {
+          var callbackUrl = $location.absUrl().replace("/providers","/config/" + provider.namespace);
+          UserVideoSources.getOAuthLogin(provider.authRequestUrl, callbackUrl).then(function(data) {
+              // Redirect to remote service login screen
+              window.location.href = data.login_url;
+          });
+      };
+  });
 
 'use strict';
 var app = angular.module('atlasAdmin.wishlist')
@@ -2768,40 +2768,6 @@ angular.module('atlasAdmin.directives.actionModal')
       };
     }]);
 
-'use strict';
-
-/* Highlight current menu element */
-/* Thanks to http://stackoverflow.com/questions/12592472/how-to-highlight-a-current-menu-item-in-angularjs */
-angular.module('atlasAdmin.directives.activePath')
-  .directive('activePath', ['$location', 'ProfileStatus', function(location, ProfileStatus) {
-    return {
-      restrict: 'A',
-      link: function(scope, element, attrs, controller) {
-        var activeClass = attrs.activePath;
-        var path = attrs.ngHref;
-        if (path.substring(0,1) == "#") {
-           path = path.substring(1);
-        }
-        scope.location = location;
-        scope.$watch('location.path()', function(currentPath) {
-            // hide menu if profile not complete
-            if (ProfileStatus.isProfileComplete()) {
-                element.removeClass('hide');
-            } else {
-                element.addClass('hide');
-            }
-
-            // highlight active item
-            if (path == currentPath.substring(0, path.length)) {
-                element.addClass(activeClass);
-            } else {
-                element.removeClass(activeClass);
-            }
-        });
-      }
-    };
-}]);
-
 angular.module('atlasAdmin.directives.atlasSearch')
   .directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http', 'GroupsService', 'BBCScrubbablesService', 'ScrubbablesHelpers', '$location',
     function($document, $q, $timeout, atlasHost, $http, Groups, Scrubbables, Helpers, $location) {
@@ -2909,6 +2875,40 @@ angular.module('atlasAdmin.directives.atlasSearch')
           templateUrl: 'components/directives/atlasSearch/atlasSearch.tpl.html'
         };
     }]);
+
+'use strict';
+
+/* Highlight current menu element */
+/* Thanks to http://stackoverflow.com/questions/12592472/how-to-highlight-a-current-menu-item-in-angularjs */
+angular.module('atlasAdmin.directives.activePath')
+  .directive('activePath', ['$location', 'ProfileStatus', function(location, ProfileStatus) {
+    return {
+      restrict: 'A',
+      link: function(scope, element, attrs, controller) {
+        var activeClass = attrs.activePath;
+        var path = attrs.ngHref;
+        if (path.substring(0,1) == "#") {
+           path = path.substring(1);
+        }
+        scope.location = location;
+        scope.$watch('location.path()', function(currentPath) {
+            // hide menu if profile not complete
+            if (ProfileStatus.isProfileComplete()) {
+                element.removeClass('hide');
+            } else {
+                element.addClass('hide');
+            }
+
+            // highlight active item
+            if (path == currentPath.substring(0, path.length)) {
+                element.addClass(activeClass);
+            } else {
+                element.removeClass(activeClass);
+            }
+        });
+      }
+    };
+}]);
 
 angular.module('atlasAdmin.directives.changeStatus')
   .directive('changestatus', ['$document', 'factoryPropositions',
@@ -4672,18 +4672,6 @@ angular.module('atlasAdmin.services.scrubbableHelpers')
     };
   }]);
 
-angular.module('atlasAdmin.services.sourceLicenses')
-  .factory('SourceLicenses', function (Atlas, Users) {
-      return {
-          get: function(sourceId) {
-            return Atlas.getRequest('/source_licenses/' + sourceId + '.json').then(
-            function (results) {
-              return results.data.source_license
-            });
-          }
-      }
-  });
-
 angular.module('atlasAdmin.services.scrubbables')
   .factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService',
     function(atlasHost, $http, $q, Groups) {
@@ -4886,6 +4874,18 @@ angular.module('atlasAdmin.services.scrubbables')
         deerContent: getDeerContentURI
     };
   }]);
+
+angular.module('atlasAdmin.services.sourceLicenses')
+  .factory('SourceLicenses', function (Atlas, Users) {
+      return {
+          get: function(sourceId) {
+            return Atlas.getRequest('/source_licenses/' + sourceId + '.json').then(
+            function (results) {
+              return results.data.source_license
+            });
+          }
+      }
+  });
 
 'use strict';
 
