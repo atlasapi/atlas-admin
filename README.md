@@ -20,6 +20,12 @@ Running gulp dev will compile all javascript, scss and also create a server whic
 
 ## E2E Tests
 
+### Test config
+
+A config file must be setup in the `tests\login` directory. There is a template file for structure, simply add twitter login details. This is temporary until open am in integrated.
+
+### Run tests
+
 To run the protractor tests you must have a local instance of the app running. Then simply run:
 
 ```

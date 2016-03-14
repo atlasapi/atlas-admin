@@ -1,0 +1,41 @@
+<div class="app-surface">
+  <div class="panel panel-default">
+    <div class="panel-body">
+        <div ng-show="app.successMessage" class="alert alert-success">
+            {{app.successMessage}}
+        </div>
+        <div ng-show="app.errorMessage" class="alert alert-danger">
+            {{app.errorMessage}}
+        </div>
+        <div ng-show="app.infoMessage" class="alert alert-info">
+            {{app.infoMessage}}
+        </div>
+        <div>
+          <p>Please select the publisher for your source from the list below and the YouTube channel that you would like to add to Atlas.</p>
+        </div>
+    </div>
+  </div>
+  <div>
+      <div class="form-group">
+          <label for="publisher" class="col-sm-2 control-label">Publisher</label>
+              <select
+                  ng-model="publisher"
+                  name="publisher"
+                  required
+                  ng-options="source.name for (id,source) in app.writableSources | orderBy: 'name'">
+              </select>
+      </div>
+  </div>
+  <div>
+      <table class="table table-striped table-hover">
+      <tr ng-repeat="channel in app.channels">
+          <td>{{channel.title}}</td>
+          <td>
+              <button type="button" class="btn btn-primary" ng-click="app.addChannel(channel.id, channel.youTubeId, publisher)">
+                  Add
+              </button>
+          </td>
+      </tr>
+      </table>
+  </div>
+</div>

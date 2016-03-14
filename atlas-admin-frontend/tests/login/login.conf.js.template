@@ -1,0 +1,4 @@
+module.exports = {
+  user: 'TWITTER_USER_HERE',
+  pass: 'TWITTER_PASS_HERE'
+}
