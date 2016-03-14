@@ -9,9 +9,9 @@ describe('E2E login', function () {
   });
 
   it('should redirect to twitter login', function () {
-    $('.auth-option.twitter').click().then(function () {
-      expect(browser.getCurrentUrl()).toContain('https://api.twitter.com/oauth/authenticate');
-    });
+    loginPageObject.get();
+    $('.auth-option.twitter a').click();
+    expect(browser.getCurrentUrl()).toContain('api.twitter.com');
   });
 
   it('should login to twitter account then redirect to the app', function () {

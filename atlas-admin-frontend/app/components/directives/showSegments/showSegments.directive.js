@@ -91,6 +91,6 @@ angular.module('atlasAdmin.directives.showSegments')
         restrict: 'E',
         scope: false,
         link: controller,
-        templateUrl: 'app/components/directives/showSegments.tpl.html'
+        templateUrl: 'components/directives/showSegments.tpl.html'
     };
   }]);

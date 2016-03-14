@@ -44,5 +44,6 @@ angular.module('atlasAdmin',
 
     'ngResource',
     'ngRoute',
-    'atlasAdminConfig'
+    'atlasAdminConfig',
+    'templates'
   ]);

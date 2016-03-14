@@ -102,6 +102,6 @@ angular.module('atlasAdmin.directives.atlasSearch')
           restrict: 'E',
           scope: false,
           link: controller,
-          templateUrl: 'app/components/directives/atlasSearch/atlasSearch.tpl.html'
+          templateUrl: 'components/directives/atlasSearch/atlasSearch.tpl.html'
         };
     }]);

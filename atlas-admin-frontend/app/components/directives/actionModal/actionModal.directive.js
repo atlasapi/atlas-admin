@@ -17,7 +17,7 @@ angular.module('atlasAdmin.directives.actionModal')
 
           var _modalInstance = $modal.open({
             // template: '<h1>'+_content.title+'</h1></div><div class="feed-modal-options"><button ng-disabled="isSendingAction" ng-click="ok()">'+_content.action+'</button><button ng-click="dismiss()">Cancel</button>',
-            templateUrl: 'app/presentation/feed/actionsModal/actionsModal.tpl.html',
+            templateUrl: 'presentation/feed/actionsModal/actionsModal.tpl.html',
             controller: 'CtrlFeedsAcceptModal',
             windowClass: 'feedsAcceptModal',
             scope: $scope,

@@ -38,7 +38,7 @@ angular.module('atlasAdmin.manageSourcesWriters')
 
     $scope.addWriterDialog = function () {
       var modalInstance = $modal.open({
-        templateUrl: 'app/presentation/manageSourcesWriters/addWriterModal/addWriterModal.html',
+        templateUrl: 'presentation/manageSourcesWriters/addWriterModal/addWriterModal.html',
         controller: AddWriterTypeaheadCtrl
       });
 

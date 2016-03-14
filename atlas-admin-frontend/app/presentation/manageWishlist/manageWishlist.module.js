@@ -9,7 +9,7 @@ angular.module('atlasAdmin.manageWishlist', [
   ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/manage/wishlist', {
-      templateUrl: 'app/presentation/manageWishlist/manageWishlist.tpl.html',
+      templateUrl: 'presentation/manageWishlist/manageWishlist.tpl.html',
       controller: 'CtrlManageWishlist'
     });
   }]);

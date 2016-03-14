@@ -74,7 +74,7 @@ angular.module('atlasAdmin.applications')
     // instantiate a new modal window
     $scope.createApplication = function() {
         var modalInstance = $modal.open({
-            templateUrl: 'app/presentation/applications/createModal/applicationCreateModal.tpl.html',
+            templateUrl: 'presentation/applications/createModal/applicationCreateModal.tpl.html',
             controller: 'CreateApplicationFormModalCtrl',
             scope: $scope
         });

@@ -7,7 +7,7 @@ angular.module('atlasAdmin.feed', [
   ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/feeds/:feedId', {
-      templateUrl: 'app/presentation/feed/feed.tpl.html',
+      templateUrl: 'presentation/feed/feed.tpl.html',
       controller: 'CtrlFeedsConsole'
     });
   }]);

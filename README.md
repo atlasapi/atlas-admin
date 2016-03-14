@@ -16,7 +16,7 @@ npm install && bower install
 gulp dev
 ```
 
-Running gulp dev will compile all javascript, scss and also create a server which runs on <http://dev.mbst.tv:8080/#/>
+Running gulp dev will compile all javascript, scss into the dist server and also create a server which runs on <http://dev.mbst.tv:8080/#/>
 
 ## E2E Tests
 

@@ -16,7 +16,7 @@ angular.module('atlasAdmin.manageWishlist')
         $scope.modal.title = "Add new source";
 
         var modalInstance = $modal.open({
-            templateUrl: 'app/presentation/manageWishlist/newWishlistItemModal/newWishlistItemModal.tpl.html',
+            templateUrl: 'presentation/manageWishlist/newWishlistItemModal/newWishlistItemModal.tpl.html',
             controller: 'CtrlNewWishlistItemModal',
             scope: $scope
         })

@@ -6,7 +6,7 @@ angular.module('atlasAdmin.feedBreakdown')
 
       $scope.showDetails = function() {
         var modalInstance = $modal.open({
-          templateUrl: 'app/presentation/feedBreakdown/statusDetailModal/statusDetailModal.tpl.html',
+          templateUrl: 'presentation/feedBreakdown/statusDetailModal/statusDetailModal.tpl.html',
           controller: 'CtrlStatusDetail',
           scope: $scope
         });

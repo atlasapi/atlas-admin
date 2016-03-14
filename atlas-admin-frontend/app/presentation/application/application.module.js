@@ -14,7 +14,7 @@ angular.module('atlasAdmin.application', [
   ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/applications/:applicationId', {
-      templateUrl: 'app/presentation/application/application.tpl.html',
+      templateUrl: 'presentation/application/application.tpl.html',
       controller: 'CtrlApplicationEdit',
       reloadOnSearch: false
     });

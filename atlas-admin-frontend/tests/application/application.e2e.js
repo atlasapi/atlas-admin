@@ -2,7 +2,7 @@
 
 var applicationPageObject = require('./application.pageobject.js');
 
-describe('E2E applications: Load', function () {
+describe('E2E application: Load', function () {
 
   it('should load the applications view', function () {
     applicationPageObject.get();
@@ -11,7 +11,7 @@ describe('E2E applications: Load', function () {
   });
 });
 
-describe('E2E applications: Sources', function () {
+describe('E2E application: Sources', function () {
   it('should enable youtube source', function () {
     expect(applicationPageObject.getAvailableSource().element(by.css('.source-title')).getText()).toEqual('YouTube');
     applicationPageObject.getAvailableSource().element(by.css('button.button-link')).click();

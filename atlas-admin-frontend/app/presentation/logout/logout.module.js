@@ -3,7 +3,7 @@
 angular.module('atlasAdmin.logout', ['ngRoute'])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/logout', {
-      templateUrl: 'app/presentation/logout/logout.tpl.html',
+      templateUrl: 'presentation/logout/logout.tpl.html',
       controller: 'CtrlLogout'
     });
   }]);

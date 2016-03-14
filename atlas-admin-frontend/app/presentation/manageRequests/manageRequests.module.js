@@ -8,7 +8,7 @@ angular.module('atlasAdmin.manageRequests', [
   ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/manage/requests', {
-      templateUrl: 'app/presentation/manageRequests/manageRequests.tpl.html',
+      templateUrl: 'presentation/manageRequests/manageRequests.tpl.html',
       controller: 'CtrlManageSourceRequests'
     });
   }]);
