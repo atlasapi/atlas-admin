@@ -34221,7 +34221,12 @@ angular.module('atlasAdmin',
     'ngResource',
     'ngRoute',
     'atlasAdminConfig'
-  ])
+  ]);
+
+'use strict';
+
+// Declare app level module which depends on filters, and services
+angular.module('atlasAdmin')
   .config(['$routeProvider', '$httpProvider', '$sceDelegateProvider', function($routeProvider, $httpProvider, $sceDelegateProvider) {
       $routeProvider.otherwise({redirectTo: '/applications'});
 
@@ -36977,6 +36982,29 @@ angular.module('atlasAdmin.menu')
         });
     }
 }]);
+
+/*
+ * Populate the values in the template below and remove .template
+ * from the filename to configure the application
+ * Atlas Host e.g. "http://stage.atlas.metabroadcast.com"
+ * Atlas version e.g. "4"
+ * Atlas API Host e.g. "http://atlas-admin-backend.stage.metabroadcast.com/api"
+ * Atlas Backend URL e.g. "http://admin-backend-stage.metabroadcast.com"
+ * Admin user URL e.g. "http://admin-backend-stage.metabroadcast.com/1/user"
+ */
+// angular.module('atlasAdminConfig', [])
+//     .value('atlasHost','http://atlas.metabroadcast.com')
+//     .value('atlasVersion', '4')
+//     .value('atlasApiHost', 'http://atlas-admin-backend.metabroadcast.com/api')
+//     .value('adminBackendUrl', 'http://admin-backend-stage.metabroadcast.com')
+//     .value('userUrl', 'http://admin-backend-stage.metabroadcast.com/1/user');
+
+angular.module('atlasAdminConfig', [])
+  .value('atlasHost', 'http://stage.atlas.metabroadcast.com')
+  .value('atlasVersion', '4')
+  .value('atlasApiHost', 'http://atlas-admin-backend.stage.metabroadcast.com/api')
+  .value('adminBackendUrl', 'http://admin-backend-stage.metabroadcast.com')
+  .value('userUrl', 'http://admin-backend-stage.metabroadcast.com/1/user');
 
 angular.module('atlasAdmin.directives.orderable', []);
 
