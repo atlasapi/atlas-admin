@@ -15,7 +15,7 @@ app.controller('CtrlManageWishlistFeatures', ['$scope', '$rootScope', '$modal',
         $scope.modal.title = "Add new feature";
 
         var modalInstance = $modal.open({
-            templateUrl: 'presentation/manageWishlist/newWishlistItemModal/newWishlistItemModal.tpl.html',
+            templateUrl: 'app/presentation/manageWishlist/newWishlistItemModal/newWishlistItemModal.tpl.html',
             controller: 'CtrlNewWishlistItemModal',
             scope: $scope
         })

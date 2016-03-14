@@ -42,7 +42,7 @@ app.controller('CtrlWishlistFeatures', ['$scope', '$rootScope', '$routeParams', 
             title: 'Tell us about a feature'
         }
         var modalInstance = $modal.open({
-            templateUrl: 'presentation/wishlist/customFeatureRequestModal/customFeatureRequestModal.tpl.html',
+            templateUrl: 'app/presentation/wishlist/customFeatureRequestModal/customFeatureRequestModal.tpl.html',
             controller: 'customFeatureRequestModal',
             scope: $scope
         });

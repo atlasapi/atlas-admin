@@ -8,11 +8,11 @@ angular.module('atlasAdmin.scrubbables', [
   ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/scrubbables', {
-      templateUrl: 'presentation/scrubbables/create.tpl.html',
+      templateUrl: 'app/presentation/scrubbables/create.tpl.html',
       controller: 'CtrlBBCScrubbables'
     });
     $routeProvider.when('/scrubbables/:atlasId', {
-      templateUrl: 'presentation/scrubbables/create.tpl.html',
+      templateUrl: 'app/presentation/scrubbables/create.tpl.html',
       controller: 'CtrlBBCScrubbables'
     });
   }]);

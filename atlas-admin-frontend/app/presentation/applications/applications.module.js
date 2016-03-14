@@ -10,7 +10,7 @@ angular.module('atlasAdmin.applications', [
   ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/applications', {
-      templateUrl: 'presentation/applications/applications.tpl.html',
+      templateUrl: 'app/presentation/applications/applications.tpl.html',
       controller: 'CtrlApplications'
     });
   }]);

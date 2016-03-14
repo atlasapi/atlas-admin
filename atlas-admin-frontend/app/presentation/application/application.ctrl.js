@@ -323,7 +323,7 @@ angular.module('atlasAdmin.application')
         $scope.app.sourceRequest.source = source;
         $scope.app.sourceRequest.applicationId = $scope.app.application.id;
         var modalInstance = $modal.open({
-            templateUrl: 'presentation/applications/sourceRequestModal/sourceRequestModal.tpl.html',
+            templateUrl: 'app/presentation/applications/sourceRequestModal/sourceRequestModal.tpl.html',
             controller: 'SourceRequestFormModalCtrl',
             scope: $scope
         });
@@ -418,7 +418,7 @@ angular.module('atlasAdmin.application')
         });
 
         var modalInstance = $modal.open({
-            templateUrl: 'presentation/application/viewTermsModal.tpl.html',
+            templateUrl: 'app/presentation/application/viewTermsModal.tpl.html',
             controller: 'ViewTermsCtrl',
             scope: $scope
         });

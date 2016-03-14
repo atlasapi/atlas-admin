@@ -6,7 +6,7 @@ angular.module('atlasAdmin.videoSourceConfig', [
   ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/videosource/config/youtube', {
-      templateUrl: 'presentation/videoSourceConfig/videoSourceConfig.tpl.html',
+      templateUrl: 'app/presentation/videoSourceConfig/videoSourceConfig.tpl.html',
       controller: 'CtrlVideoSourceYouTubeConfig'
     });
   }]);

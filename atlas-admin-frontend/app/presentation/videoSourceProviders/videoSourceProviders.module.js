@@ -6,7 +6,7 @@ angular.module('atlasAdmin.videoSourceProviders', [
   ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/videosource/providers', {
-      templateUrl: 'presentation/videoSourceProviders/videoSourceProviders.tpl.html',
+      templateUrl: 'app/presentation/videoSourceProviders/videoSourceProviders.tpl.html',
       controller: 'CtrlVideoSourceProviders'
     });
   }]);

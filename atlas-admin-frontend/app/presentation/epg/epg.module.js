@@ -6,7 +6,7 @@ angular.module('atlasAdmin.epg', [
   ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/epg/bt-tv', {
-      templateUrl: 'presentation/epg/epg.tpl.html',
+      templateUrl: 'app/presentation/epg/epg.tpl.html',
       controller: 'CtrlEPGWidget'
     });
   }]);
