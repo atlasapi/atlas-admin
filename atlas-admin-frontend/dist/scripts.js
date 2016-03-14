@@ -130,6 +130,17 @@ angular.module('atlasAdmin.epg', [
 
 'use strict';
 
+angular.module('atlasAdmin.error', ['ngRoute'])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/error', {
+      templateUrl: 'app/presentation/error/error.tpl.html',
+      controller: 'ErrorController',
+      reloadOnSearch: false
+    });
+  }]);
+
+'use strict';
+
 angular.module('atlasAdmin.feed', [
     'ngRoute',
     'atlasAdmin.directives.actionModal',
@@ -139,17 +150,6 @@ angular.module('atlasAdmin.feed', [
     $routeProvider.when('/feeds/:feedId', {
       templateUrl: 'app/presentation/feed/feed.tpl.html',
       controller: 'CtrlFeedsConsole'
-    });
-  }]);
-
-'use strict';
-
-angular.module('atlasAdmin.error', ['ngRoute'])
-  .config(['$routeProvider', function ($routeProvider) {
-    $routeProvider.when('/error', {
-      templateUrl: 'app/presentation/error/error.tpl.html',
-      controller: 'ErrorController',
-      reloadOnSearch: false
     });
   }]);
 
@@ -207,6 +207,16 @@ angular.module('atlasAdmin.logout', ['ngRoute'])
 
 'use strict';
 
+angular.module('atlasAdmin.manageSources', ['ngRoute'])
+  .config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when('/manage/sources', {
+      templateUrl: 'app/presentation/manageSources/manageSources.tpl.html',
+      controller: 'CtrlSources'
+    });
+  }]);
+
+'use strict';
+
 angular.module('atlasAdmin.manageRequests', [
     'ngRoute',
     'atlasAdmin.services.applications',
@@ -217,16 +227,6 @@ angular.module('atlasAdmin.manageRequests', [
     $routeProvider.when('/manage/requests', {
       templateUrl: 'app/presentation/manageRequests/manageRequests.tpl.html',
       controller: 'CtrlManageSourceRequests'
-    });
-  }]);
-
-'use strict';
-
-angular.module('atlasAdmin.manageSources', ['ngRoute'])
-  .config(['$routeProvider', function ($routeProvider) {
-    $routeProvider.when('/manage/sources', {
-      templateUrl: 'app/presentation/manageSources/manageSources.tpl.html',
-      controller: 'CtrlSources'
     });
   }]);
 
@@ -401,12 +401,6 @@ angular.module('atlasAdmin.wishlist', [
 
 angular.module('atlasAdmin.directives.actionModal', []);
 
-var app = angular.module('atlasAdmin.directives.atlasSearch', [
-  'atlasAdmin.services.scrubbableHelpers',
-  'atlasAdmin.services.scrubbables',
-  'atlasAdmin.services.groups'
-]);
-
 angular.module('atlasAdmin.directives.activePath', ['atlasAdmin.services.profileStatus']);
 
 angular.module('atlasAdmin.directives.changeStatus', [
@@ -426,6 +420,12 @@ angular.module('atlasAdmin.directives.loadContent', [
 ]);
 
 angular.module('atlasAdmin.directives.orderable', []);
+
+var app = angular.module('atlasAdmin.directives.atlasSearch', [
+  'atlasAdmin.services.scrubbableHelpers',
+  'atlasAdmin.services.scrubbables',
+  'atlasAdmin.services.groups'
+]);
 
 angular.module('atlasAdmin.directives.preloader', []);
 
@@ -454,24 +454,14 @@ angular.module('atlasAdmin.interceptors.profileComplete', [
 ]);
 
 'use strict';
-angular.module('atlasAdmin.services.applications', []);
-
-'use strict';
 
 angular.module('atlasAdmin.services.apiUsage', []);
 
 'use strict';
-angular.module('atlasAdmin.services.atlas', []);
+angular.module('atlasAdmin.services.applications', []);
 
 'use strict';
-
-angular.module('atlasAdmin.services.auth', ['atlasAdmin.services.profileStatus']);
-
-'use script';
-
-angular.module('atlasAdmin.services.bbcRedux', [
-  'atlasAdmin.services.groups'
-]);
+angular.module('atlasAdmin.services.atlas', []);
 
 'use strict';
 
@@ -479,7 +469,17 @@ angular.module('atlasAdmin.services.feeds', []);
 
 'use strict';
 
+angular.module('atlasAdmin.services.auth', ['atlasAdmin.services.profileStatus']);
+
+'use strict';
+
 angular.module('atlasAdmin.services.groups', []);
+
+'use script';
+
+angular.module('atlasAdmin.services.bbcRedux', [
+  'atlasAdmin.services.groups'
+]);
 
 'use strict';
 angular.module('atlasAdmin.services.payments', []);
@@ -489,11 +489,11 @@ angular.module('atlasAdmin.services.payments', []);
 angular.module('atlasAdmin.services.profileStatus', []);
 
 'use strict';
-angular.module('atlasAdmin.services.propositions', []);
-
-'use strict';
 
 angular.module('atlasAdmin.services.scrubbableHelpers', []);
+
+'use strict';
+angular.module('atlasAdmin.services.propositions', []);
 
 'use strict';
 
@@ -1403,6 +1403,19 @@ angular.module('atlasAdmin.epg')
 }]);
 
 'use strict';
+
+angular.module('atlasAdmin.error')
+  .controller('ErrorController', function($scope, $rootScope, $routeParams) {
+      $rootScope.title = "Sorry, there was a problem....";
+      $scope.alerts = [];
+      if ($routeParams.type == "forbidden") {
+          $scope.alerts.push({type:"danger", msg: "You do not have access to this resource"});
+      } else if ($routeParams.type == "not_available") {
+          $scope.alerts.push({type:"info", msg: "This service is not currently available. Please try again later."});
+      }
+  });
+
+'use strict';
 angular.module('atlasAdmin.feed')
   .controller('CtrlFeedsConsole', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$timeout',
     function($scope, $rootScope, $routeParams, Feeds, $q, $timeout) {
@@ -1540,19 +1553,6 @@ angular.module('atlasAdmin.feed')
     }]);
 
 'use strict';
-
-angular.module('atlasAdmin.error')
-  .controller('ErrorController', function($scope, $rootScope, $routeParams) {
-      $rootScope.title = "Sorry, there was a problem....";
-      $scope.alerts = [];
-      if ($routeParams.type == "forbidden") {
-          $scope.alerts.push({type:"danger", msg: "You do not have access to this resource"});
-      } else if ($routeParams.type == "not_available") {
-          $scope.alerts.push({type:"info", msg: "This service is not currently available. Please try again later."});
-      }
-  });
-
-'use strict';
 angular.module('atlasAdmin.feedBreakdown')
   .controller('CtrlFeedsBreakdown', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modal',
     function($scope, $rootScope, $routeParams, Feeds, $q, $modal) {
@@ -1652,6 +1652,20 @@ angular.module('atlasAdmin.logout')
       $location.path("/login");
   });
 
+'use strict';
+angular.module('atlasAdmin.manageSources')
+  .controller('CtrlSources', function($scope, $rootScope, $routeParams, Sources) {
+      $rootScope.view_title = "Manage sources";
+      $scope.app = {};
+      Sources.all().then(function(sources) {
+          $scope.app.sources = sources;
+          $scope.app.predicate='name';
+          $scope.app.reverse=false;
+          $scope.app.pageSize=10;
+          $scope.app.currentPage = 1;
+      });
+  });
+
 'use strict'
 angular.module('atlasAdmin.manageRequests')
   .controller('CtrlManageSourceRequests', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Users', 'sourceRequests', '$location',
@@ -1695,20 +1709,6 @@ angular.module('atlasAdmin.manageRequests')
         $scope.app.requests = data;
     });
 }]);
-
-'use strict';
-angular.module('atlasAdmin.manageSources')
-  .controller('CtrlSources', function($scope, $rootScope, $routeParams, Sources) {
-      $rootScope.view_title = "Manage sources";
-      $scope.app = {};
-      Sources.all().then(function(sources) {
-          $scope.app.sources = sources;
-          $scope.app.predicate='name';
-          $scope.app.reverse=false;
-          $scope.app.pageSize=10;
-          $scope.app.currentPage = 1;
-      });
-  });
 
 'use strict';
 
@@ -2768,114 +2768,6 @@ angular.module('atlasAdmin.directives.actionModal')
       };
     }]);
 
-angular.module('atlasAdmin.directives.atlasSearch')
-  .directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http', 'GroupsService', 'BBCScrubbablesService', 'ScrubbablesHelpers', '$location',
-    function($document, $q, $timeout, atlasHost, $http, Groups, Scrubbables, Helpers, $location) {
-
-      var controller = function($scope, $el) {
-        $el = $($el);
-        var input_timer;
-        $scope.atlasSearch = {};
-        $scope.atlasSearch.selectedItem = {};
-        $scope.atlasSearch.showAutocomplete = false;
-
-        $scope.atlasSearch.selectAtlasItem = function(title, id) {
-          if (!_.isString(title) && !_.isString(id)) {
-            return false;
-          }
-          $location.path('/scrubbables/'+id);
-          $scope.loading = true;
-          $scope.atlasSearch.searchquery = title;
-          $scope.atlasSearch.showAutocomplete = false;
-        };
-
-        $scope.atlasSearch.messageOutput = function(message) {
-          $scope.atlasSearch.showMessage = (typeof message === 'string') ? true : false;
-          if ($scope.atlasSearch.showMessage) {
-            $scope.atlasSearch.message = message;
-            $scope.atlasSearch.showMessage = true;
-            $scope.atlasSearch.showAutocomplete = false;
-          }else{
-            $scope.atlasSearch.message = '';
-            $scope.atlasSearch.showMessage = false;
-          }
-        };
-
-        var searchRequest = function() {
-          var _query = $scope.atlasSearch.searchquery;
-          if (!_query.length) {
-            return;
-          }
-
-          var getContentForUri = function(uri) {
-            var defer = $q.defer();
-            if (!_.isString(uri)) {
-              defer.reject(new Error('URI arg should be a string'));
-              return defer.promise;
-            }
-            Scrubbables.content.uri($scope.searchKey, uri).then(function(item) {
-              defer.resolve(item.contents[0]);
-            });
-            return defer.promise;
-          };
-
-          Scrubbables.search($scope.searchKey, _query).then(function(res) {
-            var broadcasts;
-            broadcasts = res.contents[0].broadcasts || null;
-            if (broadcasts) {
-              broadcasts = _.filter(res.contents[0].broadcasts, function(bcast) {
-                if (bcast.channel.id === 'cbbh') {
-                  return true;
-                }
-              });
-              if (broadcasts.length) {
-                getContentForUri(res.contents[0].uri).then(
-                  function(contents) {
-                    $scope.atlasSearch.searchResults.push( Helpers.formatResponse(contents) );
-                    $scope.atlasSearch.messageOutput(null);
-                    $scope.atlasSearch.showAutocomplete = true;
-                  }, console.error);
-                }else{
-                  $scope.atlasSearch.messageOutput('No results found');
-                  $scope.atlasSearch.showAutocomplete = false;
-                }
-              }else{
-                $scope.atlasSearch.messageOutput('No results found');
-                $scope.atlasSearch.showAutocomplete = false;
-              }
-            }, function(err) {
-              console.error(err);
-              $scope.atlasSearch.showAutocomplete = false;
-            });
-          };
-
-          $scope.atlasSearch.lookupAtlasItem = function() {
-            var _query = $scope.atlasSearch.searchquery;
-            $scope.atlasSearch.message = null;
-            $scope.atlasSearch.searchResults = [];
-            if (!_.isString(_query)) {
-              return;
-            }
-            if (!_query.length) {
-              $timeout.cancel(input_timer);
-              $scope.atlasSearch.search_results = null;
-              $scope.atlasSearch.showAutocomplete = false;
-            } else if (_query.length > 2) {
-              $scope.atlasSearch.messageOutput('Searching...');
-              $timeout.cancel(input_timer);
-              input_timer = $timeout(searchRequest, 1000);
-            }
-          };
-        };
-
-        return {
-          restrict: 'E',
-          scope: false,
-          link: controller,
-          templateUrl: 'components/directives/atlasSearch/atlasSearch.tpl.html'
-        };
-    }]);
-
 'use strict';
 
 /* Highlight current menu element */
@@ -3225,6 +3117,114 @@ angular.module('atlasAdmin.directives.orderable')
         }
     };
 });
+
+angular.module('atlasAdmin.directives.atlasSearch')
+  .directive('atlasSearch', ['$document', '$q', '$timeout', 'atlasHost', '$http', 'GroupsService', 'BBCScrubbablesService', 'ScrubbablesHelpers', '$location',
+    function($document, $q, $timeout, atlasHost, $http, Groups, Scrubbables, Helpers, $location) {
+
+      var controller = function($scope, $el) {
+        $el = $($el);
+        var input_timer;
+        $scope.atlasSearch = {};
+        $scope.atlasSearch.selectedItem = {};
+        $scope.atlasSearch.showAutocomplete = false;
+
+        $scope.atlasSearch.selectAtlasItem = function(title, id) {
+          if (!_.isString(title) && !_.isString(id)) {
+            return false;
+          }
+          $location.path('/scrubbables/'+id);
+          $scope.loading = true;
+          $scope.atlasSearch.searchquery = title;
+          $scope.atlasSearch.showAutocomplete = false;
+        };
+
+        $scope.atlasSearch.messageOutput = function(message) {
+          $scope.atlasSearch.showMessage = (typeof message === 'string') ? true : false;
+          if ($scope.atlasSearch.showMessage) {
+            $scope.atlasSearch.message = message;
+            $scope.atlasSearch.showMessage = true;
+            $scope.atlasSearch.showAutocomplete = false;
+          }else{
+            $scope.atlasSearch.message = '';
+            $scope.atlasSearch.showMessage = false;
+          }
+        };
+
+        var searchRequest = function() {
+          var _query = $scope.atlasSearch.searchquery;
+          if (!_query.length) {
+            return;
+          }
+
+          var getContentForUri = function(uri) {
+            var defer = $q.defer();
+            if (!_.isString(uri)) {
+              defer.reject(new Error('URI arg should be a string'));
+              return defer.promise;
+            }
+            Scrubbables.content.uri($scope.searchKey, uri).then(function(item) {
+              defer.resolve(item.contents[0]);
+            });
+            return defer.promise;
+          };
+
+          Scrubbables.search($scope.searchKey, _query).then(function(res) {
+            var broadcasts;
+            broadcasts = res.contents[0].broadcasts || null;
+            if (broadcasts) {
+              broadcasts = _.filter(res.contents[0].broadcasts, function(bcast) {
+                if (bcast.channel.id === 'cbbh') {
+                  return true;
+                }
+              });
+              if (broadcasts.length) {
+                getContentForUri(res.contents[0].uri).then(
+                  function(contents) {
+                    $scope.atlasSearch.searchResults.push( Helpers.formatResponse(contents) );
+                    $scope.atlasSearch.messageOutput(null);
+                    $scope.atlasSearch.showAutocomplete = true;
+                  }, console.error);
+                }else{
+                  $scope.atlasSearch.messageOutput('No results found');
+                  $scope.atlasSearch.showAutocomplete = false;
+                }
+              }else{
+                $scope.atlasSearch.messageOutput('No results found');
+                $scope.atlasSearch.showAutocomplete = false;
+              }
+            }, function(err) {
+              console.error(err);
+              $scope.atlasSearch.showAutocomplete = false;
+            });
+          };
+
+          $scope.atlasSearch.lookupAtlasItem = function() {
+            var _query = $scope.atlasSearch.searchquery;
+            $scope.atlasSearch.message = null;
+            $scope.atlasSearch.searchResults = [];
+            if (!_.isString(_query)) {
+              return;
+            }
+            if (!_query.length) {
+              $timeout.cancel(input_timer);
+              $scope.atlasSearch.search_results = null;
+              $scope.atlasSearch.showAutocomplete = false;
+            } else if (_query.length > 2) {
+              $scope.atlasSearch.messageOutput('Searching...');
+              $timeout.cancel(input_timer);
+              input_timer = $timeout(searchRequest, 1000);
+            }
+          };
+        };
+
+        return {
+          restrict: 'E',
+          scope: false,
+          link: controller,
+          templateUrl: 'app/components/directives/atlasSearch/atlasSearch.tpl.html'
+        };
+    }]);
 
 'use strict';
 angular.module('atlasAdmin.directives.preloader')
@@ -3832,7 +3832,7 @@ angular.module('atlasAdmin.directives.showSegments')
         restrict: 'E',
         scope: false,
         link: controller,
-        templateUrl: 'components/directives/showSegments.tpl.html'
+        templateUrl: 'app/components/directives/showSegments.tpl.html'
     };
   }]);
 
@@ -3992,61 +3992,6 @@ angular.module('atlasAdmin.interceptors.profileComplete')
 
 'use strict';
 
-angular.module('atlasAdmin.services.applications')
-  .factory('Applications', function (Atlas) {
-    return {
-        all: function () {
-            return Atlas.getRequest('/applications.json').then(function (results) {
-                return results.data.applications;
-            });
-        },
-        get: function(applicationId) {
-            return Atlas.getRequest('/applications/' + applicationId + '.json').then(function (results) {
-                return results.data.application;
-            });
-        },
-        create: function(title, description, url) {
-            var data = {
-                'title': title,
-                'description': description,
-                //'url': url,
-                'publisher': {
-                    'key': 'metabroadcast.com',
-                    'name': 'MetaBroadcast',
-                    'country': 'ALL'
-                }
-            }
-            return Atlas.postRequest('/applications.json', data);
-        },
-        update: function(data, callback) {
-            return Atlas.postRequest('/applications.json', data);
-        },
-        setPrecedence: function(applicationId, sourceIdOrder) {
-            var url = '/applications/' + applicationId + '/precedence';
-            var data = { 'ordering': sourceIdOrder };
-            return Atlas.postRequest(url, data);
-        },
-        deletePrecedence:  function(applicationId) {
-            var url = '/applications/' + applicationId + '/precedence';
-            return Atlas.deleteRequest(url);
-        },
-        revokeApplication: function(data) {
-            data.revoked = true;
-            return Atlas.postRequest('/applications.json', data).then(function (results) {
-                return results.data.data;
-            });
-        },
-        unRevokeApplication: function(application) {
-            application.revoked = false;
-            return Atlas.postRequest('/applications.json', application).then(function (results) {
-                return results.data.application;
-            });
-        }
-    };
- });
-
-'use strict';
-
 angular.module('atlasAdmin.services.apiUsage')
   .factory('APIUsage', ['$http', 'Authentication', 'atlasApiHost', '$q',
     function($http, Authentication, atlasApiHost, $q) {
@@ -4151,6 +4096,61 @@ angular.module('atlasAdmin.services.apiUsage')
 }]);
 
 'use strict';
+
+angular.module('atlasAdmin.services.applications')
+  .factory('Applications', function (Atlas) {
+    return {
+        all: function () {
+            return Atlas.getRequest('/applications.json').then(function (results) {
+                return results.data.applications;
+            });
+        },
+        get: function(applicationId) {
+            return Atlas.getRequest('/applications/' + applicationId + '.json').then(function (results) {
+                return results.data.application;
+            });
+        },
+        create: function(title, description, url) {
+            var data = {
+                'title': title,
+                'description': description,
+                //'url': url,
+                'publisher': {
+                    'key': 'metabroadcast.com',
+                    'name': 'MetaBroadcast',
+                    'country': 'ALL'
+                }
+            }
+            return Atlas.postRequest('/applications.json', data);
+        },
+        update: function(data, callback) {
+            return Atlas.postRequest('/applications.json', data);
+        },
+        setPrecedence: function(applicationId, sourceIdOrder) {
+            var url = '/applications/' + applicationId + '/precedence';
+            var data = { 'ordering': sourceIdOrder };
+            return Atlas.postRequest(url, data);
+        },
+        deletePrecedence:  function(applicationId) {
+            var url = '/applications/' + applicationId + '/precedence';
+            return Atlas.deleteRequest(url);
+        },
+        revokeApplication: function(data) {
+            data.revoked = true;
+            return Atlas.postRequest('/applications.json', data).then(function (results) {
+                return results.data.data;
+            });
+        },
+        unRevokeApplication: function(application) {
+            application.revoked = false;
+            return Atlas.postRequest('/applications.json', application).then(function (results) {
+                return results.data.application;
+            });
+        }
+    };
+ });
+
+'use strict';
 angular.module('atlasAdmin.services.atlas')
   .factory('Atlas', function ($http, atlasHost, atlasVersion, Authentication, $log) {
     return {
@@ -4195,86 +4195,6 @@ angular.module('atlasAdmin.services.atlas')
         }
     };
   });
-
-'use strict';
-angular.module('atlasAdmin.services.auth')
-  .factory('Authentication', ['$rootScope', 'ProfileStatus',
-      function ($rootScope, ProfileStatus) {
-      if (!$rootScope.status) {
-          $rootScope.status = {};
-      }
-      return {
-          getProvider: function () {
-              return localStorage.getItem('auth.provider');
-          },
-          setProvider: function (provider) {
-              localStorage.setItem('auth.provider', provider);
-          },
-          getToken: function () {
-              return localStorage.getItem('auth.token');
-          },
-          setToken: function (token) {
-              localStorage.setItem('auth.token', token);
-          },
-          reset: function () {
-              localStorage.removeItem('auth.provider');
-              localStorage.removeItem('auth.token');
-              localStorage.removeItem('profile.complete');
-              localStorage.removeItem('license.accepted');
-              $rootScope.status.loggedIn = false;
-          },
-          appendTokenToUrl: function (url) {
-              var provider = localStorage.getItem('auth.provider');
-              var token = localStorage.getItem('auth.token');
-              var oauthParams = 'oauth_provider=' + provider + '&oauth_token=' + token;
-              if (!token) {
-                  return url;
-              }
-              $rootScope.status.loggedIn = true;
-              return (url.indexOf('?') === -1) ?
-                          url + '?' + oauthParams :
-                          url + '&' + oauthParams;
-          }
-      };
-  }]);
-
-'use strict';
-
-angular.module('atlasAdmin.services.bbcRedux')
-  .service('bbcRedux', ['atlasHost', '$http', 'GroupsService', '$q',
-    function(atlasHost, $http, Groups, $q) {
-
-    var getAuthDetails = function() {
-        var defer = $q.defer();
-        var _user = null;
-        var _pass = null;
-        Groups.get().then(function(res) {
-            for (var i in res) {
-                if (res[i].name === 'BBC-Scrubbables') {
-                    _user = res[i].data.redux_user;
-                    _pass = res[i].data.redux_pass;
-                    break;
-                }
-            }
-            defer.resolve([_user, _pass]);
-        })
-        return defer.promise;
-    }
-
-    var getToken = function() {
-        var defer = $q.defer();
-        getAuthDetails().then(function(auth) {
-            var _postdata = {username: auth[0], password: auth[1]};
-            $http.post('https://i.bbcredux.com/user/login', _postdata)
-            .success(defer.resolve);
-        })
-        return defer.promise;
-    }
-
-    return {
-        getToken: getToken
-    }
-}]);
 
 'use strict';
 angular.module('atlasAdmin.services.feeds')
@@ -4370,6 +4290,48 @@ angular.module('atlasAdmin.services.feeds')
     }]);
 
 'use strict';
+angular.module('atlasAdmin.services.auth')
+  .factory('Authentication', ['$rootScope', 'ProfileStatus',
+      function ($rootScope, ProfileStatus) {
+      if (!$rootScope.status) {
+          $rootScope.status = {};
+      }
+      return {
+          getProvider: function () {
+              return localStorage.getItem('auth.provider');
+          },
+          setProvider: function (provider) {
+              localStorage.setItem('auth.provider', provider);
+          },
+          getToken: function () {
+              return localStorage.getItem('auth.token');
+          },
+          setToken: function (token) {
+              localStorage.setItem('auth.token', token);
+          },
+          reset: function () {
+              localStorage.removeItem('auth.provider');
+              localStorage.removeItem('auth.token');
+              localStorage.removeItem('profile.complete');
+              localStorage.removeItem('license.accepted');
+              $rootScope.status.loggedIn = false;
+          },
+          appendTokenToUrl: function (url) {
+              var provider = localStorage.getItem('auth.provider');
+              var token = localStorage.getItem('auth.token');
+              var oauthParams = 'oauth_provider=' + provider + '&oauth_token=' + token;
+              if (!token) {
+                  return url;
+              }
+              $rootScope.status.loggedIn = true;
+              return (url.indexOf('?') === -1) ?
+                          url + '?' + oauthParams :
+                          url + '&' + oauthParams;
+          }
+      };
+  }]);
+
+'use strict';
 angular.module('atlasAdmin.services.users')
   .factory('GroupsService', ['$http', 'Authentication', 'atlasApiHost', '$q',
     function($http, Authentication, atlasApiHost, $q) {
@@ -4401,6 +4363,44 @@ angular.module('atlasAdmin.services.users')
         get: getGroups
       }
     }]);
+
+'use strict';
+
+angular.module('atlasAdmin.services.bbcRedux')
+  .service('bbcRedux', ['atlasHost', '$http', 'GroupsService', '$q',
+    function(atlasHost, $http, Groups, $q) {
+
+    var getAuthDetails = function() {
+        var defer = $q.defer();
+        var _user = null;
+        var _pass = null;
+        Groups.get().then(function(res) {
+            for (var i in res) {
+                if (res[i].name === 'BBC-Scrubbables') {
+                    _user = res[i].data.redux_user;
+                    _pass = res[i].data.redux_pass;
+                    break;
+                }
+            }
+            defer.resolve([_user, _pass]);
+        })
+        return defer.promise;
+    }
+
+    var getToken = function() {
+        var defer = $q.defer();
+        getAuthDetails().then(function(auth) {
+            var _postdata = {username: auth[0], password: auth[1]};
+            $http.post('https://i.bbcredux.com/user/login', _postdata)
+            .success(defer.resolve);
+        })
+        return defer.promise;
+    }
+
+    return {
+        getToken: getToken
+    }
+}]);
 
 'use strict';
 
@@ -4452,107 +4452,6 @@ angular.module('atlasAdmin.services.profileStatus')
         }
     };
   });
-
-'use strict';
-
-angular.module('atlasAdmin.services.propositions')
-  .factory('factoryPropositions', ['$http', 'Authentication', 'atlasApiHost', '$q',
-    function($http, Authentication, atlasApiHost, $q) {
-    var endpoint = atlasApiHost + '/propositions';
-
-    //  Get all propositions
-    //
-    //  @returns promise
-    var all = function() {
-        var defer = $q.defer();
-        $http({
-            method: 'get',
-            url: Authentication.appendTokenToUrl(endpoint)
-        })
-        .success(function(data, status) {
-            defer.resolve(data, status);
-        })
-        .error(function(data, status) {
-            defer.reject('There was an error with the request. [status: '+status+']');
-        });
-        return defer.promise;
-    }
-
-    //  Create a new proposition on the server
-    //
-    //  @param data {object}
-    //  @returns promise
-    var createProposition = function(data) {
-        var defer = $q.defer();
-        if ('object' !== typeof data) {
-            defer.reject('First argument should be data object');
-            return;
-        }
-        var payload = data;
-        $http({
-            method: 'post',
-            url: Authentication.appendTokenToUrl(endpoint),
-            data: payload
-        })
-        .success(function(data, status) {
-            defer.resolve(data, status)
-        })
-        .error(function(data, status) { defer.reject('There was an error with the request. [status: '+status+']'); });
-        return defer.promise;
-    }
-
-    //  Delete a proposition on the server
-    //
-    //  @param data {object}
-    //  @returns promise
-    var removeProposition = function(itemId) {
-        var defer = $q.defer();
-        if ('object' !== typeof itemId) {
-            defer.reject('First argument should be ID string');
-            return;
-        }
-        $http({
-            method: 'delete',
-            url: Authentication.appendTokenToUrl(endpoint+'/'+itemId)
-        })
-        .success(function(data, status) {
-            defer.resolve(data, status)
-        })
-        .error(function(data, status) { defer.reject('There was an error with the request. [status: '+status+']'); });
-        return defer.promise;
-    }
-
-    //  Update a proposition on the server
-    //
-    //  @param data {object}
-    //  @returns promise
-    var updatePropositionStatus = function(itemId, status) {
-        var defer = $q.defer();
-        if ('string' !== typeof itemId || 'string' !== typeof status) {
-            defer.reject('First argument should be ID string, the second should be status string')
-            return;
-        }
-        var payload = { 'status': status }
-        $http({
-            method: 'post',
-            url: Authentication.appendTokenToUrl(endpoint+'/'+itemId+'/status'),
-            data: payload
-        })
-        .success(function(data, status) {
-            defer.resolve(data, status);
-        })
-        .error(function(data, status) { defer.reject('There was an error with the request. [status: '+status+']'); })
-        return defer.promise;
-    }
-
-    // expose the REST interface
-    return {
-        all: all,
-        create: createProposition,
-        remove: removeProposition,
-        updateStatus: updatePropositionStatus
-    }
-}])
 
 angular.module('atlasAdmin.services.scrubbableHelpers')
   .factory('ScrubbablesHelpers', ['$q',
@@ -4671,6 +4570,107 @@ angular.module('atlasAdmin.services.scrubbableHelpers')
         channelFilter: channelFilter
     };
   }]);
+
+'use strict';
+
+angular.module('atlasAdmin.services.propositions')
+  .factory('factoryPropositions', ['$http', 'Authentication', 'atlasApiHost', '$q',
+    function($http, Authentication, atlasApiHost, $q) {
+    var endpoint = atlasApiHost + '/propositions';
+
+    //  Get all propositions
+    //
+    //  @returns promise
+    var all = function() {
+        var defer = $q.defer();
+        $http({
+            method: 'get',
+            url: Authentication.appendTokenToUrl(endpoint)
+        })
+        .success(function(data, status) {
+            defer.resolve(data, status);
+        })
+        .error(function(data, status) {
+            defer.reject('There was an error with the request. [status: '+status+']');
+        });
+        return defer.promise;
+    }
+
+    //  Create a new proposition on the server
+    //
+    //  @param data {object}
+    //  @returns promise
+    var createProposition = function(data) {
+        var defer = $q.defer();
+        if ('object' !== typeof data) {
+            defer.reject('First argument should be data object');
+            return;
+        }
+        var payload = data;
+        $http({
+            method: 'post',
+            url: Authentication.appendTokenToUrl(endpoint),
+            data: payload
+        })
+        .success(function(data, status) {
+            defer.resolve(data, status)
+        })
+        .error(function(data, status) { defer.reject('There was an error with the request. [status: '+status+']'); });
+        return defer.promise;
+    }
+
+    //  Delete a proposition on the server
+    //
+    //  @param data {object}
+    //  @returns promise
+    var removeProposition = function(itemId) {
+        var defer = $q.defer();
+        if ('object' !== typeof itemId) {
+            defer.reject('First argument should be ID string');
+            return;
+        }
+        $http({
+            method: 'delete',
+            url: Authentication.appendTokenToUrl(endpoint+'/'+itemId)
+        })
+        .success(function(data, status) {
+            defer.resolve(data, status)
+        })
+        .error(function(data, status) { defer.reject('There was an error with the request. [status: '+status+']'); });
+        return defer.promise;
+    }
+
+    //  Update a proposition on the server
+    //
+    //  @param data {object}
+    //  @returns promise
+    var updatePropositionStatus = function(itemId, status) {
+        var defer = $q.defer();
+        if ('string' !== typeof itemId || 'string' !== typeof status) {
+            defer.reject('First argument should be ID string, the second should be status string')
+            return;
+        }
+        var payload = { 'status': status }
+        $http({
+            method: 'post',
+            url: Authentication.appendTokenToUrl(endpoint+'/'+itemId+'/status'),
+            data: payload
+        })
+        .success(function(data, status) {
+            defer.resolve(data, status);
+        })
+        .error(function(data, status) { defer.reject('There was an error with the request. [status: '+status+']'); })
+        return defer.promise;
+    }
+
+    // expose the REST interface
+    return {
+        all: all,
+        create: createProposition,
+        remove: removeProposition,
+        updateStatus: updatePropositionStatus
+    }
+}])
 
 angular.module('atlasAdmin.services.scrubbables')
   .factory('BBCScrubbablesService', ['atlasHost', '$http', '$q', 'GroupsService',
