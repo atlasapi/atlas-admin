@@ -18,8 +18,6 @@ assets.js = [
             'node_modules/d3/d3.min.js',
             'js/app.js',
 
-
-
             'presentation/applications/applications.module.js',
             'presentation/applications/applications.ctrl.js',
             'presentation/applications/createModal/applicationCreateModal.ctrl.js',
@@ -174,7 +172,7 @@ gulp.task('styles', function() {
 			outputStyle: 'compressed'
 			}))
 		.pipe(autoprefix('last 2 versions'))
-		.pipe(gulp.dest('css'));
+		.pipe(gulp.dest('dist/css'));
 });
 
 //  Javascripts
@@ -184,7 +182,7 @@ gulp.task('styles', function() {
 gulp.task('javascripts', function() {
     return gulp.src(assets.js)
         .pipe(concat('scripts.js'))
-        .pipe(gulp.dest('js/dist'));
+        .pipe(gulp.dest('dist/js'));
 });
 
 //  Tests

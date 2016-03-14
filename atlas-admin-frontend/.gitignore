@@ -1,4 +1,3 @@
 node_modules
 tests/login/login.conf.js
-css
-css/base.css
+dist
