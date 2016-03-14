@@ -1,7 +1,7 @@
 'use strict';
 angular.module('atlasAdmin.contact')
   .controller('ContactController', ['$scope', '$rootScope', '$sce', 'Users', 'GroupsService', '$q',
-    function($scope, $rootScope, $sce, Users, Groups, $q) {
+    function($scope, $rootScope, $sce, Users, Groups, Applications, $q) {
       $rootScope.view_title = 'Contact Us';
       var privateItems;
 
@@ -21,7 +21,50 @@ angular.module('atlasAdmin.contact')
           return defer.promise;
         };
 
-        getPrivateMenuItems().then(function(groups) {
+        var addGroups = function (groups) {
+          var defer = $q.defer();
+
+          var tools = [];
+          if (groups.length > 0) {
+            groups.forEach(function (tool) {
+              tools.push({
+                name: tool.name,
+                value: tool.name
+              });
+            });
+          }
+
+          defer.resolve({
+            tools: tools
+          });
+
+          return defer.promise;
+        };
+
+        var addApplications = function (items) {
+          var defer = $q.defer();
+
+          var applications = [];
+
+          applications.push({
+            name: '',
+            value: ''
+          });
+
+          var promises = [];
+          user.applications.forEach(function (application) {
+            promises.push(Applications.get(application));
+          });
+
+          $q.all(promises).then(function (data) {
+            items.applications = data;
+            defer.resolve(items);
+          }.bind(this));
+
+          return defer.promise;
+        };
+
+        getPrivateMenuItems().then(addGroups).then(addApplications).then(function(items) {
           new window.MBST.Contact('stage', {
             product: 'atlas',
             fields: (function () {
@@ -29,48 +72,38 @@ angular.module('atlasAdmin.contact')
 
               var subjects = [];
 
-              var tools = [];
-              if (groups.length > 0) {
-                groups.forEach(function (tool) {
-                  tools.push({
-                    name: tool.name,
-                    value: tool.name
-                  });
-                });
-              }
-
-              if (tools.length > 0) {
+              if (items.tools.length > 0) {
                 subjects.push({
                   type: 'group',
                   name: 'My Tools',
-                  options: tools
+                  options: items.tools
                 });
               }
 
               subjects = subjects.concat([
                 {
-                  name: 'data_access',
-                  value: 'Data Access'
+                  name: 'Data Access',
+                  value: 'data_access'
                 },
                 {
-                  name: 'api_calls',
-                  value: 'API Calls'
+                  name: 'API Calls',
+                  value: 'api_calls'
                 },
                 {
-                  name: 'api_explorer',
-                  value: 'API Explorer'
+                  name: 'API Explorer',
+                  value: 'api_explorer'
                 },
                 {
-                  name: 'feature_request',
-                  value: 'Feature Request'
+                  name: 'Feature Request',
+                  value: 'feature_request'
                 },
                 {
-                  name: 'usage_changes',
-                  value: 'Usage Changes'
+                  name: 'Usage Changes',
+                  value: 'usage_changes'
                 },
                 {
-                  name: 'other',
-                  value: 'Other'
+                  name: 'Other',
+                  value: 'other'
                 }
               ]);
 
@@ -84,24 +117,18 @@ angular.module('atlasAdmin.contact')
                 }
               }];
 
-
-              var applications = [];
-              applications.push({
-                name: '',
-                value: ''
-              });
-
-              user.applications.forEach(function (application) {
-                applications.push({
-                  name: application,
-                  value: application
-                })
+              var applications = items.applications.map(function (item) {
+                return {
+                  name: item.title,
+                  value: item.title + ' (' + item.id + ' - ' + item.credentials.apiKey + ')'
+                };
               });
 
               var applicationsInput = [{
                 type: 'select',
-                label: 'Application ID',
+                label: 'Application',
                 attrs: {
+                  name: 'Application',
                   options: applications
                 }
               }];
@@ -118,11 +145,11 @@ angular.module('atlasAdmin.contact')
                 description: 'Include URL, API Call, data source name etc.'
               }];
 
-              if (groups.length > 0) {
+              if (items.tools.length > 0) {
                 result = result.concat(groupsInput);
               }
 
-              if (applications.length > 0) {
+              if (items.applications.length > 0) {
                 result = result.concat(applicationsInput);
               }
 
