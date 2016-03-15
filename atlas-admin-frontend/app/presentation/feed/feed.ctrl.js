@@ -137,9 +137,6 @@ angular.module('atlasAdmin.feed')
 
         var filter = filters.join('');
 
-        console.log(filters);
-        console.log(filter);
-
         var request_url = 'youview/bbc_nitro/tasks.json?limit='+$scope.page.limit+'&offset='+$scope.page.offset+filter+sortBy;
         Feeds.request(request_url).then(pushTasksTable);
       };
