@@ -50,7 +50,8 @@ function proxyRequest(endpoint, request) {
         'limit' === query ||
         'offset' === query ||
         'type' === query ||
-        'annotations' === query) {
+        'annotations' === query ||
+        'order_by' === query) {
       _querystring[query] = request.query[query];
     } else {
       console.warn('I don\'t know about this querystring param = ' + query);
