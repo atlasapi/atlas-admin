@@ -1,0 +1,17 @@
+<div class="busy-notification" ng-show="isBusy">
+  <span>Processing...</span>
+</div>
+<div class="modal-body" ng-class="{'is-busy':isBusy}">
+  <h1>Enter the CRID you would like to resolve</h1>
+  <div class="statusMessage" ng-class="resultMessage.class" ng-show="resultMessage">{{resultMessage.body}}</div>
+  <section class="pid-check" ng-hide="clearUI">
+    <div class="field-holder">
+      <input type="text" ng-model="cridValue" required placeholder="CRID" class="check-pid-field">
+      <button ng-click="convertCrid(cridValue)" class="check-pid">Resolve</button>
+    </div>
+  </section>
+  <section class="search-result crid" ng-show="showSearchRes">
+    <strong>PID:</strong> {{newPID}}
+  </section>
+  <small class="help-text">Click outside of this window to close</small>
+</div>
