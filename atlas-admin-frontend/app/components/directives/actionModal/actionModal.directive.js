@@ -15,8 +15,6 @@ angular.module('atlasAdmin.directives.actionModal')
             action: action.charAt(0).toUpperCase() + action.slice(1)
           };
 
-          console.log(action);
-
           if (action === 'resolve') {
 
             var _modalInstance = $uibModal.open({
