@@ -1,9 +1,9 @@
 'use strict';
 
 angular.module('atlasAdmin.application')
-.controller('ViewTermsCtrl', ['$scope', '$modalInstance',
-    function($scope, $modalInstance) {
+.controller('ViewTermsCtrl', ['$scope', '$uibModalInstance',
+    function($scope, $uibModalInstance) {
       $scope.close = function() {
-          $modalInstance.dismiss();
+          $uibModalInstance.dismiss();
       };
     }]);

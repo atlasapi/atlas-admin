@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('atlasAdmin.applications')
-.controller('CtrlApplications', ['$scope', '$rootScope', '$routeParams', 'Applications', '$modal', '$location', 'Atlas', 'Authentication', 'atlasApiHost', '$http',
-    function($scope, $rootScope, $routeParams, Applications, $modal, $location, Atlas, Authentication, atlasApiHost, $http) {
+.controller('CtrlApplications', ['$scope', '$rootScope', '$routeParams', 'Applications', '$uibModal', '$location', 'Atlas', 'Authentication', 'atlasApiHost', '$http',
+    function($scope, $rootScope, $routeParams, Applications, $uibModal, $location, Atlas, Authentication, atlasApiHost, $http) {
 
     $scope.view_title = 'My Applications';
     $scope.app = {};
@@ -73,7 +73,7 @@ angular.module('atlasAdmin.applications')
 
     // instantiate a new modal window
     $scope.createApplication = function() {
-        var modalInstance = $modal.open({
+        var modalInstance = $uibModal.open({
             templateUrl: 'presentation/applications/createModal/applicationCreateModal.tpl.html',
             controller: 'CreateApplicationFormModalCtrl',
             scope: $scope

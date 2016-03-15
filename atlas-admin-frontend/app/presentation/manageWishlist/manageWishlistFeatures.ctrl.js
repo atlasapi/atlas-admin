@@ -1,5 +1,5 @@
-app.controller('CtrlManageWishlistFeatures', ['$scope', '$rootScope', '$modal',
-    function($scope, $rootScope, $modal) {
+app.controller('CtrlManageWishlistFeatures', ['$scope', '$rootScope', '$uibModal',
+    function($scope, $rootScope, $uibModal) {
 
     // filter out source wishes, then pass to the $scope
     $rootScope.$watch('items', function(old_val, new_val) {
@@ -14,7 +14,7 @@ app.controller('CtrlManageWishlistFeatures', ['$scope', '$rootScope', '$modal',
         $scope.modal.type = 'Feature' ;
         $scope.modal.title = "Add new feature";
 
-        var modalInstance = $modal.open({
+        var modalInstance = $uibModal.open({
             templateUrl: 'presentation/manageWishlist/newWishlistItemModal/newWishlistItemModal.tpl.html',
             controller: 'CtrlNewWishlistItemModal',
             scope: $scope

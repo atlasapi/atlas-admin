@@ -1,8 +1,8 @@
 'use strict';
 var app = angular.module('atlasAdmin.wishlist');
 
-app.controller('CtrlWishlistFeatures', ['$scope', '$rootScope', '$routeParams', 'Wishes', '$q', '$modal',
-    function ($scope, $rootScope, $routeParams, Wishes, $q, $modal) {
+app.controller('CtrlWishlistFeatures', ['$scope', '$rootScope', '$routeParams', 'Wishes', '$q', '$uibModal',
+    function ($scope, $rootScope, $routeParams, Wishes, $q, $uibModal) {
     var root = $rootScope;
     $scope.features = {};
     $scope.asked = {};
@@ -41,7 +41,7 @@ app.controller('CtrlWishlistFeatures', ['$scope', '$rootScope', '$routeParams', 
         $scope.modal = {
             title: 'Tell us about a feature'
         }
-        var modalInstance = $modal.open({
+        var modalInstance = $uibModal.open({
             templateUrl: 'presentation/wishlist/customFeatureRequestModal/customFeatureRequestModal.tpl.html',
             controller: 'customFeatureRequestModal',
             scope: $scope

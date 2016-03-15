@@ -26,14 +26,14 @@
                 <div class="form-row">
                     <label for="website" class="form-label">Website URL</label>
                     <input type="url" class="form-control" id="website" name="website" placeholder="http://example.com" ng-model="app.user.website" ng-change="app.changed=true">
-                    <span ng-show="userForm.website.$error.url" class="form-field-helper">Please enter a valid website address</span> 
+                    <span ng-show="userForm.website.$error.url" class="form-field-helper">Please enter a valid website address</span>
                 </div>
 
                 <div class="form-row" ng-show="app.isAdmin">
                     <button type="button" class="" ng-model="app.user.role" btn-radio="'admin'">Administrator</button>
                     <button type="button" class="" ng-model="app.user.role" btn-radio="'regular'">Regular</button>
                     <button type="button" class="" ng-model="app.user.role" btn-radio="'source'">Source</button>
-                    <span ng-show="userForm.website.$error.url" class="form-field-helper">User access level (admin only)</span> 
+                    <span ng-show="userForm.website.$error.url" class="form-field-helper">User access level (admin only)</span>
                 </div>
                 <button type="button" class="btn btn-danger" ng-click="save()">Save</button>
             </form>
@@ -67,9 +67,8 @@
                 </table>
             </div>
             <div class="container" ng-show="app.applications.length > 0">
-                <pagination total-items="(app.applications|filter:appSearchFilter).length" page="app.currentPage" max-size="app.pageSize" boundary-links="true"></pagination>
+                <uib-pagination total-items="(app.applications|filter:appSearchFilter).length" ng-model="app.currentPage" max-size="app.pageSize" boundary-links="true"></uib-pagination>
             </div>
         </div>
     </div>
 </div>
-

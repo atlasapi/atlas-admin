@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('atlasAdmin.application')
-.controller('CtrlApplicationEdit', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Sources', 'SourceLicenses', 'Authentication', 'atlasApiHost', '$modal', '$sce', '$log', '$http', '$q', 'APIUsage', 'Atlas', '$location',
-    function($scope, $rootScope, $routeParams, Applications, Sources, SourceLicenses, Authentication, atlasApiHost, $modal, $sce, $log, $http, $q, Usage, Atlas, $location) {
+.controller('CtrlApplicationEdit', ['$scope', '$rootScope', '$routeParams', 'Applications', 'Sources', 'SourceLicenses', 'Authentication', 'atlasApiHost', '$uibModal', '$sce', '$log', '$http', '$q', 'APIUsage', 'Atlas', '$location',
+    function($scope, $rootScope, $routeParams, Applications, Sources, SourceLicenses, Authentication, atlasApiHost, $uibModal, $sce, $log, $http, $q, Usage, Atlas, $location) {
 
     $scope.app = {};
     $scope.app.edited = {};
@@ -322,7 +322,7 @@ angular.module('atlasAdmin.application')
         );
         $scope.app.sourceRequest.source = source;
         $scope.app.sourceRequest.applicationId = $scope.app.application.id;
-        var modalInstance = $modal.open({
+        var modalInstance = $uibModal.open({
             templateUrl: 'presentation/applications/sourceRequestModal/sourceRequestModal.tpl.html',
             controller: 'SourceRequestFormModalCtrl',
             scope: $scope
@@ -417,7 +417,7 @@ angular.module('atlasAdmin.application')
             $log.error(error);
         });
 
-        var modalInstance = $modal.open({
+        var modalInstance = $uibModal.open({
             templateUrl: 'presentation/application/viewTermsModal.tpl.html',
             controller: 'ViewTermsCtrl',
             scope: $scope

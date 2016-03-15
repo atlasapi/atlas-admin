@@ -1,6 +1,6 @@
 angular.module('atlasAdmin.manageWishlist')
-  .controller('CtrlManageWishlistSources', ['$scope', '$rootScope', '$modal',
-    function($scope, $rootScope, $modal) {
+  .controller('CtrlManageWishlistSources', ['$scope', '$rootScope', '$uibModal',
+    function($scope, $rootScope, $uibModal) {
 
     // filter out source wishes, then pass to the $scope
     $rootScope.$watch('items', function(old_val, new_val) {
@@ -15,7 +15,7 @@ angular.module('atlasAdmin.manageWishlist')
         $scope.modal.type = 'Source' ;
         $scope.modal.title = "Add new source";
 
-        var modalInstance = $modal.open({
+        var modalInstance = $uibModal.open({
             templateUrl: 'presentation/manageWishlist/newWishlistItemModal/newWishlistItemModal.tpl.html',
             controller: 'CtrlNewWishlistItemModal',
             scope: $scope

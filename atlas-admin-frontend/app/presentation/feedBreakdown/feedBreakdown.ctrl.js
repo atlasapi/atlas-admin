@@ -1,11 +1,11 @@
 'use strict';
 angular.module('atlasAdmin.feedBreakdown')
-  .controller('CtrlFeedsBreakdown', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$modal',
-    function($scope, $rootScope, $routeParams, Feeds, $q, $modal) {
+  .controller('CtrlFeedsBreakdown', ['$scope', '$rootScope', '$routeParams', 'FeedsService', '$q', '$uibModal',
+    function($scope, $rootScope, $routeParams, Feeds, $q, $uibModal) {
       $scope.taskID = $routeParams.taskId;
 
       $scope.showDetails = function() {
-        var modalInstance = $modal.open({
+        var modalInstance = $uibModal.open({
           templateUrl: 'presentation/feedBreakdown/statusDetailModal/statusDetailModal.tpl.html',
           controller: 'CtrlStatusDetail',
           scope: $scope

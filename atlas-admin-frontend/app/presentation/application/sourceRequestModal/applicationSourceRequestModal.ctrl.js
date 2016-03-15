@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('atlasAdmin.application')
-.controller('SourceRequestFormModalCtrls', ['$scope', '$modalInstance', 'Applications', 'SourceRequests', '$log',
-    function($scope, $modalInstance, Applications, SourceRequests, $log) {
+.controller('SourceRequestFormModalCtrls', ['$scope', '$uibModalInstance', 'Applications', 'SourceRequests', '$log',
+    function($scope, $uibModalInstance, Applications, SourceRequests, $log) {
 
     $scope.item = {};
     $scope.item.invalid = true;
@@ -27,15 +27,15 @@ angular.module('atlasAdmin.application')
             true
         )
         .then(function() {
-            $modalInstance.close();
+            $uibModalInstance.close();
         },
         function(error) {
             $log.error(error);
-            $modalInstance.close();
+            $uibModalInstance.close();
         });
     };
 
     $scope.cancel = function() {
-        $modalInstance.dismiss('cancel');
+        $uibModalInstance.dismiss('cancel');
     };
 }]);

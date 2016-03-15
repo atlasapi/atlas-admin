@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('atlasAdmin.applications')
-.controller('CreateApplicationFormModalCtrl', ['$scope', '$q', '$sce', '$modalInstance', 'Applications', 'sourceRequests', 'SourceLicenses', '$location',
-    function($scope, $q, $sce, $modalInstance, Applications, SourceRequests, SourceLicenses, $location) {
+.controller('CreateApplicationFormModalCtrl', ['$scope', '$q', '$sce', '$uibModalInstance', 'Applications', 'sourceRequests', 'SourceLicenses', '$location',
+    function($scope, $q, $sce, $uibModalInstance, Applications, SourceRequests, SourceLicenses, $location) {
     $scope.app.showTerms = false;
     $scope.app.acceptTerms = false;
     $scope.app.title = '';
@@ -74,7 +74,7 @@ angular.module('atlasAdmin.applications')
                     }
                     // close modal and return data tot he $scope
                     result.data.application.source = $scope.app.sources;
-                    $modalInstance.close(result.data.application);
+                    $uibModalInstance.close(result.data.application);
                 }
             });
         }
@@ -82,6 +82,6 @@ angular.module('atlasAdmin.applications')
 
     // cancel and close modal
     $scope.cancel = function() {
-        $modalInstance.dismiss('cancel');
+        $uibModalInstance.dismiss('cancel');
     };
 }]);

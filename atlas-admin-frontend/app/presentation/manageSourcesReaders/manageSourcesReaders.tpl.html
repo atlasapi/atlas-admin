@@ -34,6 +34,6 @@
       </table>
   </div>
   <div class="container">
-      <pagination total-items="(app.applications|filter:query).length" page="app.currentPage" max-size="app.pageSize" boundary-links="true"></pagination>
+      <uib-pagination total-items="(app.applications|filter:query).length" ng-model="app.currentPage" max-size="app.pageSize" boundary-links="true"></uib-pagination>
   </div>
 </div>

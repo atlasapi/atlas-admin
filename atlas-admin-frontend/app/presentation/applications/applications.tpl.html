@@ -29,7 +29,7 @@
         </table>
     </section>
     <div class="panel-full" ng-show="state=='table'" class="container">
-        <pagination total-items="(app.applications|filter:appSearchFilter).length" page="app.currentPage" max-size="app.pageSize" boundary-links="true"></pagination>
+        <uib-pagination total-items="(app.applications|filter:appSearchFilter).length" ng-model="app.currentPage" max-size="app.pageSize" boundary-links="true"></uib-pagination>
     </div>
     <section ng-show="state=='blank'" class="row blank-slate">
         <h1 class="no-apps-message">You don't have any applications yet</h1>

@@ -6,9 +6,10 @@ angular.module('atlasAdmin.manageRequests')
     $scope.app.requests = {};
 
     // 'orderBy' helper for sorting requests by source name
-    $scope.sortBySourceName = function(val) {
-        return val.source.title;
-    }
+    // $scope.sortBySourceName = function(val) {
+    //     console.log(val.source.title);
+    //     return val.source.title;
+    // }
 
     // send request to approve source to the server, then remove the request
     // from the list

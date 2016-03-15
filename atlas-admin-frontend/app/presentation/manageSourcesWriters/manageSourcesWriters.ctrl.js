@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('atlasAdmin.manageSourcesWriters')
-  .controller('CtrlSourceWriters', function($scope, $rootScope, $routeParams, Sources, Applications, $modal) {
+  .controller('CtrlSourceWriters', function($scope, $rootScope, $routeParams, Sources, Applications, $uibModal) {
     $scope.app = {};
     Sources.get($routeParams.sourceId).then(function(source) {
         $rootScope.title = source.name;
@@ -37,7 +37,7 @@ angular.module('atlasAdmin.manageSourcesWriters')
     }
 
     $scope.addWriterDialog = function () {
-      var modalInstance = $modal.open({
+      var modalInstance = $uibModal.open({
         templateUrl: 'presentation/manageSourcesWriters/addWriterModal/addWriterModal.html',
         controller: AddWriterTypeaheadCtrl
       });

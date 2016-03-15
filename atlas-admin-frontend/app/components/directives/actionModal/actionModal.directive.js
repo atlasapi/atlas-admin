@@ -1,6 +1,6 @@
 angular.module('atlasAdmin.directives.actionModal')
-  .directive('actionModal', ['$document', '$q', '$modal',
-    function($document, $q, $modal) {
+  .directive('actionModal', ['$document', '$q', '$uibModal',
+    function($document, $q, $uibModal) {
       var controller = function($scope, el, attr) {
         var modal = function(action) {
           var defer = $q.defer();
@@ -15,7 +15,7 @@ angular.module('atlasAdmin.directives.actionModal')
             action: action.charAt(0).toUpperCase() + action.slice(1)
           };
 
-          var _modalInstance = $modal.open({
+          var _modalInstance = $uibModal.open({
             // template: '<h1>'+_content.title+'</h1></div><div class="feed-modal-options"><button ng-disabled="isSendingAction" ng-click="ok()">'+_content.action+'</button><button ng-click="dismiss()">Cancel</button>',
             templateUrl: 'presentation/feed/actionsModal/actionsModal.tpl.html',
             controller: 'CtrlFeedsAcceptModal',

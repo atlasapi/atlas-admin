@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('atlasAdmin.feed')
-  .controller('CtrlFeedsAcceptModal', ['$scope', '$modalInstance', '$q', 'FeedsService', 'modalAction', '$http', 'atlasHost',
-    function($scope, $modalInstance, $q, Feeds, modalAction, $http, atlasHost) {
+  .controller('CtrlFeedsAcceptModal', ['$scope', '$uibModalInstance', '$q', 'FeedsService', 'modalAction', '$http', 'atlasHost',
+    function($scope, $uibModalInstance, $q, Feeds, modalAction, $http, atlasHost) {
         var pidLength = 8;
         $scope.actionName = modalAction;
         $scope.pidValue = '';
@@ -122,6 +122,6 @@ angular.module('atlasAdmin.feed')
         };
 
         $scope.dismiss = function() {
-          $modalInstance.dismiss();
+          $uibModalInstance.dismiss();
         };
       }]);

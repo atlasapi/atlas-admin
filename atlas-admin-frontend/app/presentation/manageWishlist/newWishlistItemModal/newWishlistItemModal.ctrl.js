@@ -1,6 +1,6 @@
 angular.module('atlasAdmin.manageWishlist')
-  .controller('CtrlNewWishlistItemModal', ['$scope', '$rootScope', '$modalInstance', 'factoryPropositions',
-      function($scope, $rootScope, $modalInstance, Propositions) {
+  .controller('CtrlNewWishlistItemModal', ['$scope', '$rootScope', '$uibModalInstance', 'factoryPropositions',
+      function($scope, $rootScope, $uibModalInstance, Propositions) {
       $scope.formdata = {};
       $scope.formdata.status = 'not available';
       $scope.submit = function() {
@@ -14,10 +14,10 @@ angular.module('atlasAdmin.manageWishlist')
               "status": $scope.formdata.status
           }
           Propositions.create(data).then(function(data) {
-              $modalInstance.close(data);
+              $uibModalInstance.close(data);
           });
       }
       $scope.cancel = function() {
-          $modalInstance.dismiss();
+          $uibModalInstance.dismiss();
       }
   }]);

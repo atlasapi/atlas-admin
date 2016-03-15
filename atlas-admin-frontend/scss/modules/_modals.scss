@@ -14,16 +14,17 @@ body.modal-open { overflow: hidden; }
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 1550 !important;
 }
 
 .modal {
     overflow: scroll;
+    z-index: 1551 !important;
 }
 
 .modal-backdrop {
     background: white;
     opacity: .85;
+    z-index: 1550 !important;
 }
 
 .modal-dialog {

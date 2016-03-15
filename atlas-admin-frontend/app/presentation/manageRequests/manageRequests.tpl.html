@@ -14,7 +14,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="request in app.requests | orderBy:sortBySourceName">
+                    <tr ng-repeat="request in app.requests | toArray | orderBy: 'source.title'">
                         <td>{{request.source.title}}</td>
                         <td>{{request.app.title}}</td>
                         <td><div class="reason-content">{{request.reason}}</div></td>

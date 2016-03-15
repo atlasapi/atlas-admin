@@ -27,9 +27,8 @@
             </table>
         </div>
         <div class="panel-full">
-            <pagination total-items="(app.sources|filter:query).length" page="app.currentPage" max-size="app.pageSize" boundary-links="true"></pagination>
+            <uib-pagination total-items="(app.sources|filter:query).length"  ng-model="app.currentPage" max-size="app.pageSize" boundary-links="true"></uib-pagination>
         </div>
     </section>
 
 </div>
-

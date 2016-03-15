@@ -1,5 +1,5 @@
 angular.module('atlasAdmin.manageSourcesWriters')
-  .controller('AddWriterTypeaheadCtrl', function($scope, $modalInstance, Applications) {
+  .controller('AddWriterTypeaheadCtrl', function($scope, $uibModalInstance, Applications) {
     $scope.item = {};
     $scope.item.invalid = true;
     $scope.item.selected = undefined;
@@ -12,12 +12,12 @@ angular.module('atlasAdmin.manageSourcesWriters')
 
     $scope.ok = function () {
         $scope.app.wait = true;
-        $modalInstance.close($scope.item.selected);
+        $uibModalInstance.close($scope.item.selected);
     };
 
     $scope.cancel = function () {
         $scope.app.wait = true;
-        $modalInstance.dismiss('cancel');
+        $uibModalInstance.dismiss('cancel');
     };
 
     $scope.onSelect = function ($item, $model, $label) {
