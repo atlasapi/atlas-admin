@@ -67,7 +67,7 @@
                 </table>
             </div>
             <div class="container" ng-show="app.applications.length > 0">
-                <uib-pagination total-items="(app.applications|filter:appSearchFilter).length" ng-model="app.currentPage" max-size="app.pageSize" boundary-links="true"></uib-pagination>
+                <uib-pagination total-items="(app.applications|filter:appSearchFilter).length" ng-model="app.currentPage" max-size="app.pageSize" previous-text="&#60;" next-text="&#62;"></uib-pagination>
             </div>
         </div>
     </div>
