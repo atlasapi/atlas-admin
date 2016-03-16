@@ -4,11 +4,18 @@
         <button type="button" class="button positive create-application" ng-click="createApplication()">Create application</button>
     </header>
     <section ng-show="state=='table'" class="panel-full applications-list">
-        <div class="query-filter">
-            <input type="text" aria-role="search" ng-model="query" placeholder="Filter applications" id="queryFilter">
-        </div>
+
         <table class="tbl">
             <thead>
+                <tr>
+                  <th class="tbl-filters" colspan="4">
+                    <h3>Filter</h3>
+                    <div class="actions">
+                      <input type="text" aria-role="search" ng-model="query" placeholder="Filter applications" id="queryFilter">
+                    </div>
+                    <hr/>
+                  </th>
+                </tr>
                 <tr>
                     <th ng-click="app.predicate='title'; app.reverse=!app.reverse;">Application</th>
                     <th ng-click="app.predicate='credentials.apiKey'; app.reverse=!app.reverse;">API Key</th>

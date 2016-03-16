@@ -89,14 +89,14 @@ ul.tabular { @extend %bare-list; }
     }
 
     select{
-      font-size: 0.8rem;
+      font-size: 0.9rem;
       border: 0;
-      height: 26px;
+      height: 28px;
       -webkit-border-radius: 5px;
     }
 
     input[type="text"]{
-      font-size: 0.8rem;
+      font-size: 1rem;
     }
   }
 

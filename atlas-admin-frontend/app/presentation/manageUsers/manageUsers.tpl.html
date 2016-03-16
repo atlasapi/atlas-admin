@@ -4,11 +4,20 @@
     </header>
     <section class="panel-full users-list">
         <div class="query-filter">
-            <input type="text" aria-role="search" ng-model="query" id="queryFilter" placeholder="Filter users">
+
         </div>
         <div class="panel-full">
-            <table class="table">
+            <table class="tbl">
                 <thead>
+                    <tr>
+                      <th class="tbl-filters" colspan="7">
+                        <h3>Filter</h3>
+                        <div class="actions">
+                          <input type="text" aria-role="search" ng-model="query" id="queryFilter" placeholder="Filter users">
+                        </div>
+                        <hr/>
+                      </th>
+                    </tr>
                     <tr>
                         <th ng-click="app.predicate='full_name'; app.reverse=!app.reverse;">Name</th>
                         <th ng-click="app.predicate='company'; app.reverse=!app.reverse;">Company</th>
