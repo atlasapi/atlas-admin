@@ -1,8 +1,10 @@
 <div class="auth-container">
-	<div ng-repeat="provider in providers | orderBy:'name'" class="auth-option {{provider.icon}}">
-		<a ng-click="startAuth(provider)">
-			<i class="fa fa-{{provider.icon}}"></i> {{provider.prompt}}
-		</a>
-	</div>
+  <div class="auth-option">
+    <a ng-click="goToUserService()">
+      <img src="./assets/img/mbst-logo.png" alt="MetaBroadcast logo">
+      Sign in to your MetaBroadcast account
+    </a>
+  </div>
+	<p><a href="https://users.metabroadcast.com#register">Create your MetaBroadcast account</a></p>
 	<small class="smallprint">We won't post to your account without asking you first</small>
 </div>
