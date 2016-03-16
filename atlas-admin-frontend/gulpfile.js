@@ -13,6 +13,7 @@ const jsSources = [
     'node_modules/angular/angular.min.js',
     'node_modules/angular-resource/angular-resource.min.js',
     'node_modules/angular-route/angular-route.min.js',
+    'node_modules/angular-cookies/angular-cookies.min.js',
     'node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js',
     'node_modules/contact-us-form/dist/contact-us-form.js',
     'node_modules/highlight.js/lib/highlight.js',
