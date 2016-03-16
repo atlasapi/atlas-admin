@@ -1,4 +1,4 @@
-angular.module('atlasAdmin.manageSourcesWriters')
+angular.module('atlasAdmin.manageSource')
   .controller('AddWriterTypeaheadCtrl', function($scope, $uibModalInstance, Applications) {
     $scope.item = {};
     $scope.item.invalid = true;
