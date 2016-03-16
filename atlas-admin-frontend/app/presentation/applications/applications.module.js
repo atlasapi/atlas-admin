@@ -1,6 +1,7 @@
 'use strict';
 
-angular.module('atlasAdmin.applications', [
+angular
+  .module('atlasAdmin.applications', [
     'ngRoute',
     'atlasAdmin.directives.focus',
     'atlasAdmin.services.atlas',
