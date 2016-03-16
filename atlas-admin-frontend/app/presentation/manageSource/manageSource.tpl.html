@@ -1,0 +1,95 @@
+<div class="app-surface manage-sources">
+
+  <header class="app-header">
+    <h1 class="page-title">Manage Source</h1>
+  </header>
+
+  <div class="app-content wish-selector">
+      <div class="app-tabber padded">
+          <div ng-click="currentTab = 'readers'" class="app-tab readers" ng-class="{active: currentTab=='readers'}">Readers</div>
+          <div ng-click="currentTab = 'writers'" class="app-tab writers last" ng-class="{active: currentTab=='writers'}">Writers</div>
+      </div>
+
+      <section ng-if="currentTab === 'readers'" class="panel-full" ng-controller="CtrlSourceReaders">
+        <div>
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th class="tbl-filters" colspan="5">
+                    <h3>Filter</h3>
+                    <div class="actions">
+                      <input aria-role="search" type="text" placeholder="Filter readers" ng-model="query" id="queryFilter">
+                    </div>
+                    <hr/>
+                  </th>
+                </tr>
+                <tr>
+                    <th ng-click="app.predicate='title'; app.reverse=!app.reverse;">Application</th>
+                    <th ng-click="app.predicate='created'; app.reverse=!app.reverse;">Created</th>
+                    <th ng-click="app.predicate='state'; app.reverse=!app.reverse;">Status</th>
+                    <th ng-click="app.predicate='enabled'; app.reverse=!app.reverse;">Used</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="application in app.applications | filter:query | orderBy:app.predicate:app.reverse | startFrom:(app.currentPage-1)*app.pageSize  | limitTo:app.pageSize">
+                    <td><a ng-href="#/applications/{{application.id}}">{{application.title}}</a></td>
+                    <td>{{application.created|date:'dd MMM yyyy H:mm'}}</td>
+                    <td ng-show="application.state == 'requested'">
+                        <button ng-click="approveClicked(application)">
+                             Approve?
+                        </button>
+                    </td>
+                    <td ng-show="application.state != 'requested'">
+                        {{application.state|title}}
+                    </td>
+                    <td>{{application.enabled}}</td>
+                </tr>
+              </tbody>
+            </table>
+        </div>
+        <div class="container">
+            <uib-pagination total-items="(app.applications|filter:query).length" ng-model="app.currentPage" max-size="app.pageSize" previous-text="&#60;" next-text="&#62;"></uib-pagination>
+        </div>
+      </section>
+
+      <section ng-if="currentTab === 'writers'" class="panel-full" ng-controller="CtrlSourceWriters">
+        <div ng-show="successMessage" class="alert alert-success">
+            {{successMessage}}
+        </div>
+        <div ng-show="errorMessage" class="alert alert-danger">
+            {{errorMessage}}
+        </div>
+        <div class="panel panel-full">
+          <button class="button btn-danger" ng-click="addWriterDialog()">Add Writer</button>
+        </div>
+        <div>
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th class="tbl-filters" colspan="5">
+                    <h3>Filter</h3>
+                    <div class="actions">
+                      <input aria-role="search" type="text" placeholder="Filter writers" ng-model="query" id="queryFilter">
+                    </div>
+                    <hr/>
+                  </th>
+                </tr>
+                <tr>
+                  <th ng-click="app.predicate='title'; app.reverse=!app.reverse;">Application</th>
+                  <th ng-click="app.predicate='created'; app.reverse=!app.reverse;">Created</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="application in app.applications | filter:query | orderBy:app.predicate:app.reverse | startFrom:(app.currentPage-1)*app.pageSize  | limitTo:app.pageSize ">
+                    <td><a ng-href="#/applications/{{application.id}}">{{application.title}}</a></td>
+                    <td>{{application.created|date:'dd MMM yyyy H:mm'}}</td>
+                </tr>
+              </tbody>
+            </table>
+        </div>
+        <div class="container">
+            <uib-pagination total-items="(app.applications|filter:query).length" ng-model="app.currentPage" max-size="app.pageSize" previous-text="&#60;" next-text="&#62;"></uib-pagination>
+        </div>
+      </section>
+  </div>
+</div>

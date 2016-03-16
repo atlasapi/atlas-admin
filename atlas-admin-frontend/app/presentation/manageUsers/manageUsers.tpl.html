@@ -38,7 +38,7 @@
             </table>
         </div>
         <div class="panel-full">
-            <uib-pagination total-items="(app.users|filter:query).length" ng-model="app.currentPage" max-size="app.pageSize" boundary-links="true"></uib-pagination>
+            <uib-pagination total-items="(app.users|filter:query).length" ng-model="app.currentPage" max-size="app.pageSize" previous-text="&#60;" next-text="&#62;"></uib-pagination>
         </div>
     </section>
 </div>
