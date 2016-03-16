@@ -77,11 +77,6 @@
     margin-top: 1rem;
   }
 }
-
-.console {
-    margin-top: -54px;
-}
-
 .search-cell {
     display: block;
     width: 100%;
@@ -96,12 +91,15 @@
 
     > table {
         width: 100%;
+        border-radius: 5px 0px 5px 5px;
     }
 
     th.sortable {
         cursor: pointer;
+    }
 
-        &:hover { background: black; }
+    .pagination{
+      width: auto;
     }
 }
 
@@ -111,7 +109,7 @@
     z-index: 400;
     float: right;
     padding: 1rem;
-    background: lighten($color-purple, 80%);
+    background: #E9E6EE;
     border-radius: 5px 5px 0 0;
     border: 1px solid $color-purple;
     border-bottom: none;

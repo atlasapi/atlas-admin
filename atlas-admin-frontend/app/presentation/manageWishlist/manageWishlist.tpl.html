@@ -23,7 +23,7 @@
             <header class="panel-header">
                 <h2>Source requests</h2>
             </header>
-            <table class="table">
+            <table class="tbl">
                 <thead>
                     <th>Source name</th>
                 </thead>
@@ -40,7 +40,7 @@
             <header class="panel-header">
                 <h2>Feature requests</h2>
             </header>
-             <table class="table">
+             <table class="tbl">
                 <thead>
                     <th>Feature name</th>
                 </thead>
@@ -54,8 +54,10 @@
 
         <!-- source wishlist items panel -->
         <section class="panel-full" ng-if="currentTab == 'sources'" ng-controller="CtrlManageWishlistSources">
-            <div class="panel-full add" ng-click="newSourceItem()">+ Add new source to the wishlist</div>
-            <table class="table">
+            <div class="panel-full add">
+              <button class="button positive" ng-click="newSourceItem()">+ Add new source to the wishlist</button>
+            </div>
+            <table class="tbl">
                 <thead>
                     <tr>
                         <th>Source name</th>
@@ -78,8 +80,10 @@
 
         <!-- source wishlist items panel -->
         <section class="panel-full" ng-if="currentTab == 'features'" ng-controller="CtrlManageWishlistFeatures">
-            <div class="panel-full add" ng-click="newFeatureItem()">+ Add new feature to the wishlist</div>
-            <table class="table">
+            <div class="panel-full add">
+              <button class="button positive" ng-click="newFeatureItem()">+ Add new feature to the wishlist</button>
+            </div>
+            <table class="tbl">
                 <thead>
                     <tr>
                         <th>Feature name</th>

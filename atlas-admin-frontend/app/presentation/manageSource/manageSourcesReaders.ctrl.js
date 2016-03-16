@@ -1,10 +1,10 @@
 'use strict';
 
-angular.module('atlasAdmin.manageSourcesReaders')
+angular.module('atlasAdmin.manageSource')
   .controller('CtrlSourceReaders', function($scope, $rootScope, $routeParams, Sources, Applications) {
     $scope.app = {};
     Sources.get($routeParams.sourceId).then(function(source) {
-        $rootScope.title = source.name;
+        $scope.title = source.name;
         $scope.app.source = source;
     });
 
