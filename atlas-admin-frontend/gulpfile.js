@@ -97,17 +97,18 @@ function watch_tasks() {
 function run_protractor() {
     return gulp.src([
           'tests/login/login.e2e.js',
-          'tests/applications/applications.e2e.js',
-          'tests/application/application.e2e.js',
-          'tests/wishlist/wishlist.e2e.js',
-          'tests/epg/epg.e2e.js',
-          'tests/feeds/feeds.e2e.js',
-          'tests/sources/sources.e2e.js',
-          'tests/requests/requests.e2e.js',
-          'tests/users/users.e2e.js',
-          'tests/wishlistManager/wishlistManager.e2e.js',
-          'tests/terms/terms.e2e.js',
-          'tests/contact/contact.e2e.js'
+          // 'tests/applications/applications.e2e.js',
+          // 'tests/application/application.e2e.js',
+          // 'tests/wishlist/wishlist.e2e.js',
+          // 'tests/epg/epg.e2e.js',
+          // 'tests/feeds/feeds.e2e.js',
+          // 'tests/sources/sources.e2e.js',
+          // 'tests/requests/requests.e2e.js',
+          // 'tests/users/users.e2e.js',
+          // 'tests/wishlistManager/wishlistManager.e2e.js',
+          // 'tests/terms/terms.e2e.js',
+          // 'tests/contact/contact.e2e.js',
+          'tests/scrubbables/scrubbables.e2e.js'
         ])
         .pipe(gulpProtractorAngular({
             'configFile': 'protractor.conf.js',
@@ -115,6 +116,6 @@ function run_protractor() {
             'autoStartStopServer': true
         }))
         .on('error', function(e) {
-            console.log(e);
+            process.exit(1);
         });
 };
