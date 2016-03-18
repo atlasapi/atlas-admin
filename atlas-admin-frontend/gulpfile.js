@@ -93,31 +93,45 @@ function watch_tasks() {
   gulp.watch('app/**/*.js', ['build']);
 };
 
+function wrapPipe(taskFn) {
+  return function(done) {
+    var onSuccess = function() {
+      done();
+    };
+    var onError = function(err) {
+      done(err);
+    }
+    var outStream = taskFn(onSuccess, onError);
+    if(outStream && typeof outStream.on === 'function') {
+      outStream.on('end', onSuccess);
+    }
+  }
+}
+
 // E2E Tests
 function run_protractor() {
-    return gulp.src([
-          'tests/login/login.e2e.js',
-          'tests/applications/applications.e2e.js',
-          'tests/application/application.e2e.js',
-          'tests/wishlist/wishlist.e2e.js',
-          'tests/epg/epg.e2e.js',
-          'tests/feeds/feeds.e2e.js',
-          'tests/sources/sources.e2e.js',
-          'tests/requests/requests.e2e.js',
-          'tests/users/users.e2e.js',
-          'tests/wishlistManager/wishlistManager.e2e.js',
-          'tests/terms/terms.e2e.js',
-          'tests/contact/contact.e2e.js'
-        ])
-        .on('error', function(e) {
-            throw e
+  return gulp.src([
+        'tests/login/login.e2e.js',
+        'tests/applications/applications.e2e.js',
+        'tests/application/application.e2e.js',
+        'tests/wishlist/wishlist.e2e.js',
+        'tests/epg/epg.e2e.js',
+        'tests/feeds/feeds.e2e.js',
+        'tests/sources/sources.e2e.js',
+        'tests/requests/requests.e2e.js',
+        'tests/users/users.e2e.js',
+        'tests/wishlistManager/wishlistManager.e2e.js',
+        'tests/terms/terms.e2e.js',
+        'tests/contact/contact.e2e.js'
+      ])
+      .pipe(
+        gulpProtractorAngular({
+          'configFile': 'protractor.conf.js',
+          'debug': false,
+          'autoStartStopServer': true
         })
-        .pipe(gulpProtractorAngular({
-            'configFile': 'protractor.conf.js',
-            'debug': false,
-            'autoStartStopServer': true
-        }))
         .on('error', function(e) {
-            throw e
-        });
+          throw e
+        })
+      );
 };
