@@ -109,6 +109,9 @@ function run_protractor() {
           'tests/terms/terms.e2e.js',
           'tests/contact/contact.e2e.js'
         ])
+        .on('error', function(e) {
+            throw e
+        })
         .pipe(gulpProtractorAngular({
             'configFile': 'protractor.conf.js',
             'debug': false,
