@@ -115,6 +115,6 @@ function run_protractor() {
             'autoStartStopServer': true
         }))
         .on('error', function(e) {
-            process.exit(1);
+            throw e
         });
 };
