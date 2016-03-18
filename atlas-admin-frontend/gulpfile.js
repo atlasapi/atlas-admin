@@ -133,5 +133,8 @@ function run_protractor() {
         .on('error', function(e) {
           throw e
         })
-      );
+      )
+      .on('error', function(e) {
+        throw e
+      });
 };
