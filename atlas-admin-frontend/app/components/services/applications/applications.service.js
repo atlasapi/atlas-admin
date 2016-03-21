@@ -16,7 +16,7 @@ function Applications(Atlas) {
 
     get: function(applicationId) {
       return Atlas
-        .getRequest('/applications/' + applicationId + '.json')
+        .getRequest('http://admin-backend.metabroadcast.com/1/applications/' + applicationId)
         .then(function(results) {
           return results.data.application;
       });
@@ -26,7 +26,6 @@ function Applications(Atlas) {
       var data = {
         title: title,
         description: description,
-        //url: url,
         publisher: {
           key: 'metabroadcast.com',
           name: 'MetaBroadcast',
@@ -34,7 +33,8 @@ function Applications(Atlas) {
         }
       };
 
-      return Atlas.postRequest('/applications.json', data);
+      return Atlas
+        .postRequest('http://admin-backend.metabroadcast.com/1/applications', data);
     },
 
     update: function(data, callback) {
@@ -70,4 +70,4 @@ function Applications(Atlas) {
       });
     }
   };
- }
+}

@@ -5,13 +5,14 @@ angular
   .factory('Atlas', Atlas);
 
 function Atlas($http, atlasHost, atlasVersion, Authentication, $log, $cookies) {
+  var httpOptions = {
+    headers: {
+      iPlanetDirectoryPro: $cookies.get('iPlanetDirectoryPro')
+    }
+  };
+
   return {
     getRequest: function(url) {
-      var httpOptions = {
-        headers: {
-          iPlanetDirectoryPro: $cookies.get('iPlanetDirectoryPro')
-        }
-      };
       return $http.get(url, httpOptions);
     },
 
@@ -20,7 +21,7 @@ function Atlas($http, atlasHost, atlasVersion, Authentication, $log, $cookies) {
     },
 
     postRequest: function(url, data) {
-      return $http.post(Authentication.appendTokenToUrl(atlasHost + "/" + atlasVersion + url), data, {withCredentials: false});
+      return $http.post(url, data, httpOptions);
     },
 
     deleteRequest: function(url) {
