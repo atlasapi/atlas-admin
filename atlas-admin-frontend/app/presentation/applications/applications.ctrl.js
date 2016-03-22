@@ -23,6 +23,7 @@ function CtrlApplications($scope, $rootScope, $routeParams, Applications, $uibMo
       Atlas
         .getRequest('http://admin-backend.metabroadcast.com/1/applications/' + application.id)
         .then(function(response) {
+          console.log('response', response);
           $scope.app.applications.push(response.data.application);
           $scope.state = (applications.length) ? 'table' : 'blank';
         })
