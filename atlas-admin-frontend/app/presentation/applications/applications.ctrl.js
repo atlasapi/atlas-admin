@@ -16,19 +16,58 @@ function CtrlApplications($scope, $rootScope, $routeParams, Applications, $uibMo
   $scope.isAdmin = false;
 
   function httpSuccess(response) {
-    var applications = response.data.role;
+    var roles = response.data.role;
+    var applications = [];
+
+    roles.forEach(function(role) {
+      if (role.id === 'admins') {
+        $scope.isAdmin = true;
+      }
+    });
+
     $scope.app.applications = [];
 
-    applications.forEach(function(application) {
+    if ($scope.isAdmin) {
       Atlas
-        .getRequest('http://admin-backend.metabroadcast.com/1/applications/' + application.id)
+        .getRequest('http://admin-backend.metabroadcast.com/1/applications')
         .then(function(response) {
-          console.log('response', response);
-          $scope.app.applications.push(response.data.application);
-          $scope.state = (applications.length) ? 'table' : 'blank';
+          var applications = response.data.applications;
+          applications.forEach(function(application) {
+            Atlas
+              .getRequest('http://admin-backend.metabroadcast.com/1/applications/' + application.id)
+              .then(function(response) {
+                formatApplicationAndUpdateView(response.data.application);
+              })
+              .catch(httpError);
+          });
         })
         .catch(httpError);
-    });
+    } else {
+      roles.forEach(function(role) {
+        Atlas
+          .getRequest('http://admin-backend.metabroadcast.com/1/applications/' + role.id)
+          .then(function(response) {
+            formatApplicationAndUpdateView(response.data.application);
+          })
+          .catch(httpError);
+      });
+    }
+  }
+
+  function formatApplicationAndUpdateView(application) {
+    application.credentials = {};
+    application.credentials.apiKey = getApiKey(application);
+    $scope.app.applications.push(application);
+    $scope.state = ($scope.app.applications.length) ? 'table' : 'blank';
+    getUsageData($scope.app.applications);
+  }
+
+  function getApiKey(application) {
+    if (application.credentialsConfig.length) {
+      return application.credentialsConfig[0].apiKey;
+    } else {
+      return '';
+    }
   }
 
   function httpError(error) {
@@ -40,7 +79,7 @@ function CtrlApplications($scope, $rootScope, $routeParams, Applications, $uibMo
     .then(httpSuccess)
     .catch(httpError);
 
-  var getUsageData = function (applications) {
+  function getUsageData(applications) {
     var TIME_PERIOD = 8;
     var dates = [];
 
@@ -50,7 +89,7 @@ function CtrlApplications($scope, $rootScope, $routeParams, Applications, $uibMo
 
     dates = dates.join(',');
 
-    var numberWithCommas = function (x) {
+    function numberWithCommas(x) {
       return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     };
 
@@ -73,8 +112,8 @@ function CtrlApplications($scope, $rootScope, $routeParams, Applications, $uibMo
     });
   };
 
-  var handleNullUsage = function (applications) {
-    _.forEach(applications, function (application) {
+  function handleNullUsage(applications) {
+    applications.forEach(function(application) {
       application.usage = {
         doc_count: 0,
         readableCount: 0
@@ -84,7 +123,7 @@ function CtrlApplications($scope, $rootScope, $routeParams, Applications, $uibMo
     return applications;
   };
 
-  var mapUsageDataToApplications = function (applications, usageData) {
+  function mapUsageDataToApplications(applications, usageData) {
     applications = _.map(applications, function (application) {
       _.forEach(usageData, function (d) {
         if (application.credentialsConfig[0].apiKey === d.key) {

@@ -26,7 +26,7 @@
       <tbody>
         <tr ng-repeat="application in app.applications  | filter:appSearchFilter | orderBy:app.predicate:app.reverse  | startFrom:(app.currentPage-1)*app.pageSize  | limitTo:app.pageSize ">
           <td><a ng-href="#/applications/{{application.id}}">{{application.title}}</a></td>
-          <td>{{application.credentialsConfig.0.apiKey}}</td>
+          <td>{{application.credentials.apiKey}}</td>
           <td>{{application.created|date:'dd MMM yyyy H:mm'}}</td>
           <!-- if admin, show this -->
           <td ng-show="isAdmin">{{application.usage.readableCount}}</td>
