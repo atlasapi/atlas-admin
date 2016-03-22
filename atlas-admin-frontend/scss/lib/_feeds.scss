@@ -1,6 +1,6 @@
 // For the feeds console view
 .feedsConsole {
-    
+
 }
 
 .filter-bar {
@@ -57,27 +57,26 @@
   background: $color-grey;
   border: 1px solid $color-pink;
   border-radius: 5px;
-  
+
   > button + button { margin-left: 1rem; }
 
   &-label {
     display: block;
     margin-bottom: .5rem;
   }
-  
+
   .btn-publish {
     background: #92E16A;
   }
-  
   .btn-revoke {
     background: #F84E4E;
   }
+  .btn-resolve {
+    background: #6AC0E1;
+    width: 98%;
+    margin-top: 1rem;
+  }
 }
-
-.console {
-    margin-top: -54px;
-}
-
 .search-cell {
     display: block;
     width: 100%;
@@ -92,12 +91,15 @@
 
     > table {
         width: 100%;
+        border-radius: 5px 0px 5px 5px;
     }
 
     th.sortable {
         cursor: pointer;
+    }
 
-        &:hover { background: black; }
+    .pagination{
+      width: auto;
     }
 }
 
@@ -107,7 +109,7 @@
     z-index: 400;
     float: right;
     padding: 1rem;
-    background: lighten($color-purple, 80%);
+    background: #E9E6EE;
     border-radius: 5px 5px 0 0;
     border: 1px solid $color-purple;
     border-bottom: none;
@@ -176,7 +178,7 @@
     &:last-child { border-radius: 0 0 5px 5px; }
     & + & { border-top: none; }
 
-    .xml-data > pre { 
+    .xml-data > pre {
         display: block;
         box-sizing: border-box;
         width: 100%;
@@ -232,8 +234,8 @@
     border-radius: 50%;
     box-shadow: 0 5px 0 darken($color-red, 10%);
 
-    &:active { 
-        box-shadow: 0 1px 0 darken($color-red, 10%); 
+    &:active {
+        box-shadow: 0 1px 0 darken($color-red, 10%);
         transform: translateY(4px);
     }
 }
@@ -245,7 +247,7 @@
 
 // For the transaction detail modal window
 .transaction-fragments {
-    
+
 }
 
 .fragments-title {
@@ -264,26 +266,26 @@
 
 // Modal window for chacking and running actions on PIDS
 .feedsAcceptModal {
-  
+
   .modal-body.is-busy { filter: blur(1px); }
-  
+
   .pid-check {
     display: block;
     width: 100%;
   }
-  
+
   .pid-check input,
   .pid-check button {
     display: block;
     margin: 0 auto;
   }
-  
+
   .pid-check button {
     width: 177px;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
   }
-  
+
   .pid-check input {
     width: 177px;
     text-align: center;
@@ -292,7 +294,7 @@
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
   }
-  
+
   .search-result {
     @extend %cf;
     display: block;
@@ -302,12 +304,17 @@
     margin-top: 2rem;
     background: #F2EDF8;
     border-radius: 5px;
+
+    &.crid{
+      text-align: center;
+      font-size: 1.4rem;
+    }
   }
-  
+
   .actionBtn {
     text-align: center;
     margin-bottom: 2rem;
-    
+
     button {
       display: inline-block;
       box-sizing: border-box;
@@ -316,58 +323,58 @@
       font-size: 1.25rem;
       text-transform: capitalize;
     }
-    
+
     &.upload > button {
       background: #92E16A;
       border-color: darken(#92E16A, 20%);
       color: darken(#92E16A, 50%);
     }
-    
+
     &.revoke > button {
       background: #F84E4E;
       border-color: darken(#c33939, 20%);
       color: darken(#c33939, 50%);
     }
-    
+
   }
-  
-  .result-img { 
+
+  .result-img {
     float: left;
     box-sizing: border-box;
     width: 40%;
     padding-right: 5%;
     > img { width: 100%; }
-    
+
   }
-  
-  .result-content { 
+
+  .result-content {
     float: left;
     box-sizing: border-box;
     width: 60%;
   }
-  
+
   .statusMessage {
     text-align: center;
     font-size: 1.4rem;
     border-radius: 5px;
     padding: 1rem;
-    
+
     &.success {
       background: #65d58b;
     }
-    
+
     &.error {
       background: #e8c485;
       margin-bottom: 2rem;
     }
   }
-  
+
   .help-text {
     display: block;
     margin-top: 2rem;
     text-align: center;
   }
-  
+
   .busy-notification {
     position: absolute;
     z-index: 1000;
@@ -378,8 +385,8 @@
     height: 100%;
     background: rgba(255,255,255,.6);
     text-align: center;
-    
-    > span {  
+
+    > span {
       position: relative;
       display: inline-block;
       padding: 2rem;
@@ -390,6 +397,6 @@
       border-radius: 5px;
     }
   }
-  
+
   .help-text { display: block; text-align: center; }
 }

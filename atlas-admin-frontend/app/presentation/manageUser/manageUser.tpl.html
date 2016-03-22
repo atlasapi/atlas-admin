@@ -35,7 +35,7 @@
                     <button type="button" class="" ng-model="app.user.role" btn-radio="'source'">Source</button>
                     <span ng-show="userForm.website.$error.url" class="form-field-helper">User access level (admin only)</span>
                 </div>
-                <button type="button" class="btn btn-danger" ng-click="save()">Save</button>
+                <button type="button" class="button positive" ng-click="save()">Save</button>
             </form>
         </section>
     </div>
@@ -67,7 +67,7 @@
                 </table>
             </div>
             <div class="container" ng-show="app.applications.length > 0">
-                <uib-pagination total-items="(app.applications|filter:appSearchFilter).length" ng-model="app.currentPage" max-size="app.pageSize" boundary-links="true"></uib-pagination>
+                <uib-pagination total-items="(app.applications|filter:appSearchFilter).length" ng-model="app.currentPage" max-size="app.pageSize" previous-text="&#60;" next-text="&#62;"></uib-pagination>
             </div>
         </div>
     </div>

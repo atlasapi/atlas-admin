@@ -1,5 +1,5 @@
 // MBST style ftw
-//@import "../bower_components/common-style/scss/base.scss";
+// @import "../bower_components/common-style/scss/base.scss";
 
 @import "vendor/highlight";
 
@@ -8,6 +8,7 @@
 @import "variables";
 
 // mbst common modules
+@import "../bower_components/common-style/scss/variables";
 @import "../bower_components/common-style/scss/modules/typography";
 @import "../bower_components/common-style/scss/modules/lists";
 @import "../bower_components/common-style/scss/modules/tables";

@@ -1,5 +1,5 @@
 'use strict';
-var PageObject = require('../pageobject');
+var PageObject = require('../pageObject');
 
 var termsPageObject = new PageObject();
 

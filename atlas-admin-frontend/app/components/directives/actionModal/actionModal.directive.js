@@ -15,14 +15,28 @@ angular.module('atlasAdmin.directives.actionModal')
             action: action.charAt(0).toUpperCase() + action.slice(1)
           };
 
-          var _modalInstance = $uibModal.open({
-            // template: '<h1>'+_content.title+'</h1></div><div class="feed-modal-options"><button ng-disabled="isSendingAction" ng-click="ok()">'+_content.action+'</button><button ng-click="dismiss()">Cancel</button>',
-            templateUrl: 'presentation/feed/actionsModal/actionsModal.tpl.html',
-            controller: 'CtrlFeedsAcceptModal',
-            windowClass: 'feedsAcceptModal',
-            scope: $scope,
-            resolve: { modalAction: function() { return action; } }
-          });
+          if (action === 'resolve') {
+
+            var _modalInstance = $uibModal.open({
+              templateUrl: 'presentation/feed/resolveModal/resolveModal.tpl.html',
+              controller: 'CtrlFeedsResolveModal',
+              windowClass: 'feedsAcceptModal',
+              scope: $scope,
+              resolve: { modalAction: function() { return action; } }
+            });
+
+          } else {
+
+            var _modalInstance = $uibModal.open({
+              templateUrl: 'presentation/feed/actionsModal/actionsModal.tpl.html',
+              controller: 'CtrlFeedsAcceptModal',
+              windowClass: 'feedsAcceptModal',
+              scope: $scope,
+              resolve: { modalAction: function() { return action; } }
+            });
+
+          }
+
 
           _modalInstance.result.then(defer.resolve, defer.reject);
           return defer.promise;

@@ -13,8 +13,11 @@ angular.module('atlasAdmin.feed')
       $scope.table = {};
       $scope.table.order = 'upload_time';
       $scope.table.reverse = true;
-      $scope.activeFilter = '';
+      $scope.activeFilters = [];
+      $scope.urlFilters = [];
       $scope.search = {};
+      $scope.currentSortValue = '';
+      $scope.sortOrder = '.asc';
 
 
       // this controls the loading state of the feeds console
@@ -30,21 +33,47 @@ angular.module('atlasAdmin.feed')
       // @param filter_on {string} value to set for activeFilter
       //
       var input_timer;
+
       $scope.filter = function(filter_on) {
         if (! _.isString(filter_on)) {
           return;
         }
 
-        if ($scope.search[filter_on].length > 3 || $scope.search[filter_on].length === 0) {
-          $timeout.cancel(input_timer);
-          input_timer = $timeout(function() {
+        if ($scope.search[filter_on].length > 2 || $scope.search[filter_on].length === 0) {
+
+          var filterData = {};
+
+          var savedObject = _.find($scope.activeFilters, {'name': filter_on});
+
+          if (savedObject){
+            if ($scope.search[filter_on].length === 0) {
+              _.remove($scope.activeFilters, savedObject);
+            } else {
+              savedObject.value = $scope.search[filter_on];
+            }
+          } else {
             $scope.isloading = true;
-            $scope.activeFilter = filter_on;
+            filterData.name = filter_on;
+            filterData.value = $scope.search[filter_on];
+
+            $scope.activeFilters.push(filterData);
             $scope.page.current = 0;
-            getTasks();
-          }, 700);
+          }
         }
+
+        getTasks($scope.currentSortValue);
       };
+
+      $scope.sortTasks = function (sortValue) {
+        if ($scope.currentSortValue === sortValue) {
+          if ($scope.sortOrder === '.desc') {
+            $scope.sortOrder = '.asc';
+          } else if ($scope.sortOrder === '.asc') {
+            $scope.sortOrder = '.desc';
+          }
+        }
+        getTasks(sortValue);
+      }
 
 
       // Used for controlling pagination functionality. The idea is that
@@ -64,7 +93,7 @@ angular.module('atlasAdmin.feed')
 
       $scope.$watch('page.current + page.limit', function(new_val, old_val) {
         $scope.page.offset = $scope.page.current * $scope.page.limit;
-        getTasks();
+        getTasks($scope.currentSortValue);
       });
 
       $scope.page.next = function() {
@@ -84,18 +113,31 @@ angular.module('atlasAdmin.feed')
 
       // For loading sets of tasks from atlas. Filters and offsets
       // are inserted automatically based on $scope variables
-      var getTasks = function() {
-        var _filter = '';
-        if ($scope.activeFilter === 'transaction' && ! _.isEmpty($scope.search.transaction)) {
-          _filter = '&type='+$scope.search.transaction.toLowerCase();
-        }else if ($scope.activeFilter === 'uri' && ! _.isEmpty($scope.search.uri)) {
-          _filter = '&uri='+$scope.search.uri;
-        }else if ($scope.activeFilter === 'status' && ! _.isEmpty($scope.search.status)) {
-          _filter = '&status='+$scope.search.status;
-        }else if ($scope.activeFilter === 'remote_id' && ! _.isEmpty($scope.search.remote_id)){
-          _filter = '&remote_id='+$scope.search.remote_id;
+      var getTasks = function(sortValue) {
+        var sortBy = '';
+        var filters = [];
+
+        if (_.find($scope.activeFilters, {'name': 'transaction'})) {
+          filters.push( '&type='+$scope.search.transaction.toLowerCase() );
         }
-        var request_url = 'youview/bbc_nitro/tasks.json?limit='+$scope.page.limit+'&offset='+$scope.page.offset+_filter;
+        if (_.find($scope.activeFilters, {'name': 'uri'})) {
+          filters.push( '&uri='+$scope.search.uri );
+        }
+        if (_.find($scope.activeFilters, {'name': 'status'})) {
+          filters.push( '&status='+$scope.search.status );
+        }
+        if (_.find($scope.activeFilters, {'name': 'remote_id'})){
+          filters.push( '&remote_id='+$scope.search.remote_id );
+        }
+
+        if(sortValue){
+          sortBy = '&order_by=' + sortValue + $scope.sortOrder;
+          $scope.currentSortValue = sortValue;
+        }
+
+        var filter = filters.join('');
+
+        var request_url = 'youview/bbc_nitro/tasks.json?limit='+$scope.page.limit+'&offset='+$scope.page.offset+filter+sortBy;
         Feeds.request(request_url).then(pushTasksTable);
       };
 
