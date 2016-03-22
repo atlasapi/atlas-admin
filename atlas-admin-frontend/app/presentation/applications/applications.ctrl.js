@@ -87,7 +87,7 @@ function CtrlApplications($scope, $rootScope, $routeParams, Applications, $uibMo
   var mapUsageDataToApplications = function (applications, usageData) {
     applications = _.map(applications, function (application) {
       _.forEach(usageData, function (d) {
-        if (application.credentials.apiKey === d.key) {
+        if (application.credentialsConfig[0].apiKey === d.key) {
           application.usage = d;
         }
       });
