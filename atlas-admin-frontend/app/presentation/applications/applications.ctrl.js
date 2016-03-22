@@ -32,6 +32,7 @@ function CtrlApplications($scope, $rootScope, $routeParams, Applications, $uibMo
         .getRequest('http://admin-backend.metabroadcast.com/1/applications')
         .then(function(response) {
           var applications = response.data.applications;
+
           applications.forEach(function(application) {
             Atlas
               .getRequest('http://admin-backend.metabroadcast.com/1/applications/' + application.id)

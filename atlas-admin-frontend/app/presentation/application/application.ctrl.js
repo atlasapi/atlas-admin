@@ -17,13 +17,24 @@ function CtrlApplicationEdit($scope, $rootScope, $routeParams, Applications, Sou
   $scope.view_title = 'Edit application';
   $scope.isAdmin = false;
 
-  Atlas
-    .getRequest('/auth/user.json')
-    .then(function (result) {
-      if (result.data.user.role === 'admin') {
+  function httpError(error) {
+    console.error('error', error);
+  }
+
+  function getRoles(response) {
+    var roles = response.data.role;
+
+    roles.forEach(function(role) {
+      if (role.id === 'admins') {
         $scope.isAdmin = true;
       }
-  });
+    });
+  }
+
+  Atlas
+    .getRequest('http://admin-backend.metabroadcast.com/1/user')
+    .then(getRoles)
+    .catch(httpError);
 
   window.onbeforeunload = function() {
     if ($scope.app.changed) {
@@ -48,7 +59,7 @@ function CtrlApplicationEdit($scope, $rootScope, $routeParams, Applications, Sou
     // Seems to be the only way to find out the current API key
     Applications
       .get($routeParams.applicationId)
-      .then(function (application) {
+      .then(function(application) {
         $scope.app.application = application;
         $scope.app.writes = {};
         $scope.app.writes.predicate = 'name';
@@ -330,10 +341,21 @@ function CtrlApplicationEdit($scope, $rootScope, $routeParams, Applications, Sou
       }
     });
 
+    function findApiKey() {
+      if ($scope.app.application.credentialsConfig) {
+        return $scope.app.application.credentialsConfig[0].apiKey;
+      } else {
+        return '';
+      }
+    }
+
     Applications
       .get($routeParams.applicationId)
       .then(function(application) {
         $scope.app.application = application;
+        $scope.app.application.credentials = {
+          apiKey: findApiKey()
+        };
         $scope.app.writes = {};
         $scope.app.writes.predicate = 'name';
         $scope.app.writes.reverse = false;
