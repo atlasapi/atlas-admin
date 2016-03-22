@@ -59,22 +59,14 @@
                   <li><a href="/api-docs/#api-docs-channel_groups">channel_groups</a></li>
                 </ul>
               </li>
-            </ul>
-            <!--
-              <li ng-show="status.loggedIn" class="has-dropdown-menu user-menu" id="apps-menu" ng-click="app.hideAppsMenu()" ng-mouseleave="app.showAppsMenu()" ng-cloak>
+              <li class="has-dropdown-menu user-menu" id="apps-menu" ng-click="app.hideAppsMenu()" ng-mouseleave="app.showAppsMenu()">
                 <span>Apps</span>
                 <ul class="apps-dropdown dropdown-menu dropdown-menu-large" ng-show="app.appsMenu">
-                  <li ng-if="ProfileStatus.isProfileComplete()" ng-controller="CtrlApplications">
-                    <span class="application-link" ng-repeat="application in app.applications | orderBy:app.predicate:app.reverse | limitTo:3">
-                      <a href="#/applications/{{application.id}}">{{application.title}}</a>
-                    </span>
-                    <div ng-if="app.applications" class="menu-separator"></div>
-                  </li>
                   <li><a ng-href="#/applications">All applications&hellip;</a></li>
                   <li><a ng-href="#/wishlist">Wishlist</a></li>
                 </ul>
               </li>
-              <li ng-show="status.loggedIn" ng-if="app.menu.users.length" class="has-dropdown-menu user-menu" id="content-menu" ng-click="app.hideContentMenu()" ng-mouseleave="app.showContentMenu()" ng-cloak>
+              <li ng-if="app.menu.users.length" class="has-dropdown-menu user-menu" id="content-menu" ng-click="app.hideContentMenu()" ng-mouseleave="app.showContentMenu()" ng-cloak>
                 <span>Content</span>
                 <ul class="content-dropdown dropdown-menu" ng-show="app.contentMenu">
                   <li ng-repeat="item in app.menu.users" ng-cloak>
@@ -82,7 +74,7 @@
                   </li>
                 </ul>
               </li>
-              <li ng-show="status.loggedIn" ng-if="app.menu.admins.length" class="has-dropdown-menu user-menu" id="admin-menu" ng-click="app.hideAdminMenu()" ng-mouseleave="app.showAdminMenu()" ng-cloak>
+              <li ng-if="app.menu.admins.length" class="has-dropdown-menu user-menu" id="admin-menu" ng-click="app.hideAdminMenu()" ng-mouseleave="app.showAdminMenu()" ng-cloak>
                 <span>Admin</span>
                 <ul class="admin-menu admin-dropdown dropdown-menu" ng-show="app.adminMenu">
                   <li ng-repeat="item in app.menu.admins" ng-cloak>
@@ -90,7 +82,7 @@
                   </li>
                 </ul>
               </li>
-            </ul> -->
+            </ul>
           </div>
           <div class="sub-nav-tools">
             <a class="navbar-api-explorer-btn" href="/api-docs#apiExplorer">
