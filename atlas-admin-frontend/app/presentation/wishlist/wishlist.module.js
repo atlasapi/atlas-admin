@@ -1,6 +1,7 @@
 'use strict';
 
-angular.module('atlasAdmin.wishlist', [
+angular
+  .module('atlasAdmin.wishlist', [
     'ngRoute',
     'atlasAdmin.directives.inputMorph',
     'atlasAdmin.services.users',
