@@ -4,9 +4,9 @@ angular
   .module('atlasAdmin.menu')
   .controller('UserMenuController', UserMenuController);
 
-UserMenuController.$inject = ['$scope', 'Users', '$rootScope', 'Authentication', '$location', 'GroupsService', '$q'];
+UserMenuController.$inject = ['$scope', 'Users', '$rootScope', 'Authentication', '$location', 'GroupsService', '$q', 'Atlas'];
 
-function UserMenuController($scope, Users, $rootScope, Authentication, $location, Groups, $q) {
+function UserMenuController($scope, Users, $rootScope, Authentication, $location, Groups, $q, Atlas) {
   var privateItems;
 
   $scope.app = {};
@@ -119,17 +119,44 @@ function UserMenuController($scope, Users, $rootScope, Authentication, $location
     };
   };
 
-  if (Authentication.getToken()) {
-    Users.currentUser(function(user) {
-      $scope.app.user = user;
-      // find any custom menu items for this user
-      getPrivateMenuItems()
-        .then(function(groups) {
-          $scope.app.userGroups = groups;
-          $scope.app.menu = buildMenu(user, groups);
-        }, function() {
-          $scope.app.menu = buildMenu(user);
-        });
+  Atlas
+    .getRequest('http://admin-backend.metabroadcast.com/1/user')
+    .then(getUserData)
+    .catch(throwError);
+
+  function getUserData(response) {
+    var roles = response.data.role;
+
+    roles.forEach(function(role) {
+      if (role.id === 'admins') {
+        $scope.isAdmin = true;
+      }
     });
+
+    if ($scope.isAdmin) {
+      console.log('ya');
+      $scope.app.menu = buildMenu();
+    } else {
+    }
   }
+
+  function throwError(error) {
+    console.error(error);
+  };
+
+  // if (Authentication.getToken()) {
+  //   Users.currentUser(function(user) {
+  //     $scope.app.user = user;
+  //     // find any custom menu items for this user
+  //     getPrivateMenuItems()
+  //       .then(function(groups) {
+  //         $scope.app.userGroups = groups;
+  //         $scope.app.menu = buildMenu(user, groups);
+  //         console.log('a', $scope);
+  //       }, function() {
+  //         $scope.app.menu = buildMenu(user);
+  //         console.log('b', $scope);
+  //       });
+  //   });
+  // }
 }
