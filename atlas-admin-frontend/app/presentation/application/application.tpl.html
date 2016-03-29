@@ -25,7 +25,7 @@
 
         <!-- if admin show this -->
         <div class="api-usage-graph" id="api-usage-graph" ng-show="isAdmin">
-            <div class="api-usage-trigger button">API usage</div>
+            <div class="api-usage-trigger button" ng-click="toggleUsageGraph()">API usage</div>
             <div class="chart-card">
                 <div class="notifications" ng-show="errorMessage"></div>
                 <div class="graph-container">
@@ -36,12 +36,12 @@
                         <div class="graph-control graph-control-month" ng-class="{'selected':tabState=='month'}" ng-click="switchTime('month')">- 30 days</div>
                         <div class="graph-control graph-control-refresh" ng-click="reloadGraph()">Refresh</div>
                     </div>
-                    <div class="usage-graph-wrapper">
+                    <div class="usage-graph-wrapper" ng-class="{'loading': app.loading}">
                         <svg class="usage-graph" id="visualisation" width="1000" height="600"></svg>
                     </div>
                     <p class="graph-caption"></p>
                     <div class="clearfix">
-                        <div class="close-usage-graph button">&times; close</div>
+                        <div class="close-usage-graph button" ng-click="closeUsageGraph()">&times; close</div>
                     </div>
                 </div>
             </div>
