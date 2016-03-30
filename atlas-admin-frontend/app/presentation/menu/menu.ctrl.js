@@ -51,7 +51,6 @@ function UserMenuController($scope, $rootScope, $q, Atlas, $log) {
     var allMenu = [
       { path: '/manage/sources', label: 'Sources', role: 'admin' },
       { path: '/manage/requests', label: 'Requests', role: 'admin' },
-      { path: '/manage/users', label: 'Users', role: 'admin' },
       { path: '/manage/usage', label: 'API Usage', role: 'admin' },
       { path: '/manage/wishlist', label: 'Wishlist', role: 'admin' },
       { path: '/epg/bt-tv', label: 'EPG', role: 'bt-blackout' },
