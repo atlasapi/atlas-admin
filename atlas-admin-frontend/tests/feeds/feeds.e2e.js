@@ -25,16 +25,10 @@ describe('E2E feeds: Actions', function () {
     element(by.css('.pid-check .check-pid')).click();
     expect(element(by.css('.actionBtn.upload')).isPresent()).toBeTruthy();
   });
-
-  // it('should close the modal on bg click', function () {
-  //   element(by.css('.modal')).click();
-  //   expect(element(by.css('.modal .modal-dialog')).isPresent()).toBeFalsy();
-  // });
 });
 
 describe('E2E feeds: Filters', function () {
   beforeEach(function(){
-
     feedsPageObject.get();
   });
 
