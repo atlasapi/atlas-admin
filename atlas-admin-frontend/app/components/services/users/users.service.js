@@ -8,9 +8,9 @@ Users.$inject = ['$http', 'Atlas', '$rootScope', 'Authentication', 'ProfileStatu
 function Users($http, Atlas, $rootScope, Authentication, ProfileStatus, $log, atlasApiHost, $q) {
   return {
     currentUser: function(callback) {
-      $.ajax({
-        url: Atlas.getUrl('/auth/user.json'),
-        success: function(result) {
+      $http
+        .get(Atlas.getUrl('/auth/user.json'))
+        .then(function (result) {
           if (result.user) {
             if (result.user.profile_complete) {
               ProfileStatus.setComplete(result.user.profile_complete);
@@ -24,11 +24,10 @@ function Users($http, Atlas, $rootScope, Authentication, ProfileStatus, $log, at
 
             callback(result.user);
           }
-        },
-        error: function() {
+        })
+        .catch(function() {
           $log.error("No user");
           return null;
-        }
       });
     },
 
@@ -73,12 +72,11 @@ function Users($http, Atlas, $rootScope, Authentication, ProfileStatus, $log, at
     groups: function() {
       var defer = $q.defer();
 
-      $http({
-        method: 'get',
-        url: Authentication.appendTokenToUrl(atlasApiHost+'/groups')
-      })
-      .success(defer.resolve)
-      .error(defer.reject);
+      $http
+        .get(Authentication.appendTokenToUrl(atlasApiHost+'/groups'))
+        .then(defer.resolve)
+        .catch(defer.reject);
+
       return defer.promise;
     }
   };
