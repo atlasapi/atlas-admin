@@ -1,2 +1,4 @@
 'use strict';
-angular.module('atlasAdmin.services.applications', []);
+
+angular
+  .module('atlasAdmin.services.applications', []);

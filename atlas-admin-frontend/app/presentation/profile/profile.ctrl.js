@@ -21,6 +21,7 @@ function ProfileController($scope, $rootScope, $routeParams, Users, Applications
   }
 
   Users.currentUser(function(user) {
+    $log.info('user', user);
     $scope.app.user = user;
     $rootScope.view_title = 'Your profile';
   });
@@ -34,17 +35,19 @@ function ProfileController($scope, $rootScope, $routeParams, Users, Applications
     $scope.app.newUser = $scope.app.user.profile_complete === false;
     $scope.app.user.profile_complete = true;
 
-    Users.update($scope.app.user).then(function() {
-      var successMessage = 'Changes saved';
-      // redirect new users to apps screen otherwise show message
-      if ($scope.app.newUser) {
-        $location.path('/');
-      } else {
-        $scope.successMessage = 'Changes saved';
-      }
-    },
-    function() {
-      $scope.errorMessage = 'Sorry, there was an error and your changes could not be saved';
+    Users
+      .update($scope.app.user)
+      .then(function() {
+        var successMessage = 'Changes saved';
+        // redirect new users to apps screen otherwise show message
+        if ($scope.app.newUser) {
+          $location.path('/');
+        } else {
+          $scope.successMessage = 'Changes saved';
+        }
+      })
+      .catch(function() {
+        $scope.errorMessage = 'Sorry, there was an error and your changes could not be saved';
     });
   };
 }
