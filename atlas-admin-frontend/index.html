@@ -89,8 +89,7 @@
         <div class="navbar-tools" id="navbar-tools">
           <div class="navbar-user logged-in has-dropdown-menu" ng-show="status.loggedIn" ng-click="app.hideDropdown()" ng-mouseleave="app.showDropdown()" ng-cloak>
             <span class="user-avatar">
-              <img class="profile-picture" ng-src="{{app.user.profile_image}}" alt="profile picture"/>
-              <span class="user-name">{{app.user.full_name}}</span>
+              <span class="user-name">{{app.user.email}}</span>
             </span>
             <ul class="user-dropdown-menu dropdown-menu" ng-show="app.dropdown">
               <li><a href="#/profile">Your profile</a></li>
