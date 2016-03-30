@@ -47,52 +47,40 @@ function UserMenuController($scope, Users, $rootScope, Authentication, $location
     $scope.app.appsMenu = false;
   };
 
-  var buildMenu = function(user, groups) {
-    // if profile not complete the do not show menu
+  var buildMenu = function(roles) {
     var allMenu = [
-      // admin only
-      { path:'/manage/sources', label:'Sources', role:'admin' },
-      { path:'/manage/requests', label:'Requests', role:'admin' },
-      { path:'/manage/users', label:'Users', role:'admin' },
-      { path:'/manage/usage', label:'API Usage', role:'admin' },
-      { path:'/manage/wishlist', label:'Wishlist', role:'admin' }
+      { path: '/manage/sources', label: 'Sources', role: 'admin' },
+      { path: '/manage/requests', label: 'Requests', role: 'admin' },
+      { path: '/manage/users', label: 'Users', role: 'admin' },
+      { path: '/manage/usage', label: 'API Usage', role: 'admin' },
+      { path: '/manage/wishlist', label: 'Wishlist', role: 'admin' },
+      { path: '/epg/bt-tv', label: 'EPG', role: 'bt-blackout' },
+      { path: '/feeds', label: 'Feeds', role: 'youview-feeds' },
+      { path: '/scrubbables', label: 'Scrubbables', role: 'scrubbables' }
     ];
 
-    allMenu.push({
-      path: '/epg/bt-tv',
-      label: 'EPG'
-    });
-
-    allMenu.push({
-      path: '/feeds',
-      label: 'Feeds'
-    });
-
-    allMenu.push({
-      path: '/scrubbables',
-      label: 'Scrubbables'
-    });
-
-    // build the menu
     var menu = [];
-    var admin_menu = [];
+    var adminMenu = [];
 
     allMenu.forEach(function(item) {
       if ($scope.isAdmin) {
         if (item.role === 'admin') {
-          admin_menu.push(item);
+          adminMenu.push(item);
         } else {
           menu.push(item);
         }
       } else {
-        // Need to populate content menu based on openam groups
-        $log.info('item', item);
+        roles.forEach(function(role) {
+          if (item.role === role.id) {
+            menu.push(item);
+          }
+        });
       }
     });
 
     return {
       users: menu,
-      admins: admin_menu
+      admins: adminMenu
     };
   };
 
@@ -110,7 +98,7 @@ function UserMenuController($scope, Users, $rootScope, Authentication, $location
       }
     });
 
-    $scope.app.menu = buildMenu();
+    $scope.app.menu = buildMenu(roles);
   }
 
   function throwError(error) {
