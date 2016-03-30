@@ -28,11 +28,10 @@
                     <input type="url" class="form-control" id="website" name="website" placeholder="http://example.com" ng-model="app.user.website" ng-change="app.changed=true">
                     <span ng-show="userForm.website.$error.url" class="form-field-helper">Please enter a valid website address</span>
                 </div>
-
                 <div class="form-row" ng-show="app.isAdmin">
-                    <button type="button" class="" ng-model="app.user.role" btn-radio="'admin'">Administrator</button>
-                    <button type="button" class="" ng-model="app.user.role" btn-radio="'regular'">Regular</button>
-                    <button type="button" class="" ng-model="app.user.role" btn-radio="'source'">Source</button>
+                    <button type="button" class="" ng-model="app.user.role" uib-btn-radio="'admin'">Administrator</button>
+                    <button type="button" class="" ng-model="app.user.role" uib-btn-radio="'regular'">Regular</button>
+                    <button type="button" class="" ng-model="app.user.role" uib-btn-radio="'source'">Source</button>
                     <span ng-show="userForm.website.$error.url" class="form-field-helper">User access level (admin only)</span>
                 </div>
                 <button type="button" class="button positive" ng-click="save()">Save</button>
