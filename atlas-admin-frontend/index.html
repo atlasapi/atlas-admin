@@ -72,7 +72,7 @@
               </li>
             </ul>
           </li>
-          <li ng-show="isAdmin" class="has-dropdown-menu user-menu" id="admin-menu" ng-click="app.hideAdminMenu()" ng-mouseleave="app.showAdminMenu()" ng-cloak>
+          <li ng-if="app.menu.admins.length" class="has-dropdown-menu user-menu" id="admin-menu" ng-click="app.hideAdminMenu()" ng-mouseleave="app.showAdminMenu()" ng-cloak>
             <span>Admin</span>
             <ul class="admin-menu admin-dropdown dropdown-menu" ng-show="app.adminMenu">
               <li ng-repeat="item in app.menu.admins" ng-cloak>
