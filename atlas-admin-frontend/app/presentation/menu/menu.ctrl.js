@@ -4,9 +4,9 @@ angular
   .module('atlasAdmin.menu')
   .controller('UserMenuController', UserMenuController);
 
-UserMenuController.$inject = ['$scope', 'Users', '$rootScope', 'Authentication', '$location', 'GroupsService', '$q', 'Atlas', '$log'];
+UserMenuController.$inject = ['$scope', '$rootScope', '$q', 'Atlas', '$log'];
 
-function UserMenuController($scope, Users, $rootScope, Authentication, $location, Groups, $q, Atlas, $log) {
+function UserMenuController($scope, $rootScope, $q, Atlas, $log) {
   var privateItems;
 
   $scope.app = {};
