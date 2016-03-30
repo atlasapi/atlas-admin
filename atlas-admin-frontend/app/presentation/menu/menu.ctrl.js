@@ -106,11 +106,8 @@ function UserMenuController($scope, Users, $rootScope, Authentication, $location
     var admin_menu = [];
 
     allMenu.forEach(function(item) {
-      if (!item.hasOwnProperty('role') || item.role === 'regular') {
-        menu.push(item);
-      } else if (uesr.role === 'admin') {
-        admin_menu.push(item);
-      }
+      admin_menu.push(item);
+      menu.push(item);
     });
 
     return {
@@ -134,29 +131,11 @@ function UserMenuController($scope, Users, $rootScope, Authentication, $location
     });
 
     if ($scope.isAdmin) {
-      console.log('ya');
       $scope.app.menu = buildMenu();
-    } else {
     }
   }
 
   function throwError(error) {
     console.error(error);
-  };
-
-  // if (Authentication.getToken()) {
-  //   Users.currentUser(function(user) {
-  //     $scope.app.user = user;
-  //     // find any custom menu items for this user
-  //     getPrivateMenuItems()
-  //       .then(function(groups) {
-  //         $scope.app.userGroups = groups;
-  //         $scope.app.menu = buildMenu(user, groups);
-  //         console.log('a', $scope);
-  //       }, function() {
-  //         $scope.app.menu = buildMenu(user);
-  //         console.log('b', $scope);
-  //       });
-  //   });
-  // }
+  }
 }
