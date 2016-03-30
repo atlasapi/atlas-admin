@@ -4,9 +4,9 @@ angular
   .module('atlasAdmin.applications')
   .controller('CtrlApplications', CtrlApplications);
 
-CtrlApplications.$inject = ['$scope', '$rootScope', '$routeParams', 'Applications', '$uibModal', '$location', 'Atlas', 'Authentication', 'atlasApiHost', '$http'];
+CtrlApplications.$inject = ['$scope', '$rootScope', '$routeParams', 'Applications', '$uibModal', '$location', 'Atlas', 'Authentication', 'atlasApiHost', '$http', '$log'];
 
-function CtrlApplications($scope, $rootScope, $routeParams, Applications, $uibModal, $location, Atlas, Authentication, atlasApiHost, $http) {
+function CtrlApplications($scope, $rootScope, $routeParams, Applications, $uibModal, $location, Atlas, Authentication, atlasApiHost, $http, $log) {
   $scope.view_title = 'My Applications';
   $scope.app = {};
   $scope.app.predicate = 'created';
@@ -72,7 +72,7 @@ function CtrlApplications($scope, $rootScope, $routeParams, Applications, $uibMo
   }
 
   function httpError(error) {
-    console.error('error', error);
+    $log.error(error);
   }
 
   Atlas

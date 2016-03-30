@@ -4,9 +4,9 @@ angular
   .module('atlasAdmin.menu')
   .controller('UserMenuController', UserMenuController);
 
-UserMenuController.$inject = ['$scope', 'Users', '$rootScope', 'Authentication', '$location', 'GroupsService', '$q', 'Atlas'];
+UserMenuController.$inject = ['$scope', 'Users', '$rootScope', 'Authentication', '$location', 'GroupsService', '$q', 'Atlas', '$log'];
 
-function UserMenuController($scope, Users, $rootScope, Authentication, $location, Groups, $q, Atlas) {
+function UserMenuController($scope, Users, $rootScope, Authentication, $location, Groups, $q, Atlas, $log) {
   var privateItems;
 
   $scope.app = {};
@@ -47,24 +47,6 @@ function UserMenuController($scope, Users, $rootScope, Authentication, $location
     $scope.app.appsMenu = false;
   };
 
-  var getPrivateMenuItems = function() {
-    var defer = $q.defer();
-
-    if (privateItems) {
-      defer.resolve(privateItems)
-      return defer.promise;
-    }
-
-    Groups
-      .get()
-      .then(function(result) {
-        privateItems = result;
-        defer.resolve(privateItems);
-    });
-
-    return defer.promise;
-  };
-
   var buildMenu = function(user, groups) {
     // if profile not complete the do not show menu
     var allMenu = [
@@ -76,38 +58,36 @@ function UserMenuController($scope, Users, $rootScope, Authentication, $location
       { path:'/manage/wishlist', label:'Wishlist', role:'admin' }
     ];
 
-    if (_.isArray(groups)) {
-      groups.forEach(function(item) {
-        if (item.name === 'BTBlackout') {
-          allMenu.push({
-            path: '/epg/bt-tv',
-            label: 'EPG'
-          });
-        }
+    allMenu.push({
+      path: '/epg/bt-tv',
+      label: 'EPG'
+    });
 
-        if (item.name === 'BBC-YV-Feed') {
-          allMenu.push({
-            path: '/feeds',
-            label: 'Feeds'
-          });
-        }
+    allMenu.push({
+      path: '/feeds',
+      label: 'Feeds'
+    });
 
-        if (item.name === 'BBC-Scrubbables') {
-          allMenu.push({
-            path: '/scrubbables',
-            label: 'Scrubbables'
-          });
-        }
-      });
-    }
+    allMenu.push({
+      path: '/scrubbables',
+      label: 'Scrubbables'
+    });
 
     // build the menu
     var menu = [];
     var admin_menu = [];
 
     allMenu.forEach(function(item) {
-      admin_menu.push(item);
-      menu.push(item);
+      if ($scope.isAdmin) {
+        if (item.role === 'admin') {
+          admin_menu.push(item);
+        } else {
+          menu.push(item);
+        }
+      } else {
+        // Need to populate content menu based on openam groups
+        $log.info('item', item);
+      }
     });
 
     return {
@@ -130,9 +110,7 @@ function UserMenuController($scope, Users, $rootScope, Authentication, $location
       }
     });
 
-    if ($scope.isAdmin) {
-      $scope.app.menu = buildMenu();
-    }
+    $scope.app.menu = buildMenu();
   }
 
   function throwError(error) {
