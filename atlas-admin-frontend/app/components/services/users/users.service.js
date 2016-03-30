@@ -1,29 +1,24 @@
 angular
-  .module('atlasAdmin.services.users')
+  .module('atlasAdmin.services.users', ['ngCookies'])
   .factory('Users', Users)
   .factory('ProfileStatus', ProfileStatus);
 
-Users.$inject = ['$http', 'Atlas', '$rootScope', 'Authentication', 'ProfileStatus', '$log', 'atlasApiHost', '$q'];
+Users.$inject = ['$http', 'Atlas', '$rootScope', 'Authentication', 'ProfileStatus', '$log', 'atlasApiHost', '$q', '$cookies'];
 
-function Users($http, Atlas, $rootScope, Authentication, ProfileStatus, $log, atlasApiHost, $q) {
+function Users($http, Atlas, $rootScope, Authentication, ProfileStatus, $log, atlasApiHost, $q, $cookies) {
   return {
     currentUser: function(callback) {
+      var httpOptions = {
+        headers: {
+          iPlanetDirectoryPro: $cookies.get('iPlanetDirectoryPro')
+        }
+      };
+
       $http
-        .get(Atlas.getUrl('/auth/user.json'))
-        .then(function (result) {
-          if (result.user) {
-            if (result.user.profile_complete) {
-              ProfileStatus.setComplete(result.user.profile_complete);
-            }
-
-            if (typeof result.user.license_accepted === 'string') {
-              ProfileStatus.setLicenseAccepted(true);
-            } else {
-              ProfileStatus.setLicenseAccepted(false);
-            }
-
-            callback(result.user);
-          }
+        .get('http://admin-backend.metabroadcast.com/1/user', httpOptions)
+        .then(function(result) {
+          var user = result.data;
+          callback(user);
         })
         .catch(function() {
           $log.error("No user");

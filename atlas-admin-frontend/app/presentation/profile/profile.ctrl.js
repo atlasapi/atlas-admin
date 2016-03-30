@@ -2,7 +2,7 @@ angular
   .module('atlasAdmin.profile')
   .controller('ProfileController', ProfileController);
 
-function ProfileController($scope, $rootScope, $routeParams, Users, Applications, $location) {
+function ProfileController($scope, $rootScope, $routeParams, Users, $location, $log) {
   $scope.app = {};
   $scope.app.isAdmin = false;
   $scope.app.predicate = 'created';
@@ -10,18 +10,7 @@ function ProfileController($scope, $rootScope, $routeParams, Users, Applications
   $scope.app.pageSize = 10;
   $scope.app.currentPage = 1;
 
-  function populateApplications(idList) {
-    $scope.app.applications = [];
-
-    for (var i = 0; i < idList.length; i++) {
-      Applications.get(idList[i]).then(function(application) {
-        $scope.app.applications.push(application);
-      });
-    }
-  }
-
   Users.currentUser(function(user) {
-    $log.info('user', user);
     $scope.app.user = user;
     $rootScope.view_title = 'Your profile';
   });
