@@ -12,7 +12,9 @@ function ProfileController($scope, $rootScope, $routeParams, Users, $location, $
 
   Users.currentUser(function(user) {
     $scope.app.user = user;
+    $rootScope.status.loggedIn = true;
     $rootScope.view_title = 'Your profile';
+    $log.info($rootScope);
   });
 
   $scope.save = function() {

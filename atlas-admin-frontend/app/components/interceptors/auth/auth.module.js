@@ -1,2 +1,4 @@
 'use strict';
-angular.module('atlasAdmin.interceptors.auth', []);
+
+angular
+  .module('atlasAdmin.interceptors.auth', []);

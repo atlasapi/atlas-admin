@@ -8,7 +8,7 @@ angular.module('atlasAdmin')
       $httpProvider.defaults.useXDomain = true;
       delete $httpProvider.defaults.headers.common['X-Requested-With'];
       $httpProvider.interceptors.push('LoadingInterceptor');
-      // $httpProvider.interceptors.push('AuthenticationInterceptor');
+      $httpProvider.interceptors.push('AuthenticationInterceptor');
       $httpProvider.interceptors.push('ProfileCompleteInterceptor');
 
       $sceDelegateProvider.resourceUrlWhitelist([

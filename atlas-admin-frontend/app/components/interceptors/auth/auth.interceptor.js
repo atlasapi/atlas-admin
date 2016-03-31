@@ -4,28 +4,14 @@ angular
   .module('atlasAdmin.interceptors.auth')
   .factory('AuthenticationInterceptor', AuthenticationInterceptor);
 
-AuthenticationInterceptor.$inject = ['$q', '$location', 'atlasHost', 'atlasApiHost', '$window', 'Authentication'];
+AuthenticationInterceptor.$inject = ['$q', '$location', 'atlasHost', 'atlasApiHost', '$window', 'Authentication', '$log'];
 
-function AuthenticationInterceptor($q, $location, atlasHost, atlasApiHost, $window, Auth) {
+function AuthenticationInterceptor($q, $location, atlasHost, atlasApiHost, $window, Auth, $log, $rootScope, $scope) {
   return {
     request: function(config) {
-      var _url = config.url;
-
-      if (_url.indexOf('partials') !== -1 ||
-        _url.indexOf('/login') !== -1 ||
-        _url.indexOf('/logout') !== -1 ||
-        _url.indexOf('/auth/') !== -1) {
-        return config || $q.defer(config);
-      }
-
-      var _provider = Auth.getProvider() || null;
-      var _token = Auth.getToken() || null;
-
-      if (!_token || !_provider) {
-        console.log('Token and provider aren\'t present in localstorage');
-        $location.path('/login');
-      }
-
+      $log.info(config);
+      $log.info($scope);
+      // $location.path('/login');
       return config || $q.defer(config);
     },
 
