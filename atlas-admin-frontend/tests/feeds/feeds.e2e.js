@@ -25,20 +25,18 @@ describe('E2E feeds: Actions', function () {
     element(by.css('.pid-check .check-pid')).click();
     expect(element(by.css('.actionBtn.upload')).isPresent()).toBeTruthy();
   });
-
-  it('should close the modal on bg click', function () {
-    element(by.css('.feedsAcceptModal')).click().then(function() {
-      expect(element(by.css('.modal.modal-dialog')).isPresent()).toBeFalsy();
-    });
-  });
 });
 
 describe('E2E feeds: Filters', function () {
-  feedsPageObject.get();
+  beforeEach(function(){
+    feedsPageObject.get();
+  });
+
   it('should show 10 results per page', function () {
     element.all(by.repeater('task in tasks')).count().then(function(count) {
       expect(count).toEqual(15);
     });
+
     element(by.model('page.limit')).$('[value="10"]').click();
     element.all(by.repeater('task in tasks')).count().then(function(count) {
       expect(count).toEqual(10);
@@ -46,20 +44,26 @@ describe('E2E feeds: Filters', function () {
   });
 
   it('should filter results when a URI is input', function () {
-    element(by.css('.tbl-filters .search-cell.uri')).sendKeys('b00jkt5j');
-    element.all(by.repeater('task in tasks')).count().then(function(count) {
-      expect(count).toEqual(7);
+    feedsPageObject.filterBy('uri').sendKeys('b00jkt5j');
+    feedsPageObject.getFilteredResultsText('task in tasks', 'content_uri').then(function(arr){
+      for (var i = 0; i < arr.length; i++) {
+        expect(arr[i]).toContain('b00jkt5j');
+      };
     });
+
     element(by.css('.tbl-filters .search-cell.uri')).clear();
   });
 
-  // it('should filter results when an ID is input', function () {
-  //   element(by.css('.tbl-filters .search-cell.remoteId')).sendKeys('b592c2ee-8c61-488f-821b-d21545aae98e');
-  //   element.all(by.repeater('task in tasks')).count().then(function(count) {
-  //     expect(count).toEqual(1);
-  //   });
-  //   element(by.css('.tbl-filters .search-cell.remoteId')).clear();
-  // });
+  it('should filter results when an ID is input', function () {
+    feedsPageObject.filterBy('remoteId').sendKeys('993c4ff5-2856-4f98-898c-7fde1c953224');
+    feedsPageObject.getFilteredResultsText('task in tasks', 'remote_id').then(function(arr){
+      for (var i = 0; i < arr.length; i++) {
+        expect(arr[i]).toContain('993c4ff5-2856-4f98-898c-7fde1c953224');
+      };
+    });
+
+    element(by.css('.tbl-filters .search-cell.remoteId')).clear();
+  });
 });
 
 describe('E2E feeds: Single Feed', function () {
