@@ -1,3 +1,4 @@
 'use strict';
 
-angular.module('atlasAdmin.services.sources', []);
+angular
+  .module('atlasAdmin.services.sources', []);
