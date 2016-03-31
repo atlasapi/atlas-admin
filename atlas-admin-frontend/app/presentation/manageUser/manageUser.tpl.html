@@ -1,0 +1,73 @@
+<div class="app-surface user-profile">
+    <header class="app-header">
+        <h1 class="page-title">{{view_title}}</h1>
+        <span class="subheading" ng-show="app.newUser">Welcome to Atlas! To continue please check and complete the information below.</span>
+        {{successMessage}}
+        {{errorMessage}}
+    </header>
+
+    <div class="panel-half">
+        <section class="profile-holder">
+            <form name="userForm" role="form">
+                <div class="form-row">
+                    <label for="full_name" class="form-label required">Full name</label>
+                    <input type="text" class="form-control" id="full_name" name="full_name" placeholder="name" ng-model="app.user.full_name" ng-change="app.changed=true" ng-minlength=2 required>
+                    <span ng-show="userForm.full_name.$error.required || userForm.full_name.$error.minlength" class="form-field-helper">Please provide your name</span>
+                </div>
+                <div class="form-row">
+                    <label for="company" class="form-label">Company</label>
+                    <input type="text" class="form-control" id="company" name="company" placeholder="" ng-model="app.user.company" ng-change="app.changed=true">
+                </div>
+                <div class="form-row">
+                    <label for="email" class="form-label required">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="me@example.com" ng-model="app.user.email" ng-change="app.changed=true" required>
+                    <span ng-show="userForm.email.$error.email || userForm.email.$error.required" class="form-field-helper">Please enter a valid email address</span>
+                </div>
+                <div class="form-row">
+                    <label for="website" class="form-label">Website URL</label>
+                    <input type="url" class="form-control" id="website" name="website" placeholder="http://example.com" ng-model="app.user.website" ng-change="app.changed=true">
+                    <span ng-show="userForm.website.$error.url" class="form-field-helper">Please enter a valid website address</span>
+                </div>
+                <div class="form-row" ng-show="app.isAdmin">
+                    <button type="button" class="" ng-model="app.user.role" uib-btn-radio="'admin'">Administrator</button>
+                    <button type="button" class="" ng-model="app.user.role" uib-btn-radio="'regular'">Regular</button>
+                    <button type="button" class="" ng-model="app.user.role" uib-btn-radio="'source'">Source</button>
+                    <span ng-show="userForm.website.$error.url" class="form-field-helper">User access level (admin only)</span>
+                </div>
+                <button type="button" class="button positive" ng-click="save()">Save</button>
+            </form>
+        </section>
+    </div>
+    <div class="panel-half" ng-bind-html="app.formEle">
+    </div>
+
+    <div ng-show="app.isAdmin" class="panel-full padded-top">
+        <div class="panel-heading">
+            <h3 class="panel-title">Applications for {{app.user.full_name}}</h3>
+        </div>
+        <div class="panel-body">
+            <div class="row" ng-show="app.applications.length == 0">
+                <div class="container">
+                    <p>No applications registered.</p>
+                </div>
+            </div>
+            <div class="row" ng-show="app.applications.length > 0">
+                <table class="table table-striped table-hover">
+                    <tr>
+                        <th ng-click="app.predicate='title'; app.reverse=!app.reverse;">Application</th>
+                        <th ng-click="app.predicate='credentials.apiKey'; app.reverse=!app.reverse;">API Key</th>
+                        <th ng-click="app.predicate='created'; app.reverse=!app.reverse;">Created</th>
+                    </tr>
+                    <tr ng-repeat="application in app.applications | orderBy:app.predicate:app.reverse  | startFrom:(app.currentPage-1)*app.pageSize  | limitTo:app.pageSize ">
+                        <td><a ng-href="#/applications/{{application.id}}">{{application.title}}</a></td>
+                        <td>{{application.credentials.apiKey}}</td>
+                        <td>{{application.created|date:'dd MMM yyyy H:mm'}}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="container" ng-show="app.applications.length > 0">
+                <uib-pagination total-items="(app.applications|filter:appSearchFilter).length" ng-model="app.currentPage" max-size="app.pageSize" previous-text="&#60;" next-text="&#62;"></uib-pagination>
+            </div>
+        </div>
+    </div>
+</div>
