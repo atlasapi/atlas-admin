@@ -16,7 +16,7 @@ function Applications(Atlas) {
 
     get: function(applicationId) {
       return Atlas
-        .getRequest('http://admin-backend.metabroadcast.com/1/applications/' + applicationId)
+        .getRequest('applications/' + applicationId)
         .then(function(results) {
           return results.data.application;
       });

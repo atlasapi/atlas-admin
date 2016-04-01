@@ -4,7 +4,7 @@ angular
   .module('atlasAdmin.services.atlas', ['ngCookies'])
   .factory('Atlas', Atlas);
 
-function Atlas($http, atlasHost, atlasVersion, Authentication, $log, $cookies) {
+function Atlas($http, atlasHost, atlasVersion, atlasApiHost, Authentication, $log, $cookies) {
   var httpOptions = {
     headers: {
       iPlanetDirectoryPro: $cookies.get('iPlanetDirectoryPro')
@@ -12,7 +12,8 @@ function Atlas($http, atlasHost, atlasVersion, Authentication, $log, $cookies) {
   };
 
   return {
-    getRequest: function(url) {
+    getRequest: function(path) {
+      var url = atlasApiHost + path;
       return $http.get(url, httpOptions);
     },
 

@@ -29,13 +29,13 @@ function CtrlApplications($scope, $rootScope, $routeParams, Applications, $uibMo
 
     if ($scope.isAdmin) {
       Atlas
-        .getRequest('http://admin-backend.metabroadcast.com/1/applications')
+        .getRequest('applications')
         .then(function(response) {
           var applications = response.data.applications;
 
           applications.forEach(function(application) {
             Atlas
-              .getRequest('http://admin-backend.metabroadcast.com/1/applications/' + application.id)
+              .getRequest('applications/' + application.id)
               .then(function(response) {
                 formatApplicationAndUpdateView(response.data.application);
               })
@@ -46,7 +46,7 @@ function CtrlApplications($scope, $rootScope, $routeParams, Applications, $uibMo
     } else {
       roles.forEach(function(role) {
         Atlas
-          .getRequest('http://admin-backend.metabroadcast.com/1/applications/' + role.id)
+          .getRequest('applications/' + role.id)
           .then(function(response) {
             formatApplicationAndUpdateView(response.data.application);
           })
@@ -76,7 +76,7 @@ function CtrlApplications($scope, $rootScope, $routeParams, Applications, $uibMo
   }
 
   Atlas
-    .getRequest('http://admin-backend.metabroadcast.com/1/user')
+    .getRequest('user')
     .then(httpSuccess)
     .catch(httpError);
 

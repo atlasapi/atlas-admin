@@ -84,7 +84,7 @@ function UserMenuController($scope, $rootScope, $q, Atlas, $log) {
   };
 
   Atlas
-    .getRequest('http://admin-backend.metabroadcast.com/1/user')
+    .getRequest('user')
     .then(getUserData)
     .catch(throwError);
 

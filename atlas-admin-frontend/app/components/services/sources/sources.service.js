@@ -8,7 +8,7 @@ function Sources(Atlas, Applications, $log) {
   return {
     all: function () {
       return Atlas
-        .getRequest('http://admin-backend.metabroadcast.com/1/applications//sources')
+        .getRequest('applications//sources')
         .then(function(result) {
           return result.data.sources;
       });
@@ -16,7 +16,7 @@ function Sources(Atlas, Applications, $log) {
 
     get: function (sourceId) {
       return Atlas
-        .getRequest('http://admin-backend.metabroadcast.com/1/sources/' + sourceId)
+        .getRequest('sources/' + sourceId)
         .then(function(result) {
           return result.data.source;
       });
