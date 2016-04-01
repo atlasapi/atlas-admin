@@ -9,8 +9,6 @@ AuthenticationInterceptor.$inject = ['$q', '$location', 'atlasHost', 'atlasApiHo
 function AuthenticationInterceptor($q, $location, atlasHost, atlasApiHost, $window, Auth, $log, $rootScope, $scope) {
   return {
     request: function(config) {
-      $log.info(config);
-      $log.info($scope);
       // $location.path('/login');
       return config || $q.defer(config);
     },
